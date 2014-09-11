@@ -19,7 +19,7 @@ module minerva {
             return this;
         }
 
-        addTapinBefore (name: string, tapin: T, before?: string): Pipe<T> {''
+        addTapinBefore (name: string, tapin: T, before?: string): Pipe<T> {
             var names = this.$$names;
             var tapins = this.tapins;
             var index = !before ? -1 : names.indexOf(before);
