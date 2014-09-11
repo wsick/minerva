@@ -7,13 +7,13 @@ module minerva.def {
         private $$names: string[] = [];
         private $$tapins: T[] = [];
 
-        addTapin (name: string, tapin: T): Pipe<T> {
+        addTapin (name: string, tapin: T): Pipe<T, TAssets, TState, TOutput> {
             this.$$names.push(name);
             this.$$tapins.push(tapin);
             return this;
         }
 
-        addTapinBefore (name: string, tapin: T, before?: string): Pipe<T> {
+        addTapinBefore (name: string, tapin: T, before?: string): Pipe<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !before ? -1 : names.indexOf(before);
@@ -27,7 +27,7 @@ module minerva.def {
             return this;
         }
 
-        addTapinAfter (name: string, tapin: T, after?: string): Pipe<T> {
+        addTapinAfter (name: string, tapin: T, after?: string): Pipe<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !after ? -1 : names.indexOf(after);
@@ -41,7 +41,7 @@ module minerva.def {
             return this;
         }
 
-        replaceTapin (name: string, tapin: T): Pipe<T> {
+        replaceTapin (name: string, tapin: T): Pipe<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = names.indexOf(name);
@@ -51,7 +51,7 @@ module minerva.def {
             return this;
         }
 
-        removeTapin (name: string): Pipe<T> {
+        removeTapin (name: string): Pipe<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var index = names.indexOf(name);
             if (index === -1)

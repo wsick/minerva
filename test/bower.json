@@ -1,0 +1,8 @@
+{
+  "name": "Tests",
+  "version": "0.1.0",
+  "main": "tests.html",
+  "dependencies": {
+    "qunit": "~1.14.0"
+  }
+}

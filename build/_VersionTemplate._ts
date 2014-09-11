@@ -1,0 +1,3 @@
+module minerva {
+    export var version = '%VERSION%';
+}

@@ -20,7 +20,9 @@ module minerva.layout {
                     Clip: null,
                     Effect: null
                 },
-                state: { },
+                state: {
+                    RenderRegion: null
+                },
                 output: { }
             };
         }

@@ -1,0 +1,33 @@
+{
+  "name": "minerva",
+  "version": "0.1.0",
+  "description": "Microservice oriented layout engine",
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BSick7/minerva.git"
+  },
+  "keywords": [
+    "xaml",
+    "fayde"
+  ],
+  "author": "Brad Sickles <brad.sickles@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BSick7/minerva/issues"
+  },
+  "homepage": "https://github.com/BSick7/minerva",
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-qunit": "~0.4.0",
+    "grunt-typescript": "~0.3.0"
+  }
+}
