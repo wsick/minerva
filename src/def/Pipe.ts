@@ -41,13 +41,23 @@ module minerva.def {
             return this;
         }
 
-        replace (name: string, tapin: T): Pipe<T> {
+        replaceTapin (name: string, tapin: T): Pipe<T> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = names.indexOf(name);
             if (index === -1)
                 throw new Error("Could not replace pipe tap-in. No pipe tap-in named `" + name + "`.");
             tapins[index] = tapin;
+            return this;
+        }
+
+        removeTapin (name: string): Pipe<T> {
+            var names = this.$$names;
+            var index = names.indexOf(name);
+            if (index === -1)
+                throw new Error("Could not replace pipe tap-in. No pipe tap-in named `" + name + "`.");
+            names.splice(index, 1);
+            this.$$tapins.splice(index, 1);
             return this;
         }
 
