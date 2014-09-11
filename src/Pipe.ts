@@ -1,15 +1,25 @@
 module minerva {
-    export class PipeDefinition<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> {
+    export interface IPipeAssets {
+    }
+    export interface IPipeState {
+    }
+    export interface IPipeOutput {
+    }
+    export interface ITapin {
+        (assets: IPipeAssets, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
+    }
+
+    export class Pipe<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> {
         private $$names: string[] = [];
         tapins: T[] = [];
 
-        addTapin (name: string, tapin: T): PipeDefinition<T> {
+        addTapin (name: string, tapin: T): Pipe<T> {
             this.$$names.push(name);
             this.tapins.push(tapin);
             return this;
         }
 
-        addTapinBefore (name: string, tapin: T, before?: string): PipeDefinition<T> {
+        addTapinBefore (name: string, tapin: T, before?: string): Pipe<T> {''
             var names = this.$$names;
             var tapins = this.tapins;
             var index = !before ? -1 : names.indexOf(before);
@@ -23,7 +33,7 @@ module minerva {
             return this;
         }
 
-        addTapinAfter (name: string, tapin: T, after?: string): PipeDefinition<T> {
+        addTapinAfter (name: string, tapin: T, after?: string): Pipe<T> {
             var names = this.$$names;
             var tapins = this.tapins;
             var index = !after ? -1 : names.indexOf(after);
@@ -37,7 +47,7 @@ module minerva {
             return this;
         }
 
-        replace (name: string, tapin: T): PipeDefinition<T> {
+        replace (name: string, tapin: T): Pipe<T> {
             var names = this.$$names;
             var tapins = this.tapins;
             var index = names.indexOf(name);

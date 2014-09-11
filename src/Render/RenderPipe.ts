@@ -25,7 +25,7 @@ module minerva.render {
         Draw(ctx: CanvasRenderingContext2D);
     }
 
-    export class RenderPipeDefinition extends PipeDefinition<IRenderTapin, IRenderAssets, IRenderState, IRenderOutput> {
+    export class RenderPipe extends Pipe<IRenderTapin, IRenderAssets, IRenderState, IRenderOutput> {
         constructor () {
             super();
             this.addTapin('validate', tapins.validate)
