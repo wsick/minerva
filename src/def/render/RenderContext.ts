@@ -2,7 +2,7 @@ interface CanvasRenderingContext2D {
     currentTransform: number[];
 }
 
-module minerva.render {
+module minerva.def.render {
     export class RenderContext {
         static pretransformMatrix (ctx: CanvasRenderingContext2D, mat: number[]) {
             var ct = ctx.currentTransform;

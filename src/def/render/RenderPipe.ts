@@ -1,4 +1,4 @@
-module minerva.render {
+module minerva.def.render {
     export interface IRenderTapin extends ITapin {
         (assets: IRenderAssets, state: IRenderState, output: IRenderOutput, ctx: CanvasRenderingContext2D, region: Rect):boolean;
     }

@@ -1,15 +1,9 @@
-module minerva {
-    export interface IPipeAssets {
-    }
-    export interface IPipeState {
-    }
-    export interface IPipeOutput {
-    }
+module minerva.def {
     export interface ITapin {
         (assets: IPipeAssets, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
 
-    export class Pipe<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> {
+    export class Pipe<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipe<TAssets, TState, TOutput> {
         private $$names: string[] = [];
         tapins: T[] = [];
 
