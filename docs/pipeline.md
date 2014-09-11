@@ -16,15 +16,15 @@
 * A tapin has a name to reference
 * A tapin must return `true`/`false`.  If `false` or nothing is returned, then pipeline will abort.
 * A tapin will receive the following 3 input parameters.
-    * Assets
+    * `assets`
         * Pipeline input
         * Read-only (should not be mutated)
         * Because immutable, assets coming from another pipeline don't need to be copied 
-    * State
+    * `state`
         * Pipeline state parameters
         * Can be mutated by a tapin that is used in a latter tapin
         * Can also be used to reduce memory allocation/deallocation
-    * Output
+    * `output`
         * Pipeline output
         * Write-only
         * For layout pipes, the `Updater` expects a certain set of outputs to be set upon pipeline completion
