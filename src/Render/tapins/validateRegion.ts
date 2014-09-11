@@ -1,5 +1,5 @@
 module minerva.render.tapins {
-    export var validateRegion:IRenderTapin = function (assets:IRenderAssets, state:IRenderState, output:IRenderOutput):boolean {
+    export var validateRegion: IRenderTapin = function (assets: IRenderAssets, state: IRenderState, output: IRenderOutput, ctx: CanvasRenderingContext2D, region: Rect): boolean {
         var r = state.RenderRegion;
         Rect.copyTo(assets.SurfaceBoundsWithChildren, r);
         Rect.roundOut(r);

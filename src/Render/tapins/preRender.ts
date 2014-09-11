@@ -1,9 +1,8 @@
 module minerva.render.tapins {
-    export var preRender:IRenderTapin = function (assets:IRenderAssets, state:IRenderState, output:IRenderOutput):boolean {
+    export var preRender: IRenderTapin = function (assets: IRenderAssets, state: IRenderState, output: IRenderOutput, ctx: CanvasRenderingContext2D, region: Rect): boolean {
         var effect = assets.Effect;
         if (!effect)
             return true;
-        var ctx = assets.ctx;
         ctx.save();
         effect.PreRender(ctx);
         return true;

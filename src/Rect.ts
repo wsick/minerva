@@ -1,16 +1,16 @@
 module minerva {
     export class Rect {
-        constructor(public x:number = 0, public y:number = 0, public width:number = 0, public height:number = 0) {
+        constructor (public x: number = 0, public y: number = 0, public width: number = 0, public height: number = 0) {
         }
 
-        static copyTo(src:Rect, dest:Rect) {
+        static copyTo (src: Rect, dest: Rect) {
             dest.x = src.x;
             dest.y = src.y;
             dest.width = src.width;
             dest.height = src.height;
         }
 
-        static roundOut(r:Rect) {
+        static roundOut (r: Rect) {
             var x = Math.floor(r.x);
             var y = Math.floor(r.y);
             r.width = Math.ceil(r.x + r.width) - x;
@@ -19,7 +19,7 @@ module minerva {
             r.y = y;
         }
 
-        static intersection(dest:Rect, rect2:Rect) {
+        static intersection (dest: Rect, rect2: Rect) {
             var x = Math.max(dest.x, rect2.x);
             var y = Math.max(dest.y, rect2.y);
             dest.width = Math.max(0, Math.min(dest.x + dest.width, rect2.x + rect2.width) - x);
