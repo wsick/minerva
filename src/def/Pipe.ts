@@ -5,17 +5,17 @@ module minerva.def {
 
     export class Pipe<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipe<TAssets, TState, TOutput> {
         private $$names: string[] = [];
-        tapins: T[] = [];
+        private $$tapins: T[] = [];
 
         addTapin (name: string, tapin: T): Pipe<T> {
             this.$$names.push(name);
-            this.tapins.push(tapin);
+            this.$$tapins.push(tapin);
             return this;
         }
 
         addTapinBefore (name: string, tapin: T, before?: string): Pipe<T> {
             var names = this.$$names;
-            var tapins = this.tapins;
+            var tapins = this.$$tapins;
             var index = !before ? -1 : names.indexOf(before);
             if (index === -1) {
                 names.unshift(name);
@@ -29,7 +29,7 @@ module minerva.def {
 
         addTapinAfter (name: string, tapin: T, after?: string): Pipe<T> {
             var names = this.$$names;
-            var tapins = this.tapins;
+            var tapins = this.$$tapins;
             var index = !after ? -1 : names.indexOf(after);
             if (index === -1 || index === names.length - 1) {
                 names.push(name);
@@ -43,12 +43,26 @@ module minerva.def {
 
         replace (name: string, tapin: T): Pipe<T> {
             var names = this.$$names;
-            var tapins = this.tapins;
+            var tapins = this.$$tapins;
             var index = names.indexOf(name);
             if (index === -1)
                 throw new Error("Could not replace pipe tap-in. No pipe tap-in named `" + name + "`.");
             tapins[index] = tapin;
             return this;
+        }
+
+        run (assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean {
+            this.initAssets(assets);
+            this.initState(state);
+            this.initOutput(output);
+            contexts.unshift(output);
+            contexts.unshift(state);
+            contexts.unshift(assets);
+            for (var i = 0, tapins = this.$$tapins, len = tapins.length; i < len; i++) {
+                if (!tapins[i].apply(this, contexts))
+                    return false;
+            }
+            return true;
         }
 
         initAssets (assets: TAssets) {
