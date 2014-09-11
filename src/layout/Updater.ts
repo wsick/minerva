@@ -13,14 +13,15 @@ module minerva.layout {
             this.$$render = {
                 def: NO_PIPE,
                 assets: {
-
+                    TotalIsRenderVisible: true,
+                    TotalOpacity: 1.0,
+                    SurfaceBoundsWithChildren: new Rect(),
+                    RenderXform: mat3.identity(),
+                    Clip: null,
+                    Effect: null
                 },
-                state: {
-
-                },
-                output: {
-
-                }
+                state: { },
+                output: { }
             };
         }
 
