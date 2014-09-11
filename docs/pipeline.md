@@ -6,6 +6,10 @@
     * `addTapinAfter(name, tapin, after)`
     * `replaceTapin(name, tapin)`
     * `removeTapin(name)`
+* A pipe also contains 3 methods to configure parameters
+    * `initAssets(assets)`
+    * `initState(state)`
+    * `initOutput(output)`
 
 ## Tapin
 * A tapin is a function that takes assets, state, output as parameters
