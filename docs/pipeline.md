@@ -1,7 +1,5 @@
 ## Pipe
 * Composed of tapins
-* A tapin is a function that takes assets, state, output as parameters
-* A tapin has a name to reference
 * A pipe has a set of methods to help configure the tapin workflow
     * `addTapin(name, tapin)`
     * `addTapinBefore(name, tapin, before)`
@@ -10,6 +8,8 @@
     * `removeTapin(name)`
 
 ## Tapin
+* A tapin is a function that takes assets, state, output as parameters
+* A tapin has a name to reference
 * A tapin must return `true`/`false`.  If `false` or nothing is returned, then pipeline will abort.
 * A tapin will receive the following 3 input parameters.
     * Assets
