@@ -8,22 +8,24 @@ module minerva.layout {
     export class Updater {
         private $$render: IRenderPipe;
 
+        TotalIsRenderVisible = true;
+        TotalOpacity = 1.0;
+
+        SurfaceBoundsWithChildren = new Rect();
+
+        RenderXform = mat3.identity();
+
+        Clip: def.render.IGeometry = null;
+        Effect: def.render.IEffect = null;
+
         constructor () {
-            //TODO: init $$render
             this.$$render = {
                 def: NO_PIPE,
-                assets: {
-                    TotalIsRenderVisible: true,
-                    TotalOpacity: 1.0,
-                    SurfaceBoundsWithChildren: new Rect(),
-                    RenderXform: mat3.identity(),
-                    Clip: null,
-                    Effect: null
-                },
+                assets: this,
                 state: {
                     RenderRegion: null
                 },
-                output: { }
+                output: null
             };
         }
 

@@ -67,7 +67,6 @@ declare module minerva.def {
     }
     interface IPipe<TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> {
         run(assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean;
-        initAssets(assets: TAssets): any;
         initState(state: TState): any;
         initOutput(output: TOutput): any;
     }
@@ -85,7 +84,6 @@ declare module minerva.def {
         public replaceTapin(name: string, tapin: T): Pipe<T, TAssets, TState, TOutput>;
         public removeTapin(name: string): Pipe<T, TAssets, TState, TOutput>;
         public run(assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean;
-        public initAssets(assets: TAssets): void;
         public initState(state: TState): void;
         public initOutput(output: TOutput): void;
     }
@@ -168,6 +166,12 @@ declare module minerva.layout {
     }
     class Updater {
         private $$render;
+        public TotalIsRenderVisible: boolean;
+        public TotalOpacity: number;
+        public SurfaceBoundsWithChildren: Rect;
+        public RenderXform: number[];
+        public Clip: def.render.IGeometry;
+        public Effect: def.render.IEffect;
         constructor();
         public setRenderPipe(pipedef: def.render.RenderPipe): void;
         public render(ctx: CanvasRenderingContext2D, region: Rect): void;

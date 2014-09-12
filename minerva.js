@@ -832,7 +832,6 @@ var minerva;
                 for (var _i = 0; _i < (arguments.length - 3); _i++) {
                     contexts[_i] = arguments[_i + 3];
                 }
-                this.initAssets(assets);
                 this.initState(state);
                 this.initOutput(output);
                 contexts.unshift(output);
@@ -843,9 +842,6 @@ var minerva;
                         return false;
                 }
                 return true;
-            };
-
-            Pipe.prototype.initAssets = function (assets) {
             };
 
             Pipe.prototype.initState = function (state) {
@@ -1091,20 +1087,19 @@ var minerva;
 
         var Updater = (function () {
             function Updater() {
+                this.TotalIsRenderVisible = true;
+                this.TotalOpacity = 1.0;
+                this.SurfaceBoundsWithChildren = new minerva.Rect();
+                this.RenderXform = mat3.identity();
+                this.Clip = null;
+                this.Effect = null;
                 this.$$render = {
                     def: NO_PIPE,
-                    assets: {
-                        TotalIsRenderVisible: true,
-                        TotalOpacity: 1.0,
-                        SurfaceBoundsWithChildren: new minerva.Rect(),
-                        RenderXform: mat3.identity(),
-                        Clip: null,
-                        Effect: null
-                    },
+                    assets: this,
                     state: {
                         RenderRegion: null
                     },
-                    output: {}
+                    output: null
                 };
             }
             Updater.prototype.setRenderPipe = function (pipedef) {

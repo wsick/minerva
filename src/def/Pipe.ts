@@ -62,7 +62,6 @@ module minerva.def {
         }
 
         run (assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean {
-            this.initAssets(assets);
             this.initState(state);
             this.initOutput(output);
             contexts.unshift(output);
@@ -73,9 +72,6 @@ module minerva.def {
                     return false;
             }
             return true;
-        }
-
-        initAssets (assets: TAssets) {
         }
 
         initState (state: TState) {
