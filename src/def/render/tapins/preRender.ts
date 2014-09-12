@@ -3,7 +3,7 @@ module minerva.def.render.tapins {
         var effect = assets.Effect;
         if (!effect)
             return true;
-        ctx.save();
+        RenderContext.save(ctx);
         effect.PreRender(ctx);
         return true;
     };

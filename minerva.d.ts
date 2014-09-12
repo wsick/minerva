@@ -90,11 +90,16 @@ declare module minerva.def {
 }
 interface CanvasRenderingContext2D {
     currentTransform: number[];
+    $$transforms: number[][];
 }
 declare module minerva.def.render {
-    class RenderContext {
-        static pretransformMatrix(ctx: CanvasRenderingContext2D, mat: number[]): void;
-        static clipGeometry(ctx: CanvasRenderingContext2D, geom: IGeometry): void;
+    module RenderContext {
+        function init(ctx: CanvasRenderingContext2D): void;
+        function save(ctx: CanvasRenderingContext2D): void;
+        function restore(ctx: CanvasRenderingContext2D): void;
+        function scale(ctx: CanvasRenderingContext2D, x: number, y: number): void;
+        function pretransformMatrix(ctx: CanvasRenderingContext2D, mat: number[]): void;
+        function clipGeometry(ctx: CanvasRenderingContext2D, geom: IGeometry): void;
     }
 }
 declare module minerva.def.render {

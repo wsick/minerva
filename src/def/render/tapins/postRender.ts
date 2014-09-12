@@ -4,7 +4,7 @@ module minerva.def.render.tapins {
         if (!effect)
             return true;
         effect.PostRender(ctx);
-        ctx.restore();
+        RenderContext.restore(ctx);
         return true;
     };
 }
