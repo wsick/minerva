@@ -859,47 +859,46 @@ var minerva;
 (function (minerva) {
     (function (def) {
         (function (render) {
-            (function (RenderContext) {
-                function init(ctx) {
-                    ctx.currentTransform = mat3.identity();
-                    ctx.$$transforms = [];
+            var RenderContext = (function () {
+                function RenderContext(ctx) {
+                    this.$$transforms = [];
+                    this.currentTransform = mat3.identity();
+                    Object.defineProperty(this, 'ctx', { value: ctx, writable: false });
                 }
-                RenderContext.init = init;
+                RenderContext.prototype.save = function () {
+                    var ct = this.currentTransform;
+                    this.$$transforms.push(ct);
+                    this.currentTransform = !ct ? mat3.identity() : mat3.create(ct);
+                    this.ctx.save();
+                };
 
-                function save(ctx) {
-                    var ct = ctx.currentTransform;
-                    ctx.$$transforms.push(ct);
-                    ctx.currentTransform = !ct ? mat3.identity() : mat3.create(ct);
-                    ctx.save();
-                }
-                RenderContext.save = save;
+                RenderContext.prototype.restore = function () {
+                    this.currentTransform = this.$$transforms.pop();
+                    this.ctx.restore();
+                };
 
-                function restore(ctx) {
-                    ctx.currentTransform = ctx.$$transforms.pop();
-                    ctx.restore();
-                }
-                RenderContext.restore = restore;
-
-                function scale(ctx, x, y) {
-                    var ct = ctx.currentTransform;
+                RenderContext.prototype.scale = function (x, y) {
+                    var ctx = this.ctx;
+                    var ct = this.currentTransform;
                     mat3.scale(ct, x, y);
-                }
-                RenderContext.scale = scale;
+                    ctx.scale(x, y);
+                };
 
-                function pretransformMatrix(ctx, mat) {
-                    var ct = ctx.currentTransform;
+                RenderContext.prototype.pretransformMatrix = function (mat) {
+                    var ctx = this.ctx;
+                    var ct = this.currentTransform;
                     mat3.multiply(mat, ct, ct);
                     ctx.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
-                }
-                RenderContext.pretransformMatrix = pretransformMatrix;
+                };
 
-                function clipGeometry(ctx, geom) {
-                    geom.Draw(ctx);
+                RenderContext.prototype.clipGeometry = function (geom) {
+                    var ctx = this.ctx;
+                    geom.Draw(this);
                     ctx.clip();
-                }
-                RenderContext.clipGeometry = clipGeometry;
-            })(render.RenderContext || (render.RenderContext = {}));
-            var RenderContext = render.RenderContext;
+                };
+                return RenderContext;
+            })();
+            render.RenderContext = RenderContext;
         })(def.render || (def.render = {}));
         var render = def.render;
     })(minerva.def || (minerva.def = {}));
@@ -941,7 +940,7 @@ var minerva;
                 tapins.applyClip = function (assets, state, output, ctx, region) {
                     var clip = assets.Clip;
                     if (clip)
-                        render.RenderContext.clipGeometry(ctx, clip);
+                        ctx.clipGeometry(clip);
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -976,7 +975,7 @@ var minerva;
                     if (!effect)
                         return true;
                     effect.PostRender(ctx);
-                    render.RenderContext.restore(ctx);
+                    ctx.restore();
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -995,7 +994,7 @@ var minerva;
                     var effect = assets.Effect;
                     if (!effect)
                         return true;
-                    render.RenderContext.save(ctx);
+                    ctx.save();
                     effect.PreRender(ctx);
                     return true;
                 };
@@ -1012,9 +1011,9 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.prepareContext = function (assets, state, output, ctx, region) {
-                    render.RenderContext.save(ctx);
-                    render.RenderContext.pretransformMatrix(ctx, assets.RenderXform);
-                    ctx.globalAlpha = assets.TotalOpacity;
+                    ctx.save();
+                    ctx.pretransformMatrix(assets.RenderXform);
+                    ctx.ctx.globalAlpha = assets.TotalOpacity;
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -1045,7 +1044,7 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.restoreContext = function (assets, state, output, ctx, region) {
-                    render.RenderContext.restore(ctx);
+                    ctx.restore();
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));

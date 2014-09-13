@@ -88,23 +88,22 @@ declare module minerva.def {
         public initOutput(output: TOutput): void;
     }
 }
-interface CanvasRenderingContext2D {
-    currentTransform: number[];
-    $$transforms: number[][];
-}
 declare module minerva.def.render {
-    module RenderContext {
-        function init(ctx: CanvasRenderingContext2D): void;
-        function save(ctx: CanvasRenderingContext2D): void;
-        function restore(ctx: CanvasRenderingContext2D): void;
-        function scale(ctx: CanvasRenderingContext2D, x: number, y: number): void;
-        function pretransformMatrix(ctx: CanvasRenderingContext2D, mat: number[]): void;
-        function clipGeometry(ctx: CanvasRenderingContext2D, geom: IGeometry): void;
+    class RenderContext {
+        private $$transforms;
+        public currentTransform: number[];
+        public ctx: CanvasRenderingContext2D;
+        constructor(ctx: CanvasRenderingContext2D);
+        public save(): void;
+        public restore(): void;
+        public scale(x: number, y: number): void;
+        public pretransformMatrix(mat: number[]): void;
+        public clipGeometry(geom: IGeometry): void;
     }
 }
 declare module minerva.def.render {
     interface IRenderTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, ctx: CanvasRenderingContext2D, region: Rect): boolean;
+        (assets: IAssets, state: IState, output: IOutput, ctx: RenderContext, region: Rect): boolean;
     }
     interface IAssets extends IPipeAssets {
         TotalIsRenderVisible: boolean;
@@ -120,11 +119,11 @@ declare module minerva.def.render {
     interface IOutput extends IPipeOutput {
     }
     interface IEffect {
-        PreRender(ctx: CanvasRenderingContext2D): any;
-        PostRender(ctx: CanvasRenderingContext2D): any;
+        PreRender(ctx: RenderContext): any;
+        PostRender(ctx: RenderContext): any;
     }
     interface IGeometry {
-        Draw(ctx: CanvasRenderingContext2D): any;
+        Draw(ctx: RenderContext): any;
     }
     class RenderPipe extends Pipe<IRenderTapin, IAssets, IState, IOutput> {
         constructor();

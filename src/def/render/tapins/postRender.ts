@@ -1,10 +1,10 @@
 module minerva.def.render.tapins {
-    export var postRender: IRenderTapin = function (assets: IAssets, state: IState, output: IOutput, ctx: CanvasRenderingContext2D, region: Rect): boolean {
+    export var postRender: IRenderTapin = function (assets: IAssets, state: IState, output: IOutput, ctx: RenderContext, region: Rect): boolean {
         var effect = assets.Effect;
         if (!effect)
             return true;
         effect.PostRender(ctx);
-        RenderContext.restore(ctx);
+        ctx.restore();
         return true;
     };
 }

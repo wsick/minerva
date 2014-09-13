@@ -6,6 +6,7 @@ QUnit.module("render");
 import render = minerva.def.render;
 import tapins = minerva.def.render.tapins;
 import Rect = minerva.Rect;
+import RenderContext = minerva.def.render.RenderContext;
 
 function typedToArray (typed) {
     var arr = [];
@@ -32,6 +33,22 @@ var mock = {
         };
     }
 };
+
+class MockRenderContext extends RenderContext {
+    saved = false;
+
+    save () {
+        super.save();
+        this.saved = true;
+    }
+
+    restored = false;
+
+    restore () {
+        super.restore();
+        this.restored = true;
+    }
+}
 
 QUnit.test("validate", (assert) => {
     var assets = mock.assets();
@@ -81,19 +98,18 @@ QUnit.test("prepareContext", (assert) => {
     var state = mock.state();
 
     var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    render.RenderContext.init(ctx);
-    assert.equal(ctx.globalAlpha, 1.0);
+    var rctx = new RenderContext(canvas.getContext('2d'));
+    assert.equal(rctx.raw.globalAlpha, 1.0);
 
-    render.RenderContext.scale(ctx, 2, 4);
+    rctx.scale(2, 4);
     mat3.createTranslate(10, 15, assets.RenderXform);
     assets.TotalOpacity = 0.5;
-    tapins.prepareContext(assets, state, null, ctx, new Rect(), "#4");
-    assert.equal(ctx.globalAlpha, 0.5);
-    assert.deepEqual(typedToArray(ctx.currentTransform), [2, 0, 20, 0, 4, 60, 0, 0, 1]);
-    render.RenderContext.restore(ctx);
-    assert.equal(ctx.globalAlpha, 1.0);
-    assert.deepEqual(typedToArray(ctx.currentTransform), [2, 0, 0, 0, 4, 0, 0, 0, 1]);
+    tapins.prepareContext(assets, state, null, rctx, new Rect(), "#4");
+    assert.equal(rctx.raw.globalAlpha, 0.5);
+    assert.deepEqual(typedToArray(rctx.currentTransform), [2, 0, 20, 0, 4, 60, 0, 0, 1]);
+    rctx.restore();
+    assert.equal(rctx.raw.globalAlpha, 1.0);
+    assert.deepEqual(typedToArray(rctx.currentTransform), [2, 0, 0, 0, 4, 0, 0, 0, 1]);
 });
 
 QUnit.test("applyClip", (assert) => {
@@ -102,11 +118,11 @@ QUnit.test("applyClip", (assert) => {
 
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
-    render.RenderContext.init(ctx);
+    var rctx = new RenderContext(ctx);
 
     var clipDrawn = false;
     assets.Clip = <minerva.def.render.IGeometry>{
-        Draw: function (ctx: CanvasRenderingContext2D) {
+        Draw: function (ctx: RenderContext) {
             clipDrawn = true;
         }
     };
@@ -116,7 +132,7 @@ QUnit.test("applyClip", (assert) => {
         clipped = true;
     };
 
-    assert.ok(tapins.applyClip(assets, state, null, ctx, new Rect(), "#1"));
+    assert.ok(tapins.applyClip(assets, state, null, rctx, new Rect(), "#1"));
     assert.ok(clipDrawn, "#2");
     assert.ok(clipped, "#3");
 });
@@ -126,34 +142,26 @@ QUnit.test("preRender", (assert) => {
     var state = mock.state();
 
     var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    render.RenderContext.init(ctx);
-
-    var tmp = render.RenderContext.save;
-    var saved = false;
-    render.RenderContext.save = function () {
-        tmp.apply(this, arguments);
-        saved = true;
-    };
+    var rctx = new MockRenderContext(canvas.getContext('2d'));
 
     assets.Effect = <minerva.def.render.IEffect> {
-        PreRender: function (ctx: CanvasRenderingContext2D) {
-            ctx.globalAlpha = 0.5;
+        PreRender: function (ctx: RenderContext) {
+            ctx.raw.globalAlpha = 0.5;
         },
-        PostRender: function (ctx: CanvasRenderingContext2D) {
+        PostRender: function (ctx: RenderContext) {
 
         }
     };
-    assert.ok(tapins.preRender(assets, state, null, ctx, new Rect(), "#1"));
-    assert.ok(saved);
-    assert.equal(ctx.globalAlpha, 0.5);
-    render.RenderContext.restore(ctx);
-    assert.equal(ctx.globalAlpha, 1.0);
+    assert.ok(tapins.preRender(assets, state, null, rctx, new Rect(), "#1"));
+    assert.ok(rctx.saved);
+    assert.equal(rctx.raw.globalAlpha, 0.5);
+    rctx.restore();
+    assert.equal(rctx.raw.globalAlpha, 1.0);
 
-    saved = false;
+    rctx.saved = false;
     assets.Effect = null;
-    assert.ok(tapins.preRender(assets, state, null, ctx, new Rect(), "#2"));
-    assert.ok(!saved);
+    assert.ok(tapins.preRender(assets, state, null, rctx, new Rect(), "#2"));
+    assert.ok(!rctx.saved);
 });
 
 QUnit.test("doRender", (assert) => {
@@ -165,32 +173,24 @@ QUnit.test("postRender", (assert) => {
     var state = mock.state();
 
     var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    render.RenderContext.init(ctx);
-
-    var tmp = render.RenderContext.restore;
-    var restored = false;
-    render.RenderContext.restore = function () {
-        tmp.apply(this, arguments);
-        restored = true;
-    };
+    var rctx = new MockRenderContext(canvas.getContext('2d'));
 
     assets.Effect = <minerva.def.render.IEffect> {
-        PreRender: function (ctx: CanvasRenderingContext2D) {
+        PreRender: function (ctx: RenderContext) {
         },
-        PostRender: function (ctx: CanvasRenderingContext2D) {
-            ctx.globalAlpha = 0.5;
+        PostRender: function (ctx: RenderContext) {
+            ctx.raw.globalAlpha = 0.5;
         }
     };
-    render.RenderContext.save(ctx);
-    assert.ok(tapins.postRender(assets, state, null, ctx, new Rect(), "#1"));
-    assert.ok(restored);
-    assert.equal(ctx.globalAlpha, 1.0);
+    rctx.save();
+    assert.ok(tapins.postRender(assets, state, null, rctx, new Rect(), "#1"));
+    assert.ok(rctx.restored);
+    assert.equal(rctx.raw.globalAlpha, 1.0);
 
-    restored = false;
+    rctx.restored = false;
     assets.Effect = null;
-    assert.ok(tapins.postRender(assets, state, null, ctx, new Rect(), "#2"));
-    assert.ok(!restored);
+    assert.ok(tapins.postRender(assets, state, null, rctx, new Rect(), "#2"));
+    assert.ok(!rctx.restored);
 });
 
 QUnit.test("renderChildren", (assert) => {
@@ -202,16 +202,8 @@ QUnit.test("restoreContext", (assert) => {
     var state = mock.state();
 
     var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    render.RenderContext.init(ctx);
+    var rctx = new MockRenderContext(canvas.getContext('2d'));
 
-    var tmp = render.RenderContext.restore;
-    var restored = false;
-    render.RenderContext.restore = function () {
-        tmp.apply(this, arguments);
-        restored = true;
-    };
-
-    assert.ok(tapins.restoreContext(assets, state, null, ctx, new Rect(), "#1"));
-    assert.ok(restored);
+    assert.ok(tapins.restoreContext(assets, state, null, rctx, new Rect(), "#1"));
+    assert.ok(rctx.restored);
 });

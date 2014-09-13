@@ -1,6 +1,6 @@
 module minerva.def.render {
     export interface IRenderTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, ctx: CanvasRenderingContext2D, region: Rect):boolean;
+        (assets: IAssets, state: IState, output: IOutput, ctx: RenderContext, region: Rect):boolean;
     }
     export interface IAssets extends IPipeAssets {
         TotalIsRenderVisible: boolean;
@@ -18,11 +18,11 @@ module minerva.def.render {
     }
 
     export interface IEffect {
-        PreRender(ctx: CanvasRenderingContext2D);
-        PostRender(ctx: CanvasRenderingContext2D);
+        PreRender(ctx: RenderContext);
+        PostRender(ctx: RenderContext);
     }
     export interface IGeometry {
-        Draw(ctx: CanvasRenderingContext2D);
+        Draw(ctx: RenderContext);
     }
 
     export class RenderPipe extends Pipe<IRenderTapin, IAssets, IState, IOutput> {
