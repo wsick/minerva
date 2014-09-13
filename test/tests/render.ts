@@ -1,7 +1,7 @@
 /// <reference path="../qunit.d.ts" />
 /// <reference path="../lib/minerva/minerva" />
 
-QUnit.module("render");
+QUnit.module("Render Tapins");
 
 import render = minerva.def.render;
 import tapins = minerva.def.render.tapins;
