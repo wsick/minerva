@@ -79,6 +79,7 @@ module minerva.layout {
             var output = pipe.output;
 
             output.dirtyFlags = this.dirtyFlags;
+            Size.copyTo(this.previousConstraint, output.previousConstraint);
             Size.copyTo(this.hiddenDesire, output.hiddenDesire);
 
             var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);

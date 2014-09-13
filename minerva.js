@@ -1503,6 +1503,7 @@ var minerva;
                 var output = pipe.output;
 
                 output.dirtyFlags = this.dirtyFlags;
+                minerva.Size.copyTo(this.previousConstraint, output.previousConstraint);
                 minerva.Size.copyTo(this.hiddenDesire, output.hiddenDesire);
 
                 var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
