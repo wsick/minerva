@@ -58,6 +58,20 @@ declare module minerva {
         static intersection(dest: Rect, rect2: Rect): void;
     }
 }
+declare module minerva {
+    class Size {
+        public width: number;
+        public height: number;
+        constructor(width?: number, height?: number);
+        static copyTo(src: Size, dest: Size): void;
+    }
+}
+declare module minerva {
+    enum Visibility {
+        Visible = 0,
+        Collapsed = 1,
+    }
+}
 declare module minerva.def {
     interface IPipeAssets {
     }
@@ -67,8 +81,8 @@ declare module minerva.def {
     }
     interface IPipe<TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> {
         run(assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean;
-        initState(state: TState): any;
-        initOutput(output: TOutput): any;
+        createState(): TState;
+        createOutput(): TOutput;
     }
 }
 declare module minerva.def {
@@ -84,9 +98,44 @@ declare module minerva.def {
         public replaceTapin(name: string, tapin: T): Pipe<T, TAssets, TState, TOutput>;
         public removeTapin(name: string): Pipe<T, TAssets, TState, TOutput>;
         public run(assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean;
-        public initState(state: TState): void;
-        public initOutput(output: TOutput): void;
+        public createState(): TState;
+        public createOutput(): TOutput;
     }
+}
+declare module minerva.def.measure {
+    interface IMeasureTapin extends ITapin {
+        (assets: IAssets, state: IState, output: IOutput, availableSize: Size): boolean;
+    }
+    interface IAssets extends IPipeAssets {
+        previousConstraint: Size;
+        visibility: Visibility;
+        desiredSize: Size;
+        dirtyFlags: layout.DirtyFlags;
+    }
+    interface IState extends IPipeState {
+    }
+    interface IOutput extends IPipeOutput {
+        error: string;
+        previousConstraint: Size;
+        desiredSize: Size;
+    }
+    class MeasurePipe extends Pipe<IMeasureTapin, IAssets, IState, IOutput> {
+        constructor();
+        public createState(): IState;
+        public createOutput(): IOutput;
+    }
+}
+declare module minerva.def.measure.tapins {
+    var applyTemplate: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var checkNeedMeasure: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var validate: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var validateVisibility: IMeasureTapin;
 }
 declare module minerva.def.render {
     class RenderContext {
@@ -170,20 +219,49 @@ declare module minerva.layout {
         public state: TState;
         public output: TOutput;
     }
+    function createPipe<TAssets extends def.IPipeAssets, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipe<TAssets, TState, TOutput>, assets: any): IPipe<TAssets, TState, TOutput>;
 }
 declare module minerva.layout {
+    interface IMeasurePipe extends IPipe<def.measure.IAssets, def.measure.IState, def.measure.IOutput> {
+    }
     interface IRenderPipe extends IPipe<def.render.IAssets, def.render.IState, def.render.IOutput> {
     }
+    enum DirtyFlags {
+        Transform,
+        LocalTransform,
+        LocalProjection,
+        Clip,
+        LocalClip,
+        LayoutClip,
+        RenderVisibility,
+        HitTestVisibility,
+        Measure,
+        Arrange,
+        ChildrenZIndices,
+        Bounds,
+        NewBounds,
+        Invalidate,
+        InUpDirtyList,
+        InDownDirtyList,
+        DownDirtyState,
+        UpDirtyState,
+    }
     class Updater implements def.render.IAssets {
+        private $$measure;
         private $$render;
+        public previousConstraint: Size;
+        public desiredSize: Size;
         public totalIsRenderVisible: boolean;
         public totalOpacity: number;
         public surfaceBoundsWithChildren: Rect;
         public renderXform: number[];
+        public dirtyFlags: DirtyFlags;
         public clip: def.render.IGeometry;
         public effect: def.render.IEffect;
         constructor();
-        public setRenderPipe(pipedef: def.render.RenderPipe): void;
-        public render(ctx: CanvasRenderingContext2D, region: Rect): void;
+        public setMeasurePipe(pipedef?: def.measure.MeasurePipe): Updater;
+        public setRenderPipe(pipedef?: def.render.RenderPipe): Updater;
+        public measure(availableSize: Size): boolean;
+        public render(ctx: CanvasRenderingContext2D, region: Rect): boolean;
     }
 }

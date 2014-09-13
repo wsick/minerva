@@ -767,6 +767,31 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var Size = (function () {
+        function Size(width, height) {
+            if (typeof width === "undefined") { width = 0; }
+            if (typeof height === "undefined") { height = 0; }
+            this.width = width;
+            this.height = height;
+        }
+        Size.copyTo = function (src, dest) {
+            dest.width = src.width;
+            dest.height = src.height;
+        };
+        return Size;
+    })();
+    minerva.Size = Size;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (Visibility) {
+        Visibility[Visibility["Visible"] = 0] = "Visible";
+        Visibility[Visibility["Collapsed"] = 1] = "Collapsed";
+    })(minerva.Visibility || (minerva.Visibility = {}));
+    var Visibility = minerva.Visibility;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (def) {
         var Pipe = (function () {
             function Pipe() {
@@ -832,8 +857,6 @@ var minerva;
                 for (var _i = 0; _i < (arguments.length - 3); _i++) {
                     contexts[_i] = arguments[_i + 3];
                 }
-                this.initState(state);
-                this.initOutput(output);
                 contexts.unshift(output);
                 contexts.unshift(state);
                 contexts.unshift(assets);
@@ -844,14 +867,122 @@ var minerva;
                 return true;
             };
 
-            Pipe.prototype.initState = function (state) {
+            Pipe.prototype.createState = function () {
+                return null;
             };
 
-            Pipe.prototype.initOutput = function (output) {
+            Pipe.prototype.createOutput = function () {
+                return null;
             };
             return Pipe;
         })();
         def.Pipe = Pipe;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (measure) {
+            var MeasurePipe = (function (_super) {
+                __extends(MeasurePipe, _super);
+                function MeasurePipe() {
+                    _super.call(this);
+                    this.addTapin('validate', measure.tapins.validate).addTapin('validateVisibility', measure.tapins.validateVisibility).addTapin('applyTemplate', measure.tapins.applyTemplate).addTapin('checkNeedMeasure', measure.tapins.checkNeedMeasure);
+                }
+                MeasurePipe.prototype.createState = function () {
+                    return {};
+                };
+
+                MeasurePipe.prototype.createOutput = function () {
+                    return {
+                        error: null,
+                        previousConstraint: new minerva.Size(),
+                        desiredSize: new minerva.Size()
+                    };
+                };
+                return MeasurePipe;
+            })(def.Pipe);
+            measure.MeasurePipe = MeasurePipe;
+        })(def.measure || (def.measure = {}));
+        var measure = def.measure;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (measure) {
+            (function (tapins) {
+                tapins.applyTemplate = function (assets, state, output, availableSize) {
+                    return true;
+                };
+            })(measure.tapins || (measure.tapins = {}));
+            var tapins = measure.tapins;
+        })(def.measure || (def.measure = {}));
+        var measure = def.measure;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (measure) {
+            (function (tapins) {
+                tapins.checkNeedMeasure = function (assets, state, output, availableSize) {
+                    if ((assets.dirtyFlags & minerva.layout.DirtyFlags.Measure) > 0)
+                        return true;
+                    var pc = assets.previousConstraint;
+                    return (!pc || pc.width !== availableSize.width || pc.height !== availableSize.height);
+                };
+            })(measure.tapins || (measure.tapins = {}));
+            var tapins = measure.tapins;
+        })(def.measure || (def.measure = {}));
+        var measure = def.measure;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (measure) {
+            (function (tapins) {
+                tapins.validate = function (assets, state, output, availableSize) {
+                    if (isNaN(availableSize.width) || isNaN(availableSize.height)) {
+                        output.error = "Cannot call Measure using a size with NaN values.";
+                        return false;
+                    }
+                    return true;
+                };
+            })(measure.tapins || (measure.tapins = {}));
+            var tapins = measure.tapins;
+        })(def.measure || (def.measure = {}));
+        var measure = def.measure;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (measure) {
+            (function (tapins) {
+                tapins.validateVisibility = function (assets, state, output, availableSize) {
+                    if (assets.visibility !== 0 /* Visible */) {
+                        output.previousConstraint = availableSize;
+                        return false;
+                    }
+                    return true;
+                };
+            })(measure.tapins || (measure.tapins = {}));
+            var tapins = measure.tapins;
+        })(def.measure || (def.measure = {}));
+        var measure = def.measure;
     })(minerva.def || (minerva.def = {}));
     var def = minerva.def;
 })(minerva || (minerva = {}));
@@ -937,12 +1068,6 @@ var minerva;
     })(minerva.def || (minerva.def = {}));
     var def = minerva.def;
 })(minerva || (minerva = {}));
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var minerva;
 (function (minerva) {
     (function (def) {
@@ -1134,38 +1259,83 @@ var minerva;
             return IPipe;
         })();
         layout.IPipe = IPipe;
+
+        function createPipe(pipedef, assets) {
+            return {
+                def: pipedef,
+                assets: assets,
+                state: pipedef.createState(),
+                output: pipedef.createOutput()
+            };
+        }
+        layout.createPipe = createPipe;
     })(minerva.layout || (minerva.layout = {}));
     var layout = minerva.layout;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (layout) {
+        (function (DirtyFlags) {
+            DirtyFlags[DirtyFlags["Transform"] = 1 << 0] = "Transform";
+            DirtyFlags[DirtyFlags["LocalTransform"] = 1 << 1] = "LocalTransform";
+            DirtyFlags[DirtyFlags["LocalProjection"] = 1 << 2] = "LocalProjection";
+            DirtyFlags[DirtyFlags["Clip"] = 1 << 3] = "Clip";
+            DirtyFlags[DirtyFlags["LocalClip"] = 1 << 4] = "LocalClip";
+            DirtyFlags[DirtyFlags["LayoutClip"] = 1 << 5] = "LayoutClip";
+            DirtyFlags[DirtyFlags["RenderVisibility"] = 1 << 6] = "RenderVisibility";
+            DirtyFlags[DirtyFlags["HitTestVisibility"] = 1 << 7] = "HitTestVisibility";
+            DirtyFlags[DirtyFlags["Measure"] = 1 << 8] = "Measure";
+            DirtyFlags[DirtyFlags["Arrange"] = 1 << 9] = "Arrange";
+            DirtyFlags[DirtyFlags["ChildrenZIndices"] = 1 << 10] = "ChildrenZIndices";
+            DirtyFlags[DirtyFlags["Bounds"] = 1 << 20] = "Bounds";
+            DirtyFlags[DirtyFlags["NewBounds"] = 1 << 21] = "NewBounds";
+            DirtyFlags[DirtyFlags["Invalidate"] = 1 << 22] = "Invalidate";
+            DirtyFlags[DirtyFlags["InUpDirtyList"] = 1 << 30] = "InUpDirtyList";
+            DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
+
+            DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ChildrenZIndices] = "DownDirtyState";
+            DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.Invalidate] = "UpDirtyState";
+        })(layout.DirtyFlags || (layout.DirtyFlags = {}));
+        var DirtyFlags = layout.DirtyFlags;
+
         var NO_PIPE = new minerva.def.Pipe();
 
         var Updater = (function () {
             function Updater() {
+                this.previousConstraint = new minerva.Size();
+                this.desiredSize = new minerva.Size();
                 this.totalIsRenderVisible = true;
                 this.totalOpacity = 1.0;
                 this.surfaceBoundsWithChildren = new minerva.Rect();
                 this.renderXform = mat3.identity();
+                this.dirtyFlags = 0;
                 this.clip = null;
                 this.effect = null;
-                this.$$render = {
-                    def: NO_PIPE,
-                    assets: this,
-                    state: {
-                        renderRegion: null
-                    },
-                    output: null
-                };
+                this.$$measure = null;
+                this.$$render = null;
             }
+            Updater.prototype.setMeasurePipe = function (pipedef) {
+                this.$$measure = layout.createPipe(pipedef || NO_PIPE, this);
+                return this;
+            };
+
             Updater.prototype.setRenderPipe = function (pipedef) {
-                this.$$render.def = pipedef || NO_PIPE;
+                this.$$render = layout.createPipe(pipedef || NO_PIPE, this);
+                return this;
+            };
+
+            Updater.prototype.measure = function (availableSize) {
+                var pipe = this.$$measure;
+                var output = pipe.output;
+                var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
+                minerva.Size.copyTo(output.previousConstraint, this.previousConstraint);
+                minerva.Size.copyTo(output.desiredSize, this.desiredSize);
+                return success;
             };
 
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
-                pipe.def.run(pipe.assets, pipe.state, pipe.output, ctx, region);
+                return pipe.def.run(pipe.assets, pipe.state, null, ctx, region);
             };
             return Updater;
         })();

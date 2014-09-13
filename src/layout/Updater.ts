@@ -1,12 +1,40 @@
 module minerva.layout {
+    export interface IMeasurePipe extends IPipe<def.measure.IAssets, def.measure.IState, def.measure.IOutput> {
+    }
     export interface IRenderPipe extends IPipe<def.render.IAssets, def.render.IState, def.render.IOutput> {
+    }
 
+    export enum DirtyFlags {
+        Transform = 1 << 0,
+        LocalTransform = 1 << 1,
+        LocalProjection = 1 << 2,
+        Clip = 1 << 3,
+        LocalClip = 1 << 4,
+        LayoutClip = 1 << 5,
+        RenderVisibility = 1 << 6,
+        HitTestVisibility = 1 << 7,
+        Measure = 1 << 8,
+        Arrange = 1 << 9,
+        ChildrenZIndices = 1 << 10,
+        Bounds = 1 << 20,
+        NewBounds = 1 << 21,
+        Invalidate = 1 << 22,
+        InUpDirtyList = 1 << 30,
+        InDownDirtyList = 1 << 31,
+
+        DownDirtyState = Transform | LocalTransform | LocalProjection
+            | Clip | LocalClip | LayoutClip | RenderVisibility | HitTestVisibility | ChildrenZIndices,
+        UpDirtyState = Bounds | Invalidate,
     }
 
     var NO_PIPE = new def.Pipe<def.ITapin, def.IPipeAssets, def.IPipeState, def.IPipeOutput>();
 
     export class Updater implements def.render.IAssets {
+        private $$measure: IMeasurePipe;
         private $$render: IRenderPipe;
+
+        previousConstraint = new Size();
+        desiredSize = new Size();
 
         totalIsRenderVisible = true;
         totalOpacity = 1.0;
@@ -15,27 +43,38 @@ module minerva.layout {
 
         renderXform = mat3.identity();
 
+        dirtyFlags: DirtyFlags = 0;
+
         clip: def.render.IGeometry = null;
         effect: def.render.IEffect = null;
 
         constructor () {
-            this.$$render = <IRenderPipe>{
-                def: NO_PIPE,
-                assets: this,
-                state: {
-                    renderRegion: null
-                },
-                output: null
-            };
+            this.$$measure = null;
+            this.$$render = null;
         }
 
-        setRenderPipe (pipedef: def.render.RenderPipe) {
-            this.$$render.def = pipedef || NO_PIPE;
+        setMeasurePipe (pipedef?: def.measure.MeasurePipe): Updater {
+            this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE, this);
+            return this;
         }
 
-        render (ctx: CanvasRenderingContext2D, region: Rect) {
+        setRenderPipe (pipedef?: def.render.RenderPipe): Updater {
+            this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE, this);
+            return this;
+        }
+
+        measure (availableSize: Size): boolean {
+            var pipe = this.$$measure;
+            var output = pipe.output;
+            var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
+            Size.copyTo(output.previousConstraint, this.previousConstraint);
+            Size.copyTo(output.desiredSize, this.desiredSize);
+            return success;
+        }
+
+        render (ctx: CanvasRenderingContext2D, region: Rect): boolean {
             var pipe = this.$$render;
-            pipe.def.run(pipe.assets, pipe.state, pipe.output, ctx, region);
+            return pipe.def.run(pipe.assets, pipe.state, null, ctx, region);
         }
     }
 }
