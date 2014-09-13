@@ -112,6 +112,23 @@ declare module minerva.def {
         public createOutput(): TOutput;
     }
 }
+declare module minerva.def.arrange {
+    interface IArrangeTapin extends ITapin {
+        (assets: IAssets, state: IState, output: IOutput, finalRect: Rect): boolean;
+    }
+    interface IAssets extends IPipeAssets {
+        hiddenDesire: Size;
+    }
+    interface IState extends IPipeState {
+    }
+    interface IOutput extends IPipeOutput {
+    }
+    class ArrangePipe extends Pipe<IArrangeTapin, IAssets, IState, IOutput> {
+        constructor();
+        public createState(): IState;
+        public createOutput(): IOutput;
+    }
+}
 declare module minerva.def.helpers {
     interface ISized {
         width: number;
@@ -272,6 +289,8 @@ declare module minerva.layout {
 declare module minerva.layout {
     interface IMeasurePipe extends IPipe<def.measure.IAssets, def.measure.IState, def.measure.IOutput> {
     }
+    interface IArrangePipe extends IPipe<def.arrange.IAssets, def.arrange.IState, def.arrange.IOutput> {
+    }
     interface IRenderPipe extends IPipe<def.render.IAssets, def.render.IState, def.render.IOutput> {
     }
     enum DirtyFlags {
@@ -294,32 +313,18 @@ declare module minerva.layout {
         DownDirtyState,
         UpDirtyState,
     }
-    class Updater implements def.measure.IAssets, def.render.IAssets {
+    interface IUpdaterAssets extends def.measure.IAssets, def.arrange.IAssets, def.render.IAssets {
+    }
+    class Updater {
         private $$measure;
+        private $$arrange;
         private $$render;
-        public width: number;
-        public height: number;
-        public minWidth: number;
-        public minHeight: number;
-        public maxWidth: number;
-        public maxHeight: number;
-        public useLayoutRounding: boolean;
-        public previousConstraint: Size;
-        public desiredSize: Size;
-        public hiddenDesire: Size;
-        public totalIsRenderVisible: boolean;
-        public totalOpacity: number;
-        public surfaceBoundsWithChildren: Rect;
-        public renderXform: number[];
-        public dirtyFlags: DirtyFlags;
-        public margin: Thickness;
-        public clip: def.render.IGeometry;
-        public effect: def.render.IEffect;
-        public visibility: Visibility;
+        public assets: IUpdaterAssets;
         constructor();
         public setMeasurePipe(pipedef?: def.measure.MeasurePipe): Updater;
+        public setArrangePipe(pipedef?: def.arrange.ArrangePipe): Updater;
         public setRenderPipe(pipedef?: def.render.RenderPipe): Updater;
         public measure(availableSize: Size): boolean;
-        public render(ctx: CanvasRenderingContext2D, region: Rect): boolean;
+        public render(ctx: def.render.RenderContext, region: Rect): boolean;
     }
 }

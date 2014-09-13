@@ -1,6 +1,8 @@
 module minerva.layout {
     export interface IMeasurePipe extends IPipe<def.measure.IAssets, def.measure.IState, def.measure.IOutput> {
     }
+    export interface IArrangePipe extends IPipe<def.arrange.IAssets, def.arrange.IState, def.arrange.IOutput> {
+    }
     export interface IRenderPipe extends IPipe<def.render.IAssets, def.render.IState, def.render.IOutput> {
     }
 
@@ -29,70 +31,83 @@ module minerva.layout {
 
     var NO_PIPE = new def.Pipe<def.ITapin, def.IPipeAssets, def.IPipeState, def.IPipeOutput>();
 
-    export class Updater implements def.measure.IAssets, def.render.IAssets {
+    export interface IUpdaterAssets extends def.measure.IAssets, def.arrange.IAssets, def.render.IAssets {
+    }
+
+    export class Updater {
         private $$measure: IMeasurePipe;
+        private $$arrange: IArrangePipe;
         private $$render: IRenderPipe;
 
-        width: number = NaN;
-        height: number = NaN;
-        minWidth: number = 0.0;
-        minHeight: number = 0.0;
-        maxWidth: number = Number.POSITIVE_INFINITY;
-        maxHeight: number = Number.POSITIVE_INFINITY;
-        useLayoutRounding: boolean = true;
+        assets = <IUpdaterAssets> {
+            width: NaN,
+            height: NaN,
+            minWidth: 0.0,
+            minHeight: 0.0,
+            maxWidth: Number.POSITIVE_INFINITY,
+            maxHeight: Number.POSITIVE_INFINITY,
+            useLayoutRounding: true,
 
-        previousConstraint = new Size();
-        desiredSize = new Size();
-        hiddenDesire = new Size();
+            previousConstraint: new Size(),
+            desiredSize: new Size(),
+            hiddenDesire: new Size(),
 
-        totalIsRenderVisible = true;
-        totalOpacity = 1.0;
+            totalIsRenderVisible: true,
+            totalOpacity: 1.0,
 
-        surfaceBoundsWithChildren = new Rect();
+            surfaceBoundsWithChildren: new Rect(),
 
-        renderXform = mat3.identity();
+            renderXform: mat3.identity(),
 
-        dirtyFlags: DirtyFlags = 0;
+            dirtyFlags: 0,
 
-        margin: Thickness = new Thickness();
-        clip: def.render.IGeometry = null;
-        effect: def.render.IEffect = null;
-        visibility = Visibility.Visible;
+            margin: new Thickness(),
+            clip: null,
+            effect: null,
+            visibility: Visibility.Visible
+        };
 
         constructor () {
             this.$$measure = null;
+            this.$$arrange = null;
             this.$$render = null;
         }
 
         setMeasurePipe (pipedef?: def.measure.MeasurePipe): Updater {
-            this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE, this);
+            this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE, this.assets);
+            return this;
+        }
+
+        setArrangePipe (pipedef?: def.arrange.ArrangePipe): Updater {
+            this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE, this.assets);
             return this;
         }
 
         setRenderPipe (pipedef?: def.render.RenderPipe): Updater {
-            this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE, this);
+            this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE, this.assets);
             return this;
         }
 
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
+            var myassets = this.assets;
             var output = pipe.output;
 
-            output.dirtyFlags = this.dirtyFlags;
-            Size.copyTo(this.previousConstraint, output.previousConstraint);
-            Size.copyTo(this.hiddenDesire, output.hiddenDesire);
+            output.dirtyFlags = myassets.dirtyFlags;
+            Size.copyTo(myassets.previousConstraint, output.previousConstraint);
+            Size.copyTo(myassets.hiddenDesire, output.hiddenDesire);
 
             var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
 
-            Size.copyTo(output.previousConstraint, this.previousConstraint);
-            Size.copyTo(output.desiredSize, this.desiredSize);
-            Size.copyTo(output.hiddenDesire, this.hiddenDesire);
-            this.dirtyFlags = output.dirtyFlags;
+            Size.copyTo(output.previousConstraint, myassets.previousConstraint);
+            Size.copyTo(output.desiredSize, myassets.desiredSize);
+            Size.copyTo(output.hiddenDesire, myassets.hiddenDesire);
+            myassets.dirtyFlags = output.dirtyFlags;
 
             return success;
         }
 
-        render (ctx: CanvasRenderingContext2D, region: Rect): boolean {
+        render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(pipe.assets, pipe.state, null, ctx, region);
         }

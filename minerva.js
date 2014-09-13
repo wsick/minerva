@@ -912,6 +912,36 @@ var minerva;
     })(minerva.def || (minerva.def = {}));
     var def = minerva.def;
 })(minerva || (minerva = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            var ArrangePipe = (function (_super) {
+                __extends(ArrangePipe, _super);
+                function ArrangePipe() {
+                    _super.call(this);
+                }
+                ArrangePipe.prototype.createState = function () {
+                    return {};
+                };
+
+                ArrangePipe.prototype.createOutput = function () {
+                    return {};
+                };
+                return ArrangePipe;
+            })(def.Pipe);
+            arrange.ArrangePipe = ArrangePipe;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (def) {
@@ -943,12 +973,6 @@ var minerva;
     })(minerva.def || (minerva.def = {}));
     var def = minerva.def;
 })(minerva || (minerva = {}));
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var minerva;
 (function (minerva) {
     (function (def) {
@@ -1466,52 +1490,61 @@ var minerva;
 
         var Updater = (function () {
             function Updater() {
-                this.width = NaN;
-                this.height = NaN;
-                this.minWidth = 0.0;
-                this.minHeight = 0.0;
-                this.maxWidth = Number.POSITIVE_INFINITY;
-                this.maxHeight = Number.POSITIVE_INFINITY;
-                this.useLayoutRounding = true;
-                this.previousConstraint = new minerva.Size();
-                this.desiredSize = new minerva.Size();
-                this.hiddenDesire = new minerva.Size();
-                this.totalIsRenderVisible = true;
-                this.totalOpacity = 1.0;
-                this.surfaceBoundsWithChildren = new minerva.Rect();
-                this.renderXform = mat3.identity();
-                this.dirtyFlags = 0;
-                this.margin = new minerva.Thickness();
-                this.clip = null;
-                this.effect = null;
-                this.visibility = 0 /* Visible */;
+                this.assets = {
+                    width: NaN,
+                    height: NaN,
+                    minWidth: 0.0,
+                    minHeight: 0.0,
+                    maxWidth: Number.POSITIVE_INFINITY,
+                    maxHeight: Number.POSITIVE_INFINITY,
+                    useLayoutRounding: true,
+                    previousConstraint: new minerva.Size(),
+                    desiredSize: new minerva.Size(),
+                    hiddenDesire: new minerva.Size(),
+                    totalIsRenderVisible: true,
+                    totalOpacity: 1.0,
+                    surfaceBoundsWithChildren: new minerva.Rect(),
+                    renderXform: mat3.identity(),
+                    dirtyFlags: 0,
+                    margin: new minerva.Thickness(),
+                    clip: null,
+                    effect: null,
+                    visibility: 0 /* Visible */
+                };
                 this.$$measure = null;
+                this.$$arrange = null;
                 this.$$render = null;
             }
             Updater.prototype.setMeasurePipe = function (pipedef) {
-                this.$$measure = layout.createPipe(pipedef || NO_PIPE, this);
+                this.$$measure = layout.createPipe(pipedef || NO_PIPE, this.assets);
+                return this;
+            };
+
+            Updater.prototype.setArrangePipe = function (pipedef) {
+                this.$$arrange = layout.createPipe(pipedef || NO_PIPE, this.assets);
                 return this;
             };
 
             Updater.prototype.setRenderPipe = function (pipedef) {
-                this.$$render = layout.createPipe(pipedef || NO_PIPE, this);
+                this.$$render = layout.createPipe(pipedef || NO_PIPE, this.assets);
                 return this;
             };
 
             Updater.prototype.measure = function (availableSize) {
                 var pipe = this.$$measure;
+                var myassets = this.assets;
                 var output = pipe.output;
 
-                output.dirtyFlags = this.dirtyFlags;
-                minerva.Size.copyTo(this.previousConstraint, output.previousConstraint);
-                minerva.Size.copyTo(this.hiddenDesire, output.hiddenDesire);
+                output.dirtyFlags = myassets.dirtyFlags;
+                minerva.Size.copyTo(myassets.previousConstraint, output.previousConstraint);
+                minerva.Size.copyTo(myassets.hiddenDesire, output.hiddenDesire);
 
                 var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
 
-                minerva.Size.copyTo(output.previousConstraint, this.previousConstraint);
-                minerva.Size.copyTo(output.desiredSize, this.desiredSize);
-                minerva.Size.copyTo(output.hiddenDesire, this.hiddenDesire);
-                this.dirtyFlags = output.dirtyFlags;
+                minerva.Size.copyTo(output.previousConstraint, myassets.previousConstraint);
+                minerva.Size.copyTo(output.desiredSize, myassets.desiredSize);
+                minerva.Size.copyTo(output.hiddenDesire, myassets.hiddenDesire);
+                myassets.dirtyFlags = output.dirtyFlags;
 
                 return success;
             };
