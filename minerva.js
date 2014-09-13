@@ -926,6 +926,7 @@ var minerva;
                 __extends(ArrangePipe, _super);
                 function ArrangePipe() {
                     _super.call(this);
+                    this.addTapin('applyRounding', null).addTapin('validateFinalRect', null).addTapin('validateVisibility', null).addTapin('checkNeedArrange', null).addTapin('ensureMeasured', null).addTapin('applyMargin', null).addTapin('clearLayoutClip', null).addTapin('invalidateFuture', null).addTapin('prepareOverride', null).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
                 }
                 ArrangePipe.prototype.createState = function () {
                     return {};
@@ -1545,6 +1546,15 @@ var minerva;
                 minerva.Size.copyTo(output.desiredSize, myassets.desiredSize);
                 minerva.Size.copyTo(output.hiddenDesire, myassets.hiddenDesire);
                 myassets.dirtyFlags = output.dirtyFlags;
+
+                return success;
+            };
+
+            Updater.prototype.arrange = function (finalRect) {
+                var pipe = this.$$arrange;
+                var output = pipe.output;
+
+                var success = pipe.def.run(pipe.assets, pipe.state, output, finalRect);
 
                 return success;
             };

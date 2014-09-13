@@ -325,6 +325,7 @@ declare module minerva.layout {
         public setArrangePipe(pipedef?: def.arrange.ArrangePipe): Updater;
         public setRenderPipe(pipedef?: def.render.RenderPipe): Updater;
         public measure(availableSize: Size): boolean;
+        public arrange(finalRect: Rect): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;
     }
 }

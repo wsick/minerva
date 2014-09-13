@@ -107,6 +107,15 @@ module minerva.layout {
             return success;
         }
 
+        arrange (finalRect: Rect): boolean {
+            var pipe = this.$$arrange;
+            var output = pipe.output;
+
+            var success = pipe.def.run(pipe.assets, pipe.state, output, finalRect);
+
+            return success;
+        }
+
         render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(pipe.assets, pipe.state, null, ctx, region);
