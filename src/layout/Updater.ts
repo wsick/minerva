@@ -5,25 +5,25 @@ module minerva.layout {
 
     var NO_PIPE = new def.Pipe<def.ITapin, def.IPipeAssets, def.IPipeState, def.IPipeOutput>();
 
-    export class Updater {
+    export class Updater implements def.render.IAssets {
         private $$render: IRenderPipe;
 
-        TotalIsRenderVisible = true;
-        TotalOpacity = 1.0;
+        totalIsRenderVisible = true;
+        totalOpacity = 1.0;
 
-        SurfaceBoundsWithChildren = new Rect();
+        surfaceBoundsWithChildren = new Rect();
 
-        RenderXform = mat3.identity();
+        renderXform = mat3.identity();
 
-        Clip: def.render.IGeometry = null;
-        Effect: def.render.IEffect = null;
+        clip: def.render.IGeometry = null;
+        effect: def.render.IEffect = null;
 
         constructor () {
-            this.$$render = {
+            this.$$render = <IRenderPipe>{
                 def: NO_PIPE,
                 assets: this,
                 state: {
-                    RenderRegion: null
+                    renderRegion: null
                 },
                 output: null
             };

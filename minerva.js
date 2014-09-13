@@ -921,8 +921,8 @@ var minerva;
                     this.addTapin('validate', render.tapins.validate).addTapin('validateRegion', render.tapins.validateRegion).addTapin('prepareContext', render.tapins.prepareContext).addTapin('applyClip', render.tapins.applyClip).addTapin('preRender', render.tapins.preRender).addTapin('doRender', render.tapins.doRender).addTapin('postRender', render.tapins.postRender).addTapin('renderChildren', render.tapins.renderChildren).addTapin('restoreContext', render.tapins.restoreContext);
                 }
                 RenderPipe.prototype.initState = function (state) {
-                    if (!state.RenderRegion)
-                        state.RenderRegion = new minerva.Rect();
+                    if (!state.renderRegion)
+                        state.renderRegion = new minerva.Rect();
                 };
                 return RenderPipe;
             })(def.Pipe);
@@ -938,7 +938,7 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.applyClip = function (assets, state, output, ctx, region) {
-                    var clip = assets.Clip;
+                    var clip = assets.clip;
                     if (clip)
                         ctx.clipGeometry(clip);
                     return true;
@@ -971,7 +971,7 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.postRender = function (assets, state, output, ctx, region) {
-                    var effect = assets.Effect;
+                    var effect = assets.effect;
                     if (!effect)
                         return true;
                     effect.PostRender(ctx);
@@ -991,7 +991,7 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.preRender = function (assets, state, output, ctx, region) {
-                    var effect = assets.Effect;
+                    var effect = assets.effect;
                     if (!effect)
                         return true;
                     ctx.save();
@@ -1012,8 +1012,8 @@ var minerva;
             (function (tapins) {
                 tapins.prepareContext = function (assets, state, output, ctx, region) {
                     ctx.save();
-                    ctx.pretransformMatrix(assets.RenderXform);
-                    ctx.raw.globalAlpha = assets.TotalOpacity;
+                    ctx.pretransformMatrix(assets.renderXform);
+                    ctx.raw.globalAlpha = assets.totalOpacity;
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -1060,9 +1060,9 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.validate = function (assets, state, output, ctx, region) {
-                    if (!assets.TotalIsRenderVisible)
+                    if (!assets.totalIsRenderVisible)
                         return false;
-                    if ((assets.TotalOpacity * 255) < 0.5)
+                    if ((assets.totalOpacity * 255) < 0.5)
                         return false;
                     return true;
                 };
@@ -1079,8 +1079,8 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.validateRegion = function (assets, state, output, ctx, region) {
-                    var r = state.RenderRegion;
-                    minerva.Rect.copyTo(assets.SurfaceBoundsWithChildren, r);
+                    var r = state.renderRegion;
+                    minerva.Rect.copyTo(assets.surfaceBoundsWithChildren, r);
                     minerva.Rect.roundOut(r);
                     minerva.Rect.intersection(r, region);
                     return r.width > 0 && r.height > 0;
@@ -1111,17 +1111,17 @@ var minerva;
 
         var Updater = (function () {
             function Updater() {
-                this.TotalIsRenderVisible = true;
-                this.TotalOpacity = 1.0;
-                this.SurfaceBoundsWithChildren = new minerva.Rect();
-                this.RenderXform = mat3.identity();
-                this.Clip = null;
-                this.Effect = null;
+                this.totalIsRenderVisible = true;
+                this.totalOpacity = 1.0;
+                this.surfaceBoundsWithChildren = new minerva.Rect();
+                this.renderXform = mat3.identity();
+                this.clip = null;
+                this.effect = null;
                 this.$$render = {
                     def: NO_PIPE,
                     assets: this,
                     state: {
-                        RenderRegion: null
+                        renderRegion: null
                     },
                     output: null
                 };

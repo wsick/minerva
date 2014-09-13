@@ -3,15 +3,15 @@ module minerva.def.render {
         (assets: IAssets, state: IState, output: IOutput, ctx: RenderContext, region: Rect):boolean;
     }
     export interface IAssets extends IPipeAssets {
-        TotalIsRenderVisible: boolean;
-        TotalOpacity: number;
-        SurfaceBoundsWithChildren: Rect;
-        RenderXform: number[];
-        Clip: IGeometry;
-        Effect: IEffect;
+        totalIsRenderVisible: boolean;
+        totalOpacity: number;
+        surfaceBoundsWithChildren: Rect;
+        renderXform: number[];
+        clip: IGeometry;
+        effect: IEffect;
     }
     export interface IState extends IPipeState {
-        RenderRegion: Rect;
+        renderRegion: Rect;
     }
     export interface IOutput extends IPipeOutput {
 
@@ -40,8 +40,8 @@ module minerva.def.render {
         }
 
         initState (state: IState) {
-            if (!state.RenderRegion)
-                state.RenderRegion = new Rect();
+            if (!state.renderRegion)
+                state.renderRegion = new Rect();
         }
     }
 }

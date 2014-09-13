@@ -106,15 +106,15 @@ declare module minerva.def.render {
         (assets: IAssets, state: IState, output: IOutput, ctx: RenderContext, region: Rect): boolean;
     }
     interface IAssets extends IPipeAssets {
-        TotalIsRenderVisible: boolean;
-        TotalOpacity: number;
-        SurfaceBoundsWithChildren: Rect;
-        RenderXform: number[];
-        Clip: IGeometry;
-        Effect: IEffect;
+        totalIsRenderVisible: boolean;
+        totalOpacity: number;
+        surfaceBoundsWithChildren: Rect;
+        renderXform: number[];
+        clip: IGeometry;
+        effect: IEffect;
     }
     interface IState extends IPipeState {
-        RenderRegion: Rect;
+        renderRegion: Rect;
     }
     interface IOutput extends IPipeOutput {
     }
@@ -168,14 +168,14 @@ declare module minerva.layout {
 declare module minerva.layout {
     interface IRenderPipe extends IPipe<def.render.IAssets, def.render.IState, def.render.IOutput> {
     }
-    class Updater {
+    class Updater implements def.render.IAssets {
         private $$render;
-        public TotalIsRenderVisible: boolean;
-        public TotalOpacity: number;
-        public SurfaceBoundsWithChildren: Rect;
-        public RenderXform: number[];
-        public Clip: def.render.IGeometry;
-        public Effect: def.render.IEffect;
+        public totalIsRenderVisible: boolean;
+        public totalOpacity: number;
+        public surfaceBoundsWithChildren: Rect;
+        public renderXform: number[];
+        public clip: def.render.IGeometry;
+        public effect: def.render.IEffect;
         constructor();
         public setRenderPipe(pipedef: def.render.RenderPipe): void;
         public render(ctx: CanvasRenderingContext2D, region: Rect): void;

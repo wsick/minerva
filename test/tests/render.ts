@@ -19,17 +19,17 @@ function typedToArray (typed) {
 var mock = {
     assets: function (): render.IAssets {
         return <render.IAssets> {
-            TotalIsRenderVisible: true,
-            TotalOpacity: 1.0,
-            SurfaceBoundsWithChildren: new Rect(),
-            RenderXform: mat3.identity(),
-            Clip: null,
-            Effect: null
+            totalIsRenderVisible: true,
+            totalOpacity: 1.0,
+            surfaceBoundsWithChildren: new Rect(),
+            renderXform: mat3.identity(),
+            clip: null,
+            effect: null
         };
     },
     state: function (): render.IState {
         return <render.IState> {
-            RenderRegion: new Rect()
+            renderRegion: new Rect()
         };
     }
 };
@@ -56,24 +56,24 @@ QUnit.test("validate", (assert) => {
 
     assert.ok(tapins.validate(assets, state, null, null, null), "#1");
 
-    assets.TotalIsRenderVisible = false;
+    assets.totalIsRenderVisible = false;
     assert.ok(!tapins.validate(assets, state, null, null, null), "#2");
 
-    assets.TotalIsRenderVisible = true;
-    assets.TotalOpacity = 0.002;
+    assets.totalIsRenderVisible = true;
+    assets.totalOpacity = 0.002;
     assert.ok(tapins.validate(assets, state, null, null, null), "#3");
 
-    assets.TotalOpacity = 0.0018;
+    assets.totalOpacity = 0.0018;
     assert.ok(!tapins.validate(assets, state, null, null, null), "#4");
 });
 
 QUnit.test("validateRegion", (assert) => {
     var assets = mock.assets();
-    assets.SurfaceBoundsWithChildren = new Rect(50, 50, 100, 100);
+    assets.surfaceBoundsWithChildren = new Rect(50, 50, 100, 100);
     var state = mock.state();
 
     assert.ok(tapins.validateRegion(assets, state, null, null, new Rect(0, 0, 100, 200)), "#1");
-    var rr = state.RenderRegion;
+    var rr = state.renderRegion;
     assert.equal(rr.x, 50);
     assert.equal(rr.y, 50);
     assert.equal(rr.width, 50);
@@ -102,8 +102,8 @@ QUnit.test("prepareContext", (assert) => {
     assert.equal(rctx.raw.globalAlpha, 1.0);
 
     rctx.scale(2, 4);
-    mat3.createTranslate(10, 15, assets.RenderXform);
-    assets.TotalOpacity = 0.5;
+    mat3.createTranslate(10, 15, assets.renderXform);
+    assets.totalOpacity = 0.5;
     tapins.prepareContext(assets, state, null, rctx, new Rect(), "#4");
     assert.equal(rctx.raw.globalAlpha, 0.5);
     assert.deepEqual(typedToArray(rctx.currentTransform), [2, 0, 20, 0, 4, 60, 0, 0, 1]);
@@ -121,7 +121,7 @@ QUnit.test("applyClip", (assert) => {
     var rctx = new RenderContext(ctx);
 
     var clipDrawn = false;
-    assets.Clip = <minerva.def.render.IGeometry>{
+    assets.clip = <minerva.def.render.IGeometry>{
         Draw: function (ctx: RenderContext) {
             clipDrawn = true;
         }
@@ -144,7 +144,7 @@ QUnit.test("preRender", (assert) => {
     var canvas = document.createElement('canvas');
     var rctx = new MockRenderContext(canvas.getContext('2d'));
 
-    assets.Effect = <minerva.def.render.IEffect> {
+    assets.effect = <minerva.def.render.IEffect> {
         PreRender: function (ctx: RenderContext) {
             ctx.raw.globalAlpha = 0.5;
         },
@@ -159,7 +159,7 @@ QUnit.test("preRender", (assert) => {
     assert.equal(rctx.raw.globalAlpha, 1.0);
 
     rctx.saved = false;
-    assets.Effect = null;
+    assets.effect = null;
     assert.ok(tapins.preRender(assets, state, null, rctx, new Rect(), "#2"));
     assert.ok(!rctx.saved);
 });
@@ -175,7 +175,7 @@ QUnit.test("postRender", (assert) => {
     var canvas = document.createElement('canvas');
     var rctx = new MockRenderContext(canvas.getContext('2d'));
 
-    assets.Effect = <minerva.def.render.IEffect> {
+    assets.effect = <minerva.def.render.IEffect> {
         PreRender: function (ctx: RenderContext) {
         },
         PostRender: function (ctx: RenderContext) {
@@ -188,7 +188,7 @@ QUnit.test("postRender", (assert) => {
     assert.equal(rctx.raw.globalAlpha, 1.0);
 
     rctx.restored = false;
-    assets.Effect = null;
+    assets.effect = null;
     assert.ok(tapins.postRender(assets, state, null, rctx, new Rect(), "#2"));
     assert.ok(!rctx.restored);
 });
