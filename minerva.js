@@ -864,26 +864,27 @@ var minerva;
                     this.$$transforms = [];
                     this.currentTransform = mat3.identity();
                     Object.defineProperty(this, 'raw', { value: ctx, writable: false });
+                    Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
                 }
                 RenderContext.prototype.save = function () {
-                    var ct = this.currentTransform;
-                    this.$$transforms.push(ct);
-                    this.currentTransform = !ct ? mat3.identity() : mat3.create(ct);
+                    this.$$transforms.push(mat3.clone(this.currentTransform));
                     this.raw.save();
                 };
 
                 RenderContext.prototype.restore = function () {
-                    this.currentTransform = this.$$transforms.pop();
+                    var old = this.$$transforms.pop();
+                    if (old)
+                        mat3.set(old, this.currentTransform);
                     this.raw.restore();
                 };
 
                 RenderContext.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
-                    this.currentTransform = mat3.create([m11, m12, dx, m21, m22, dy, 0, 0, 1]);
+                    mat3.set([m11, m12, dx, m21, m22, dy, 0, 0, 1], this.currentTransform);
                     this.raw.setTransform(m11, m12, m21, m22, dx, dy);
                 };
 
                 RenderContext.prototype.resetTransform = function () {
-                    this.currentTransform = mat3.identity();
+                    mat3.identity(this.currentTransform);
                     var raw = this.raw;
                     if (raw.resetTransform)
                         raw.resetTransform();
@@ -896,8 +897,7 @@ var minerva;
                 };
 
                 RenderContext.prototype.scale = function (x, y) {
-                    var ct = this.currentTransform;
-                    mat3.scale(ct, x, y);
+                    mat3.scale(this.currentTransform, x, y);
                     this.raw.scale(x, y);
                 };
 
@@ -909,8 +909,7 @@ var minerva;
                 };
 
                 RenderContext.prototype.translate = function (x, y) {
-                    var ct = this.currentTransform;
-                    mat3.translate(ct, x, y);
+                    mat3.translate(this.currentTransform, x, y);
                     this.raw.translate(x, y);
                 };
 
@@ -927,9 +926,8 @@ var minerva;
                 };
 
                 RenderContext.prototype.clipGeometry = function (geom) {
-                    var ctx = this.raw;
                     geom.Draw(this);
-                    ctx.clip();
+                    this.raw.clip();
                 };
                 return RenderContext;
             })();

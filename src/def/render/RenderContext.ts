@@ -6,27 +6,28 @@ module minerva.def.render {
 
         constructor (ctx: CanvasRenderingContext2D) {
             Object.defineProperty(this, 'raw', { value: ctx, writable: false });
+            Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
         }
 
         save () {
-            var ct = this.currentTransform;
-            this.$$transforms.push(ct);
-            this.currentTransform = !ct ? mat3.identity() : mat3.create(ct);
+            this.$$transforms.push(mat3.clone(this.currentTransform));
             this.raw.save();
         }
 
         restore () {
-            this.currentTransform = this.$$transforms.pop();
+            var old = this.$$transforms.pop();
+            if (old)
+                mat3.set(old, this.currentTransform);
             this.raw.restore();
         }
 
         setTransform (m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
-            this.currentTransform = mat3.create([m11, m12, dx, m21, m22, dy, 0, 0, 1]);
+            mat3.set([m11, m12, dx, m21, m22, dy, 0, 0, 1], this.currentTransform);
             this.raw.setTransform(m11, m12, m21, m22, dx, dy);
         }
 
         resetTransform () {
-            this.currentTransform = mat3.identity();
+            mat3.identity(this.currentTransform);
             var raw = <any>this.raw;
             if (raw.resetTransform)
                 raw.resetTransform();
@@ -39,8 +40,7 @@ module minerva.def.render {
         }
 
         scale (x: number, y: number) {
-            var ct = this.currentTransform;
-            mat3.scale(ct, x, y);
+            mat3.scale(this.currentTransform, x, y);
             this.raw.scale(x, y);
         }
 
@@ -52,8 +52,7 @@ module minerva.def.render {
         }
 
         translate (x: number, y: number) {
-            var ct = this.currentTransform;
-            mat3.translate(ct, x, y);
+            mat3.translate(this.currentTransform, x, y);
             this.raw.translate(x, y);
         }
 
