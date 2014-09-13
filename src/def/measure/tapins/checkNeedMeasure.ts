@@ -3,6 +3,10 @@ module minerva.def.measure.tapins {
         if ((assets.dirtyFlags & layout.DirtyFlags.Measure) > 0)
             return true;
         var pc = assets.previousConstraint;
-        return (!pc || pc.width !== availableSize.width || pc.height !== availableSize.height);
+        if (!pc || pc.width !== availableSize.width || pc.height !== availableSize.height) {
+            Size.copyTo(pc, output.previousConstraint);
+            return true;
+        }
+        return false;
     };
 }

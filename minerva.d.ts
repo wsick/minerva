@@ -67,6 +67,15 @@ declare module minerva {
     }
 }
 declare module minerva {
+    class Thickness {
+        public left: number;
+        public top: number;
+        public right: number;
+        public bottom: number;
+        static shrinkSize(thickness: Thickness, dest: Size): Size;
+    }
+}
+declare module minerva {
     enum Visibility {
         Visible = 0,
         Collapsed = 1,
@@ -102,22 +111,46 @@ declare module minerva.def {
         public createOutput(): TOutput;
     }
 }
+declare module minerva.def.helpers {
+    interface ISized {
+        width: number;
+        height: number;
+        minWidth: number;
+        minHeight: number;
+        maxWidth: number;
+        maxHeight: number;
+        useLayoutRounding: boolean;
+    }
+    function coerceSize(size: Size, assets: ISized): void;
+}
 declare module minerva.def.measure {
     interface IMeasureTapin extends ITapin {
         (assets: IAssets, state: IState, output: IOutput, availableSize: Size): boolean;
     }
     interface IAssets extends IPipeAssets {
+        width: number;
+        height: number;
+        minWidth: number;
+        minHeight: number;
+        maxWidth: number;
+        maxHeight: number;
+        useLayoutRounding: boolean;
+        margin: Thickness;
         previousConstraint: Size;
         visibility: Visibility;
         desiredSize: Size;
         dirtyFlags: layout.DirtyFlags;
     }
     interface IState extends IPipeState {
+        response: Size;
+        availableSize: Size;
     }
     interface IOutput extends IPipeOutput {
         error: string;
         previousConstraint: Size;
         desiredSize: Size;
+        hiddenDesire: Size;
+        dirtyFlags: layout.DirtyFlags;
     }
     class MeasurePipe extends Pipe<IMeasureTapin, IAssets, IState, IOutput> {
         constructor();
@@ -130,6 +163,18 @@ declare module minerva.def.measure.tapins {
 }
 declare module minerva.def.measure.tapins {
     var checkNeedMeasure: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var completeOverride: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var doOverride: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var invalidateFuture: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var prepareOverride: IMeasureTapin;
 }
 declare module minerva.def.measure.tapins {
     var validate: IMeasureTapin;
@@ -246,18 +291,28 @@ declare module minerva.layout {
         DownDirtyState,
         UpDirtyState,
     }
-    class Updater implements def.render.IAssets {
+    class Updater implements def.measure.IAssets, def.render.IAssets {
         private $$measure;
         private $$render;
+        public width: number;
+        public height: number;
+        public minWidth: number;
+        public minHeight: number;
+        public maxWidth: number;
+        public maxHeight: number;
+        public useLayoutRounding: boolean;
         public previousConstraint: Size;
         public desiredSize: Size;
+        public hiddenDesire: Size;
         public totalIsRenderVisible: boolean;
         public totalOpacity: number;
         public surfaceBoundsWithChildren: Rect;
         public renderXform: number[];
         public dirtyFlags: DirtyFlags;
+        public margin: Thickness;
         public clip: def.render.IGeometry;
         public effect: def.render.IEffect;
+        public visibility: Visibility;
         constructor();
         public setMeasurePipe(pipedef?: def.measure.MeasurePipe): Updater;
         public setRenderPipe(pipedef?: def.render.RenderPipe): Updater;

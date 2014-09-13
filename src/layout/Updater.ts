@@ -29,12 +29,21 @@ module minerva.layout {
 
     var NO_PIPE = new def.Pipe<def.ITapin, def.IPipeAssets, def.IPipeState, def.IPipeOutput>();
 
-    export class Updater implements def.render.IAssets {
+    export class Updater implements def.measure.IAssets, def.render.IAssets {
         private $$measure: IMeasurePipe;
         private $$render: IRenderPipe;
 
+        width: number = NaN;
+        height: number = NaN;
+        minWidth: number = 0.0;
+        minHeight: number = 0.0;
+        maxWidth: number = Number.POSITIVE_INFINITY;
+        maxHeight: number = Number.POSITIVE_INFINITY;
+        useLayoutRounding: boolean = true;
+
         previousConstraint = new Size();
         desiredSize = new Size();
+        hiddenDesire = new Size();
 
         totalIsRenderVisible = true;
         totalOpacity = 1.0;
@@ -45,8 +54,10 @@ module minerva.layout {
 
         dirtyFlags: DirtyFlags = 0;
 
+        margin: Thickness = new Thickness();
         clip: def.render.IGeometry = null;
         effect: def.render.IEffect = null;
+        visibility = Visibility.Visible;
 
         constructor () {
             this.$$measure = null;
@@ -66,9 +77,17 @@ module minerva.layout {
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
             var output = pipe.output;
+
+            output.dirtyFlags = this.dirtyFlags;
+            Size.copyTo(this.hiddenDesire, output.hiddenDesire);
+
             var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
+
             Size.copyTo(output.previousConstraint, this.previousConstraint);
             Size.copyTo(output.desiredSize, this.desiredSize);
+            Size.copyTo(output.hiddenDesire, this.hiddenDesire);
+            this.dirtyFlags = output.dirtyFlags;
+
             return success;
         }
 

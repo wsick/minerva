@@ -3,17 +3,29 @@ module minerva.def.measure {
         (assets: IAssets, state: IState, output: IOutput, availableSize: Size):boolean;
     }
     export interface IAssets extends IPipeAssets {
+        width: number;
+        height: number;
+        minWidth: number;
+        minHeight: number;
+        maxWidth: number;
+        maxHeight: number;
+        useLayoutRounding: boolean;
+        margin: Thickness;
         previousConstraint: Size;
         visibility: Visibility;
         desiredSize: Size;
         dirtyFlags: layout.DirtyFlags;
     }
     export interface IState extends IPipeState {
+        response: Size;
+        availableSize: Size;
     }
     export interface IOutput extends IPipeOutput {
         error: string;
         previousConstraint: Size;
         desiredSize: Size;
+        hiddenDesire: Size;
+        dirtyFlags: layout.DirtyFlags;
     }
 
     export class MeasurePipe extends Pipe<IMeasureTapin, IAssets, IState, IOutput> {
@@ -22,11 +34,17 @@ module minerva.def.measure {
             this.addTapin('validate', tapins.validate)
                 .addTapin('validateVisibility', tapins.validateVisibility)
                 .addTapin('applyTemplate', tapins.applyTemplate)
-                .addTapin('checkNeedMeasure', tapins.checkNeedMeasure);
+                .addTapin('checkNeedMeasure', tapins.checkNeedMeasure)
+                .addTapin('invalidateFuture', tapins.invalidateFuture)
+                .addTapin('prepareOverride', tapins.prepareOverride)
+                .addTapin('doOverride', tapins.doOverride)
+                .addTapin('completeOverride', tapins.completeOverride);
         }
 
         createState (): IState {
             return {
+                availableSize: new Size(),
+                response: new Size()
             };
         }
 
@@ -34,7 +52,9 @@ module minerva.def.measure {
             return {
                 error: null,
                 previousConstraint: new Size(),
-                desiredSize: new Size()
+                desiredSize: new Size(),
+                hiddenDesire: new Size(),
+                dirtyFlags: 0
             };
         }
     }
