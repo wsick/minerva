@@ -17,7 +17,6 @@ module minerva.def.measure {
         dirtyFlags: layout.DirtyFlags;
     }
     export interface IState extends IPipeState {
-        response: Size;
         availableSize: Size;
     }
     export interface IOutput extends IPipeOutput {
@@ -38,13 +37,14 @@ module minerva.def.measure {
                 .addTapin('invalidateFuture', tapins.invalidateFuture)
                 .addTapin('prepareOverride', tapins.prepareOverride)
                 .addTapin('doOverride', tapins.doOverride)
-                .addTapin('completeOverride', tapins.completeOverride);
+                .addTapin('completeOverride', tapins.completeOverride)
+                //NOTE: Impl aborts when (no parent or parent is Canvas) AND (self is Canvas or not a layout container)
+                .addTapin('finishDesired', tapins.finishDesired);
         }
 
         createState (): IState {
             return {
-                availableSize: new Size(),
-                response: new Size()
+                availableSize: new Size()
             };
         }
 

@@ -73,6 +73,7 @@ declare module minerva {
         public right: number;
         public bottom: number;
         static shrinkSize(thickness: Thickness, dest: Size): Size;
+        static growSize(thickness: Thickness, dest: Size): Size;
     }
 }
 declare module minerva {
@@ -142,7 +143,6 @@ declare module minerva.def.measure {
         dirtyFlags: layout.DirtyFlags;
     }
     interface IState extends IPipeState {
-        response: Size;
         availableSize: Size;
     }
     interface IOutput extends IPipeOutput {
@@ -169,6 +169,9 @@ declare module minerva.def.measure.tapins {
 }
 declare module minerva.def.measure.tapins {
     var doOverride: IMeasureTapin;
+}
+declare module minerva.def.measure.tapins {
+    var finishDesired: IMeasureTapin;
 }
 declare module minerva.def.measure.tapins {
     var invalidateFuture: IMeasureTapin;

@@ -798,6 +798,18 @@ var minerva;
             dest.height = h > 0 ? h : 0;
             return dest;
         };
+
+        Thickness.growSize = function (thickness, dest) {
+            var w = dest.width;
+            var h = dest.height;
+            if (w != Number.POSITIVE_INFINITY)
+                w += thickness.left + thickness.right;
+            if (h != Number.POSITIVE_INFINITY)
+                h += thickness.top + thickness.bottom;
+            dest.width = w > 0 ? w : 0;
+            dest.height = h > 0 ? h : 0;
+            return dest;
+        };
         return Thickness;
     })();
     minerva.Thickness = Thickness;
@@ -945,12 +957,11 @@ var minerva;
                 __extends(MeasurePipe, _super);
                 function MeasurePipe() {
                     _super.call(this);
-                    this.addTapin('validate', measure.tapins.validate).addTapin('validateVisibility', measure.tapins.validateVisibility).addTapin('applyTemplate', measure.tapins.applyTemplate).addTapin('checkNeedMeasure', measure.tapins.checkNeedMeasure).addTapin('invalidateFuture', measure.tapins.invalidateFuture).addTapin('prepareOverride', measure.tapins.prepareOverride).addTapin('doOverride', measure.tapins.doOverride).addTapin('completeOverride', measure.tapins.completeOverride);
+                    this.addTapin('validate', measure.tapins.validate).addTapin('validateVisibility', measure.tapins.validateVisibility).addTapin('applyTemplate', measure.tapins.applyTemplate).addTapin('checkNeedMeasure', measure.tapins.checkNeedMeasure).addTapin('invalidateFuture', measure.tapins.invalidateFuture).addTapin('prepareOverride', measure.tapins.prepareOverride).addTapin('doOverride', measure.tapins.doOverride).addTapin('completeOverride', measure.tapins.completeOverride).addTapin('finishDesired', measure.tapins.finishDesired);
                 }
                 MeasurePipe.prototype.createState = function () {
                     return {
-                        availableSize: new minerva.Size(),
-                        response: new minerva.Size()
+                        availableSize: new minerva.Size()
                     };
                 };
 
@@ -1015,7 +1026,7 @@ var minerva;
             (function (tapins) {
                 tapins.completeOverride = function (assets, state, output, availableSize) {
                     output.dirtyFlags = assets.dirtyFlags & minerva.layout.DirtyFlags.Measure;
-                    minerva.Size.copyTo(state.response, output.hiddenDesire);
+                    minerva.Size.copyTo(output.desiredSize, output.hiddenDesire);
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
@@ -1031,8 +1042,32 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.doOverride = function (assets, state, output, availableSize) {
-                    state.response.width = 0;
-                    state.response.height = 0;
+                    output.desiredSize.width = 0;
+                    output.desiredSize.height = 0;
+                    return true;
+                };
+            })(measure.tapins || (measure.tapins = {}));
+            var tapins = measure.tapins;
+        })(def.measure || (def.measure = {}));
+        var measure = def.measure;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (measure) {
+            (function (tapins) {
+                tapins.finishDesired = function (assets, state, output, availableSize) {
+                    var ds = output.desiredSize;
+                    def.helpers.coerceSize(ds, assets);
+                    minerva.Thickness.growSize(assets.margin, ds);
+                    ds.width = Math.min(ds.width, availableSize.width);
+                    ds.height = Math.min(ds.height, availableSize.height);
+                    if (assets.useLayoutRounding) {
+                        ds.width = Math.round(ds.width);
+                        ds.height = Math.round(ds.height);
+                    }
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
