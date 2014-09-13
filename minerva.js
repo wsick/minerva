@@ -877,18 +877,53 @@ var minerva;
                     this.raw.restore();
                 };
 
+                RenderContext.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
+                    this.currentTransform = mat3.create([m11, m12, dx, m21, m22, dy, 0, 0, 1]);
+                    this.raw.setTransform(m11, m12, m21, m22, dx, dy);
+                };
+
+                RenderContext.prototype.resetTransform = function () {
+                    this.currentTransform = mat3.identity();
+                    var raw = this.raw;
+                    if (raw.resetTransform)
+                        raw.resetTransform();
+                };
+
+                RenderContext.prototype.transform = function (m11, m12, m21, m22, dx, dy) {
+                    var ct = this.currentTransform;
+                    mat3.multiply(ct, mat3.create([m11, m12, dx, m21, m22, dy, 0, 0, 1]), ct);
+                    this.raw.transform(m11, m12, m21, m22, dx, dy);
+                };
+
                 RenderContext.prototype.scale = function (x, y) {
-                    var ctx = this.raw;
                     var ct = this.currentTransform;
                     mat3.scale(ct, x, y);
-                    ctx.scale(x, y);
+                    this.raw.scale(x, y);
+                };
+
+                RenderContext.prototype.rotate = function (angle) {
+                    var ct = this.currentTransform;
+                    var r = mat3.createRotate(angle);
+                    mat3.multiply(ct, r, ct);
+                    this.raw.rotate(angle);
+                };
+
+                RenderContext.prototype.translate = function (x, y) {
+                    var ct = this.currentTransform;
+                    mat3.translate(ct, x, y);
+                    this.raw.translate(x, y);
+                };
+
+                RenderContext.prototype.transformMatrix = function (mat) {
+                    var ct = this.currentTransform;
+                    mat3.multiply(ct, mat, ct);
+                    this.raw.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
                 };
 
                 RenderContext.prototype.pretransformMatrix = function (mat) {
-                    var ctx = this.raw;
                     var ct = this.currentTransform;
                     mat3.multiply(mat, ct, ct);
-                    ctx.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
+                    this.raw.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
                 };
 
                 RenderContext.prototype.clipGeometry = function (geom) {

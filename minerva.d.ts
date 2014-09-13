@@ -96,7 +96,13 @@ declare module minerva.def.render {
         constructor(ctx: CanvasRenderingContext2D);
         public save(): void;
         public restore(): void;
+        public setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
+        public resetTransform(): void;
+        public transform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
         public scale(x: number, y: number): void;
+        public rotate(angle: number): void;
+        public translate(x: number, y: number): void;
+        public transformMatrix(mat: number[]): void;
         public pretransformMatrix(mat: number[]): void;
         public clipGeometry(geom: IGeometry): void;
     }
