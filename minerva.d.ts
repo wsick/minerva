@@ -92,7 +92,7 @@ declare module minerva.def.render {
     class RenderContext {
         private $$transforms;
         public currentTransform: number[];
-        public ctx: CanvasRenderingContext2D;
+        public raw: CanvasRenderingContext2D;
         constructor(ctx: CanvasRenderingContext2D);
         public save(): void;
         public restore(): void;

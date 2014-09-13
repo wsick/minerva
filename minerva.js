@@ -863,36 +863,36 @@ var minerva;
                 function RenderContext(ctx) {
                     this.$$transforms = [];
                     this.currentTransform = mat3.identity();
-                    Object.defineProperty(this, 'ctx', { value: ctx, writable: false });
+                    Object.defineProperty(this, 'raw', { value: ctx, writable: false });
                 }
                 RenderContext.prototype.save = function () {
                     var ct = this.currentTransform;
                     this.$$transforms.push(ct);
                     this.currentTransform = !ct ? mat3.identity() : mat3.create(ct);
-                    this.ctx.save();
+                    this.raw.save();
                 };
 
                 RenderContext.prototype.restore = function () {
                     this.currentTransform = this.$$transforms.pop();
-                    this.ctx.restore();
+                    this.raw.restore();
                 };
 
                 RenderContext.prototype.scale = function (x, y) {
-                    var ctx = this.ctx;
+                    var ctx = this.raw;
                     var ct = this.currentTransform;
                     mat3.scale(ct, x, y);
                     ctx.scale(x, y);
                 };
 
                 RenderContext.prototype.pretransformMatrix = function (mat) {
-                    var ctx = this.ctx;
+                    var ctx = this.raw;
                     var ct = this.currentTransform;
                     mat3.multiply(mat, ct, ct);
                     ctx.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
                 };
 
                 RenderContext.prototype.clipGeometry = function (geom) {
-                    var ctx = this.ctx;
+                    var ctx = this.raw;
                     geom.Draw(this);
                     ctx.clip();
                 };
@@ -1013,7 +1013,7 @@ var minerva;
                 tapins.prepareContext = function (assets, state, output, ctx, region) {
                     ctx.save();
                     ctx.pretransformMatrix(assets.RenderXform);
-                    ctx.ctx.globalAlpha = assets.TotalOpacity;
+                    ctx.raw.globalAlpha = assets.TotalOpacity;
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
