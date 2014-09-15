@@ -1054,7 +1054,7 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.completeOverride = function (assets, state, output, availableSize) {
-                    output.dirtyFlags = assets.dirtyFlags & minerva.layout.DirtyFlags.Measure;
+                    output.dirtyFlags = assets.dirtyFlags & ~minerva.layout.DirtyFlags.Measure;
                     minerva.Size.copyTo(output.desiredSize, output.hiddenDesire);
                     return true;
                 };

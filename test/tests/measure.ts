@@ -129,4 +129,22 @@ module tests.measure {
         assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
         assert.deepEqual(state.availableSize, new Size(35, 45));
     });
+
+    QUnit.test("doOverride", (assert) => {
+        assert.ok(true);
+    });
+
+    QUnit.test("completeOverride", (assert) => {
+        var assets = mock.assets();
+        var state = mock.state();
+        var output = mock.output();
+
+        assets.dirtyFlags |= minerva.layout.DirtyFlags.Measure;
+        output.desiredSize.width = 35;
+        output.desiredSize.height = 35;
+        assert.ok(tapins.completeOverride(assets, state, output, new Size(50, 50)));
+        assert.equal(output.dirtyFlags, 0);
+        assert.notStrictEqual(output.desiredSize, output.hiddenDesire);
+        assert.deepEqual(output.hiddenDesire, new Size(35, 35));
+    });
 }
