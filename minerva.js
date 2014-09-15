@@ -1016,7 +1016,7 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.applyTemplate = function (assets, state, output, availableSize) {
+                tapins.applyTemplate = function (input, state, output, availableSize) {
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
@@ -1031,10 +1031,10 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.checkNeedMeasure = function (assets, state, output, availableSize) {
-                    if ((assets.dirtyFlags & minerva.layout.DirtyFlags.Measure) > 0)
+                tapins.checkNeedMeasure = function (input, state, output, availableSize) {
+                    if ((input.dirtyFlags & minerva.layout.DirtyFlags.Measure) > 0)
                         return true;
-                    var pc = assets.previousConstraint;
+                    var pc = input.previousConstraint;
                     if (!pc || pc.width !== availableSize.width || pc.height !== availableSize.height) {
                         minerva.Size.copyTo(pc, output.previousConstraint);
                         return true;
@@ -1053,8 +1053,8 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.completeOverride = function (assets, state, output, availableSize) {
-                    output.dirtyFlags = assets.dirtyFlags & ~minerva.layout.DirtyFlags.Measure;
+                tapins.completeOverride = function (input, state, output, availableSize) {
+                    output.dirtyFlags = input.dirtyFlags & ~minerva.layout.DirtyFlags.Measure;
                     minerva.Size.copyTo(output.desiredSize, output.hiddenDesire);
                     return true;
                 };
@@ -1070,7 +1070,7 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.doOverride = function (assets, state, output, availableSize) {
+                tapins.doOverride = function (input, state, output, availableSize) {
                     output.desiredSize.width = 0;
                     output.desiredSize.height = 0;
                     return true;
@@ -1087,13 +1087,13 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.finishDesired = function (assets, state, output, availableSize) {
+                tapins.finishDesired = function (input, state, output, availableSize) {
                     var ds = output.desiredSize;
-                    def.helpers.coerceSize(ds, assets);
-                    minerva.Thickness.growSize(assets.margin, ds);
+                    def.helpers.coerceSize(ds, input);
+                    minerva.Thickness.growSize(input.margin, ds);
                     ds.width = Math.min(ds.width, availableSize.width);
                     ds.height = Math.min(ds.height, availableSize.height);
-                    if (assets.useLayoutRounding) {
+                    if (input.useLayoutRounding) {
                         ds.width = Math.round(ds.width);
                         ds.height = Math.round(ds.height);
                     }
@@ -1111,7 +1111,7 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.invalidateFuture = function (assets, state, output, availableSize) {
+                tapins.invalidateFuture = function (input, state, output, availableSize) {
                     console.warn("Implement measure.tapins.invalidateFuture");
 
                     return true;
@@ -1128,10 +1128,10 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.prepareOverride = function (assets, state, output, availableSize) {
+                tapins.prepareOverride = function (input, state, output, availableSize) {
                     minerva.Size.copyTo(availableSize, state.availableSize);
-                    minerva.Thickness.shrinkSize(assets.margin, state.availableSize);
-                    def.helpers.coerceSize(state.availableSize, assets);
+                    minerva.Thickness.shrinkSize(input.margin, state.availableSize);
+                    def.helpers.coerceSize(state.availableSize, input);
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
@@ -1146,7 +1146,7 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.validate = function (assets, state, output, availableSize) {
+                tapins.validate = function (input, state, output, availableSize) {
                     if (isNaN(availableSize.width) || isNaN(availableSize.height)) {
                         output.error = "Cannot call Measure using a size with NaN values.";
                         return false;
@@ -1165,8 +1165,8 @@ var minerva;
     (function (def) {
         (function (measure) {
             (function (tapins) {
-                tapins.validateVisibility = function (assets, state, output, availableSize) {
-                    if (assets.visibility !== 0 /* Visible */) {
+                tapins.validateVisibility = function (input, state, output, availableSize) {
+                    if (input.visibility !== 0 /* Visible */) {
                         minerva.Size.copyTo(availableSize, output.previousConstraint);
                         return false;
                     }
@@ -1293,8 +1293,8 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.applyClip = function (assets, state, output, ctx, region) {
-                    var clip = assets.clip;
+                tapins.applyClip = function (input, state, output, ctx, region) {
+                    var clip = input.clip;
                     if (clip)
                         ctx.clipGeometry(clip);
                     return true;
@@ -1311,7 +1311,7 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.doRender = function (assets, state, output, ctx, region) {
+                tapins.doRender = function (input, state, output, ctx, region) {
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -1326,8 +1326,8 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.postRender = function (assets, state, output, ctx, region) {
-                    var effect = assets.effect;
+                tapins.postRender = function (input, state, output, ctx, region) {
+                    var effect = input.effect;
                     if (!effect)
                         return true;
                     effect.PostRender(ctx);
@@ -1346,8 +1346,8 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.preRender = function (assets, state, output, ctx, region) {
-                    var effect = assets.effect;
+                tapins.preRender = function (input, state, output, ctx, region) {
+                    var effect = input.effect;
                     if (!effect)
                         return true;
                     ctx.save();
@@ -1366,10 +1366,10 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.prepareContext = function (assets, state, output, ctx, region) {
+                tapins.prepareContext = function (input, state, output, ctx, region) {
                     ctx.save();
-                    ctx.pretransformMatrix(assets.renderXform);
-                    ctx.raw.globalAlpha = assets.totalOpacity;
+                    ctx.pretransformMatrix(input.renderXform);
+                    ctx.raw.globalAlpha = input.totalOpacity;
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -1384,7 +1384,7 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.renderChildren = function (assets, state, output, ctx, region) {
+                tapins.renderChildren = function (input, state, output, ctx, region) {
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -1399,7 +1399,7 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.restoreContext = function (assets, state, output, ctx, region) {
+                tapins.restoreContext = function (input, state, output, ctx, region) {
                     ctx.restore();
                     return true;
                 };
@@ -1415,10 +1415,10 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.validate = function (assets, state, output, ctx, region) {
-                    if (!assets.totalIsRenderVisible)
+                tapins.validate = function (input, state, output, ctx, region) {
+                    if (!input.totalIsRenderVisible)
                         return false;
-                    if ((assets.totalOpacity * 255) < 0.5)
+                    if ((input.totalOpacity * 255) < 0.5)
                         return false;
                     return true;
                 };
@@ -1434,9 +1434,9 @@ var minerva;
     (function (def) {
         (function (render) {
             (function (tapins) {
-                tapins.validateRegion = function (assets, state, output, ctx, region) {
+                tapins.validateRegion = function (input, state, output, ctx, region) {
                     var r = state.renderRegion;
-                    minerva.Rect.copyTo(assets.surfaceBoundsWithChildren, r);
+                    minerva.Rect.copyTo(input.surfaceBoundsWithChildren, r);
                     minerva.Rect.roundOut(r);
                     minerva.Rect.intersection(r, region);
                     return r.width > 0 && r.height > 0;
