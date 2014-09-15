@@ -29,8 +29,10 @@ module.exports = function (grunt) {
             },
             test: {
                 src: ['test/**/*.ts', '!test/lib/**/*.ts'],
+                dest: 'test/.build',
                 options: {
                     target: 'es5',
+                    basePath: 'test/tests',
                     sourceMap: true
                 }
             }

@@ -1,5 +1,4 @@
 .idea/
 node_modules/
 test/lib/
-test/tests/*.js.map
-test/tests/*.js
+test/.build/
