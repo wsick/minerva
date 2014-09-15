@@ -72,6 +72,7 @@ declare module minerva {
         public top: number;
         public right: number;
         public bottom: number;
+        constructor(left?: number, top?: number, right?: number, bottom?: number);
         static shrinkSize(thickness: Thickness, dest: Size): Size;
         static growSize(thickness: Thickness, dest: Size): Size;
     }

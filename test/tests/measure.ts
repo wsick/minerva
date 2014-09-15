@@ -86,4 +86,47 @@ module tests.measure {
         assets.dirtyFlags |= minerva.layout.DirtyFlags.Measure;
         assert.ok(tapins.checkNeedMeasure(assets, state, output, new Size(0, 0)));
     });
+
+    QUnit.test("invalidateFuture", (assert) => {
+        console.warn("invalidateFuture needs implemented.");
+        ok(true);
+    });
+
+    QUnit.test("prepareOverride", (assert) => {
+        var assets = mock.assets();
+        var state = mock.state();
+        var output = mock.output();
+
+        //basic
+        assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
+        assert.deepEqual(state.availableSize, new Size(50, 100));
+
+        //margin
+        assets.margin.left = 5;
+        assets.margin.top = 10;
+        assets.margin.right = 15;
+        assets.margin.bottom = 20;
+        assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
+        assert.deepEqual(state.availableSize, new Size(30, 70));
+
+        //margin+min/max coerced
+        assets.minWidth = 35;
+        assets.maxHeight = 65;
+        assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
+        assert.deepEqual(state.availableSize, new Size(35, 65));
+
+        //margin+size+uselayoutrounding
+        assets.minWidth = 0;
+        assets.maxHeight = Number.POSITIVE_INFINITY;
+        assets.width = 29.75;
+        assets.height = 50.25;
+        assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
+        assert.deepEqual(state.availableSize, new Size(30, 50));
+
+        //size+uselayoutrounding+min/max coerced
+        assets.minWidth = 35;
+        assets.maxHeight = 45;
+        assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
+        assert.deepEqual(state.availableSize, new Size(35, 45));
+    });
 }

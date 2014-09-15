@@ -785,7 +785,11 @@ var minerva;
 var minerva;
 (function (minerva) {
     var Thickness = (function () {
-        function Thickness() {
+        function Thickness(left, top, right, bottom) {
+            this.left = left == null ? 0 : left;
+            this.top = top == null ? 0 : top;
+            this.right = right == null ? 0 : right;
+            this.bottom = bottom == null ? 0 : bottom;
         }
         Thickness.shrinkSize = function (thickness, dest) {
             var w = dest.width;
@@ -948,8 +952,8 @@ var minerva;
     (function (def) {
         (function (helpers) {
             function coerceSize(size, assets) {
-                var cw = Math.max(assets.minWidth, assets.width);
-                var ch = Math.max(assets.minHeight, assets.height);
+                var cw = Math.max(assets.minWidth, size.width);
+                var ch = Math.max(assets.minHeight, size.height);
 
                 if (!isNaN(assets.width))
                     cw = assets.width;

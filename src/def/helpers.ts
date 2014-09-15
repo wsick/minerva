@@ -9,8 +9,8 @@ module minerva.def.helpers {
         useLayoutRounding: boolean;
     }
     export function coerceSize (size: Size, assets: ISized) {
-        var cw = Math.max(assets.minWidth, assets.width);
-        var ch = Math.max(assets.minHeight, assets.height);
+        var cw = Math.max(assets.minWidth, size.width);
+        var ch = Math.max(assets.minHeight, size.height);
 
         if (!isNaN(assets.width))
             cw = assets.width;
