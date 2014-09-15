@@ -10,7 +10,7 @@ module minerva.def.arrange {
     export interface IOutput extends IPipeOutput {
     }
 
-    export class ArrangePipe extends Pipe<IArrangeTapin, IAssets, IState, IOutput> {
+    export class ArrangePipe extends PipeDef<IArrangeTapin, IAssets, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('applyRounding', null)

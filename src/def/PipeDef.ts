@@ -3,17 +3,17 @@ module minerva.def {
         (assets: IPipeAssets, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
 
-    export class Pipe<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipe<TAssets, TState, TOutput> {
+    export class PipeDef<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipeDef<TAssets, TState, TOutput> {
         private $$names: string[] = [];
         private $$tapins: T[] = [];
 
-        addTapin (name: string, tapin: T): Pipe<T, TAssets, TState, TOutput> {
+        addTapin (name: string, tapin: T): PipeDef<T, TAssets, TState, TOutput> {
             this.$$names.push(name);
             this.$$tapins.push(tapin);
             return this;
         }
 
-        addTapinBefore (name: string, tapin: T, before?: string): Pipe<T, TAssets, TState, TOutput> {
+        addTapinBefore (name: string, tapin: T, before?: string): PipeDef<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !before ? -1 : names.indexOf(before);
@@ -27,7 +27,7 @@ module minerva.def {
             return this;
         }
 
-        addTapinAfter (name: string, tapin: T, after?: string): Pipe<T, TAssets, TState, TOutput> {
+        addTapinAfter (name: string, tapin: T, after?: string): PipeDef<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !after ? -1 : names.indexOf(after);
@@ -41,7 +41,7 @@ module minerva.def {
             return this;
         }
 
-        replaceTapin (name: string, tapin: T): Pipe<T, TAssets, TState, TOutput> {
+        replaceTapin (name: string, tapin: T): PipeDef<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = names.indexOf(name);
@@ -51,7 +51,7 @@ module minerva.def {
             return this;
         }
 
-        removeTapin (name: string): Pipe<T, TAssets, TState, TOutput> {
+        removeTapin (name: string): PipeDef<T, TAssets, TState, TOutput> {
             var names = this.$$names;
             var index = names.indexOf(name);
             if (index === -1)

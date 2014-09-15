@@ -29,7 +29,7 @@ module minerva.layout {
         UpDirtyState = Bounds | Invalidate,
     }
 
-    var NO_PIPE = new def.Pipe<def.ITapin, def.IPipeAssets, def.IPipeState, def.IPipeOutput>();
+    var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeAssets, def.IPipeState, def.IPipeOutput>();
 
     export interface IUpdaterAssets extends def.measure.IAssets, def.arrange.IAssets, def.render.IAssets {
     }
@@ -73,7 +73,7 @@ module minerva.layout {
             this.$$render = null;
         }
 
-        setMeasurePipe (pipedef?: def.measure.MeasurePipe): Updater {
+        setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
             this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE, this.assets);
             return this;
         }
@@ -83,7 +83,7 @@ module minerva.layout {
             return this;
         }
 
-        setRenderPipe (pipedef?: def.render.RenderPipe): Updater {
+        setRenderPipe (pipedef?: def.render.RenderPipeDef): Updater {
             this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE, this.assets);
             return this;
         }

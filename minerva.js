@@ -825,18 +825,18 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (def) {
-        var Pipe = (function () {
-            function Pipe() {
+        var PipeDef = (function () {
+            function PipeDef() {
                 this.$$names = [];
                 this.$$tapins = [];
             }
-            Pipe.prototype.addTapin = function (name, tapin) {
+            PipeDef.prototype.addTapin = function (name, tapin) {
                 this.$$names.push(name);
                 this.$$tapins.push(tapin);
                 return this;
             };
 
-            Pipe.prototype.addTapinBefore = function (name, tapin, before) {
+            PipeDef.prototype.addTapinBefore = function (name, tapin, before) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !before ? -1 : names.indexOf(before);
@@ -850,7 +850,7 @@ var minerva;
                 return this;
             };
 
-            Pipe.prototype.addTapinAfter = function (name, tapin, after) {
+            PipeDef.prototype.addTapinAfter = function (name, tapin, after) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !after ? -1 : names.indexOf(after);
@@ -864,7 +864,7 @@ var minerva;
                 return this;
             };
 
-            Pipe.prototype.replaceTapin = function (name, tapin) {
+            PipeDef.prototype.replaceTapin = function (name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = names.indexOf(name);
@@ -874,7 +874,7 @@ var minerva;
                 return this;
             };
 
-            Pipe.prototype.removeTapin = function (name) {
+            PipeDef.prototype.removeTapin = function (name) {
                 var names = this.$$names;
                 var index = names.indexOf(name);
                 if (index === -1)
@@ -884,7 +884,7 @@ var minerva;
                 return this;
             };
 
-            Pipe.prototype.run = function (assets, state, output) {
+            PipeDef.prototype.run = function (assets, state, output) {
                 var contexts = [];
                 for (var _i = 0; _i < (arguments.length - 3); _i++) {
                     contexts[_i] = arguments[_i + 3];
@@ -899,16 +899,16 @@ var minerva;
                 return true;
             };
 
-            Pipe.prototype.createState = function () {
+            PipeDef.prototype.createState = function () {
                 return null;
             };
 
-            Pipe.prototype.createOutput = function () {
+            PipeDef.prototype.createOutput = function () {
                 return null;
             };
-            return Pipe;
+            return PipeDef;
         })();
-        def.Pipe = Pipe;
+        def.PipeDef = PipeDef;
     })(minerva.def || (minerva.def = {}));
     var def = minerva.def;
 })(minerva || (minerva = {}));
@@ -936,7 +936,7 @@ var minerva;
                     return {};
                 };
                 return ArrangePipe;
-            })(def.Pipe);
+            })(def.PipeDef);
             arrange.ArrangePipe = ArrangePipe;
         })(def.arrange || (def.arrange = {}));
         var arrange = def.arrange;
@@ -978,19 +978,19 @@ var minerva;
 (function (minerva) {
     (function (def) {
         (function (measure) {
-            var MeasurePipe = (function (_super) {
-                __extends(MeasurePipe, _super);
-                function MeasurePipe() {
+            var MeasurePipeDef = (function (_super) {
+                __extends(MeasurePipeDef, _super);
+                function MeasurePipeDef() {
                     _super.call(this);
                     this.addTapin('validate', measure.tapins.validate).addTapin('validateVisibility', measure.tapins.validateVisibility).addTapin('applyTemplate', measure.tapins.applyTemplate).addTapin('checkNeedMeasure', measure.tapins.checkNeedMeasure).addTapin('invalidateFuture', measure.tapins.invalidateFuture).addTapin('prepareOverride', measure.tapins.prepareOverride).addTapin('doOverride', measure.tapins.doOverride).addTapin('completeOverride', measure.tapins.completeOverride).addTapin('finishDesired', measure.tapins.finishDesired);
                 }
-                MeasurePipe.prototype.createState = function () {
+                MeasurePipeDef.prototype.createState = function () {
                     return {
                         availableSize: new minerva.Size()
                     };
                 };
 
-                MeasurePipe.prototype.createOutput = function () {
+                MeasurePipeDef.prototype.createOutput = function () {
                     return {
                         error: null,
                         previousConstraint: new minerva.Size(),
@@ -999,9 +999,9 @@ var minerva;
                         dirtyFlags: 0
                     };
                 };
-                return MeasurePipe;
-            })(def.Pipe);
-            measure.MeasurePipe = MeasurePipe;
+                return MeasurePipeDef;
+            })(def.PipeDef);
+            measure.MeasurePipeDef = MeasurePipeDef;
         })(def.measure || (def.measure = {}));
         var measure = def.measure;
     })(minerva.def || (minerva.def = {}));
@@ -1261,19 +1261,19 @@ var minerva;
 (function (minerva) {
     (function (def) {
         (function (render) {
-            var RenderPipe = (function (_super) {
-                __extends(RenderPipe, _super);
-                function RenderPipe() {
+            var RenderPipeDef = (function (_super) {
+                __extends(RenderPipeDef, _super);
+                function RenderPipeDef() {
                     _super.call(this);
                     this.addTapin('validate', render.tapins.validate).addTapin('validateRegion', render.tapins.validateRegion).addTapin('prepareContext', render.tapins.prepareContext).addTapin('applyClip', render.tapins.applyClip).addTapin('preRender', render.tapins.preRender).addTapin('doRender', render.tapins.doRender).addTapin('postRender', render.tapins.postRender).addTapin('renderChildren', render.tapins.renderChildren).addTapin('restoreContext', render.tapins.restoreContext);
                 }
-                RenderPipe.prototype.initState = function (state) {
+                RenderPipeDef.prototype.initState = function (state) {
                     if (!state.renderRegion)
                         state.renderRegion = new minerva.Rect();
                 };
-                return RenderPipe;
-            })(def.Pipe);
-            render.RenderPipe = RenderPipe;
+                return RenderPipeDef;
+            })(def.PipeDef);
+            render.RenderPipeDef = RenderPipeDef;
         })(def.render || (def.render = {}));
         var render = def.render;
     })(minerva.def || (minerva.def = {}));
@@ -1487,7 +1487,7 @@ var minerva;
         })(layout.DirtyFlags || (layout.DirtyFlags = {}));
         var DirtyFlags = layout.DirtyFlags;
 
-        var NO_PIPE = new minerva.def.Pipe();
+        var NO_PIPE = new minerva.def.PipeDef();
 
         var Updater = (function () {
             function Updater() {

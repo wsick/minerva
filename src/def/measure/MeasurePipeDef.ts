@@ -27,7 +27,7 @@ module minerva.def.measure {
         dirtyFlags: layout.DirtyFlags;
     }
 
-    export class MeasurePipe extends Pipe<IMeasureTapin, IAssets, IState, IOutput> {
+    export class MeasurePipeDef extends PipeDef<IMeasureTapin, IAssets, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('validate', tapins.validate)
