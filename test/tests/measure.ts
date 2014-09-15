@@ -64,7 +64,26 @@ module tests.measure {
         assets.visibility = minerva.Visibility.Collapsed;
         output.previousConstraint.width = 0;
         output.previousConstraint.height = 0;
-        assert.ok(!tapins.validateVisibility(assets, state, output, new Size(1, 2)));
+        var as = new Size(1, 2);
+        assert.ok(!tapins.validateVisibility(assets, state, output, as));
+        assert.notStrictEqual(output.previousConstraint, as);
         assert.deepEqual(output.previousConstraint, new Size(1, 2));
+    });
+
+    QUnit.test("applyTemplate", (assert) => {
+        ok(true);
+    });
+
+    QUnit.test("checkNeedMeasure", (assert) => {
+        var assets = mock.assets();
+        var state = mock.state();
+        var output = mock.output();
+
+        assert.ok(!tapins.checkNeedMeasure(assets, state, output, new Size(0, 0)));
+
+        assert.ok(tapins.checkNeedMeasure(assets, state, output, new Size(100, 100)));
+
+        assets.dirtyFlags |= minerva.layout.DirtyFlags.Measure;
+        assert.ok(tapins.checkNeedMeasure(assets, state, output, new Size(0, 0)));
     });
 }

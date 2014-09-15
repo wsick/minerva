@@ -1163,7 +1163,7 @@ var minerva;
             (function (tapins) {
                 tapins.validateVisibility = function (assets, state, output, availableSize) {
                     if (assets.visibility !== 0 /* Visible */) {
-                        output.previousConstraint = availableSize;
+                        minerva.Size.copyTo(availableSize, output.previousConstraint);
                         return false;
                     }
                     return true;
