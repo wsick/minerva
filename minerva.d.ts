@@ -94,23 +94,27 @@ declare module minerva.def {
         run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
         createState(): TState;
         createOutput(): TOutput;
+        prepare(input: TInput, state: TState, output: TOutput): any;
+        flush(input: TInput, state: TState, output: TOutput): any;
     }
 }
 declare module minerva.def {
     interface ITapin {
         (assets: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
-    class PipeDef<T extends ITapin, TAssets extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipeDef<TAssets, TState, TOutput> {
+    class PipeDef<T extends ITapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipeDef<TInput, TState, TOutput> {
         private $$names;
         private $$tapins;
-        public addTapin(name: string, tapin: T): PipeDef<T, TAssets, TState, TOutput>;
-        public addTapinBefore(name: string, tapin: T, before?: string): PipeDef<T, TAssets, TState, TOutput>;
-        public addTapinAfter(name: string, tapin: T, after?: string): PipeDef<T, TAssets, TState, TOutput>;
-        public replaceTapin(name: string, tapin: T): PipeDef<T, TAssets, TState, TOutput>;
-        public removeTapin(name: string): PipeDef<T, TAssets, TState, TOutput>;
-        public run(assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean;
+        public addTapin(name: string, tapin: T): PipeDef<T, TInput, TState, TOutput>;
+        public addTapinBefore(name: string, tapin: T, before?: string): PipeDef<T, TInput, TState, TOutput>;
+        public addTapinAfter(name: string, tapin: T, after?: string): PipeDef<T, TInput, TState, TOutput>;
+        public replaceTapin(name: string, tapin: T): PipeDef<T, TInput, TState, TOutput>;
+        public removeTapin(name: string): PipeDef<T, TInput, TState, TOutput>;
+        public run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
         public createState(): TState;
         public createOutput(): TOutput;
+        public prepare(input: TInput, state: TState, output: TOutput): void;
+        public flush(input: TInput, state: TState, output: TOutput): void;
     }
 }
 declare module minerva.def.arrange {
@@ -119,15 +123,19 @@ declare module minerva.def.arrange {
     }
     interface IInput extends IPipeInput {
         hiddenDesire: Size;
+        dirtyFlags: layout.DirtyFlags;
     }
     interface IState extends IPipeState {
     }
     interface IOutput extends IPipeOutput {
+        dirtyFlags: layout.DirtyFlags;
     }
     class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.def.helpers {
@@ -158,6 +166,7 @@ declare module minerva.def.measure {
         previousConstraint: Size;
         visibility: Visibility;
         desiredSize: Size;
+        hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
     }
     interface IState extends IPipeState {
@@ -174,6 +183,8 @@ declare module minerva.def.measure {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.def.measure.tapins {

@@ -90,37 +90,17 @@ module minerva.layout {
 
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
-            var input = this.assets;
-            var output = pipe.output;
-
-            output.dirtyFlags = input.dirtyFlags;
-            Size.copyTo(input.previousConstraint, output.previousConstraint);
-            Size.copyTo(input.hiddenDesire, output.hiddenDesire);
-
-            var success = pipe.def.run(input, pipe.state, output, availableSize);
-
-            Size.copyTo(output.previousConstraint, input.previousConstraint);
-            Size.copyTo(output.desiredSize, input.desiredSize);
-            Size.copyTo(output.hiddenDesire, input.hiddenDesire);
-            input.dirtyFlags = output.dirtyFlags;
-
-            return success;
+            return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
         }
 
         arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
-            var input = this.assets;
-            var output = pipe.output;
-
-            var success = pipe.def.run(input, pipe.state, output, finalRect);
-
-            return success;
+            return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
         }
 
         render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
-            var input = this.assets;
-            return pipe.def.run(input, pipe.state, null, ctx, region);
+            return pipe.def.run(this.assets, pipe.state, null, ctx, region);
         }
     }
 }

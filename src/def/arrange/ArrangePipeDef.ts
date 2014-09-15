@@ -4,10 +4,12 @@ module minerva.def.arrange {
     }
     export interface IInput extends IPipeInput {
         hiddenDesire: Size;
+        dirtyFlags: layout.DirtyFlags;
     }
     export interface IState extends IPipeState {
     }
     export interface IOutput extends IPipeOutput {
+        dirtyFlags: layout.DirtyFlags;
     }
 
     export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
@@ -36,7 +38,16 @@ module minerva.def.arrange {
 
         createOutput (): IOutput {
             return {
+                dirtyFlags: 0
             };
+        }
+
+        prepare (input: IInput, state: IState, output: IOutput) {
+            output.dirtyFlags = input.dirtyFlags;
+        }
+
+        flush (input: IInput, state: IState, output: IOutput) {
+            input.dirtyFlags = output.dirtyFlags;
         }
     }
 }

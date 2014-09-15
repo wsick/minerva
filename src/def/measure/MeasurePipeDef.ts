@@ -14,6 +14,7 @@ module minerva.def.measure {
         previousConstraint: Size;
         visibility: Visibility;
         desiredSize: Size;
+        hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
     }
     export interface IState extends IPipeState {
@@ -56,6 +57,19 @@ module minerva.def.measure {
                 hiddenDesire: new Size(),
                 dirtyFlags: 0
             };
+        }
+
+        prepare (input: IInput, state: IState, output: IOutput) {
+            output.dirtyFlags = input.dirtyFlags;
+            Size.copyTo(input.previousConstraint, output.previousConstraint);
+            Size.copyTo(input.hiddenDesire, output.hiddenDesire);
+        }
+
+        flush (input: IInput, state: IState, output: IOutput) {
+            Size.copyTo(output.previousConstraint, input.previousConstraint);
+            Size.copyTo(output.desiredSize, input.desiredSize);
+            Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+            input.dirtyFlags = output.dirtyFlags;
         }
     }
 }

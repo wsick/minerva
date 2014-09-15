@@ -888,19 +888,27 @@ var minerva;
                 return this;
             };
 
-            PipeDef.prototype.run = function (assets, state, output) {
+            PipeDef.prototype.run = function (input, state, output) {
                 var contexts = [];
                 for (var _i = 0; _i < (arguments.length - 3); _i++) {
                     contexts[_i] = arguments[_i + 3];
                 }
+                this.prepare(input, state, output);
+
                 contexts.unshift(output);
                 contexts.unshift(state);
-                contexts.unshift(assets);
+                contexts.unshift(input);
+                var flag = true;
                 for (var i = 0, tapins = this.$$tapins, len = tapins.length; i < len; i++) {
-                    if (!tapins[i].apply(this, contexts))
-                        return false;
+                    if (!tapins[i].apply(this, contexts)) {
+                        flag = false;
+                        break;
+                    }
                 }
-                return true;
+
+                this.flush(input, state, output);
+
+                return flag;
             };
 
             PipeDef.prototype.createState = function () {
@@ -909,6 +917,12 @@ var minerva;
 
             PipeDef.prototype.createOutput = function () {
                 return null;
+            };
+
+            PipeDef.prototype.prepare = function (input, state, output) {
+            };
+
+            PipeDef.prototype.flush = function (input, state, output) {
             };
             return PipeDef;
         })();
@@ -937,7 +951,17 @@ var minerva;
                 };
 
                 ArrangePipe.prototype.createOutput = function () {
-                    return {};
+                    return {
+                        dirtyFlags: 0
+                    };
+                };
+
+                ArrangePipe.prototype.prepare = function (input, state, output) {
+                    output.dirtyFlags = input.dirtyFlags;
+                };
+
+                ArrangePipe.prototype.flush = function (input, state, output) {
+                    input.dirtyFlags = output.dirtyFlags;
                 };
                 return ArrangePipe;
             })(def.PipeDef);
@@ -1002,6 +1026,19 @@ var minerva;
                         hiddenDesire: new minerva.Size(),
                         dirtyFlags: 0
                     };
+                };
+
+                MeasurePipeDef.prototype.prepare = function (input, state, output) {
+                    output.dirtyFlags = input.dirtyFlags;
+                    minerva.Size.copyTo(input.previousConstraint, output.previousConstraint);
+                    minerva.Size.copyTo(input.hiddenDesire, output.hiddenDesire);
+                };
+
+                MeasurePipeDef.prototype.flush = function (input, state, output) {
+                    minerva.Size.copyTo(output.previousConstraint, input.previousConstraint);
+                    minerva.Size.copyTo(output.desiredSize, input.desiredSize);
+                    minerva.Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+                    input.dirtyFlags = output.dirtyFlags;
                 };
                 return MeasurePipeDef;
             })(def.PipeDef);
@@ -1541,37 +1578,17 @@ var minerva;
 
             Updater.prototype.measure = function (availableSize) {
                 var pipe = this.$$measure;
-                var input = this.assets;
-                var output = pipe.output;
-
-                output.dirtyFlags = input.dirtyFlags;
-                minerva.Size.copyTo(input.previousConstraint, output.previousConstraint);
-                minerva.Size.copyTo(input.hiddenDesire, output.hiddenDesire);
-
-                var success = pipe.def.run(input, pipe.state, output, availableSize);
-
-                minerva.Size.copyTo(output.previousConstraint, input.previousConstraint);
-                minerva.Size.copyTo(output.desiredSize, input.desiredSize);
-                minerva.Size.copyTo(output.hiddenDesire, input.hiddenDesire);
-                input.dirtyFlags = output.dirtyFlags;
-
-                return success;
+                return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
             };
 
             Updater.prototype.arrange = function (finalRect) {
                 var pipe = this.$$arrange;
-                var input = this.assets;
-                var output = pipe.output;
-
-                var success = pipe.def.run(input, pipe.state, output, finalRect);
-
-                return success;
+                return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
             };
 
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
-                var input = this.assets;
-                return pipe.def.run(input, pipe.state, null, ctx, region);
+                return pipe.def.run(this.assets, pipe.state, null, ctx, region);
             };
             return Updater;
         })();

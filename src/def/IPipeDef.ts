@@ -9,5 +9,7 @@ module minerva.def {
         run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
         createState(): TState;
         createOutput(): TOutput;
+        prepare(input: TInput, state: TState, output: TOutput);
+        flush(input: TInput, state: TState, output: TOutput);
     }
 }
