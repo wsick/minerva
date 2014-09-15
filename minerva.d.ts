@@ -84,23 +84,23 @@ declare module minerva {
     }
 }
 declare module minerva.def {
-    interface IPipeAssets {
+    interface IPipeInput {
     }
     interface IPipeState {
     }
     interface IPipeOutput {
     }
-    interface IPipeDef<TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> {
-        run(assets: TAssets, state: TState, output: TOutput, ...contexts: any[]): boolean;
+    interface IPipeDef<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
+        run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
         createState(): TState;
         createOutput(): TOutput;
     }
 }
 declare module minerva.def {
     interface ITapin {
-        (assets: IPipeAssets, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
+        (assets: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
-    class PipeDef<T extends ITapin, TAssets extends IPipeAssets, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipeDef<TAssets, TState, TOutput> {
+    class PipeDef<T extends ITapin, TAssets extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipeDef<TAssets, TState, TOutput> {
         private $$names;
         private $$tapins;
         public addTapin(name: string, tapin: T): PipeDef<T, TAssets, TState, TOutput>;
@@ -115,16 +115,16 @@ declare module minerva.def {
 }
 declare module minerva.def.arrange {
     interface IArrangeTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, finalRect: Rect): boolean;
+        (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean;
     }
-    interface IAssets extends IPipeAssets {
+    interface IInput extends IPipeInput {
         hiddenDesire: Size;
     }
     interface IState extends IPipeState {
     }
     interface IOutput extends IPipeOutput {
     }
-    class ArrangePipe extends PipeDef<IArrangeTapin, IAssets, IState, IOutput> {
+    class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -144,9 +144,9 @@ declare module minerva.def.helpers {
 }
 declare module minerva.def.measure {
     interface IMeasureTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, availableSize: Size): boolean;
+        (input: IInput, state: IState, output: IOutput, availableSize: Size): boolean;
     }
-    interface IAssets extends IPipeAssets {
+    interface IInput extends IPipeInput {
         width: number;
         height: number;
         minWidth: number;
@@ -170,7 +170,7 @@ declare module minerva.def.measure {
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
     }
-    class MeasurePipeDef extends PipeDef<IMeasureTapin, IAssets, IState, IOutput> {
+    class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -224,9 +224,9 @@ declare module minerva.def.render {
 }
 declare module minerva.def.render {
     interface IRenderTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, ctx: RenderContext, region: Rect): boolean;
+        (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect): boolean;
     }
-    interface IAssets extends IPipeAssets {
+    interface IInput extends IPipeInput {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         surfaceBoundsWithChildren: Rect;
@@ -246,9 +246,10 @@ declare module minerva.def.render {
     interface IGeometry {
         Draw(ctx: RenderContext): any;
     }
-    class RenderPipeDef extends PipeDef<IRenderTapin, IAssets, IState, IOutput> {
+    class RenderPipeDef extends PipeDef<IRenderTapin, IInput, IState, IOutput> {
         constructor();
-        public initState(state: IState): void;
+        public createState(): IState;
+        public createOutput(): IOutput;
     }
 }
 declare module minerva.def.render.tapins {
@@ -279,20 +280,19 @@ declare module minerva.def.render.tapins {
     var validateRegion: IRenderTapin;
 }
 declare module minerva.layout {
-    class IPipe<TAssets extends def.IPipeAssets, TState extends def.IPipeState, TOutput extends def.IPipeOutput> {
-        public def: def.IPipeDef<TAssets, TState, TOutput>;
-        public assets: TAssets;
+    class IPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput> {
+        public def: def.IPipeDef<TInput, TState, TOutput>;
         public state: TState;
         public output: TOutput;
     }
-    function createPipe<TAssets extends def.IPipeAssets, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipeDef<TAssets, TState, TOutput>, assets: any): IPipe<TAssets, TState, TOutput>;
+    function createPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipeDef<TInput, TState, TOutput>): IPipe<TInput, TState, TOutput>;
 }
 declare module minerva.layout {
-    interface IMeasurePipe extends IPipe<def.measure.IAssets, def.measure.IState, def.measure.IOutput> {
+    interface IMeasurePipe extends IPipe<def.measure.IInput, def.measure.IState, def.measure.IOutput> {
     }
-    interface IArrangePipe extends IPipe<def.arrange.IAssets, def.arrange.IState, def.arrange.IOutput> {
+    interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
     }
-    interface IRenderPipe extends IPipe<def.render.IAssets, def.render.IState, def.render.IOutput> {
+    interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
     }
     enum DirtyFlags {
         Transform,
@@ -314,7 +314,7 @@ declare module minerva.layout {
         DownDirtyState,
         UpDirtyState,
     }
-    interface IUpdaterAssets extends def.measure.IAssets, def.arrange.IAssets, def.render.IAssets {
+    interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput {
     }
     class Updater {
         private $$measure;

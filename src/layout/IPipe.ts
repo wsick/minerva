@@ -1,15 +1,13 @@
 module minerva.layout {
-    export class IPipe<TAssets extends def.IPipeAssets, TState extends def.IPipeState, TOutput extends def.IPipeOutput> {
-        def: def.IPipeDef<TAssets, TState, TOutput>;
-        assets: TAssets;
+    export class IPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput> {
+        def: def.IPipeDef<TInput, TState, TOutput>;
         state: TState;
         output: TOutput;
     }
 
-    export function createPipe<TAssets extends def.IPipeAssets, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipeDef<TAssets, TState, TOutput>, assets): IPipe<TAssets, TState, TOutput> {
-        return <IPipe<TAssets, TState, TOutput>> {
+    export function createPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipeDef<TInput, TState, TOutput>): IPipe<TInput, TState, TOutput> {
+        return <IPipe<TInput, TState, TOutput>> {
             def: pipedef,
-            assets: assets,
             state: pipedef.createState(),
             output: pipedef.createOutput()
         };

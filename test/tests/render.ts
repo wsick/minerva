@@ -18,8 +18,8 @@ module tests.render {
     }
 
     var mock = {
-        assets: function (): render.IAssets {
-            return <render.IAssets> {
+        assets: function (): render.IInput {
+            return <render.IInput> {
                 totalIsRenderVisible: true,
                 totalOpacity: 1.0,
                 surfaceBoundsWithChildren: new Rect(),

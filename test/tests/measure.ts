@@ -10,8 +10,8 @@ module tests.measure {
     import Size = minerva.Size;
 
     var mock = {
-        assets: function (): measure.IAssets {
-            return <measure.IAssets> {
+        assets: function (): measure.IInput {
+            return <measure.IInput> {
                 width: NaN,
                 height: NaN,
                 minWidth: 0,

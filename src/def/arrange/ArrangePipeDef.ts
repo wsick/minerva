@@ -1,8 +1,8 @@
 module minerva.def.arrange {
     export interface IArrangeTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, finalRect: Rect):boolean;
+        (input: IInput, state: IState, output: IOutput, finalRect: Rect):boolean;
     }
-    export interface IAssets extends IPipeAssets {
+    export interface IInput extends IPipeInput {
         hiddenDesire: Size;
     }
     export interface IState extends IPipeState {
@@ -10,7 +10,7 @@ module minerva.def.arrange {
     export interface IOutput extends IPipeOutput {
     }
 
-    export class ArrangePipe extends PipeDef<IArrangeTapin, IAssets, IState, IOutput> {
+    export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('applyRounding', null)

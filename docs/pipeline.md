@@ -6,20 +6,19 @@
     * `addTapinAfter(name, tapin, after)`
     * `replaceTapin(name, tapin)`
     * `removeTapin(name)`
-* A pipe also contains 3 methods to configure parameters
-    * `initAssets(assets)`
-    * `initState(state)`
-    * `initOutput(output)`
+* A pipe also contains methods to configure state and output
+    * `createState()`
+    * `createOutput()`
 
 ## Tapin
-* A tapin is a function that takes assets, state, output as parameters
-* A tapin has a name to reference
+* A tapin is a function that takes input, state, output as parameters
+* A tapin is registered in the pipeline with a name
 * A tapin must return `true`/`false`.  If `false` or nothing is returned, then pipeline will abort.
 * A tapin will receive the following 3 input parameters.
-    * `assets`
+    * `input`
         * Pipeline input
         * Read-only (should not be mutated)
-        * Because immutable, assets coming from another pipeline don't need to be copied 
+        * Because immutable, input coming from another pipeline don't need to be copied 
     * `state`
         * Pipeline state parameters
         * Can be mutated by a tapin that is used in a latter tapin

@@ -1,8 +1,8 @@
 module minerva.def.render {
     export interface IRenderTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, ctx: RenderContext, region: Rect):boolean;
+        (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect):boolean;
     }
-    export interface IAssets extends IPipeAssets {
+    export interface IInput extends IPipeInput {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         surfaceBoundsWithChildren: Rect;
@@ -25,7 +25,7 @@ module minerva.def.render {
         Draw(ctx: RenderContext);
     }
 
-    export class RenderPipeDef extends PipeDef<IRenderTapin, IAssets, IState, IOutput> {
+    export class RenderPipeDef extends PipeDef<IRenderTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('validate', tapins.validate)
@@ -39,9 +39,15 @@ module minerva.def.render {
                 .addTapin('restoreContext', tapins.restoreContext);
         }
 
-        initState (state: IState) {
-            if (!state.renderRegion)
-                state.renderRegion = new Rect();
+        createState (): IState {
+            return <IState> {
+                renderRegion: new Rect()
+            };
+        }
+
+        createOutput (): IOutput {
+            return <IOutput> {
+            };
         }
     }
 }

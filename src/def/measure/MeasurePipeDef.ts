@@ -1,8 +1,8 @@
 module minerva.def.measure {
     export interface IMeasureTapin extends ITapin {
-        (assets: IAssets, state: IState, output: IOutput, availableSize: Size):boolean;
+        (input: IInput, state: IState, output: IOutput, availableSize: Size):boolean;
     }
-    export interface IAssets extends IPipeAssets {
+    export interface IInput extends IPipeInput {
         width: number;
         height: number;
         minWidth: number;
@@ -27,7 +27,7 @@ module minerva.def.measure {
         dirtyFlags: layout.DirtyFlags;
     }
 
-    export class MeasurePipeDef extends PipeDef<IMeasureTapin, IAssets, IState, IOutput> {
+    export class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('validate', tapins.validate)

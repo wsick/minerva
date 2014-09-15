@@ -1,9 +1,9 @@
 module minerva.layout {
-    export interface IMeasurePipe extends IPipe<def.measure.IAssets, def.measure.IState, def.measure.IOutput> {
+    export interface IMeasurePipe extends IPipe<def.measure.IInput, def.measure.IState, def.measure.IOutput> {
     }
-    export interface IArrangePipe extends IPipe<def.arrange.IAssets, def.arrange.IState, def.arrange.IOutput> {
+    export interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
     }
-    export interface IRenderPipe extends IPipe<def.render.IAssets, def.render.IState, def.render.IOutput> {
+    export interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
     }
 
     export enum DirtyFlags {
@@ -29,9 +29,9 @@ module minerva.layout {
         UpDirtyState = Bounds | Invalidate,
     }
 
-    var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeAssets, def.IPipeState, def.IPipeOutput>();
+    var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeInput, def.IPipeState, def.IPipeOutput>();
 
-    export interface IUpdaterAssets extends def.measure.IAssets, def.arrange.IAssets, def.render.IAssets {
+    export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput {
     }
 
     export class Updater {
@@ -74,51 +74,53 @@ module minerva.layout {
         }
 
         setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
-            this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE, this.assets);
+            this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
         setArrangePipe (pipedef?: def.arrange.ArrangePipe): Updater {
-            this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE, this.assets);
+            this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
         setRenderPipe (pipedef?: def.render.RenderPipeDef): Updater {
-            this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE, this.assets);
+            this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
-            var myassets = this.assets;
+            var input = this.assets;
             var output = pipe.output;
 
-            output.dirtyFlags = myassets.dirtyFlags;
-            Size.copyTo(myassets.previousConstraint, output.previousConstraint);
-            Size.copyTo(myassets.hiddenDesire, output.hiddenDesire);
+            output.dirtyFlags = input.dirtyFlags;
+            Size.copyTo(input.previousConstraint, output.previousConstraint);
+            Size.copyTo(input.hiddenDesire, output.hiddenDesire);
 
-            var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
+            var success = pipe.def.run(input, pipe.state, output, availableSize);
 
-            Size.copyTo(output.previousConstraint, myassets.previousConstraint);
-            Size.copyTo(output.desiredSize, myassets.desiredSize);
-            Size.copyTo(output.hiddenDesire, myassets.hiddenDesire);
-            myassets.dirtyFlags = output.dirtyFlags;
+            Size.copyTo(output.previousConstraint, input.previousConstraint);
+            Size.copyTo(output.desiredSize, input.desiredSize);
+            Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+            input.dirtyFlags = output.dirtyFlags;
 
             return success;
         }
 
         arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
+            var input = this.assets;
             var output = pipe.output;
 
-            var success = pipe.def.run(pipe.assets, pipe.state, output, finalRect);
+            var success = pipe.def.run(input, pipe.state, output, finalRect);
 
             return success;
         }
 
         render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
-            return pipe.def.run(pipe.assets, pipe.state, null, ctx, region);
+            var input = this.assets;
+            return pipe.def.run(input, pipe.state, null, ctx, region);
         }
     }
 }

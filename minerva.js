@@ -1271,9 +1271,14 @@ var minerva;
                     _super.call(this);
                     this.addTapin('validate', render.tapins.validate).addTapin('validateRegion', render.tapins.validateRegion).addTapin('prepareContext', render.tapins.prepareContext).addTapin('applyClip', render.tapins.applyClip).addTapin('preRender', render.tapins.preRender).addTapin('doRender', render.tapins.doRender).addTapin('postRender', render.tapins.postRender).addTapin('renderChildren', render.tapins.renderChildren).addTapin('restoreContext', render.tapins.restoreContext);
                 }
-                RenderPipeDef.prototype.initState = function (state) {
-                    if (!state.renderRegion)
-                        state.renderRegion = new minerva.Rect();
+                RenderPipeDef.prototype.createState = function () {
+                    return {
+                        renderRegion: new minerva.Rect()
+                    };
+                };
+
+                RenderPipeDef.prototype.createOutput = function () {
+                    return {};
                 };
                 return RenderPipeDef;
             })(def.PipeDef);
@@ -1453,10 +1458,9 @@ var minerva;
         })();
         layout.IPipe = IPipe;
 
-        function createPipe(pipedef, assets) {
+        function createPipe(pipedef) {
             return {
                 def: pipedef,
-                assets: assets,
                 state: pipedef.createState(),
                 output: pipedef.createOutput()
             };
@@ -1521,51 +1525,53 @@ var minerva;
                 this.$$render = null;
             }
             Updater.prototype.setMeasurePipe = function (pipedef) {
-                this.$$measure = layout.createPipe(pipedef || NO_PIPE, this.assets);
+                this.$$measure = layout.createPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.setArrangePipe = function (pipedef) {
-                this.$$arrange = layout.createPipe(pipedef || NO_PIPE, this.assets);
+                this.$$arrange = layout.createPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.setRenderPipe = function (pipedef) {
-                this.$$render = layout.createPipe(pipedef || NO_PIPE, this.assets);
+                this.$$render = layout.createPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.measure = function (availableSize) {
                 var pipe = this.$$measure;
-                var myassets = this.assets;
+                var input = this.assets;
                 var output = pipe.output;
 
-                output.dirtyFlags = myassets.dirtyFlags;
-                minerva.Size.copyTo(myassets.previousConstraint, output.previousConstraint);
-                minerva.Size.copyTo(myassets.hiddenDesire, output.hiddenDesire);
+                output.dirtyFlags = input.dirtyFlags;
+                minerva.Size.copyTo(input.previousConstraint, output.previousConstraint);
+                minerva.Size.copyTo(input.hiddenDesire, output.hiddenDesire);
 
-                var success = pipe.def.run(pipe.assets, pipe.state, output, availableSize);
+                var success = pipe.def.run(input, pipe.state, output, availableSize);
 
-                minerva.Size.copyTo(output.previousConstraint, myassets.previousConstraint);
-                minerva.Size.copyTo(output.desiredSize, myassets.desiredSize);
-                minerva.Size.copyTo(output.hiddenDesire, myassets.hiddenDesire);
-                myassets.dirtyFlags = output.dirtyFlags;
+                minerva.Size.copyTo(output.previousConstraint, input.previousConstraint);
+                minerva.Size.copyTo(output.desiredSize, input.desiredSize);
+                minerva.Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+                input.dirtyFlags = output.dirtyFlags;
 
                 return success;
             };
 
             Updater.prototype.arrange = function (finalRect) {
                 var pipe = this.$$arrange;
+                var input = this.assets;
                 var output = pipe.output;
 
-                var success = pipe.def.run(pipe.assets, pipe.state, output, finalRect);
+                var success = pipe.def.run(input, pipe.state, output, finalRect);
 
                 return success;
             };
 
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
-                return pipe.def.run(pipe.assets, pipe.state, null, ctx, region);
+                var input = this.assets;
+                return pipe.def.run(input, pipe.state, null, ctx, region);
             };
             return Updater;
         })();
