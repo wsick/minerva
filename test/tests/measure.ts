@@ -53,4 +53,18 @@ module tests.measure {
         assert.ok(!tapins.validate(assets, state, output, new Size(NaN, NaN)));
         assert.ok(!!output.error);
     });
+
+    QUnit.test("validateVisibility", (assert) => {
+        var assets = mock.assets();
+        var state = mock.state();
+        var output = mock.output();
+
+        assert.ok(tapins.validateVisibility(assets, state, output, new Size()));
+
+        assets.visibility = minerva.Visibility.Collapsed;
+        output.previousConstraint.width = 0;
+        output.previousConstraint.height = 0;
+        assert.ok(!tapins.validateVisibility(assets, state, output, new Size(1, 2)));
+        assert.deepEqual(output.previousConstraint, new Size(1, 2));
+    });
 }
