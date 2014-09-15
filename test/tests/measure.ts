@@ -124,6 +124,7 @@ module tests.measure {
         assert.deepEqual(state.availableSize, new Size(30, 50));
 
         //size+uselayoutrounding+min/max coerced
+        assets.margin.left = assets.margin.top = assets.margin.right = assets.margin.bottom = 0;
         assets.minWidth = 35;
         assets.maxHeight = 45;
         assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
@@ -146,5 +147,35 @@ module tests.measure {
         assert.equal(output.dirtyFlags, 0);
         assert.notStrictEqual(output.desiredSize, output.hiddenDesire);
         assert.deepEqual(output.hiddenDesire, new Size(35, 35));
+    });
+
+    QUnit.test("finishDesired", (assert) => {
+        var assets = mock.assets();
+        var state = mock.state();
+        var output = mock.output();
+
+        output.desiredSize.width = 50;
+        output.desiredSize.height = 50;
+        assert.ok(tapins.finishDesired(assets, state, output, new Size(25.2, 24.8)));
+        assert.deepEqual(output.desiredSize, new Size(25, 25));
+
+        //margin
+        output.desiredSize.width = 50;
+        output.desiredSize.height = 50;
+        assets.margin.left = 5;
+        assets.margin.top = 10;
+        assets.margin.right = 15;
+        assets.margin.bottom = 20;
+        assert.ok(tapins.finishDesired(assets, state, output, new Size(100, 75)));
+        assert.deepEqual(output.desiredSize, new Size(70, 75));
+
+        //margin+min/max coerced
+        assets.margin.left = assets.margin.top = assets.margin.right = assets.margin.bottom = 0;
+        output.desiredSize.width = 50;
+        output.desiredSize.height = 50;
+        assets.minWidth = 72.25;
+        assets.maxHeight = 65;
+        assert.ok(tapins.prepareOverride(assets, state, output, new Size(50, 100)));
+        assert.deepEqual(state.availableSize, new Size(72, 65));
     });
 }
