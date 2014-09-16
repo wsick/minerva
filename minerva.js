@@ -987,7 +987,7 @@ var minerva;
                 __extends(ArrangePipe, _super);
                 function ArrangePipe() {
                     _super.call(this);
-                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
+                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
                 }
                 ArrangePipe.prototype.createState = function () {
                     return {
@@ -1052,6 +1052,31 @@ var minerva;
     (function (def) {
         (function (arrange) {
             (function (tapins) {
+                tapins.calcStretched = function (input, state, output, finalRect) {
+                    var fr = state.finalRect;
+                    minerva.Rect.copyTo(fr, output.layoutSlot);
+
+                    minerva.Thickness.shrinkRect(input.margin, fr);
+
+                    var stretched = state.stretched;
+                    stretched.width = fr.width;
+                    stretched.height = fr.height;
+                    def.helpers.coerceSize(stretched, input);
+
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
                 tapins.checkNeedArrange = function (input, state, output, finalRect) {
                     if ((input.dirtyFlags & minerva.layout.DirtyFlags.Arrange) > 0)
                         return true;
@@ -1087,31 +1112,21 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.prepareOverride = function (input, state, output, finalRect) {
-                    var fs = state.finalSize;
-                    minerva.Size.copyTo(input.hiddenDesire, fs);
-                    var fr = state.finalRect;
-                    minerva.Rect.copyTo(fr, output.layoutSlot);
-
-                    minerva.Thickness.shrinkRect(input.margin, fr);
-
                     var framework = state.framework;
                     framework.width = 0;
                     framework.height = 0;
                     def.helpers.coerceSize(framework, input);
 
-                    var stretched = state.stretched;
-                    stretched.width = fr.width;
-                    stretched.height = fr.height;
-                    def.helpers.coerceSize(stretched, input);
-
                     if (input.horizontalAlignment === 3 /* Stretch */)
-                        framework.width = Math.max(framework.width, stretched.width);
+                        framework.width = Math.max(framework.width, state.stretched.width);
 
                     if (input.verticalAlignment === 3 /* Stretch */)
-                        framework.height = Math.max(framework.height, stretched.height);
+                        framework.height = Math.max(framework.height, state.stretched.height);
 
-                    fs.width = Math.max(fs.width, framework.width);
-                    fs.height = Math.max(fs.height, framework.height);
+                    var fs = state.finalSize;
+                    var hd = input.hiddenDesire;
+                    fs.width = Math.max(hd.width, framework.width);
+                    fs.height = Math.max(hd.height, framework.height);
 
                     return true;
                 };

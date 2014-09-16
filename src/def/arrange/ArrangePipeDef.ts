@@ -39,6 +39,7 @@ module minerva.def.arrange {
                 .addTapin('checkNeedArrange', tapins.checkNeedArrange)
                 //.addTapin('ensureMeasured', tapins.ensureMeasured) -> original only runs if haven't measured for Panel
                 .addTapin('invalidateFuture', tapins.invalidateFuture)
+                .addTapin('calcStretched', tapins.calcStretched)
                 .addTapin('prepareOverride', tapins.prepareOverride)
                 .addTapin('doOverride', null)
                 .addTapin('completeOverride', null)

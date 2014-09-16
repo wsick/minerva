@@ -177,6 +177,9 @@ declare module minerva.def.arrange.tapins {
     var applyRounding: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
+    var calcStretched: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
     var checkNeedArrange: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {

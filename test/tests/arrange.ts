@@ -12,7 +12,16 @@ module tests.arrange {
     var mock = {
         input: function (): arrange.IInput {
             return <arrange.IInput> {
+                width: NaN,
+                height: NaN,
+                minWidth: 0,
+                minHeight: 0,
+                maxWidth: Number.POSITIVE_INFINITY,
+                maxHeight: Number.POSITIVE_INFINITY,
                 useLayoutRounding: true,
+                margin: new minerva.Thickness(),
+                horizontalAlignment: minerva.HorizontalAlignment.Stretch,
+                verticalAlignment: minerva.VerticalAlignment.Stretch,
                 visibility: minerva.Visibility.Visible,
                 hiddenDesire: new Size(),
                 dirtyFlags: 0,
@@ -21,7 +30,10 @@ module tests.arrange {
         },
         state: function (): arrange.IState {
             return <arrange.IState> {
-                finalRect: new Rect()
+                finalRect: new Rect(),
+                finalSize: new Size(),
+                framework: new Size(),
+                stretched: new Size()
             };
         },
         output: function (): arrange.IOutput {
@@ -125,11 +137,34 @@ module tests.arrange {
         ok(true);
     });
 
+    QUnit.test("calcStretched", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        var fr = new Rect(0, 0, 100, 100);
+        Rect.copyTo(fr, state.finalRect);
+        input.margin.left = input.margin.top = input.margin.right = input.margin.bottom = 5;
+        assert.ok(tapins.calcStretched(input, state, output, fr));
+        assert.notStrictEqual(output.layoutSlot, fr);
+        assert.deepEqual(output.layoutSlot, new Rect(0, 0, 100, 100));
+        assert.deepEqual(state.stretched, new Size(90, 90));
+    });
+
     QUnit.test("prepareOverride", (assert) => {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
 
-        ok(true);
+        var fr = new Rect(0, 0, 100, 100);
+        Rect.copyTo(fr, state.finalRect);
+        input.width = 150;
+        input.height = 75;
+        input.hiddenDesire.width = 145;
+        input.hiddenDesire.height = 80;
+        state.stretched.width = 151;
+        state.stretched.height = 70;
+        assert.ok(tapins.prepareOverride(input, state, output, fr));
+        assert.deepEqual(state.finalSize, new Size(151, 80));
     });
 }
