@@ -117,11 +117,19 @@ module tests.arrange {
         assert.ok(tapins.checkNeedArrange(input, state, output, fr));
     });
 
-    QUnit.test("ensureMeasured", (assert) => {
+    QUnit.test("invalidateFuture", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
         ok(true);
     });
 
-    QUnit.test("applyMargin", (assert) => {
+    QUnit.test("prepareOverride", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
         ok(true);
     });
 }

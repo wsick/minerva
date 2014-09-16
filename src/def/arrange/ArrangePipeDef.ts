@@ -3,6 +3,15 @@ module minerva.def.arrange {
         (input: IInput, state: IState, output: IOutput, finalRect: Rect):boolean;
     }
     export interface IInput extends IPipeInput {
+        width: number;
+        height: number;
+        minWidth: number;
+        minHeight: number;
+        maxWidth: number;
+        maxHeight: number;
+        margin: Thickness;
+        horizontalAlignment: HorizontalAlignment;
+        verticalAlignment: VerticalAlignment;
         useLayoutRounding: boolean;
         visibility: Visibility;
         hiddenDesire: Size;
@@ -11,6 +20,9 @@ module minerva.def.arrange {
     }
     export interface IState extends IPipeState {
         finalRect: Rect;
+        finalSize: Size;
+        framework: Size;
+        stretched: Size;
     }
     export interface IOutput extends IPipeOutput {
         error: string;
@@ -25,11 +37,9 @@ module minerva.def.arrange {
                 .addTapin('validateFinalRect', tapins.validateFinalRect)
                 .addTapin('validateVisibility', tapins.validateVisibility)
                 .addTapin('checkNeedArrange', tapins.checkNeedArrange)
-                .addTapin('ensureMeasured', null)
-                .addTapin('applyMargin', null)
-                .addTapin('clearLayoutClip', null)
-                .addTapin('invalidateFuture', null)
-                .addTapin('prepareOverride', null)
+                //.addTapin('ensureMeasured', tapins.ensureMeasured) -> original only runs if haven't measured for Panel
+                .addTapin('invalidateFuture', tapins.invalidateFuture)
+                .addTapin('prepareOverride', tapins.prepareOverride)
                 .addTapin('doOverride', null)
                 .addTapin('completeOverride', null)
                 .addTapin('buildLayoutXform', null)
@@ -39,7 +49,10 @@ module minerva.def.arrange {
 
         createState(): IState {
             return {
-                finalRect: new Rect()
+                finalRect: new Rect(),
+                finalSize: new Size(),
+                framework: new Size(),
+                stretched: new Size()
             };
         }
 
