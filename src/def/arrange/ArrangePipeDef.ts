@@ -3,10 +3,12 @@ module minerva.def.arrange {
         (input: IInput, state: IState, output: IOutput, finalRect: Rect):boolean;
     }
     export interface IInput extends IPipeInput {
+        useLayoutRounding: boolean;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
     }
     export interface IState extends IPipeState {
+        finalRect: Rect;
     }
     export interface IOutput extends IPipeOutput {
         dirtyFlags: layout.DirtyFlags;
@@ -15,7 +17,7 @@ module minerva.def.arrange {
     export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor () {
             super();
-            this.addTapin('applyRounding', null)
+            this.addTapin('applyRounding', tapins.applyRounding)
                 .addTapin('validateFinalRect', null)
                 .addTapin('validateVisibility', null)
                 .addTapin('checkNeedArrange', null)
@@ -33,6 +35,7 @@ module minerva.def.arrange {
 
         createState (): IState {
             return {
+                finalRect: new Rect()
             };
         }
 
