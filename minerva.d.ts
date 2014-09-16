@@ -122,13 +122,18 @@ declare module minerva.def.arrange {
         (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean;
     }
     interface IInput extends IPipeInput {
+        useLayoutRounding: boolean;
+        visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
     }
     interface IState extends IPipeState {
+        finalRect: Rect;
     }
     interface IOutput extends IPipeOutput {
+        error: string;
         dirtyFlags: layout.DirtyFlags;
+        layoutSlot: Rect;
     }
     class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -137,6 +142,15 @@ declare module minerva.def.arrange {
         public prepare(input: IInput, state: IState, output: IOutput): void;
         public flush(input: IInput, state: IState, output: IOutput): void;
     }
+}
+declare module minerva.def.arrange.tapins {
+    var applyRounding: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
+    var validateFinalRect: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
+    var validateVisibility: IArrangeTapin;
 }
 declare module minerva.def.helpers {
     interface ISized {

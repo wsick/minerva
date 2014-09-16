@@ -4,6 +4,7 @@ module minerva.def.arrange {
     }
     export interface IInput extends IPipeInput {
         useLayoutRounding: boolean;
+        visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
     }
@@ -11,15 +12,17 @@ module minerva.def.arrange {
         finalRect: Rect;
     }
     export interface IOutput extends IPipeOutput {
+        error: string;
         dirtyFlags: layout.DirtyFlags;
+        layoutSlot: Rect;
     }
 
     export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('applyRounding', tapins.applyRounding)
-                .addTapin('validateFinalRect', null)
-                .addTapin('validateVisibility', null)
+                .addTapin('validateFinalRect', tapins.validateFinalRect)
+                .addTapin('validateVisibility', tapins.validateVisibility)
                 .addTapin('checkNeedArrange', null)
                 .addTapin('ensureMeasured', null)
                 .addTapin('applyMargin', null)
@@ -41,7 +44,9 @@ module minerva.def.arrange {
 
         createOutput (): IOutput {
             return {
-                dirtyFlags: 0
+                error: null,
+                dirtyFlags: 0,
+                layoutSlot: new Rect()
             };
         }
 

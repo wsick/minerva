@@ -944,15 +944,19 @@ var minerva;
                 __extends(ArrangePipe, _super);
                 function ArrangePipe() {
                     _super.call(this);
-                    this.addTapin('applyRounding', null).addTapin('validateFinalRect', null).addTapin('validateVisibility', null).addTapin('checkNeedArrange', null).addTapin('ensureMeasured', null).addTapin('applyMargin', null).addTapin('clearLayoutClip', null).addTapin('invalidateFuture', null).addTapin('prepareOverride', null).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
+                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', null).addTapin('ensureMeasured', null).addTapin('applyMargin', null).addTapin('clearLayoutClip', null).addTapin('invalidateFuture', null).addTapin('prepareOverride', null).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
                 }
                 ArrangePipe.prototype.createState = function () {
-                    return {};
+                    return {
+                        finalRect: new minerva.Rect()
+                    };
                 };
 
                 ArrangePipe.prototype.createOutput = function () {
                     return {
-                        dirtyFlags: 0
+                        error: null,
+                        dirtyFlags: 0,
+                        layoutSlot: new minerva.Rect()
                     };
                 };
 
@@ -966,6 +970,69 @@ var minerva;
                 return ArrangePipe;
             })(def.PipeDef);
             arrange.ArrangePipe = ArrangePipe;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                tapins.applyRounding = function (input, state, output, finalRect) {
+                    var fr = state.finalRect;
+                    if (input.useLayoutRounding) {
+                        fr.x = Math.round(finalRect.x);
+                        fr.y = Math.round(finalRect.y);
+                        fr.width = Math.round(finalRect.width);
+                        fr.height = Math.round(finalRect.height);
+                    } else {
+                        minerva.Rect.copyTo(finalRect, fr);
+                    }
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                tapins.validateFinalRect = function (input, state, output, finalRect) {
+                    var fr = state.finalRect;
+                    if (fr.width < 0 || fr.height < 0 || !isFinite(fr.width) || !isFinite(fr.height) || isNaN(fr.width) || isNaN(fr.height)) {
+                        output.error = "Invalid arguments to Arrange.";
+                        return false;
+                    }
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                tapins.validateVisibility = function (input, state, output, finalRect) {
+                    if (input.visibility !== 0 /* Visible */) {
+                        minerva.Rect.copyTo(state.finalRect, output.layoutSlot);
+                        return false;
+                    }
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
         })(def.arrange || (def.arrange = {}));
         var arrange = def.arrange;
     })(minerva.def || (minerva.def = {}));
