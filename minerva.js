@@ -737,6 +737,10 @@ var minerva;
             this.width = width;
             this.height = height;
         }
+        Rect.isEqual = function (rect1, rect2) {
+            return rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height;
+        };
+
         Rect.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
@@ -944,7 +948,7 @@ var minerva;
                 __extends(ArrangePipe, _super);
                 function ArrangePipe() {
                     _super.call(this);
-                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', null).addTapin('ensureMeasured', null).addTapin('applyMargin', null).addTapin('clearLayoutClip', null).addTapin('invalidateFuture', null).addTapin('prepareOverride', null).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
+                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('ensureMeasured', null).addTapin('applyMargin', null).addTapin('clearLayoutClip', null).addTapin('invalidateFuture', null).addTapin('prepareOverride', null).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
                 }
                 ArrangePipe.prototype.createState = function () {
                     return {
@@ -962,10 +966,12 @@ var minerva;
 
                 ArrangePipe.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
+                    minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
                 };
 
                 ArrangePipe.prototype.flush = function (input, state, output) {
                     input.dirtyFlags = output.dirtyFlags;
+                    minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
                 };
                 return ArrangePipe;
             })(def.PipeDef);
@@ -991,6 +997,25 @@ var minerva;
                         minerva.Rect.copyTo(finalRect, fr);
                     }
                     return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                tapins.checkNeedArrange = function (input, state, output, finalRect) {
+                    if ((input.dirtyFlags & minerva.layout.DirtyFlags.Arrange) > 0)
+                        return true;
+                    if (!minerva.Rect.isEqual(output.layoutSlot, state.finalRect))
+                        return true;
+                    return false;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;

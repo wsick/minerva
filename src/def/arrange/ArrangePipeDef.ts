@@ -7,6 +7,7 @@ module minerva.def.arrange {
         visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        layoutSlot: Rect;
     }
     export interface IState extends IPipeState {
         finalRect: Rect;
@@ -18,12 +19,12 @@ module minerva.def.arrange {
     }
 
     export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
-        constructor () {
+        constructor() {
             super();
             this.addTapin('applyRounding', tapins.applyRounding)
                 .addTapin('validateFinalRect', tapins.validateFinalRect)
                 .addTapin('validateVisibility', tapins.validateVisibility)
-                .addTapin('checkNeedArrange', null)
+                .addTapin('checkNeedArrange', tapins.checkNeedArrange)
                 .addTapin('ensureMeasured', null)
                 .addTapin('applyMargin', null)
                 .addTapin('clearLayoutClip', null)
@@ -36,13 +37,13 @@ module minerva.def.arrange {
             //...more
         }
 
-        createState (): IState {
+        createState(): IState {
             return {
                 finalRect: new Rect()
             };
         }
 
-        createOutput (): IOutput {
+        createOutput(): IOutput {
             return {
                 error: null,
                 dirtyFlags: 0,
@@ -50,12 +51,14 @@ module minerva.def.arrange {
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput) {
+        prepare(input: IInput, state: IState, output: IOutput) {
             output.dirtyFlags = input.dirtyFlags;
+            Rect.copyTo(input.layoutSlot, output.layoutSlot);
         }
 
-        flush (input: IInput, state: IState, output: IOutput) {
+        flush(input: IInput, state: IState, output: IOutput) {
             input.dirtyFlags = output.dirtyFlags;
+            Rect.copyTo(output.layoutSlot, input.layoutSlot);
         }
     }
 }

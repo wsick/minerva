@@ -53,6 +53,7 @@ declare module minerva {
         public width: number;
         public height: number;
         constructor(x?: number, y?: number, width?: number, height?: number);
+        static isEqual(rect1: Rect, rect2: Rect): boolean;
         static copyTo(src: Rect, dest: Rect): void;
         static roundOut(r: Rect): void;
         static intersection(dest: Rect, rect2: Rect): void;
@@ -126,6 +127,7 @@ declare module minerva.def.arrange {
         visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        layoutSlot: Rect;
     }
     interface IState extends IPipeState {
         finalRect: Rect;
@@ -145,6 +147,9 @@ declare module minerva.def.arrange {
 }
 declare module minerva.def.arrange.tapins {
     var applyRounding: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
+    var checkNeedArrange: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
     var validateFinalRect: IArrangeTapin;

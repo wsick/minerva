@@ -15,7 +15,8 @@ module tests.arrange {
                 useLayoutRounding: true,
                 visibility: minerva.Visibility.Visible,
                 hiddenDesire: new Size(),
-                dirtyFlags: 0
+                dirtyFlags: 0,
+                layoutSlot: new Rect()
             };
         },
         state: function (): arrange.IState {
@@ -96,7 +97,24 @@ module tests.arrange {
     });
 
     QUnit.test("checkNeedArrange", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        var fr = new Rect(0, 0, 50, 50);
+        Rect.copyTo(fr, state.finalRect);
+        var ls = output.layoutSlot;
+        ls.width = 50;
+        ls.height = 50;
+        assert.ok(!tapins.checkNeedArrange(input, state, output, fr));
+
+        input.dirtyFlags |= minerva.layout.DirtyFlags.Arrange;
+        assert.ok(tapins.checkNeedArrange(input, state, output, fr));
+        input.dirtyFlags = 0;
+
+        ls.width = 100;
+        ls.height = 100;
+        assert.ok(tapins.checkNeedArrange(input, state, output, fr));
     });
 
     QUnit.test("ensureMeasured", (assert) => {
