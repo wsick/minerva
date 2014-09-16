@@ -1013,9 +1013,7 @@ var minerva;
                 tapins.checkNeedArrange = function (input, state, output, finalRect) {
                     if ((input.dirtyFlags & minerva.layout.DirtyFlags.Arrange) > 0)
                         return true;
-                    if (!minerva.Rect.isEqual(output.layoutSlot, state.finalRect))
-                        return true;
-                    return false;
+                    return !minerva.Rect.isEqual(output.layoutSlot, state.finalRect);
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
