@@ -170,6 +170,8 @@ declare module minerva.def.arrange {
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
         layoutSlot: Rect;
+        renderSize: Size;
+        lastRenderSize: Size;
         layoutClip: Rect;
         isTopLevel: boolean;
     }
@@ -188,6 +190,8 @@ declare module minerva.def.arrange {
         arrangedSize: Size;
         layoutXform: number[];
         layoutClip: Rect;
+        renderSize: Size;
+        lastRenderSize: Size;
     }
     class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -205,6 +209,9 @@ declare module minerva.def.arrange.tapins {
 }
 declare module minerva.def.arrange.tapins {
     var buildLayoutXform: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
+    var buildRenderSize: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
     var calcStretched: IArrangeTapin;

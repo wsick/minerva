@@ -17,6 +17,8 @@ module minerva.def.arrange {
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
         layoutSlot: Rect;
+        renderSize: Size;
+        lastRenderSize: Size;
         layoutClip: Rect;
         isTopLevel: boolean;
     }
@@ -35,6 +37,8 @@ module minerva.def.arrange {
         arrangedSize: Size;
         layoutXform: number[];
         layoutClip: Rect;
+        renderSize: Size;
+        lastRenderSize: Size;
     }
 
     export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
@@ -53,8 +57,7 @@ module minerva.def.arrange {
                 .addTapin('calcVisualOffset', tapins.calcVisualOffset)
                 .addTapin('buildLayoutClip', tapins.buildLayoutClip)
                 .addTapin('buildLayoutXform', tapins.buildLayoutXform)
-                .addTapin('buildRenderSize', null);
-            //...more
+                .addTapin('buildRenderSize', tapins.buildRenderSize);
         }
 
         createState (): IState {
@@ -75,18 +78,25 @@ module minerva.def.arrange {
                 layoutSlot: new Rect(),
                 arrangedSize: new Size(),
                 layoutXform: mat3.identity(),
-                layoutClip: new Rect()
+                layoutClip: new Rect(),
+                renderSize: new Size(),
+                lastRenderSize: null
             };
         }
 
         prepare (input: IInput, state: IState, output: IOutput) {
             output.dirtyFlags = input.dirtyFlags;
             Rect.copyTo(input.layoutSlot, output.layoutSlot);
+            Size.copyTo(input.renderSize, output.renderSize);
+            output.lastRenderSize = null;
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
             input.dirtyFlags = output.dirtyFlags;
             Rect.copyTo(output.layoutSlot, input.layoutSlot);
+            Size.copyTo(output.renderSize, input.renderSize);
+            if (output.lastRenderSize)
+                input.lastRenderSize = output.lastRenderSize;
         }
     }
 }

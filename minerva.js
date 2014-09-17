@@ -1014,7 +1014,7 @@ var minerva;
                 __extends(ArrangePipe, _super);
                 function ArrangePipe() {
                     _super.call(this);
-                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', arrange.tapins.doOverride).addTapin('completeOverride', arrange.tapins.completeOverride).addTapin('calcVisualOffset', arrange.tapins.calcVisualOffset).addTapin('buildLayoutClip', arrange.tapins.buildLayoutClip).addTapin('buildLayoutXform', arrange.tapins.buildLayoutXform).addTapin('buildRenderSize', null);
+                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', arrange.tapins.doOverride).addTapin('completeOverride', arrange.tapins.completeOverride).addTapin('calcVisualOffset', arrange.tapins.calcVisualOffset).addTapin('buildLayoutClip', arrange.tapins.buildLayoutClip).addTapin('buildLayoutXform', arrange.tapins.buildLayoutXform).addTapin('buildRenderSize', arrange.tapins.buildRenderSize);
                 }
                 ArrangePipe.prototype.createState = function () {
                     return {
@@ -1034,18 +1034,25 @@ var minerva;
                         layoutSlot: new minerva.Rect(),
                         arrangedSize: new minerva.Size(),
                         layoutXform: mat3.identity(),
-                        layoutClip: new minerva.Rect()
+                        layoutClip: new minerva.Rect(),
+                        renderSize: new minerva.Size(),
+                        lastRenderSize: null
                     };
                 };
 
                 ArrangePipe.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
+                    minerva.Size.copyTo(input.renderSize, output.renderSize);
+                    output.lastRenderSize = null;
                 };
 
                 ArrangePipe.prototype.flush = function (input, state, output) {
                     input.dirtyFlags = output.dirtyFlags;
                     minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
+                    minerva.Size.copyTo(output.renderSize, input.renderSize);
+                    if (output.lastRenderSize)
+                        input.lastRenderSize = output.lastRenderSize;
                 };
                 return ArrangePipe;
             })(def.PipeDef);
@@ -1130,6 +1137,27 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.buildLayoutXform = function (input, state, output, finalRect) {
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                tapins.buildRenderSize = function (input, state, output, finalRect) {
+                    minerva.Size.copyTo(output.arrangedSize, output.renderSize);
+                    if (!minerva.Size.isEqual(input.renderSize, output.renderSize)) {
+                        if (!input.lastRenderSize) {
+                            output.lastRenderSize = input.renderSize;
+                        }
+                    }
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
