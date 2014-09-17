@@ -12,13 +12,6 @@ module minerva {
             this.height = height == null ? 0 : height;
         }
 
-        static isEqual (rect1: Rect, rect2: Rect): boolean {
-            return rect1.x === rect2.x
-                && rect1.y === rect2.y
-                && rect1.width === rect2.width
-                && rect1.height === rect2.height;
-        }
-
         static copyTo (src: Rect, dest: Rect) {
             dest.x = src.x;
             dest.y = src.y;
@@ -42,6 +35,18 @@ module minerva {
             dest.height = Math.max(0, Math.min(dest.y + dest.height, rect2.y + rect2.height) - y);
             dest.x = x;
             dest.y = y;
+        }
+
+        static isEqual (rect1: Rect, rect2: Rect): boolean {
+            return rect1.x === rect2.x
+                && rect1.y === rect2.y
+                && rect1.width === rect2.width
+                && rect1.height === rect2.height;
+        }
+
+        static isEmpty (src: Rect): boolean {
+            return src.width === 0
+                || src.height === 0;
         }
 
         static isContainedIn (src: Rect, test: Rect) {

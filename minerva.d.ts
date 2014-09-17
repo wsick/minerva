@@ -78,10 +78,11 @@ declare module minerva {
         public width: number;
         public height: number;
         constructor(x?: number, y?: number, width?: number, height?: number);
-        static isEqual(rect1: Rect, rect2: Rect): boolean;
         static copyTo(src: Rect, dest: Rect): void;
         static roundOut(r: Rect): void;
         static intersection(dest: Rect, rect2: Rect): void;
+        static isEqual(rect1: Rect, rect2: Rect): boolean;
+        static isEmpty(src: Rect): boolean;
         static isContainedIn(src: Rect, test: Rect): boolean;
     }
 }

@@ -19,7 +19,7 @@ module minerva.def.arrange {
         layoutSlot: Rect;
         renderSize: Size;
         lastRenderSize: Size;
-        layoutClip: Rect;
+        layoutClip: Rect; //NOTE: empty represents no layout clip
         isTopLevel: boolean;
     }
     export interface IState extends IPipeState {
@@ -98,7 +98,10 @@ module minerva.def.arrange {
         flush (input: IInput, state: IState, output: IOutput) {
             input.dirtyFlags = output.dirtyFlags;
             Rect.copyTo(output.layoutSlot, input.layoutSlot);
-            Rect.copyTo(output.layoutClip, input.layoutClip);
+            if (!Rect.isEqual(output.layoutClip, input.layoutClip)) {
+                Rect.copyTo(output.layoutClip, input.layoutClip);
+                //TODO: this._AddDirtyElement(_Dirty.LayoutClip)
+            }
             Size.copyTo(output.renderSize, input.renderSize);
             if (output.lastRenderSize)
                 input.lastRenderSize = output.lastRenderSize;

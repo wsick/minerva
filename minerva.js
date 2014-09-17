@@ -761,10 +761,6 @@ var minerva;
             this.width = width == null ? 0 : width;
             this.height = height == null ? 0 : height;
         }
-        Rect.isEqual = function (rect1, rect2) {
-            return rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height;
-        };
-
         Rect.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
@@ -788,6 +784,14 @@ var minerva;
             dest.height = Math.max(0, Math.min(dest.y + dest.height, rect2.y + rect2.height) - y);
             dest.x = x;
             dest.y = y;
+        };
+
+        Rect.isEqual = function (rect1, rect2) {
+            return rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height;
+        };
+
+        Rect.isEmpty = function (src) {
+            return src.width === 0 || src.height === 0;
         };
 
         Rect.isContainedIn = function (src, test) {
@@ -1044,6 +1048,7 @@ var minerva;
                 ArrangePipe.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
+                    minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
                     output.lastRenderSize = null;
                 };
@@ -1051,6 +1056,9 @@ var minerva;
                 ArrangePipe.prototype.flush = function (input, state, output) {
                     input.dirtyFlags = output.dirtyFlags;
                     minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
+                    if (!minerva.Rect.isEqual(output.layoutClip, input.layoutClip)) {
+                        minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
+                    }
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
                     if (output.lastRenderSize)
                         input.lastRenderSize = output.lastRenderSize;
@@ -1346,6 +1354,8 @@ var minerva;
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, finalRect) {
                     console.warn("Implement arrange.tapins.invalidateFuture");
+                    var lc = output.layoutClip;
+                    lc.x = lc.y = lc.width = lc.height = 0;
 
                     return true;
                 };
