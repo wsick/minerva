@@ -1,6 +1,15 @@
 module minerva {
-    export class Rect {
-        constructor (public x: number = 0, public y: number = 0, public width: number = 0, public height: number = 0) {
+    export class Rect implements IPoint, ISize {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+
+        constructor (x?: number, y?: number, width?: number, height?: number) {
+            this.x = x == null ? 0 : x;
+            this.y = y == null ? 0 : y;
+            this.width = width == null ? 0 : width;
+            this.height = height == null ? 0 : height;
         }
 
         static isEqual (rect1: Rect, rect2: Rect): boolean {
@@ -13,11 +22,6 @@ module minerva {
         static copyTo (src: Rect, dest: Rect) {
             dest.x = src.x;
             dest.y = src.y;
-            dest.width = src.width;
-            dest.height = src.height;
-        }
-
-        static copySizeTo (src: Rect, dest: Size) {
             dest.width = src.width;
             dest.height = src.height;
         }
@@ -38,6 +42,24 @@ module minerva {
             dest.height = Math.max(0, Math.min(dest.y + dest.height, rect2.y + rect2.height) - y);
             dest.x = x;
             dest.y = y;
+        }
+
+        static isContainedIn (src: Rect, test: Rect) {
+            var sl = src.x;
+            var st = src.y;
+            var sr = src.x + src.width;
+            var sb = src.y + src.height;
+
+            var tl = test.x;
+            var tt = test.y;
+            var tr = test.x + test.width;
+            var tb = test.y + test.height;
+
+            if (sl < tl || st < tt || sl > tr || st > tb) //src top-left is outside test
+                return false;
+            if (sr < tl || sb < tt || sr > tr || sb > tb) //src bottom-right is outside test
+                return false;
+            return true;
         }
     }
 }

@@ -756,14 +756,10 @@ var minerva;
 (function (minerva) {
     var Rect = (function () {
         function Rect(x, y, width, height) {
-            if (typeof x === "undefined") { x = 0; }
-            if (typeof y === "undefined") { y = 0; }
-            if (typeof width === "undefined") { width = 0; }
-            if (typeof height === "undefined") { height = 0; }
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
+            this.x = x == null ? 0 : x;
+            this.y = y == null ? 0 : y;
+            this.width = width == null ? 0 : width;
+            this.height = height == null ? 0 : height;
         }
         Rect.isEqual = function (rect1, rect2) {
             return rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height;
@@ -772,11 +768,6 @@ var minerva;
         Rect.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
-            dest.width = src.width;
-            dest.height = src.height;
-        };
-
-        Rect.copySizeTo = function (src, dest) {
             dest.width = src.width;
             dest.height = src.height;
         };
@@ -798,6 +789,24 @@ var minerva;
             dest.x = x;
             dest.y = y;
         };
+
+        Rect.isContainedIn = function (src, test) {
+            var sl = src.x;
+            var st = src.y;
+            var sr = src.x + src.width;
+            var sb = src.y + src.height;
+
+            var tl = test.x;
+            var tt = test.y;
+            var tr = test.x + test.width;
+            var tb = test.y + test.height;
+
+            if (sl < tl || st < tt || sl > tr || st > tb)
+                return false;
+            if (sr < tl || sb < tt || sr > tr || sb > tb)
+                return false;
+            return true;
+        };
         return Rect;
     })();
     minerva.Rect = Rect;
@@ -806,14 +815,16 @@ var minerva;
 (function (minerva) {
     var Size = (function () {
         function Size(width, height) {
-            if (typeof width === "undefined") { width = 0; }
-            if (typeof height === "undefined") { height = 0; }
-            this.width = width;
-            this.height = height;
+            this.width = width == null ? 0 : width;
+            this.height = height == null ? 0 : height;
         }
         Size.copyTo = function (src, dest) {
             dest.width = src.width;
             dest.height = src.height;
+        };
+
+        Size.isEqual = function (size1, size2) {
+            return size1.width === size2.width && size1.height === size2.height;
         };
         return Size;
     })();
@@ -1003,7 +1014,7 @@ var minerva;
                 __extends(ArrangePipe, _super);
                 function ArrangePipe() {
                     _super.call(this);
-                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', arrange.tapins.doOverride).addTapin('completeOverride', arrange.tapins.completeOverride).addTapin('calcVisualOffset', arrange.tapins.calcVisualOffset).addTapin('buildLayoutXform', arrange.tapins.buildLayoutXform).addTapin('buildRenderSize', null);
+                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', arrange.tapins.doOverride).addTapin('completeOverride', arrange.tapins.completeOverride).addTapin('calcVisualOffset', arrange.tapins.calcVisualOffset).addTapin('buildLayoutClip', arrange.tapins.buildLayoutClip).addTapin('buildLayoutXform', arrange.tapins.buildLayoutXform).addTapin('buildRenderSize', null);
                 }
                 ArrangePipe.prototype.createState = function () {
                     return {
@@ -1022,7 +1033,8 @@ var minerva;
                         dirtyFlags: 0,
                         layoutSlot: new minerva.Rect(),
                         arrangedSize: new minerva.Size(),
-                        layoutXform: mat3.identity()
+                        layoutXform: mat3.identity(),
+                        layoutClip: new minerva.Rect()
                     };
                 };
 
@@ -1058,6 +1070,51 @@ var minerva;
                     } else {
                         minerva.Rect.copyTo(finalRect, fr);
                     }
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                var testRect = new minerva.Rect();
+                var fwClip = new minerva.Rect();
+
+                tapins.buildLayoutClip = function (input, state, output, finalRect) {
+                    if (input.isTopLevel)
+                        return true;
+
+                    var layoutClip = output.layoutClip;
+                    var vo = state.visualOffset;
+
+                    minerva.Rect.copyTo(state.finalRect, output.layoutClip);
+                    layoutClip.x = Math.max(layoutClip.x - vo.x, 0);
+                    layoutClip.y = Math.max(layoutClip.y - vo.y, 0);
+
+                    if (input.useLayoutRounding) {
+                        layoutClip.x = Math.round(layoutClip.x);
+                        layoutClip.y = Math.round(layoutClip.y);
+                    }
+
+                    testRect.x = 0;
+                    testRect.y = 0;
+                    minerva.Size.copyTo(output.arrangedSize, testRect);
+                    if (!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, output.arrangedSize)) {
+                        fwClip.width = Number.POSITIVE_INFINITY;
+                        fwClip.height = Number.POSITIVE_INFINITY;
+                        def.helpers.coerceSize(fwClip, input);
+                        minerva.Rect.intersection(layoutClip, fwClip);
+                    } else {
+                        layoutClip.x = layoutClip.y = layoutClip.width = layoutClip.height = 0;
+                    }
+
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));

@@ -8,7 +8,7 @@ module minerva.def.helpers {
         maxHeight: number;
         useLayoutRounding: boolean;
     }
-    export function coerceSize (size: Size, assets: ISized) {
+    export function coerceSize (size: ISize, assets: ISized) {
         var cw = Math.max(assets.minWidth, size.width);
         var ch = Math.max(assets.minHeight, size.height);
 

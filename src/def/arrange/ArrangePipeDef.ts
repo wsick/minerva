@@ -17,6 +17,7 @@ module minerva.def.arrange {
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
         layoutSlot: Rect;
+        layoutClip: Rect;
         isTopLevel: boolean;
     }
     export interface IState extends IPipeState {
@@ -33,6 +34,7 @@ module minerva.def.arrange {
         layoutSlot: Rect;
         arrangedSize: Size;
         layoutXform: number[];
+        layoutClip: Rect;
     }
 
     export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
@@ -49,6 +51,7 @@ module minerva.def.arrange {
                 .addTapin('doOverride', tapins.doOverride) //must set arrangedSize
                 .addTapin('completeOverride', tapins.completeOverride)
                 .addTapin('calcVisualOffset', tapins.calcVisualOffset)
+                .addTapin('buildLayoutClip', tapins.buildLayoutClip)
                 .addTapin('buildLayoutXform', tapins.buildLayoutXform)
                 .addTapin('buildRenderSize', null);
             //...more
@@ -71,7 +74,8 @@ module minerva.def.arrange {
                 dirtyFlags: 0,
                 layoutSlot: new Rect(),
                 arrangedSize: new Size(),
-                layoutXform: mat3.identity()
+                layoutXform: mat3.identity(),
+                layoutClip: new Rect()
             };
         }
 

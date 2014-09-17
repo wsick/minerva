@@ -16,7 +16,11 @@ declare module minerva {
     }
 }
 declare module minerva {
-    class Point {
+    interface IPoint {
+        x: number;
+        y: number;
+    }
+    class Point implements IPoint {
         public x: number;
         public y: number;
         constructor(x?: number, y?: number);
@@ -68,7 +72,7 @@ declare module mat4 {
     function scale(mat: number[], x: number, y: number, z: number): number[];
 }
 declare module minerva {
-    class Rect {
+    class Rect implements IPoint, ISize {
         public x: number;
         public y: number;
         public width: number;
@@ -76,17 +80,22 @@ declare module minerva {
         constructor(x?: number, y?: number, width?: number, height?: number);
         static isEqual(rect1: Rect, rect2: Rect): boolean;
         static copyTo(src: Rect, dest: Rect): void;
-        static copySizeTo(src: Rect, dest: Size): void;
         static roundOut(r: Rect): void;
         static intersection(dest: Rect, rect2: Rect): void;
+        static isContainedIn(src: Rect, test: Rect): boolean;
     }
 }
 declare module minerva {
-    class Size {
+    interface ISize {
+        width: number;
+        height: number;
+    }
+    class Size implements ISize {
         public width: number;
         public height: number;
         constructor(width?: number, height?: number);
-        static copyTo(src: Size, dest: Size): void;
+        static copyTo(src: ISize, dest: ISize): void;
+        static isEqual(size1: ISize, size2: ISize): boolean;
     }
 }
 declare module minerva {
@@ -161,6 +170,7 @@ declare module minerva.def.arrange {
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
         layoutSlot: Rect;
+        layoutClip: Rect;
         isTopLevel: boolean;
     }
     interface IState extends IPipeState {
@@ -177,6 +187,7 @@ declare module minerva.def.arrange {
         layoutSlot: Rect;
         arrangedSize: Size;
         layoutXform: number[];
+        layoutClip: Rect;
     }
     class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -188,6 +199,9 @@ declare module minerva.def.arrange {
 }
 declare module minerva.def.arrange.tapins {
     var applyRounding: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
+    var buildLayoutClip: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
     var buildLayoutXform: IArrangeTapin;
@@ -229,7 +243,7 @@ declare module minerva.def.helpers {
         maxHeight: number;
         useLayoutRounding: boolean;
     }
-    function coerceSize(size: Size, assets: ISized): void;
+    function coerceSize(size: ISize, assets: ISized): void;
 }
 declare module minerva.def.measure {
     interface IMeasureTapin extends ITapin {
