@@ -215,6 +215,9 @@ declare module minerva.def.arrange.tapins {
     var buildRenderSize: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
+    var calcFlip: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
     var calcStretched: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {

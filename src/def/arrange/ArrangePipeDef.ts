@@ -55,6 +55,7 @@ module minerva.def.arrange {
                 .addTapin('prepareOverride', tapins.prepareOverride)
                 .addTapin('doOverride', tapins.doOverride) //must set arrangedSize
                 .addTapin('completeOverride', tapins.completeOverride)
+                .addTapin('calcFlip', tapins.calcFlip)
                 .addTapin('calcVisualOffset', tapins.calcVisualOffset)
                 .addTapin('buildLayoutClip', tapins.buildLayoutClip)
                 .addTapin('buildLayoutXform', tapins.buildLayoutXform)
