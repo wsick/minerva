@@ -37,7 +37,7 @@ module minerva.def.measure {
                 .addTapin('checkNeedMeasure', tapins.checkNeedMeasure)
                 .addTapin('invalidateFuture', tapins.invalidateFuture)
                 .addTapin('prepareOverride', tapins.prepareOverride)
-                .addTapin('doOverride', tapins.doOverride)
+                .addTapin('doOverride', tapins.doOverride) //must set desiredSize
                 .addTapin('completeOverride', tapins.completeOverride)
                 //NOTE: Impl aborts when (no parent or parent is Canvas) AND (self is Canvas or not a layout container)
                 .addTapin('finishDesired', tapins.finishDesired);

@@ -19,6 +19,17 @@ var minerva;
     })(minerva.VerticalAlignment || (minerva.VerticalAlignment = {}));
     var VerticalAlignment = minerva.VerticalAlignment;
 })(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var Point = (function () {
+        function Point(x, y) {
+            this.x = x == null ? 0 : x;
+            this.y = y == null ? 0 : y;
+        }
+        return Point;
+    })();
+    minerva.Point = Point;
+})(minerva || (minerva = {}));
 var vec2;
 (function (vec2) {
     var arrayType = (typeof Float32Array !== "undefined") ? Float32Array : Array;
@@ -765,6 +776,11 @@ var minerva;
             dest.height = src.height;
         };
 
+        Rect.copySizeTo = function (src, dest) {
+            dest.width = src.width;
+            dest.height = src.height;
+        };
+
         Rect.roundOut = function (r) {
             var x = Math.floor(r.x);
             var y = Math.floor(r.y);
@@ -987,14 +1003,16 @@ var minerva;
                 __extends(ArrangePipe, _super);
                 function ArrangePipe() {
                     _super.call(this);
-                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', null).addTapin('completeOverride', null).addTapin('buildLayoutXform', null).addTapin('buildRenderSize', null);
+                    this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', arrange.tapins.doOverride).addTapin('completeOverride', arrange.tapins.completeOverride).addTapin('calcVisualOffset', arrange.tapins.calcVisualOffset).addTapin('buildLayoutXform', arrange.tapins.buildLayoutXform).addTapin('buildRenderSize', null);
                 }
                 ArrangePipe.prototype.createState = function () {
                     return {
                         finalRect: new minerva.Rect(),
                         finalSize: new minerva.Size(),
                         framework: new minerva.Size(),
-                        stretched: new minerva.Size()
+                        stretched: new minerva.Size(),
+                        constrained: new minerva.Size(),
+                        visualOffset: new minerva.Point()
                     };
                 };
 
@@ -1002,7 +1020,9 @@ var minerva;
                     return {
                         error: null,
                         dirtyFlags: 0,
-                        layoutSlot: new minerva.Rect()
+                        layoutSlot: new minerva.Rect(),
+                        arrangedSize: new minerva.Size(),
+                        layoutXform: mat3.identity()
                     };
                 };
 
@@ -1052,6 +1072,21 @@ var minerva;
     (function (def) {
         (function (arrange) {
             (function (tapins) {
+                tapins.buildLayoutXform = function (input, state, output, finalRect) {
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
                 tapins.calcStretched = function (input, state, output, finalRect) {
                     var fr = state.finalRect;
                     minerva.Rect.copyTo(fr, output.layoutSlot);
@@ -1077,10 +1112,117 @@ var minerva;
     (function (def) {
         (function (arrange) {
             (function (tapins) {
+                tapins.calcVisualOffset = function (input, state, output, finalRect) {
+                    var vo = state.visualOffset;
+                    var fr = state.finalRect;
+                    var constrained = state.constrained;
+                    vo.x = fr.x;
+                    vo.y = fr.y;
+
+                    if (!input.isTopLevel) {
+                        switch (input.horizontalAlignment) {
+                            case 0 /* Left */:
+                                break;
+                            case 2 /* Right */:
+                                vo.x += fr.width - constrained.width;
+                                break;
+                            case 1 /* Center */:
+                                vo.x += (fr.width - constrained.width) * 0.5;
+                                break;
+                            default:
+                                vo.x += Math.max((fr.width - constrained.width) * 0.5, 0);
+                                break;
+                        }
+
+                        switch (input.verticalAlignment) {
+                            case 0 /* Top */:
+                                break;
+                            case 2 /* Bottom */:
+                                vo.y += fr.height - constrained.height;
+                                break;
+                            case 1 /* Center */:
+                                vo.y += (fr.height - constrained.height) * 0.5;
+                                break;
+                            default:
+                                vo.y += Math.max((fr.height - constrained.height) * 0.5, 0);
+                                break;
+                        }
+                    }
+
+                    if (input.useLayoutRounding) {
+                        vo.x = Math.round(vo.x);
+                        vo.y = Math.round(vo.y);
+                    }
+
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
                 tapins.checkNeedArrange = function (input, state, output, finalRect) {
                     if ((input.dirtyFlags & minerva.layout.DirtyFlags.Arrange) > 0)
                         return true;
                     return !minerva.Rect.isEqual(output.layoutSlot, state.finalRect);
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                tapins.completeOverride = function (input, state, output, finalRect) {
+                    input.dirtyFlags &= ~minerva.layout.DirtyFlags.Arrange;
+
+                    var as = output.arrangedSize;
+                    if (input.horizontalAlignment === 3 /* Stretch */)
+                        as.width = Math.max(as.width, state.framework.width);
+
+                    if (input.verticalAlignment === 3 /* Stretch */)
+                        as.height = Math.max(as.height, state.framework.height);
+
+                    if (input.useLayoutRounding) {
+                        as.width = Math.round(as.width);
+                        as.height = Math.round(as.height);
+                    }
+
+                    var constrained = state.constrained;
+                    minerva.Size.copyTo(as, constrained);
+                    def.helpers.coerceSize(constrained, input);
+                    constrained.width = Math.min(constrained.width, as.width);
+                    constrained.height = Math.min(constrained.height, as.height);
+                    return true;
+                };
+            })(arrange.tapins || (arrange.tapins = {}));
+            var tapins = arrange.tapins;
+        })(def.arrange || (def.arrange = {}));
+        var arrange = def.arrange;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (arrange) {
+            (function (tapins) {
+                tapins.doOverride = function (input, state, output, finalRect) {
+                    output.arrangedSize.width = 0;
+                    output.arrangedSize.height = 0;
+                    return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;

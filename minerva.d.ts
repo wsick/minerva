@@ -15,6 +15,13 @@ declare module minerva {
         Stretch = 3,
     }
 }
+declare module minerva {
+    class Point {
+        public x: number;
+        public y: number;
+        constructor(x?: number, y?: number);
+    }
+}
 declare module vec2 {
     function createFrom(x: number, y: number): number[];
 }
@@ -69,6 +76,7 @@ declare module minerva {
         constructor(x?: number, y?: number, width?: number, height?: number);
         static isEqual(rect1: Rect, rect2: Rect): boolean;
         static copyTo(src: Rect, dest: Rect): void;
+        static copySizeTo(src: Rect, dest: Size): void;
         static roundOut(r: Rect): void;
         static intersection(dest: Rect, rect2: Rect): void;
     }
@@ -153,17 +161,22 @@ declare module minerva.def.arrange {
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
         layoutSlot: Rect;
+        isTopLevel: boolean;
     }
     interface IState extends IPipeState {
         finalRect: Rect;
         finalSize: Size;
         framework: Size;
         stretched: Size;
+        constrained: Size;
+        visualOffset: Point;
     }
     interface IOutput extends IPipeOutput {
         error: string;
         dirtyFlags: layout.DirtyFlags;
         layoutSlot: Rect;
+        arrangedSize: Size;
+        layoutXform: number[];
     }
     class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -177,10 +190,22 @@ declare module minerva.def.arrange.tapins {
     var applyRounding: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
+    var buildLayoutXform: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
     var calcStretched: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
+    var calcVisualOffset: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
     var checkNeedArrange: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
+    var completeOverride: IArrangeTapin;
+}
+declare module minerva.def.arrange.tapins {
+    var doOverride: IArrangeTapin;
 }
 declare module minerva.def.arrange.tapins {
     var invalidateFuture: IArrangeTapin;

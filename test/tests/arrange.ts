@@ -167,4 +167,20 @@ module tests.arrange {
         assert.ok(tapins.prepareOverride(input, state, output, fr));
         assert.deepEqual(state.finalSize, new Size(151, 80));
     });
+
+    QUnit.test("doOverride", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        ok(true);
+    });
+
+    QUnit.test("completeOverride", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+
+    });
 }
