@@ -29,6 +29,7 @@ module minerva.def.arrange {
         stretched: Size;
         constrained: Size;
         visualOffset: Point;
+        flipHorizontal: boolean;
     }
     export interface IOutput extends IPipeOutput {
         error: string;
@@ -67,7 +68,8 @@ module minerva.def.arrange {
                 framework: new Size(),
                 stretched: new Size(),
                 constrained: new Size(),
-                visualOffset: new Point()
+                visualOffset: new Point(),
+                flipHorizontal: false
             };
         }
 

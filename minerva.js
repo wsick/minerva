@@ -1023,7 +1023,8 @@ var minerva;
                         framework: new minerva.Size(),
                         stretched: new minerva.Size(),
                         constrained: new minerva.Size(),
-                        visualOffset: new minerva.Point()
+                        visualOffset: new minerva.Point(),
+                        flipHorizontal: false
                     };
                 };
 
@@ -1137,6 +1138,12 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.buildLayoutXform = function (input, state, output, finalRect) {
+                    var vo = state.visualOffset;
+                    var layoutXform = mat3.createTranslate(vo.x, vo.y, output.layoutXform);
+                    if (state.flipHorizontal) {
+                        mat3.translate(layoutXform, output.arrangedSize.width, 0);
+                        mat3.scale(layoutXform, -1, 1);
+                    }
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));

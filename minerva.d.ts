@@ -182,6 +182,7 @@ declare module minerva.def.arrange {
         stretched: Size;
         constrained: Size;
         visualOffset: Point;
+        flipHorizontal: boolean;
     }
     interface IOutput extends IPipeOutput {
         error: string;
