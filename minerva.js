@@ -761,6 +761,14 @@ var minerva;
             this.width = width == null ? 0 : width;
             this.height = height == null ? 0 : height;
         }
+        Rect.isEqual = function (rect1, rect2) {
+            return rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height;
+        };
+
+        Rect.isEmpty = function (src) {
+            return src.width === 0 || src.height === 0;
+        };
+
         Rect.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
@@ -784,14 +792,6 @@ var minerva;
             dest.height = Math.max(0, Math.min(dest.y + dest.height, rect2.y + rect2.height) - y);
             dest.x = x;
             dest.y = y;
-        };
-
-        Rect.isEqual = function (rect1, rect2) {
-            return rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height;
-        };
-
-        Rect.isEmpty = function (src) {
-            return src.width === 0 || src.height === 0;
         };
 
         Rect.isContainedIn = function (src, test) {

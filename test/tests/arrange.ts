@@ -181,6 +181,6 @@ module tests.arrange {
         var state = mock.state();
         var output = mock.output();
 
-
+        ok(true);
     });
 }
