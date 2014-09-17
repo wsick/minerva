@@ -90,6 +90,7 @@ module minerva.def.arrange {
         prepare (input: IInput, state: IState, output: IOutput) {
             output.dirtyFlags = input.dirtyFlags;
             Rect.copyTo(input.layoutSlot, output.layoutSlot);
+            Rect.copyTo(input.layoutClip, output.layoutClip);
             Size.copyTo(input.renderSize, output.renderSize);
             output.lastRenderSize = null;
         }
@@ -97,6 +98,7 @@ module minerva.def.arrange {
         flush (input: IInput, state: IState, output: IOutput) {
             input.dirtyFlags = output.dirtyFlags;
             Rect.copyTo(output.layoutSlot, input.layoutSlot);
+            Rect.copyTo(output.layoutClip, input.layoutClip);
             Size.copyTo(output.renderSize, input.renderSize);
             if (output.lastRenderSize)
                 input.lastRenderSize = output.lastRenderSize;
