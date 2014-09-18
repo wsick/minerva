@@ -12,7 +12,7 @@ module tests.arrange {
     import DirtyFlags = minerva.layout.DirtyFlags;
     import UIFlags = minerva.layout.UIFlags;
 
-    function typedToArray (typed) {
+    function typedToArray(typed) {
         var arr = [];
         for (var i = 0; i < typed.length; i++) {
             arr.push(typed[i]);
@@ -242,7 +242,19 @@ module tests.arrange {
         var state = mock.state();
         var output = mock.output();
 
-        assert.ok(false);
+        output.layoutClip = new Rect(0, 0, 0, 0);
+        input.isTopLevel = true;
+        assert.ok(tapins.buildLayoutClip(input, state, output, new Rect()));
+        assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
+
+        input.isTopLevel = false;
+        state.visualOffset = new Point(5, 15);
+        state.finalRect = new Rect(5, 15, 200, 300);
+        output.arrangedSize = new Size(100, 100);
+        input.layoutClip = new Rect(0, 0, 0, 0);
+        assert.ok(tapins.buildLayoutClip(input, state, output, new Rect()));
+        assert.deepEqual(output.layoutClip, new Rect(0, 0, 200, 300));
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.LayoutClip, DirtyFlags.LayoutClip);
     });
 
     QUnit.test("buildLayoutXform", (assert) => {
