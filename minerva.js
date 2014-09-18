@@ -1365,10 +1365,11 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, finalRect) {
-                    console.warn("Implement arrange.tapins.invalidateFuture");
                     var lc = output.layoutClip;
                     lc.x = lc.y = lc.width = lc.height = 0;
-
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.LocalTransform;
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.LocalProjection;
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));

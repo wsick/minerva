@@ -8,6 +8,8 @@ module tests.arrange {
     import tapins = minerva.def.arrange.tapins;
     import Rect = minerva.Rect;
     import Size = minerva.Size;
+    import DirtyFlags = minerva.layout.DirtyFlags;
+    import UIFlags = minerva.layout.UIFlags;
 
     var mock = {
         input: function (): arrange.IInput {
@@ -24,8 +26,9 @@ module tests.arrange {
                 verticalAlignment: minerva.VerticalAlignment.Stretch,
                 visibility: minerva.Visibility.Visible,
                 hiddenDesire: new Size(),
+                layoutSlot: new Rect(),
                 dirtyFlags: 0,
-                layoutSlot: new Rect()
+                uiFlags: 0
             };
         },
         state: function (): arrange.IState {
@@ -40,7 +43,13 @@ module tests.arrange {
             return <arrange.IOutput> {
                 error: null,
                 layoutSlot: new Rect(),
-                dirtyFlags: 0
+                arrangedSize: new Size(),
+                layoutXform: mat3.identity(),
+                layoutClip: new Rect(),
+                renderSize: new Size(),
+                lastRenderSize: new Size(),
+                dirtyFlags: 0,
+                uiFlags: 0
             }
         }
     };
@@ -134,7 +143,9 @@ module tests.arrange {
         var state = mock.state();
         var output = mock.output();
 
-        ok(true);
+        assert.ok(tapins.invalidateFuture(input, state, output, new Rect()));
+        assert.strictEqual(output.dirtyFlags, DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Bounds);
+        assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
     });
 
     QUnit.test("calcStretched", (assert) => {
