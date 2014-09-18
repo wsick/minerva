@@ -8,6 +8,7 @@ module tests.arrange {
     import tapins = minerva.def.arrange.tapins;
     import Rect = minerva.Rect;
     import Size = minerva.Size;
+    import Point = minerva.Point;
     import DirtyFlags = minerva.layout.DirtyFlags;
     import UIFlags = minerva.layout.UIFlags;
 
@@ -36,7 +37,10 @@ module tests.arrange {
                 finalRect: new Rect(),
                 finalSize: new Size(),
                 framework: new Size(),
-                stretched: new Size()
+                stretched: new Size(),
+                constrained: new Size(),
+                visualOffset: new Point(),
+                flipHorizontal: false
             };
         },
         output: function (): arrange.IOutput {
@@ -192,6 +196,23 @@ module tests.arrange {
         var state = mock.state();
         var output = mock.output();
 
-        ok(true);
+        output.dirtyFlags |= DirtyFlags.Arrange;
+        output.arrangedSize.width = 100;
+        output.arrangedSize.height = 100;
+        state.framework.width = 150.6;
+        state.framework.height = 95.3;
+        assert.ok(tapins.completeOverride(input, state, output, new Rect()));
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.Arrange, 0);
+        assert.deepEqual(output.arrangedSize, new Size(151, 100));
+        assert.deepEqual(state.constrained, new Size(151, 100));
+    });
+
+    QUnit.test("calcFlip", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        assert.ok(tapins.calcFlip(input, state, output, new Rect()));
+        assert.strictEqual(state.flipHorizontal, false);
     });
 }
