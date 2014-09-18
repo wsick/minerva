@@ -215,4 +215,17 @@ module tests.arrange {
         assert.ok(tapins.calcFlip(input, state, output, new Rect()));
         assert.strictEqual(state.flipHorizontal, false);
     });
+
+    QUnit.test("calcVisualOffset", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        state.finalRect = new Rect(100, 33, 323, 900);
+        state.constrained = new Size(350, 523);
+        input.verticalAlignment = minerva.VerticalAlignment.Center;
+        input.horizontalAlignment = minerva.HorizontalAlignment.Center;
+        assert.ok(tapins.calcVisualOffset(input, state, output, new Rect()));
+        assert.deepEqual(state.visualOffset, new Point(87, 222));
+    });
 }
