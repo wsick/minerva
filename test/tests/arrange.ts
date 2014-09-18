@@ -12,6 +12,14 @@ module tests.arrange {
     import DirtyFlags = minerva.layout.DirtyFlags;
     import UIFlags = minerva.layout.UIFlags;
 
+    function typedToArray (typed) {
+        var arr = [];
+        for (var i = 0; i < typed.length; i++) {
+            arr.push(typed[i]);
+        }
+        return arr;
+    }
+
     var mock = {
         input: function (): arrange.IInput {
             return <arrange.IInput> {
@@ -227,5 +235,44 @@ module tests.arrange {
         input.horizontalAlignment = minerva.HorizontalAlignment.Center;
         assert.ok(tapins.calcVisualOffset(input, state, output, new Rect()));
         assert.deepEqual(state.visualOffset, new Point(87, 222));
+    });
+
+    QUnit.test("buildLayoutClip", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        assert.ok(false);
+    });
+
+    QUnit.test("buildLayoutXform", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        state.visualOffset = new Point(150, 200);
+        assert.ok(tapins.buildLayoutXform(input, state, output, new Rect()));
+        assert.deepEqual(typedToArray(output.layoutXform), [1, 0, 150, 0, 1, 200, 0, 0, 1]);
+
+        output.arrangedSize.width = 100;
+        state.flipHorizontal = true;
+        assert.ok(tapins.buildLayoutXform(input, state, output, new Rect()));
+        assert.deepEqual(typedToArray(output.layoutXform), [-1, 0, -250, 0, 1, 200, 0, 0, 1]);
+    });
+
+    QUnit.test("buildRenderSize", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        input.renderSize = new Size(100, 200);
+        output.arrangedSize = new Size(250, 300);
+        output.uiFlags = 0;
+        assert.ok(tapins.buildRenderSize(input, state, output, new Rect()));
+        assert.deepEqual(output.renderSize, output.arrangedSize);
+        assert.notStrictEqual(output.renderSize, output.arrangedSize);
+        assert.deepEqual(output.lastRenderSize, input.renderSize);
+        assert.notStrictEqual(output.lastRenderSize, input.renderSize);
+        assert.strictEqual(output.uiFlags, UIFlags.SizeHint);
     });
 }

@@ -3,7 +3,7 @@ module minerva.def.arrange.tapins {
         Size.copyTo(output.arrangedSize, output.renderSize);
         if (!Size.isEqual(input.renderSize, output.renderSize)) {
             if (!input.lastRenderSize) {
-                output.lastRenderSize = input.renderSize;
+                Size.copyTo(input.renderSize, output.lastRenderSize);
                 output.uiFlags |= layout.UIFlags.SizeHint;
             }
         }

@@ -1181,7 +1181,7 @@ var minerva;
                     minerva.Size.copyTo(output.arrangedSize, output.renderSize);
                     if (!minerva.Size.isEqual(input.renderSize, output.renderSize)) {
                         if (!input.lastRenderSize) {
-                            output.lastRenderSize = input.renderSize;
+                            minerva.Size.copyTo(input.renderSize, output.lastRenderSize);
                             output.uiFlags |= 8192 /* SizeHint */;
                         }
                     }
