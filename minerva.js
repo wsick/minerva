@@ -1036,6 +1036,7 @@ var minerva;
                     return {
                         error: null,
                         dirtyFlags: 0,
+                        uiFlags: 0,
                         layoutSlot: new minerva.Rect(),
                         arrangedSize: new minerva.Size(),
                         layoutXform: mat3.identity(),
@@ -1047,6 +1048,7 @@ var minerva;
 
                 ArrangePipe.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
+                    output.uiFlags = input.uiFlags;
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
                     minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
@@ -1054,11 +1056,16 @@ var minerva;
                 };
 
                 ArrangePipe.prototype.flush = function (input, state, output) {
-                    input.dirtyFlags = output.dirtyFlags;
-                    minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
-                    if (!minerva.Rect.isEqual(output.layoutClip, input.layoutClip)) {
-                        minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
+                    var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+                    if (newDirty > 0) {
                     }
+                    var newUi = output.uiFlags & ~input.uiFlags;
+                    if (newUi > 0) {
+                    }
+                    input.dirtyFlags = output.dirtyFlags;
+                    input.uiFlags = output.uiFlags;
+                    minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
+                    minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
                     if (output.lastRenderSize)
                         input.lastRenderSize = output.lastRenderSize;
@@ -1131,6 +1138,10 @@ var minerva;
                         layoutClip.x = layoutClip.y = layoutClip.width = layoutClip.height = 0;
                     }
 
+                    if (!minerva.Rect.isEqual(output.layoutClip, input.layoutClip)) {
+                        output.dirtyFlags |= minerva.layout.DirtyFlags.LayoutClip;
+                    }
+
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
@@ -1171,6 +1182,7 @@ var minerva;
                     if (!minerva.Size.isEqual(input.renderSize, output.renderSize)) {
                         if (!input.lastRenderSize) {
                             output.lastRenderSize = input.renderSize;
+                            output.uiFlags |= 8192 /* SizeHint */;
                         }
                     }
                     return true;
@@ -1302,7 +1314,7 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, finalRect) {
-                    input.dirtyFlags &= ~minerva.layout.DirtyFlags.Arrange;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.Arrange;
 
                     var as = output.arrangedSize;
                     if (input.horizontalAlignment === 3 /* Stretch */)
@@ -1996,6 +2008,19 @@ var minerva;
             DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.Invalidate] = "UpDirtyState";
         })(layout.DirtyFlags || (layout.DirtyFlags = {}));
         var DirtyFlags = layout.DirtyFlags;
+        (function (UIFlags) {
+            UIFlags[UIFlags["None"] = 0] = "None";
+
+            UIFlags[UIFlags["RenderVisible"] = 0x02] = "RenderVisible";
+            UIFlags[UIFlags["HitTestVisible"] = 0x04] = "HitTestVisible";
+            UIFlags[UIFlags["TotalRenderVisible"] = 0x08] = "TotalRenderVisible";
+            UIFlags[UIFlags["TotalHitTestVisible"] = 0x10] = "TotalHitTestVisible";
+
+            UIFlags[UIFlags["ArrangeHint"] = 0x800] = "ArrangeHint";
+            UIFlags[UIFlags["MeasureHint"] = 0x1000] = "MeasureHint";
+            UIFlags[UIFlags["SizeHint"] = 0x2000] = "SizeHint";
+        })(layout.UIFlags || (layout.UIFlags = {}));
+        var UIFlags = layout.UIFlags;
 
         var NO_PIPE = new minerva.def.PipeDef();
 
@@ -2022,7 +2047,8 @@ var minerva;
                     totalOpacity: 1.0,
                     surfaceBoundsWithChildren: new minerva.Rect(),
                     renderXform: mat3.identity(),
-                    dirtyFlags: 0
+                    dirtyFlags: 0,
+                    uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */
                 };
                 this.$$measure = null;
                 this.$$arrange = null;
@@ -2055,7 +2081,7 @@ var minerva;
 
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
-                return pipe.def.run(this.assets, pipe.state, null, ctx, region);
+                return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
             };
             return Updater;
         })();

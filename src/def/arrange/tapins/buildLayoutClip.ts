@@ -30,6 +30,10 @@ module minerva.def.arrange.tapins {
             layoutClip.x = layoutClip.y = layoutClip.width = layoutClip.height = 0;
         }
 
+        if (!Rect.isEqual(output.layoutClip, input.layoutClip)) {
+            output.dirtyFlags |= layout.DirtyFlags.LayoutClip;
+        }
+
         return true;
     };
 }

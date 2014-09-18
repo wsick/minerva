@@ -16,6 +16,7 @@ module minerva.def.arrange {
         visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
         layoutSlot: Rect;
         renderSize: Size;
         lastRenderSize: Size;
@@ -40,6 +41,7 @@ module minerva.def.arrange {
         layoutClip: Rect;
         renderSize: Size;
         lastRenderSize: Size;
+        uiFlags: layout.UIFlags;
     }
 
     export class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
@@ -78,6 +80,7 @@ module minerva.def.arrange {
             return {
                 error: null,
                 dirtyFlags: 0,
+                uiFlags: 0,
                 layoutSlot: new Rect(),
                 arrangedSize: new Size(),
                 layoutXform: mat3.identity(),
@@ -89,6 +92,7 @@ module minerva.def.arrange {
 
         prepare (input: IInput, state: IState, output: IOutput) {
             output.dirtyFlags = input.dirtyFlags;
+            output.uiFlags = input.uiFlags;
             Rect.copyTo(input.layoutSlot, output.layoutSlot);
             Rect.copyTo(input.layoutClip, output.layoutClip);
             Size.copyTo(input.renderSize, output.renderSize);
@@ -96,12 +100,18 @@ module minerva.def.arrange {
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
-            input.dirtyFlags = output.dirtyFlags;
-            Rect.copyTo(output.layoutSlot, input.layoutSlot);
-            if (!Rect.isEqual(output.layoutClip, input.layoutClip)) {
-                Rect.copyTo(output.layoutClip, input.layoutClip);
-                //TODO: this._AddDirtyElement(_Dirty.LayoutClip)
+            var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+            if (newDirty > 0) {
+                //TODO: Add dirty elements
             }
+            var newUi = output.uiFlags & ~input.uiFlags;
+            if (newUi > 0) {
+                //TODO: Propagate flags up
+            }
+            input.dirtyFlags = output.dirtyFlags;
+            input.uiFlags = output.uiFlags;
+            Rect.copyTo(output.layoutSlot, input.layoutSlot);
+            Rect.copyTo(output.layoutClip, input.layoutClip);
             Size.copyTo(output.renderSize, input.renderSize);
             if (output.lastRenderSize)
                 input.lastRenderSize = output.lastRenderSize;

@@ -28,6 +28,18 @@ module minerva.layout {
             | Clip | LocalClip | LayoutClip | RenderVisibility | HitTestVisibility | ChildrenZIndices,
         UpDirtyState = Bounds | Invalidate,
     }
+    export enum UIFlags {
+        None = 0,
+
+        RenderVisible = 0x02,
+        HitTestVisible = 0x04,
+        TotalRenderVisible = 0x08,
+        TotalHitTestVisible = 0x10,
+
+        ArrangeHint = 0x800,
+        MeasureHint = 0x1000,
+        SizeHint = 0x2000,
+    }
 
     var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeInput, def.IPipeState, def.IPipeOutput>();
 
@@ -65,41 +77,42 @@ module minerva.layout {
 
             renderXform: mat3.identity(),
 
-            dirtyFlags: 0
+            dirtyFlags: 0,
+            uiFlags: UIFlags.RenderVisible | UIFlags.HitTestVisible
         };
 
-        constructor() {
+        constructor () {
             this.$$measure = null;
             this.$$arrange = null;
             this.$$render = null;
         }
 
-        setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater {
+        setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
             this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setArrangePipe(pipedef?: def.arrange.ArrangePipe): Updater {
+        setArrangePipe (pipedef?: def.arrange.ArrangePipe): Updater {
             this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setRenderPipe(pipedef?: def.render.RenderPipeDef): Updater {
+        setRenderPipe (pipedef?: def.render.RenderPipeDef): Updater {
             this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        measure(availableSize: Size): boolean {
+        measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
             return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
         }
 
-        arrange(finalRect: Rect): boolean {
+        arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
             return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
         }
 
-        render(ctx: def.render.RenderContext, region: Rect): boolean {
+        render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
         }

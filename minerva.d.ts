@@ -170,6 +170,7 @@ declare module minerva.def.arrange {
         visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
         layoutSlot: Rect;
         renderSize: Size;
         lastRenderSize: Size;
@@ -194,6 +195,7 @@ declare module minerva.def.arrange {
         layoutClip: Rect;
         renderSize: Size;
         lastRenderSize: Size;
+        uiFlags: layout.UIFlags;
     }
     class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -431,6 +433,16 @@ declare module minerva.layout {
         InDownDirtyList,
         DownDirtyState,
         UpDirtyState,
+    }
+    enum UIFlags {
+        None = 0,
+        RenderVisible = 2,
+        HitTestVisible = 4,
+        TotalRenderVisible = 8,
+        TotalHitTestVisible = 16,
+        ArrangeHint = 2048,
+        MeasureHint = 4096,
+        SizeHint = 8192,
     }
     interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput {
     }
