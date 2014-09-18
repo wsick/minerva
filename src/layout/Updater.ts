@@ -3,6 +3,8 @@ module minerva.layout {
     }
     export interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
     }
+    export interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
+    }
     export interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
     }
 
@@ -47,9 +49,12 @@ module minerva.layout {
     }
 
     export class Updater {
-        private $$measure: IMeasurePipe;
-        private $$arrange: IArrangePipe;
-        private $$render: IRenderPipe;
+        private $$measure: IMeasurePipe=null;
+        private $$arrange: IArrangePipe=null;
+        private $$processdown: IProcessDownPipe=null;
+        private $$render: IRenderPipe=null;
+
+        private $$visualParentUpdater: Updater = null;
 
         assets = <IUpdaterAssets> {
             width: NaN,
@@ -81,38 +86,43 @@ module minerva.layout {
             uiFlags: UIFlags.RenderVisible | UIFlags.HitTestVisible
         };
 
-        constructor () {
-            this.$$measure = null;
-            this.$$arrange = null;
-            this.$$render = null;
+        constructor() {
         }
 
-        setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
+        setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater {
             this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setArrangePipe (pipedef?: def.arrange.ArrangePipe): Updater {
+        setArrangePipe(pipedef?: def.arrange.ArrangePipe): Updater {
             this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setRenderPipe (pipedef?: def.render.RenderPipeDef): Updater {
+        setRenderPipe(pipedef?: def.render.RenderPipeDef): Updater {
             this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        measure (availableSize: Size): boolean {
+        measure(availableSize: Size): boolean {
             var pipe = this.$$measure;
             return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
         }
 
-        arrange (finalRect: Rect): boolean {
+        arrange(finalRect: Rect): boolean {
             var pipe = this.$$arrange;
             return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
         }
 
-        render (ctx: def.render.RenderContext, region: Rect): boolean {
+        processDown(): boolean {
+            var pipe = this.$$processdown;
+            var vp = this.$$visualParentUpdater;
+            var vpi = vp ? vp.assets : null;
+
+            return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
+        }
+
+        render(ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
         }

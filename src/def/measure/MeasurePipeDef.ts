@@ -46,13 +46,13 @@ module minerva.def.measure {
         }
 
         createState (): IState {
-            return {
+            return <IState>{
                 availableSize: new Size()
             };
         }
 
         createOutput (): IOutput {
-            return {
+            return <IOutput>{
                 error: null,
                 previousConstraint: new Size(),
                 desiredSize: new Size(),
