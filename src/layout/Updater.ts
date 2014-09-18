@@ -101,7 +101,7 @@ module minerva.layout {
 
         render(ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
-            return pipe.def.run(this.assets, pipe.state, null, ctx, region);
+            return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
         }
     }
 }
