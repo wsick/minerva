@@ -277,6 +277,7 @@ declare module minerva.def.measure {
         desiredSize: Size;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
     }
     interface IState extends IPipeState {
         availableSize: Size;
@@ -287,6 +288,7 @@ declare module minerva.def.measure {
         desiredSize: Size;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
     }
     class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor();

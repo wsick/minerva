@@ -16,6 +16,7 @@ module minerva.def.measure {
         desiredSize: Size;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
     }
     export interface IState extends IPipeState {
         availableSize: Size;
@@ -26,6 +27,7 @@ module minerva.def.measure {
         desiredSize: Size;
         hiddenDesire: Size;
         dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
     }
 
     export class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
@@ -55,7 +57,8 @@ module minerva.def.measure {
                 previousConstraint: new Size(),
                 desiredSize: new Size(),
                 hiddenDesire: new Size(),
-                dirtyFlags: 0
+                dirtyFlags: 0,
+                uiFlags: 0
             };
         }
 
@@ -66,10 +69,19 @@ module minerva.def.measure {
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
-            Size.copyTo(output.previousConstraint, input.previousConstraint);
-            Size.copyTo(output.desiredSize, input.desiredSize);
-            Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+            var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+            if (newDirty > 0) {
+                //TODO: Add dirty elements
+            }
+            var newUi = output.uiFlags & ~input.uiFlags;
+            if (newUi > 0) {
+                //TODO: Propagate flags up
+            }
             input.dirtyFlags = output.dirtyFlags;
+            input.uiFlags = output.uiFlags;
+            Size.copyTo(output.previousConstraint, input.previousConstraint);
+            Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+            Size.copyTo(output.desiredSize, input.desiredSize);
         }
     }
 }

@@ -8,6 +8,8 @@ module tests.measure {
     import tapins = minerva.def.measure.tapins;
     import Rect = minerva.Rect;
     import Size = minerva.Size;
+    import DirtyFlags = minerva.layout.DirtyFlags;
+    import UIFlags = minerva.layout.UIFlags;
 
     var mock = {
         input: function (): measure.IInput {
@@ -23,7 +25,8 @@ module tests.measure {
                 previousConstraint: new Size(),
                 visibility: minerva.Visibility.Visible,
                 desiredSize: new Size(),
-                dirtyFlags: 0
+                dirtyFlags: 0,
+                uiFlags: 0
             };
         },
         state: function (): measure.IState {
@@ -37,7 +40,8 @@ module tests.measure {
                 previousConstraint: new Size(),
                 desiredSize: new Size(),
                 hiddenDesire: new Size(),
-                dirtyFlags: 0
+                dirtyFlags: 0,
+                uiFlags: 0
             }
         }
     };
@@ -88,8 +92,13 @@ module tests.measure {
     });
 
     QUnit.test("invalidateFuture", (assert) => {
-        console.warn("invalidateFuture needs implemented.");
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+
+        assert.ok(tapins.invalidateFuture(input, state, output, new Size()));
+        assert.strictEqual(output.dirtyFlags, DirtyFlags.Arrange | DirtyFlags.Bounds);
+        assert.strictEqual(output.uiFlags, UIFlags.ArrangeHint);
     });
 
     QUnit.test("prepareOverride", (assert) => {

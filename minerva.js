@@ -1501,7 +1501,8 @@ var minerva;
                         previousConstraint: new minerva.Size(),
                         desiredSize: new minerva.Size(),
                         hiddenDesire: new minerva.Size(),
-                        dirtyFlags: 0
+                        dirtyFlags: 0,
+                        uiFlags: 0
                     };
                 };
 
@@ -1512,10 +1513,17 @@ var minerva;
                 };
 
                 MeasurePipeDef.prototype.flush = function (input, state, output) {
-                    minerva.Size.copyTo(output.previousConstraint, input.previousConstraint);
-                    minerva.Size.copyTo(output.desiredSize, input.desiredSize);
-                    minerva.Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+                    var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+                    if (newDirty > 0) {
+                    }
+                    var newUi = output.uiFlags & ~input.uiFlags;
+                    if (newUi > 0) {
+                    }
                     input.dirtyFlags = output.dirtyFlags;
+                    input.uiFlags = output.uiFlags;
+                    minerva.Size.copyTo(output.previousConstraint, input.previousConstraint);
+                    minerva.Size.copyTo(output.hiddenDesire, input.hiddenDesire);
+                    minerva.Size.copyTo(output.desiredSize, input.desiredSize);
                 };
                 return MeasurePipeDef;
             })(def.PipeDef);
@@ -1568,7 +1576,7 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, availableSize) {
-                    output.dirtyFlags = input.dirtyFlags & ~minerva.layout.DirtyFlags.Measure;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.Measure;
                     minerva.Size.copyTo(output.desiredSize, output.hiddenDesire);
                     return true;
                 };
@@ -1626,8 +1634,9 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, availableSize) {
-                    console.warn("Implement measure.tapins.invalidateFuture");
-
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.Arrange;
+                    output.uiFlags |= 2048 /* ArrangeHint */;
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
