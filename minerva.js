@@ -1762,11 +1762,18 @@ var minerva;
 
                 ProcessDownPipeDef.prototype.createOutput = function () {
                     return {
+                        totalIsRenderVisible: false,
+                        totalOpacity: 1.0,
+                        totalIsHitTestVisible: false,
+                        z: NaN,
+                        compositeLayoutClip: new minerva.Rect(),
                         renderXform: mat3.identity(),
                         absoluteXform: mat3.identity(),
                         localProjection: mat4.identity(),
                         absoluteProjection: mat4.identity(),
-                        totalHasRenderProjection: false
+                        totalHasRenderProjection: false,
+                        dirtyFlags: 0,
+                        uiFlags: 0
                     };
                 };
 
@@ -2429,13 +2436,34 @@ var minerva;
                     clip: null,
                     effect: null,
                     visibility: 0 /* Visible */,
+                    opacity: 1.0,
+                    isHitTestVisible: true,
+                    renderTransform: mat3.identity(),
+                    renderTransformOrigin: new minerva.Point(),
+                    projection: null,
+                    isTopLevel: false,
                     previousConstraint: new minerva.Size(),
                     desiredSize: new minerva.Size(),
                     hiddenDesire: new minerva.Size(),
+                    renderSize: new minerva.Size(),
+                    lastRenderSize: new minerva.Size(),
+                    layoutSlot: new minerva.Rect(),
+                    layoutClip: new minerva.Rect(),
+                    compositeLayoutClip: new minerva.Rect(),
+                    actualWidth: 0,
+                    actualHeight: 0,
                     totalIsRenderVisible: true,
                     totalOpacity: 1.0,
+                    totalIsHitTestVisible: true,
+                    totalHasRenderProjection: false,
                     surfaceBoundsWithChildren: new minerva.Rect(),
+                    layoutXform: mat3.identity(),
+                    carrierXform: mat3.identity(),
                     renderXform: mat3.identity(),
+                    absoluteXform: mat3.identity(),
+                    carrierProjection: mat4.identity(),
+                    localProjection: mat4.identity(),
+                    absoluteProjection: mat4.identity(),
                     dirtyFlags: 0,
                     uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */
                 };

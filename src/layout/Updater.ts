@@ -35,17 +35,41 @@ module minerva.layout {
             clip: null,
             effect: null,
             visibility: Visibility.Visible,
+            opacity: 1.0,
+            isHitTestVisible: true,
+            renderTransform: mat3.identity(),
+            renderTransformOrigin: new Point(),
+            projection: null,
+
+            isTopLevel: false,
 
             previousConstraint: new Size(),
             desiredSize: new Size(),
             hiddenDesire: new Size(),
 
+            renderSize: new Size(),
+            lastRenderSize: new Size(),
+            layoutSlot: new Rect(),
+            layoutClip: new Rect(),
+            compositeLayoutClip: new Rect(),
+
+            actualWidth: 0,
+            actualHeight: 0,
+
             totalIsRenderVisible: true,
             totalOpacity: 1.0,
+            totalIsHitTestVisible: true,
+            totalHasRenderProjection: false,
 
             surfaceBoundsWithChildren: new Rect(),
 
+            layoutXform: mat3.identity(),
+            carrierXform: mat3.identity(),
             renderXform: mat3.identity(),
+            absoluteXform: mat3.identity(),
+            carrierProjection: mat4.identity(),
+            localProjection: mat4.identity(),
+            absoluteProjection: mat4.identity(),
 
             dirtyFlags: 0,
             uiFlags: UIFlags.RenderVisible | UIFlags.HitTestVisible
