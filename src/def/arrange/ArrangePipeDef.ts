@@ -15,8 +15,8 @@ module minerva.def.arrange {
         useLayoutRounding: boolean;
         visibility: Visibility;
         hiddenDesire: Size;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
         layoutSlot: Rect;
         renderSize: Size;
         lastRenderSize: Size;
@@ -34,14 +34,14 @@ module minerva.def.arrange {
     }
     export interface IOutput extends IPipeOutput {
         error: string;
-        dirtyFlags: layout.DirtyFlags;
+        dirtyFlags: DirtyFlags;
         layoutSlot: Rect;
         arrangedSize: Size;
         layoutXform: number[];
         layoutClip: Rect;
         renderSize: Size;
         lastRenderSize: Size;
-        uiFlags: layout.UIFlags;
+        uiFlags: UIFlags;
     }
 
     export class ArrangePipeDef extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {

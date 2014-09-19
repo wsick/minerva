@@ -1,13 +1,13 @@
 module minerva.def.processdown.tapins {
     export var processRenderVisibility: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
-        if ((output.dirtyFlags & layout.DirtyFlags.RenderVisibility) === 0)
+        if ((output.dirtyFlags & DirtyFlags.RenderVisibility) === 0)
             return true;
-        output.dirtyFlags &= ~layout.DirtyFlags.RenderVisibility;
+        output.dirtyFlags &= ~DirtyFlags.RenderVisibility;
 
         //Update bounds
-        output.dirtyFlags |= layout.DirtyFlags.Bounds;
+        output.dirtyFlags |= DirtyFlags.Bounds;
         if (vpoutput)
-            vpoutput.dirtyFlags |= layout.DirtyFlags.Bounds;
+            vpoutput.dirtyFlags |= DirtyFlags.Bounds;
 
         //Calculate
         if (vpinput) {
@@ -25,7 +25,7 @@ module minerva.def.processdown.tapins {
 
         //Update new bounds
         if (input.totalIsRenderVisible !== output.totalIsRenderVisible)
-            output.dirtyFlags |= layout.DirtyFlags.NewBounds;
+            output.dirtyFlags |= DirtyFlags.NewBounds;
 
         return true;
     };

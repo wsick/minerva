@@ -1,6 +1,6 @@
 module minerva.def.arrange.tapins {
     export var completeOverride: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
-        output.dirtyFlags &= ~layout.DirtyFlags.Arrange;
+        output.dirtyFlags &= ~DirtyFlags.Arrange;
 
         var as = output.arrangedSize;
         if (input.horizontalAlignment === HorizontalAlignment.Stretch)

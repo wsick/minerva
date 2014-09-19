@@ -16,6 +16,39 @@ declare module minerva {
     }
 }
 declare module minerva {
+    enum DirtyFlags {
+        Transform,
+        LocalTransform,
+        LocalProjection,
+        Clip,
+        LocalClip,
+        LayoutClip,
+        RenderVisibility,
+        HitTestVisibility,
+        Measure,
+        Arrange,
+        ChildrenZIndices,
+        Bounds,
+        NewBounds,
+        Invalidate,
+        InUpDirtyList,
+        InDownDirtyList,
+        DownDirtyState,
+        UpDirtyState,
+        PropagateDown,
+    }
+    enum UIFlags {
+        None = 0,
+        RenderVisible = 2,
+        HitTestVisible = 4,
+        TotalRenderVisible = 8,
+        TotalHitTestVisible = 16,
+        ArrangeHint = 2048,
+        MeasureHint = 4096,
+        SizeHint = 8192,
+    }
+}
+declare module minerva {
     interface IProjection {
         getDistanceFromXYPlane(objectWidth: number, objectHeight: number): number;
         getTransform(): number[];
@@ -175,8 +208,8 @@ declare module minerva.def.arrange {
         useLayoutRounding: boolean;
         visibility: Visibility;
         hiddenDesire: Size;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
         layoutSlot: Rect;
         renderSize: Size;
         lastRenderSize: Size;
@@ -194,14 +227,14 @@ declare module minerva.def.arrange {
     }
     interface IOutput extends IPipeOutput {
         error: string;
-        dirtyFlags: layout.DirtyFlags;
+        dirtyFlags: DirtyFlags;
         layoutSlot: Rect;
         arrangedSize: Size;
         layoutXform: number[];
         layoutClip: Rect;
         renderSize: Size;
         lastRenderSize: Size;
-        uiFlags: layout.UIFlags;
+        uiFlags: UIFlags;
     }
     class ArrangePipeDef extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -282,8 +315,8 @@ declare module minerva.def.measure {
         visibility: Visibility;
         desiredSize: Size;
         hiddenDesire: Size;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
     interface IState extends IPipeState {
         availableSize: Size;
@@ -293,8 +326,8 @@ declare module minerva.def.measure {
         previousConstraint: Size;
         desiredSize: Size;
         hiddenDesire: Size;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
     class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor();
@@ -357,8 +390,8 @@ declare module minerva.def.processdown {
         localProjection: number[];
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
     interface IState extends IPipeState {
         xformOrigin: Point;
@@ -376,8 +409,8 @@ declare module minerva.def.processdown {
         localProjection: number[];
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
     class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor();
@@ -518,37 +551,6 @@ declare module minerva.layout {
     interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
     }
     interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
-    }
-    enum DirtyFlags {
-        Transform,
-        LocalTransform,
-        LocalProjection,
-        Clip,
-        LocalClip,
-        LayoutClip,
-        RenderVisibility,
-        HitTestVisibility,
-        Measure,
-        Arrange,
-        ChildrenZIndices,
-        Bounds,
-        NewBounds,
-        Invalidate,
-        InUpDirtyList,
-        InDownDirtyList,
-        DownDirtyState,
-        UpDirtyState,
-        PropagateDown,
-    }
-    enum UIFlags {
-        None = 0,
-        RenderVisible = 2,
-        HitTestVisible = 4,
-        TotalRenderVisible = 8,
-        TotalHitTestVisible = 16,
-        ArrangeHint = 2048,
-        MeasureHint = 4096,
-        SizeHint = 8192,
     }
     interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput, def.processdown.IInput {
     }

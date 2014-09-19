@@ -15,8 +15,8 @@ module minerva.def.measure {
         visibility: Visibility;
         desiredSize: Size;
         hiddenDesire: Size;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
     export interface IState extends IPipeState {
         availableSize: Size;
@@ -26,8 +26,8 @@ module minerva.def.measure {
         previousConstraint: Size;
         desiredSize: Size;
         hiddenDesire: Size;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
 
     export class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {

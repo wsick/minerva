@@ -21,6 +21,45 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (DirtyFlags) {
+        DirtyFlags[DirtyFlags["Transform"] = 1 << 0] = "Transform";
+        DirtyFlags[DirtyFlags["LocalTransform"] = 1 << 1] = "LocalTransform";
+        DirtyFlags[DirtyFlags["LocalProjection"] = 1 << 2] = "LocalProjection";
+        DirtyFlags[DirtyFlags["Clip"] = 1 << 3] = "Clip";
+        DirtyFlags[DirtyFlags["LocalClip"] = 1 << 4] = "LocalClip";
+        DirtyFlags[DirtyFlags["LayoutClip"] = 1 << 5] = "LayoutClip";
+        DirtyFlags[DirtyFlags["RenderVisibility"] = 1 << 6] = "RenderVisibility";
+        DirtyFlags[DirtyFlags["HitTestVisibility"] = 1 << 7] = "HitTestVisibility";
+        DirtyFlags[DirtyFlags["Measure"] = 1 << 8] = "Measure";
+        DirtyFlags[DirtyFlags["Arrange"] = 1 << 9] = "Arrange";
+        DirtyFlags[DirtyFlags["ChildrenZIndices"] = 1 << 10] = "ChildrenZIndices";
+        DirtyFlags[DirtyFlags["Bounds"] = 1 << 20] = "Bounds";
+        DirtyFlags[DirtyFlags["NewBounds"] = 1 << 21] = "NewBounds";
+        DirtyFlags[DirtyFlags["Invalidate"] = 1 << 22] = "Invalidate";
+        DirtyFlags[DirtyFlags["InUpDirtyList"] = 1 << 30] = "InUpDirtyList";
+        DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
+
+        DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ChildrenZIndices] = "DownDirtyState";
+        DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.Invalidate] = "UpDirtyState";
+        DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
+    })(minerva.DirtyFlags || (minerva.DirtyFlags = {}));
+    var DirtyFlags = minerva.DirtyFlags;
+    (function (UIFlags) {
+        UIFlags[UIFlags["None"] = 0] = "None";
+
+        UIFlags[UIFlags["RenderVisible"] = 0x02] = "RenderVisible";
+        UIFlags[UIFlags["HitTestVisible"] = 0x04] = "HitTestVisible";
+        UIFlags[UIFlags["TotalRenderVisible"] = 0x08] = "TotalRenderVisible";
+        UIFlags[UIFlags["TotalHitTestVisible"] = 0x10] = "TotalHitTestVisible";
+
+        UIFlags[UIFlags["ArrangeHint"] = 0x800] = "ArrangeHint";
+        UIFlags[UIFlags["MeasureHint"] = 0x1000] = "MeasureHint";
+        UIFlags[UIFlags["SizeHint"] = 0x2000] = "SizeHint";
+    })(minerva.UIFlags || (minerva.UIFlags = {}));
+    var UIFlags = minerva.UIFlags;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     var Point = (function () {
         function Point(x, y) {
             this.x = x == null ? 0 : x;
@@ -1139,7 +1178,7 @@ var minerva;
                     }
 
                     if (!minerva.Rect.isEqual(output.layoutClip, input.layoutClip)) {
-                        output.dirtyFlags |= minerva.layout.DirtyFlags.LayoutClip;
+                        output.dirtyFlags |= minerva.DirtyFlags.LayoutClip;
                     }
 
                     return true;
@@ -1297,7 +1336,7 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.checkNeedArrange = function (input, state, output, finalRect) {
-                    if ((input.dirtyFlags & minerva.layout.DirtyFlags.Arrange) > 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Arrange) > 0)
                         return true;
                     return !minerva.Rect.isEqual(output.layoutSlot, state.finalRect);
                 };
@@ -1314,7 +1353,7 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, finalRect) {
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.Arrange;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.Arrange;
 
                     var as = output.arrangedSize;
                     if (input.horizontalAlignment === 3 /* Stretch */)
@@ -1367,9 +1406,9 @@ var minerva;
                 tapins.invalidateFuture = function (input, state, output, finalRect) {
                     var lc = output.layoutClip;
                     lc.x = lc.y = lc.width = lc.height = 0;
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.LocalTransform;
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.LocalProjection;
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+                    output.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+                    output.dirtyFlags |= minerva.DirtyFlags.LocalProjection;
+                    output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
@@ -1555,7 +1594,7 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.checkNeedMeasure = function (input, state, output, availableSize) {
-                    if ((input.dirtyFlags & minerva.layout.DirtyFlags.Measure) > 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Measure) > 0)
                         return true;
                     var pc = input.previousConstraint;
                     if (!pc || pc.width !== availableSize.width || pc.height !== availableSize.height) {
@@ -1577,7 +1616,7 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, availableSize) {
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.Measure;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.Measure;
                     minerva.Size.copyTo(output.desiredSize, output.hiddenDesire);
                     return true;
                 };
@@ -1635,9 +1674,9 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, availableSize) {
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.Arrange;
+                    output.dirtyFlags |= minerva.DirtyFlags.Arrange;
                     output.uiFlags |= 2048 /* ArrangeHint */;
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+                    output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
@@ -1750,7 +1789,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcAbsoluteProjection = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     var abs = output.absoluteProjection;
@@ -1776,7 +1815,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcAbsoluteXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     var abs = output.absoluteXform;
@@ -1802,7 +1841,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcLocalProjection = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     output.totalHasRenderProjection = vpinput ? vpinput.totalHasRenderProjection : false;
@@ -1830,7 +1869,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcRenderXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     var rx = output.renderXform;
@@ -1878,9 +1917,9 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processHitTestVisibility = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.HitTestVisibility) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.HitTestVisibility) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.HitTestVisibility;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.HitTestVisibility;
 
                     if (vpinput) {
                         output.totalIsHitTestVisible = vpinput.totalIsHitTestVisible && input.isHitTestVisible;
@@ -1903,9 +1942,9 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processLayoutClip = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.LayoutClip) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.LayoutClip;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.LayoutClip;
 
                     var composite = output.compositeLayoutClip;
                     var vpc = vpinput ? vpinput.compositeLayoutClip : null;
@@ -1935,10 +1974,10 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processLocalProjection = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.LocalProjection) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.LocalProjection) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.LocalProjection;
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.Transform;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.LocalProjection;
+                    output.dirtyFlags |= minerva.DirtyFlags.Transform;
 
                     var projection = input.projection;
                     output.z = projection ? projection.getDistanceFromXYPlane(input.actualWidth, input.actualHeight) : NaN;
@@ -1958,10 +1997,10 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processLocalXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.LocalTransform) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.LocalTransform;
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.Transform;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.LocalTransform;
+                    output.dirtyFlags |= minerva.DirtyFlags.Transform;
 
                     var local = mat3.identity(state.localXform);
                     var render = input.renderTransform;
@@ -1988,13 +2027,13 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processRenderVisibility = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.RenderVisibility) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.RenderVisibility) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.RenderVisibility;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.RenderVisibility;
 
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+                    output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     if (vpoutput)
-                        vpoutput.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+                        vpoutput.dirtyFlags |= minerva.DirtyFlags.Bounds;
 
                     if (vpinput) {
                         output.totalOpacity = vpinput.totalOpacity * input.opacity;
@@ -2005,7 +2044,7 @@ var minerva;
                     }
 
                     if (input.totalIsRenderVisible !== output.totalIsRenderVisible)
-                        output.dirtyFlags |= minerva.layout.DirtyFlags.NewBounds;
+                        output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
 
                     return true;
                 };
@@ -2022,15 +2061,15 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.Transform;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.Transform;
 
                     if (!mat4.equal(input.localProjection, output.localProjection)) {
-                        output.dirtyFlags |= minerva.layout.DirtyFlags.NewBounds;
+                        output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
                     }
 
-                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+                    output.dirtyFlags |= minerva.DirtyFlags.Bounds;
 
                     return true;
                 };
@@ -2047,9 +2086,9 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processZIndices = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.ChildrenZIndices) === 0)
+                    if ((output.dirtyFlags & minerva.DirtyFlags.ChildrenZIndices) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.ChildrenZIndices;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.ChildrenZIndices;
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
@@ -2367,43 +2406,6 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (layout) {
-        (function (DirtyFlags) {
-            DirtyFlags[DirtyFlags["Transform"] = 1 << 0] = "Transform";
-            DirtyFlags[DirtyFlags["LocalTransform"] = 1 << 1] = "LocalTransform";
-            DirtyFlags[DirtyFlags["LocalProjection"] = 1 << 2] = "LocalProjection";
-            DirtyFlags[DirtyFlags["Clip"] = 1 << 3] = "Clip";
-            DirtyFlags[DirtyFlags["LocalClip"] = 1 << 4] = "LocalClip";
-            DirtyFlags[DirtyFlags["LayoutClip"] = 1 << 5] = "LayoutClip";
-            DirtyFlags[DirtyFlags["RenderVisibility"] = 1 << 6] = "RenderVisibility";
-            DirtyFlags[DirtyFlags["HitTestVisibility"] = 1 << 7] = "HitTestVisibility";
-            DirtyFlags[DirtyFlags["Measure"] = 1 << 8] = "Measure";
-            DirtyFlags[DirtyFlags["Arrange"] = 1 << 9] = "Arrange";
-            DirtyFlags[DirtyFlags["ChildrenZIndices"] = 1 << 10] = "ChildrenZIndices";
-            DirtyFlags[DirtyFlags["Bounds"] = 1 << 20] = "Bounds";
-            DirtyFlags[DirtyFlags["NewBounds"] = 1 << 21] = "NewBounds";
-            DirtyFlags[DirtyFlags["Invalidate"] = 1 << 22] = "Invalidate";
-            DirtyFlags[DirtyFlags["InUpDirtyList"] = 1 << 30] = "InUpDirtyList";
-            DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
-
-            DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ChildrenZIndices] = "DownDirtyState";
-            DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.Invalidate] = "UpDirtyState";
-            DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
-        })(layout.DirtyFlags || (layout.DirtyFlags = {}));
-        var DirtyFlags = layout.DirtyFlags;
-        (function (UIFlags) {
-            UIFlags[UIFlags["None"] = 0] = "None";
-
-            UIFlags[UIFlags["RenderVisible"] = 0x02] = "RenderVisible";
-            UIFlags[UIFlags["HitTestVisible"] = 0x04] = "HitTestVisible";
-            UIFlags[UIFlags["TotalRenderVisible"] = 0x08] = "TotalRenderVisible";
-            UIFlags[UIFlags["TotalHitTestVisible"] = 0x10] = "TotalHitTestVisible";
-
-            UIFlags[UIFlags["ArrangeHint"] = 0x800] = "ArrangeHint";
-            UIFlags[UIFlags["MeasureHint"] = 0x1000] = "MeasureHint";
-            UIFlags[UIFlags["SizeHint"] = 0x2000] = "SizeHint";
-        })(layout.UIFlags || (layout.UIFlags = {}));
-        var UIFlags = layout.UIFlags;
-
         var NO_PIPE = new minerva.def.PipeDef();
 
         var Updater = (function () {

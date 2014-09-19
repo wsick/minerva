@@ -1,6 +1,6 @@
 module minerva.def.measure.tapins {
     export var checkNeedMeasure: IMeasureTapin = function (input: IInput, state: IState, output: IOutput, availableSize: Size): boolean {
-        if ((input.dirtyFlags & layout.DirtyFlags.Measure) > 0)
+        if ((input.dirtyFlags & DirtyFlags.Measure) > 0)
             return true;
         var pc = input.previousConstraint;
         if (!pc || pc.width !== availableSize.width || pc.height !== availableSize.height) {

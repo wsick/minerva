@@ -31,7 +31,7 @@ module minerva.def.arrange.tapins {
         }
 
         if (!Rect.isEqual(output.layoutClip, input.layoutClip)) {
-            output.dirtyFlags |= layout.DirtyFlags.LayoutClip;
+            output.dirtyFlags |= DirtyFlags.LayoutClip;
         }
 
         return true;

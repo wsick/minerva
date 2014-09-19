@@ -24,8 +24,8 @@ module minerva.def.processdown {
         localProjection: number[];
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
     export interface IState extends IPipeState {
         xformOrigin: Point;
@@ -43,8 +43,8 @@ module minerva.def.processdown {
         localProjection: number[];
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
-        dirtyFlags: layout.DirtyFlags;
-        uiFlags: layout.UIFlags;
+        dirtyFlags: DirtyFlags;
+        uiFlags: UIFlags;
     }
 
     export class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {

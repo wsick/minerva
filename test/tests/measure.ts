@@ -8,8 +8,8 @@ module tests.measure {
     import tapins = minerva.def.measure.tapins;
     import Rect = minerva.Rect;
     import Size = minerva.Size;
-    import DirtyFlags = minerva.layout.DirtyFlags;
-    import UIFlags = minerva.layout.UIFlags;
+    import DirtyFlags = minerva.DirtyFlags;
+    import UIFlags = minerva.UIFlags;
 
     var mock = {
         input: function (): measure.IInput {
@@ -87,7 +87,7 @@ module tests.measure {
 
         assert.ok(tapins.checkNeedMeasure(input, state, output, new Size(100, 100)));
 
-        input.dirtyFlags |= minerva.layout.DirtyFlags.Measure;
+        input.dirtyFlags |= DirtyFlags.Measure;
         assert.ok(tapins.checkNeedMeasure(input, state, output, new Size(0, 0)));
     });
 
@@ -149,7 +149,7 @@ module tests.measure {
         var state = mock.state();
         var output = mock.output();
 
-        input.dirtyFlags |= minerva.layout.DirtyFlags.Measure;
+        input.dirtyFlags |= DirtyFlags.Measure;
         output.desiredSize.width = 35;
         output.desiredSize.height = 35;
         assert.ok(tapins.completeOverride(input, state, output, new Size(50, 50)));

@@ -1,6 +1,6 @@
 module minerva.def.processdown.tapins {
     export var calcLocalProjection: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
-        if ((output.dirtyFlags & layout.DirtyFlags.Transform) === 0)
+        if ((output.dirtyFlags & DirtyFlags.Transform) === 0)
             return true;
 
         output.totalHasRenderProjection = vpinput ? vpinput.totalHasRenderProjection : false;

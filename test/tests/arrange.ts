@@ -9,8 +9,8 @@ module tests.arrange {
     import Rect = minerva.Rect;
     import Size = minerva.Size;
     import Point = minerva.Point;
-    import DirtyFlags = minerva.layout.DirtyFlags;
-    import UIFlags = minerva.layout.UIFlags;
+    import DirtyFlags = minerva.DirtyFlags;
+    import UIFlags = minerva.UIFlags;
 
     function typedToArray(typed) {
         var arr = [];
@@ -141,7 +141,7 @@ module tests.arrange {
         ls.height = 50;
         assert.ok(!tapins.checkNeedArrange(input, state, output, fr));
 
-        input.dirtyFlags |= minerva.layout.DirtyFlags.Arrange;
+        input.dirtyFlags |= DirtyFlags.Arrange;
         assert.ok(tapins.checkNeedArrange(input, state, output, fr));
         input.dirtyFlags = 0;
 
