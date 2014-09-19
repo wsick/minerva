@@ -21,7 +21,7 @@ module minerva.layout {
 
         private $$visualParentUpdater: Updater = null;
 
-        assets = <IUpdaterAssets> {
+        assets: IUpdaterAssets = {
             width: NaN,
             height: NaN,
             minWidth: 0.0,
