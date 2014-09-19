@@ -8,7 +8,7 @@ module minerva.def.processup.tapins {
             helpers.invalidate(vpoutput, output.surfaceBoundsWithChildren);
         }
 
-        output.invalidateSubtreePaint = !Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate;
+        state.invalidateSubtreePaint = !Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate;
         output.forceInvalidate = false;
 
         return true;

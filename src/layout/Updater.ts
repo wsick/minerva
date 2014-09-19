@@ -45,6 +45,7 @@ module minerva.layout {
             projection: null,
             effectPadding: new Thickness(),
 
+            surface: null,
             isTopLevel: false,
 
             previousConstraint: new Size(),

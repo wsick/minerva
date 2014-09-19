@@ -10,6 +10,7 @@ module minerva.def.processup {
         maxWidth: number;
         maxHeight: number;
         useLayoutRounding: boolean;
+        isTopLevel: boolean;
         actualWidth: number;
         actualHeight: number;
         effectPadding: Thickness;
@@ -21,9 +22,11 @@ module minerva.def.processup {
         surfaceBoundsWithChildren: Rect;
         dirtyFlags: DirtyFlags;
         forceInvalidate: boolean;
+        surface: ISurface;
     }
     export interface IState extends IPipeState {
         actualSize: Size;
+        invalidateSubtreePaint: boolean;
     }
     export interface IOutput extends IPipeOutput, helpers.IInvalidateable {
         extents: Rect;
@@ -32,8 +35,10 @@ module minerva.def.processup {
         surfaceBoundsWithChildren: Rect;
         dirtyFlags: DirtyFlags;
         dirtyRegion: Rect;
-        invalidateSubtreePaint: boolean;
         forceInvalidate: boolean;
+    }
+    export interface ISurface {
+        invalidate(dirty: Rect);
     }
 
     export class ProcessUpPipeDef extends PipeDef<IProcessUpTapin, IInput, IState, IOutput> {
@@ -44,11 +49,13 @@ module minerva.def.processup {
                 .addTapin('calcPaintBounds', tapins.calcPaintBounds)
                 .addTapin('processBounds', tapins.processBounds)
                 .addTapin('processNewBounds', tapins.processNewBounds)
+                .addTapin('invalidateSubtree', tapins.invalidateSubtree)
                 .addTapin('processInvalidate', tapins.processInvalidate);
         }
 
         createState(): IState {
             return {
+                invalidateSubtreePaint: false,
                 actualSize: new Size()
             };
         }
@@ -61,7 +68,6 @@ module minerva.def.processup {
                 surfaceBoundsWithChildren: new Rect(),
                 dirtyFlags: 0,
                 dirtyRegion: new Rect(),
-                invalidateSubtreePaint: false,
                 forceInvalidate: false,
                 totalIsRenderVisible: false,
                 totalOpacity: 1.0

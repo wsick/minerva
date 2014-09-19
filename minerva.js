@@ -2259,10 +2259,11 @@ var minerva;
                 __extends(ProcessUpPipeDef, _super);
                 function ProcessUpPipeDef() {
                     _super.call(this);
-                    this.addTapin('calcActualSize', processup.tapins.calcActualSize).addTapin('calcExtents', processup.tapins.calcExtents).addTapin('calcPaintBounds', processup.tapins.calcPaintBounds).addTapin('processBounds', processup.tapins.processBounds).addTapin('processNewBounds', processup.tapins.processNewBounds).addTapin('processInvalidate', processup.tapins.processInvalidate);
+                    this.addTapin('calcActualSize', processup.tapins.calcActualSize).addTapin('calcExtents', processup.tapins.calcExtents).addTapin('calcPaintBounds', processup.tapins.calcPaintBounds).addTapin('processBounds', processup.tapins.processBounds).addTapin('processNewBounds', processup.tapins.processNewBounds).addTapin('invalidateSubtree', processup.tapins.invalidateSubtree).addTapin('processInvalidate', processup.tapins.processInvalidate);
                 }
                 ProcessUpPipeDef.prototype.createState = function () {
                     return {
+                        invalidateSubtreePaint: false,
                         actualSize: new minerva.Size()
                     };
                 };
@@ -2275,7 +2276,6 @@ var minerva;
                         surfaceBoundsWithChildren: new minerva.Rect(),
                         dirtyFlags: 0,
                         dirtyRegion: new minerva.Rect(),
-                        invalidateSubtreePaint: false,
                         forceInvalidate: false,
                         totalIsRenderVisible: false,
                         totalOpacity: 1.0
@@ -2374,6 +2374,24 @@ var minerva;
     (function (def) {
         (function (processup) {
             (function (tapins) {
+                tapins.invalidateSubtree = function (input, state, output, vpinput, vpoutput) {
+                    if (!state.invalidateSubtreePaint)
+                        return true;
+                    def.helpers.invalidate(output, output.surfaceBoundsWithChildren);
+                    return true;
+                };
+            })(processup.tapins || (processup.tapins = {}));
+            var tapins = processup.tapins;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processup) {
+            (function (tapins) {
                 tapins.processBounds = function (input, state, output, vpinput, vpoutput) {
                     output.dirtyFlags &= ~minerva.DirtyFlags.Bounds;
 
@@ -2383,7 +2401,7 @@ var minerva;
                         def.helpers.invalidate(vpoutput, output.surfaceBoundsWithChildren);
                     }
 
-                    output.invalidateSubtreePaint = !minerva.Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate;
+                    state.invalidateSubtreePaint = !minerva.Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate;
                     output.forceInvalidate = false;
 
                     return true;
@@ -2401,6 +2419,15 @@ var minerva;
         (function (processup) {
             (function (tapins) {
                 tapins.processInvalidate = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Invalidate) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.Invalidate;
+                    var dirty = output.dirtyRegion;
+                    if (vpoutput)
+                        def.helpers.invalidate(vpoutput, dirty);
+                    else if (input.surface)
+                        input.surface.invalidate(dirty);
+                    dirty.x = dirty.y = dirty.width = dirty.height = 0;
                     return true;
                 };
             })(processup.tapins || (processup.tapins = {}));
@@ -2416,6 +2443,14 @@ var minerva;
         (function (processup) {
             (function (tapins) {
                 tapins.processNewBounds = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.DirtyFlags.NewBounds) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.DirtyFlags.NewBounds;
+                    if (vpoutput)
+                        def.helpers.invalidate(vpoutput, output.surfaceBoundsWithChildren);
+                    else if (input.isTopLevel)
+                        state.invalidateSubtreePaint = true;
+
                     return true;
                 };
             })(processup.tapins || (processup.tapins = {}));
@@ -2748,6 +2783,7 @@ var minerva;
                     renderTransformOrigin: new minerva.Point(),
                     projection: null,
                     effectPadding: new minerva.Thickness(),
+                    surface: null,
                     isTopLevel: false,
                     previousConstraint: new minerva.Size(),
                     desiredSize: new minerva.Size(),
