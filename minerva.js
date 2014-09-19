@@ -833,6 +833,22 @@ var minerva;
             dest.y = y;
         };
 
+        Rect.union = function (dest, rect2) {
+            if (rect2.width <= 0 || rect2.height <= 0)
+                return;
+            if (dest.width <= 0 || dest.height <= 0) {
+                Rect.copyTo(rect2, dest);
+                return;
+            }
+
+            var x = Math.min(dest.x, rect2.x);
+            var y = Math.min(dest.y, rect2.y);
+            dest.width = Math.max(dest.x + dest.width, rect2.x + rect2.width) - x;
+            dest.height = Math.max(dest.y + dest.height, rect2.y + rect2.height) - y;
+            dest.x = x;
+            dest.y = y;
+        };
+
         Rect.isContainedIn = function (src, test) {
             var sl = src.x;
             var st = src.y;
@@ -849,6 +865,105 @@ var minerva;
             if (sr < tl || sb < tt || sr > tr || sb > tb)
                 return false;
             return true;
+        };
+
+        Rect.clipmask = function (clip) {
+            var mask = 0;
+
+            if (-clip[0] + clip[3] < 0)
+                mask |= (1 << 0);
+            if (clip[0] + clip[3] < 0)
+                mask |= (1 << 1);
+            if (-clip[1] + clip[3] < 0)
+                mask |= (1 << 2);
+            if (clip[1] + clip[3] < 0)
+                mask |= (1 << 3);
+            if (clip[2] + clip[3] < 0)
+                mask |= (1 << 4);
+            if (-clip[2] + clip[3] < 0)
+                mask |= (1 << 5);
+
+            return mask;
+        };
+
+        Rect.transform4 = function (dest, projection) {
+            if (!projection)
+                return;
+
+            var x = dest.x;
+            var y = dest.y;
+            var width = dest.width;
+            var height = dest.height;
+
+            var p1 = vec4.createFrom(x, y, 0.0, 1.0);
+            var p2 = vec4.createFrom(x + width, y, 0.0, 1.0);
+            var p3 = vec4.createFrom(x + width, y + height, 0.0, 1.0);
+            var p4 = vec4.createFrom(x, y + height, 0.0, 1.0);
+
+            mat4.transformVec4(projection, p1);
+            mat4.transformVec4(projection, p2);
+            mat4.transformVec4(projection, p3);
+            mat4.transformVec4(projection, p4);
+
+            var vs = 65536.0;
+            var vsr = 1.0 / vs;
+            p1[0] *= vsr;
+            p1[1] *= vsr;
+            p2[0] *= vsr;
+            p2[1] *= vsr;
+            p3[0] *= vsr;
+            p3[1] *= vsr;
+            p4[0] *= vsr;
+            p4[1] *= vsr;
+
+            var cm1 = Rect.clipmask(p1);
+            var cm2 = Rect.clipmask(p2);
+            var cm3 = Rect.clipmask(p3);
+            var cm4 = Rect.clipmask(p4);
+
+            if ((cm1 | cm2 | cm3 | cm4) !== 0) {
+                if ((cm1 & cm2 & cm3 & cm4) === 0) {
+                    dest.x = dest.y = dest.width = dest.height = 0;
+                }
+            } else {
+                var p1w = 1.0 / p1[3];
+                var p2w = 1.0 / p2[3];
+                var p3w = 1.0 / p3[3];
+                var p4w = 1.0 / p4[3];
+                p1[0] *= p1w * vs;
+                p1[1] *= p1w * vs;
+                p2[0] *= p2w * vs;
+                p2[1] *= p2w * vs;
+                p3[0] *= p3w * vs;
+                p3[1] *= p3w * vs;
+                p4[0] *= p4w * vs;
+                p4[1] *= p4w * vs;
+
+                dest.x = p1[0];
+                dest.y = p1[1];
+                dest.width = 0;
+                dest.height = 0;
+                Rect.extendTo(dest, p2[0], p2[1]);
+                Rect.extendTo(dest, p3[0], p3[1]);
+                Rect.extendTo(dest, p4[0], p4[1]);
+            }
+        };
+
+        Rect.extendTo = function (dest, x, y) {
+            var rx = dest.x;
+            var ry = dest.y;
+            var rw = dest.width;
+            var rh = dest.height;
+
+            if (x < rx || x > (rx + rw))
+                rw = Math.max(Math.abs(x - rx), Math.abs(x - rx - rw));
+            if (y < ry || y > (ry + rh))
+                rh = Math.max(Math.abs(y - ry), Math.abs(y - ry - rh));
+
+            dest.x = Math.min(rx, x);
+            dest.y = Math.min(ry, y);
+            dest.width = rw;
+            dest.height = rh;
         };
         return Rect;
     })();
@@ -1514,6 +1629,22 @@ var minerva;
                 size.height = ch;
             }
             helpers.coerceSize = coerceSize;
+
+            function invalidate(out, region) {
+                if (!out.totalIsRenderVisible || (out.totalOpacity * 255) < 0.5)
+                    return;
+                out.dirtyFlags |= minerva.DirtyFlags.Invalidate;
+                minerva.Rect.union(out.dirtyRegion, region);
+            }
+            helpers.invalidate = invalidate;
+
+            function copyGrowTransform4(dest, src, thickness, projection) {
+                minerva.Rect.copyTo(src, dest);
+                minerva.Thickness.growRect(thickness, dest);
+                if (projection)
+                    minerva.Rect.transform4(dest, projection);
+            }
+            helpers.copyGrowTransform4 = copyGrowTransform4;
         })(def.helpers || (def.helpers = {}));
         var helpers = def.helpers;
     })(minerva.def || (minerva.def = {}));
@@ -2123,6 +2254,180 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (def) {
+        (function (processup) {
+            var ProcessUpPipeDef = (function (_super) {
+                __extends(ProcessUpPipeDef, _super);
+                function ProcessUpPipeDef() {
+                    _super.call(this);
+                    this.addTapin('calcActualSize', processup.tapins.calcActualSize).addTapin('calcExtents', processup.tapins.calcExtents).addTapin('calcPaintBounds', processup.tapins.calcPaintBounds).addTapin('processBounds', processup.tapins.processBounds).addTapin('processNewBounds', processup.tapins.processNewBounds).addTapin('processInvalidate', processup.tapins.processInvalidate);
+                }
+                ProcessUpPipeDef.prototype.createState = function () {
+                    return {
+                        actualSize: new minerva.Size()
+                    };
+                };
+
+                ProcessUpPipeDef.prototype.createOutput = function () {
+                    return {
+                        extents: new minerva.Rect(),
+                        extentsWithChildren: new minerva.Rect(),
+                        globalBoundsWithChildren: new minerva.Rect(),
+                        surfaceBoundsWithChildren: new minerva.Rect(),
+                        dirtyFlags: 0,
+                        dirtyRegion: new minerva.Rect(),
+                        invalidateSubtreePaint: false,
+                        forceInvalidate: false,
+                        totalIsRenderVisible: false,
+                        totalOpacity: 1.0
+                    };
+                };
+
+                ProcessUpPipeDef.prototype.prepare = function (input, state, output) {
+                };
+
+                ProcessUpPipeDef.prototype.flush = function (input, state, output) {
+                };
+                return ProcessUpPipeDef;
+            })(def.PipeDef);
+            processup.ProcessUpPipeDef = ProcessUpPipeDef;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processup) {
+            (function (tapins) {
+                tapins.calcActualSize = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                        return true;
+
+                    var as = state.actualSize;
+                    as.width = input.actualWidth;
+                    as.height = input.actualHeight;
+                    def.helpers.coerceSize(as, input);
+                    if (isNaN(as.width))
+                        as.width = 0;
+                    if (isNaN(as.height))
+                        as.height = 0;
+
+                    return true;
+                };
+            })(processup.tapins || (processup.tapins = {}));
+            var tapins = processup.tapins;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processup) {
+            (function (tapins) {
+                tapins.calcExtents = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                        return true;
+
+                    var e = output.extents;
+                    var ewc = output.extentsWithChildren;
+                    e.x = ewc.x = 0;
+                    e.y = ewc.y = 0;
+                    var as = state.actualSize;
+                    e.width = ewc.width = as.width;
+                    e.height = ewc.height = as.height;
+
+                    return true;
+                };
+            })(processup.tapins || (processup.tapins = {}));
+            var tapins = processup.tapins;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processup) {
+            (function (tapins) {
+                tapins.calcPaintBounds = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                        return true;
+
+                    def.helpers.copyGrowTransform4(input.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
+                    def.helpers.copyGrowTransform4(input.surfaceBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.absoluteProjection);
+
+                    return true;
+                };
+            })(processup.tapins || (processup.tapins = {}));
+            var tapins = processup.tapins;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processup) {
+            (function (tapins) {
+                tapins.processBounds = function (input, state, output, vpinput, vpoutput) {
+                    output.dirtyFlags &= ~minerva.DirtyFlags.Bounds;
+
+                    if (vpoutput && !minerva.Rect.isEqual(input.globalBoundsWithChildren, output.globalBoundsWithChildren)) {
+                        vpoutput.dirtyFlags |= minerva.DirtyFlags.Bounds;
+                        def.helpers.invalidate(vpoutput, input.surfaceBoundsWithChildren);
+                        def.helpers.invalidate(vpoutput, output.surfaceBoundsWithChildren);
+                    }
+
+                    output.invalidateSubtreePaint = !minerva.Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate;
+                    output.forceInvalidate = false;
+
+                    return true;
+                };
+            })(processup.tapins || (processup.tapins = {}));
+            var tapins = processup.tapins;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processup) {
+            (function (tapins) {
+                tapins.processInvalidate = function (input, state, output, vpinput, vpoutput) {
+                    return true;
+                };
+            })(processup.tapins || (processup.tapins = {}));
+            var tapins = processup.tapins;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processup) {
+            (function (tapins) {
+                tapins.processNewBounds = function (input, state, output, vpinput, vpoutput) {
+                    return true;
+                };
+            })(processup.tapins || (processup.tapins = {}));
+            var tapins = processup.tapins;
+        })(def.processup || (def.processup = {}));
+        var processup = def.processup;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
         (function (render) {
             var RenderContext = (function () {
                 function RenderContext(ctx) {
@@ -2420,6 +2725,7 @@ var minerva;
                 this.$$measure = null;
                 this.$$arrange = null;
                 this.$$processdown = null;
+                this.$$processup = null;
                 this.$$render = null;
                 this.$$visualParentUpdater = null;
                 this.assets = {
@@ -2441,6 +2747,7 @@ var minerva;
                     renderTransform: mat3.identity(),
                     renderTransformOrigin: new minerva.Point(),
                     projection: null,
+                    effectPadding: new minerva.Thickness(),
                     isTopLevel: false,
                     previousConstraint: new minerva.Size(),
                     desiredSize: new minerva.Size(),
@@ -2456,7 +2763,10 @@ var minerva;
                     totalOpacity: 1.0,
                     totalIsHitTestVisible: true,
                     totalHasRenderProjection: false,
+                    extents: new minerva.Rect(),
+                    extentsWithChildren: new minerva.Rect(),
                     surfaceBoundsWithChildren: new minerva.Rect(),
+                    globalBoundsWithChildren: new minerva.Rect(),
                     layoutXform: mat3.identity(),
                     carrierXform: mat3.identity(),
                     renderXform: mat3.identity(),
@@ -2465,7 +2775,8 @@ var minerva;
                     localProjection: mat4.identity(),
                     absoluteProjection: mat4.identity(),
                     dirtyFlags: 0,
-                    uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */
+                    uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */,
+                    forceInvalidate: false
                 };
             }
             Updater.prototype.setMeasurePipe = function (pipedef) {
@@ -2480,6 +2791,11 @@ var minerva;
 
             Updater.prototype.setProcessDownPipe = function (pipedef) {
                 this.$$processdown = layout.createPipe(pipedef || NO_PIPE);
+                return this;
+            };
+
+            Updater.prototype.setProcessUpPipe = function (pipedef) {
+                this.$$processup = layout.createPipe(pipedef || NO_PIPE);
                 return this;
             };
 
@@ -2503,6 +2819,14 @@ var minerva;
                 var vp = this.$$visualParentUpdater;
                 var vpi = vp ? vp.assets : null;
                 var vpo = vp ? vp.$$processdown.output : null;
+                return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
+            };
+
+            Updater.prototype.processUp = function () {
+                var pipe = this.$$processup;
+                var vp = this.$$visualParentUpdater;
+                var vpi = vp ? vp.assets : null;
+                var vpo = vp ? vp.$$processup.output : null;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
             };
 

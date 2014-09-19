@@ -8,7 +8,7 @@ module minerva.def.helpers {
         maxHeight: number;
         useLayoutRounding: boolean;
     }
-    export function coerceSize (size: ISize, assets: ISized) {
+    export function coerceSize(size: ISize, assets: ISized) {
         var cw = Math.max(assets.minWidth, size.width);
         var ch = Math.max(assets.minHeight, size.height);
 
@@ -28,5 +28,25 @@ module minerva.def.helpers {
 
         size.width = cw;
         size.height = ch;
+    }
+
+    export interface IInvalidateable {
+        totalIsRenderVisible: boolean;
+        totalOpacity: number;
+        dirtyFlags: DirtyFlags;
+        dirtyRegion: Rect;
+    }
+    export function invalidate(out: IInvalidateable, region: Rect) {
+        if (!out.totalIsRenderVisible || (out.totalOpacity * 255) < 0.5)
+            return;
+        out.dirtyFlags |= DirtyFlags.Invalidate;
+        Rect.union(out.dirtyRegion, region);
+    }
+
+    export function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]) {
+        Rect.copyTo(src, dest);
+        Thickness.growRect(thickness, dest);
+        if (projection)
+            Rect.transform4(dest, projection);
     }
 }

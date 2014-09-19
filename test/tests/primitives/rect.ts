@@ -60,6 +60,10 @@ module tests.primitives.rect {
         assert.deepEqual(r2, new Rect(0, 0, 100, 100), "r2 should remain unchanged");
     });
 
+    QUnit.test("union", (assert) => {
+        ok(false);
+    });
+
     QUnit.test("isContainedIn", (assert) => {
         var r1 = new Rect(0, 0, 100, 100);
         var r2 = new Rect(50, 50, 25, 25);
