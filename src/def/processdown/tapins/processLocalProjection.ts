@@ -4,18 +4,10 @@ module minerva.def.processdown.tapins {
         if (output.dirtyFlags & DirtyFlags.LocalProjection === 0)
             return true;
         output.dirtyFlags &= ~DirtyFlags.LocalProjection;
+        output.dirtyFlags |= ~DirtyFlags.Transform;
 
-        /*
         var projection = input.projection;
-        if (!projection) {
-            Controls.Panel.SetZ(uie, NaN);
-            return;
-        }
-
-        projection.SetObjectSize(this.GetBrushSize());
-        var z = projection.GetDistanceFromXYPlane();
-        Controls.Panel.SetZ(uie, z);
-        */
+        output.z = projection ? projection.getDistanceFromXYPlane(input.actualWidth, input.actualHeight) : NaN;
 
         return true;
     };

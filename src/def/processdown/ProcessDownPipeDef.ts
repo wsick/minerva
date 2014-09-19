@@ -8,11 +8,14 @@ module minerva.def.processdown {
         isHitTestVisible: boolean;
         renderTransform: number[];
         renderTransformOrigin: Point;
+        projection: IProjection;
         actualWidth: number;
         actualHeight: number;
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
+        layoutClip: Rect;
+        compositeLayoutClip: Rect;
         dirtyFlags: layout.DirtyFlags;
         uiFlags: layout.UIFlags;
     }
@@ -24,6 +27,8 @@ module minerva.def.processdown {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
+        z: number;
+        compositeLayoutClip: Rect;
         dirtyFlags: layout.DirtyFlags;
         uiFlags: layout.UIFlags;
     }
@@ -35,10 +40,10 @@ module minerva.def.processdown {
                 .addTapin('processHitTestVisibility', tapins.processHitTestVisibility)
                 .addTapin('calcXformOrigin', tapins.calcXformOrigin)
                 .addTapin('processLocalXform', tapins.processLocalXform)
-                .addTapin('processLocalProjection', null)
-                .addTapin('processXform', null)
-                .addTapin('processLayoutClip', null)
-                .addTapin('processZIndices', null)
+                .addTapin('processLocalProjection', tapins.processLocalProjection)
+                .addTapin('processXform', tapins.processXform)
+                .addTapin('processLayoutClip', tapins.processLayoutClip)
+                .addTapin('processZIndices', tapins.processZIndices)
                 .addTapin('propagateDirtyToChildren', null);
         }
 
@@ -61,6 +66,7 @@ module minerva.def.processdown {
 
         flush(input: IInput, state: IState, output: IOutput) {
 
+            // DirtyFlags.Transform most likely won't be set on input or outpu
         }
     }
 }

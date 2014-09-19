@@ -4,6 +4,7 @@ module minerva.def.processdown.tapins {
         if (output.dirtyFlags & DirtyFlags.LocalTransform === 0)
             return true;
         output.dirtyFlags &= ~DirtyFlags.LocalTransform;
+        output.dirtyFlags |= ~DirtyFlags.Transform;
 
         var local = mat3.identity(state.localXform);
         var render = input.renderTransform;
