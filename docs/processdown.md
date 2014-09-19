@@ -17,6 +17,10 @@
         * Set Panel.Z based on distance from xy plane
     * Transform
         * Combine all transforms and projections to output matrices
+            * render = local * layout * carrier
+            * localP = render(toP) * carrierP
+            * abs = vpAbs * render
+            * absP = vpAbsP * localP
         * Update Bounds (visual parent)
         * Propagate down `Transform`
     * Layout Clip
