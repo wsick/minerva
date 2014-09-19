@@ -16,6 +16,12 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IProjection {
+        getDistanceFromXYPlane(objectWidth: number, objectHeight: number): number;
+        getTransform(): number[];
+    }
+}
+declare module minerva {
     interface IPoint {
         x: number;
         y: number;
@@ -197,7 +203,7 @@ declare module minerva.def.arrange {
         lastRenderSize: Size;
         uiFlags: layout.UIFlags;
     }
-    class ArrangePipe extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
+    class ArrangePipeDef extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -325,6 +331,101 @@ declare module minerva.def.measure.tapins {
 declare module minerva.def.measure.tapins {
     var validateVisibility: IMeasureTapin;
 }
+declare module minerva.def.processdown {
+    interface IProcessDownTapin extends ITapin {
+        (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean;
+    }
+    interface IInput extends IPipeInput {
+        visibility: Visibility;
+        opacity: number;
+        isHitTestVisible: boolean;
+        renderTransform: number[];
+        renderTransformOrigin: Point;
+        projection: IProjection;
+        actualWidth: number;
+        actualHeight: number;
+        totalIsRenderVisible: boolean;
+        totalOpacity: number;
+        totalIsHitTestVisible: boolean;
+        layoutClip: Rect;
+        compositeLayoutClip: Rect;
+        layoutXform: number[];
+        carrierXform: number[];
+        renderXform: number[];
+        absoluteXform: number[];
+        carrierProjection: number[];
+        localProjection: number[];
+        absoluteProjection: number[];
+        totalHasRenderProjection: boolean;
+        dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
+    }
+    interface IState extends IPipeState {
+        xformOrigin: Point;
+        localXform: number[];
+        renderAsProjection: number[];
+    }
+    interface IOutput extends IPipeOutput {
+        totalIsRenderVisible: boolean;
+        totalOpacity: number;
+        totalIsHitTestVisible: boolean;
+        z: number;
+        compositeLayoutClip: Rect;
+        renderXform: number[];
+        absoluteXform: number[];
+        localProjection: number[];
+        absoluteProjection: number[];
+        totalHasRenderProjection: boolean;
+        dirtyFlags: layout.DirtyFlags;
+        uiFlags: layout.UIFlags;
+    }
+    class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
+        constructor();
+        public createState(): IState;
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
+    }
+}
+declare module minerva.def.processdown.tapins {
+    var calcAbsoluteProjection: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var calcAbsoluteXform: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var calcLocalProjection: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var calcRenderXform: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var calcXformOrigin: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var processHitTestVisibility: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var processLayoutClip: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var processLocalProjection: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var processLocalXform: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var processRenderVisibility: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var processXform: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var processZIndices: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var propagateDirtyToChildren: IProcessDownTapin;
+}
 declare module minerva.def.render {
     class RenderContext {
         private $$transforms;
@@ -414,6 +515,8 @@ declare module minerva.layout {
     }
     interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
     }
+    interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
+    }
     interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
     }
     enum DirtyFlags {
@@ -435,6 +538,7 @@ declare module minerva.layout {
         InDownDirtyList,
         DownDirtyState,
         UpDirtyState,
+        PropagateDown,
     }
     enum UIFlags {
         None = 0,
@@ -446,19 +550,23 @@ declare module minerva.layout {
         MeasureHint = 4096,
         SizeHint = 8192,
     }
-    interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput {
+    interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput, def.processdown.IInput {
     }
     class Updater {
         private $$measure;
         private $$arrange;
+        private $$processdown;
         private $$render;
+        private $$visualParentUpdater;
         public assets: IUpdaterAssets;
         constructor();
         public setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater;
-        public setArrangePipe(pipedef?: def.arrange.ArrangePipe): Updater;
+        public setArrangePipe(pipedef?: def.arrange.ArrangePipeDef): Updater;
+        public setProcessDownPipe(pipedef?: def.processdown.ProcessDownPipeDef): Updater;
         public setRenderPipe(pipedef?: def.render.RenderPipeDef): Updater;
         public measure(availableSize: Size): boolean;
         public arrange(finalRect: Rect): boolean;
+        public processDown(): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;
     }
 }

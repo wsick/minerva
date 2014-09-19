@@ -46,7 +46,7 @@ module minerva.layout {
 
     var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeInput, def.IPipeState, def.IPipeOutput>();
 
-    export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput, def.processDown.IInput {
+    export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.render.IInput, def.processdown.IInput {
     }
 
     export class Updater {
@@ -124,7 +124,7 @@ module minerva.layout {
             var pipe = this.$$processdown;
             var vp = this.$$visualParentUpdater;
             var vpi = vp ? vp.assets : null;
-
+            var vpo = vp ? vp.$$processdown.output : null;
             return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
         }
 

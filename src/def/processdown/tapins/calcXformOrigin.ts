@@ -1,5 +1,4 @@
 module minerva.def.processdown.tapins {
-    import DirtyFlags = layout.DirtyFlags;
     export var calcXformOrigin: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
         var xo = state.xformOrigin;
         var userxo = input.renderTransformOrigin;

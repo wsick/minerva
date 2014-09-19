@@ -1014,13 +1014,13 @@ var minerva;
 (function (minerva) {
     (function (def) {
         (function (arrange) {
-            var ArrangePipe = (function (_super) {
-                __extends(ArrangePipe, _super);
-                function ArrangePipe() {
+            var ArrangePipeDef = (function (_super) {
+                __extends(ArrangePipeDef, _super);
+                function ArrangePipeDef() {
                     _super.call(this);
                     this.addTapin('applyRounding', arrange.tapins.applyRounding).addTapin('validateFinalRect', arrange.tapins.validateFinalRect).addTapin('validateVisibility', arrange.tapins.validateVisibility).addTapin('checkNeedArrange', arrange.tapins.checkNeedArrange).addTapin('invalidateFuture', arrange.tapins.invalidateFuture).addTapin('calcStretched', arrange.tapins.calcStretched).addTapin('prepareOverride', arrange.tapins.prepareOverride).addTapin('doOverride', arrange.tapins.doOverride).addTapin('completeOverride', arrange.tapins.completeOverride).addTapin('calcFlip', arrange.tapins.calcFlip).addTapin('calcVisualOffset', arrange.tapins.calcVisualOffset).addTapin('buildLayoutClip', arrange.tapins.buildLayoutClip).addTapin('buildLayoutXform', arrange.tapins.buildLayoutXform).addTapin('buildRenderSize', arrange.tapins.buildRenderSize);
                 }
-                ArrangePipe.prototype.createState = function () {
+                ArrangePipeDef.prototype.createState = function () {
                     return {
                         finalRect: new minerva.Rect(),
                         finalSize: new minerva.Size(),
@@ -1032,7 +1032,7 @@ var minerva;
                     };
                 };
 
-                ArrangePipe.prototype.createOutput = function () {
+                ArrangePipeDef.prototype.createOutput = function () {
                     return {
                         error: null,
                         dirtyFlags: 0,
@@ -1046,7 +1046,7 @@ var minerva;
                     };
                 };
 
-                ArrangePipe.prototype.prepare = function (input, state, output) {
+                ArrangePipeDef.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
                     output.uiFlags = input.uiFlags;
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
@@ -1055,7 +1055,7 @@ var minerva;
                     output.lastRenderSize = null;
                 };
 
-                ArrangePipe.prototype.flush = function (input, state, output) {
+                ArrangePipeDef.prototype.flush = function (input, state, output) {
                     var newDirty = output.dirtyFlags & ~input.dirtyFlags;
                     if (newDirty > 0) {
                     }
@@ -1070,9 +1070,9 @@ var minerva;
                     if (output.lastRenderSize)
                         input.lastRenderSize = output.lastRenderSize;
                 };
-                return ArrangePipe;
+                return ArrangePipeDef;
             })(def.PipeDef);
-            arrange.ArrangePipe = ArrangePipe;
+            arrange.ArrangePipeDef = ArrangePipeDef;
         })(def.arrange || (def.arrange = {}));
         var arrange = def.arrange;
     })(minerva.def || (minerva.def = {}));
@@ -1706,6 +1706,377 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (def) {
+        (function (processdown) {
+            var ProcessDownPipeDef = (function (_super) {
+                __extends(ProcessDownPipeDef, _super);
+                function ProcessDownPipeDef() {
+                    _super.call(this);
+                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('processZIndices', processdown.tapins.processZIndices).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
+                }
+                ProcessDownPipeDef.prototype.createState = function () {
+                    return {
+                        xformOrigin: new minerva.Point(),
+                        localXform: mat3.identity(),
+                        renderAsProjection: mat4.identity()
+                    };
+                };
+
+                ProcessDownPipeDef.prototype.createOutput = function () {
+                    return {
+                        renderXform: mat3.identity(),
+                        absoluteXform: mat3.identity(),
+                        localProjection: mat4.identity(),
+                        absoluteProjection: mat4.identity(),
+                        totalHasRenderProjection: false
+                    };
+                };
+
+                ProcessDownPipeDef.prototype.prepare = function (input, state, output) {
+                };
+
+                ProcessDownPipeDef.prototype.flush = function (input, state, output) {
+                };
+                return ProcessDownPipeDef;
+            })(def.PipeDef);
+            processdown.ProcessDownPipeDef = ProcessDownPipeDef;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.calcAbsoluteProjection = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                        return true;
+
+                    var abs = output.absoluteProjection;
+                    if (vpinput)
+                        mat4.set(vpinput.absoluteProjection, abs);
+                    else
+                        mat4.identity(abs);
+
+                    mat4.multiply(output.localProjection, abs, abs);
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.calcAbsoluteXform = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                        return true;
+
+                    var abs = output.absoluteXform;
+                    if (vpinput)
+                        mat3.set(vpinput.absoluteXform, abs);
+                    else
+                        mat3.identity(abs);
+
+                    mat3.multiply(output.renderXform, abs, abs);
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.calcLocalProjection = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                        return true;
+
+                    output.totalHasRenderProjection = vpinput ? vpinput.totalHasRenderProjection : false;
+
+                    var lp = output.localProjection;
+                    mat4.multiply(input.carrierProjection, state.renderAsProjection, lp);
+                    var projection = input.projection;
+                    if (projection) {
+                        mat4.multiply(lp, input.projection.getTransform(), lp);
+                        output.totalHasRenderProjection = true;
+                    }
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.calcRenderXform = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                        return true;
+
+                    var rx = output.renderXform;
+                    mat3.set(input.carrierXform, rx);
+                    mat3.multiply(rx, input.layoutXform, rx);
+                    mat3.multiply(rx, state.localXform, rx);
+                    mat4.toAffineMat3(rx, state.renderAsProjection);
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.calcXformOrigin = function (input, state, output, vpinput, vpoutput) {
+                    var xo = state.xformOrigin;
+                    var userxo = input.renderTransformOrigin;
+                    if (!userxo) {
+                        xo.x = 0;
+                        xo.y = 0;
+                    } else {
+                        xo.x = input.actualWidth * userxo.x;
+                        xo.y = input.actualHeight * userxo.y;
+                    }
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.processHitTestVisibility = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.HitTestVisibility) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.HitTestVisibility;
+
+                    if (vpinput) {
+                        output.totalIsHitTestVisible = vpinput.totalIsHitTestVisible && input.isHitTestVisible;
+                    } else {
+                        output.totalIsHitTestVisible = input.isHitTestVisible;
+                    }
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.processLayoutClip = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.LayoutClip) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.LayoutClip;
+
+                    var composite = output.compositeLayoutClip;
+                    var vpc = vpinput ? vpinput.compositeLayoutClip : null;
+                    if (!minerva.Rect.isEmpty(input.layoutClip)) {
+                        minerva.Rect.copyTo(input.layoutClip, composite);
+                        if (vpc)
+                            minerva.Rect.intersection(composite, vpc);
+                    } else {
+                        if (vpc)
+                            minerva.Rect.copyTo(vpc, composite);
+                        else
+                            composite.x = composite.y = composite.width = composite.height = 0;
+                    }
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.processLocalProjection = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.LocalProjection) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.LocalProjection;
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.Transform;
+
+                    var projection = input.projection;
+                    output.z = projection ? projection.getDistanceFromXYPlane(input.actualWidth, input.actualHeight) : NaN;
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.processLocalXform = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.LocalTransform) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.LocalTransform;
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.Transform;
+
+                    var local = mat3.identity(state.localXform);
+                    var render = input.renderTransform;
+                    if (!render)
+                        return true;
+
+                    var origin = state.xformOrigin;
+                    mat3.translate(local, origin.x, origin.y);
+                    mat3.multiply(local, render, local);
+                    mat3.translate(local, -origin.x, -origin.y);
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.processRenderVisibility = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.RenderVisibility) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.RenderVisibility;
+
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+                    if (vpoutput)
+                        vpoutput.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+
+                    if (vpinput) {
+                        output.totalOpacity = vpinput.totalOpacity * input.opacity;
+                        output.totalIsRenderVisible = (vpinput.visibility === 0 /* Visible */) && (input.visibility === 0 /* Visible */);
+                    } else {
+                        output.totalOpacity = input.opacity;
+                        output.totalIsRenderVisible = input.visibility === 0 /* Visible */;
+                    }
+
+                    if (input.totalIsRenderVisible !== output.totalIsRenderVisible)
+                        output.dirtyFlags |= minerva.layout.DirtyFlags.NewBounds;
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.processXform = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.Transform) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.Transform;
+
+                    if (!mat4.equal(input.localProjection, output.localProjection)) {
+                        output.dirtyFlags |= minerva.layout.DirtyFlags.NewBounds;
+                    }
+
+                    output.dirtyFlags |= minerva.layout.DirtyFlags.Bounds;
+
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.processZIndices = function (input, state, output, vpinput, vpoutput) {
+                    if ((output.dirtyFlags & minerva.layout.DirtyFlags.ChildrenZIndices) === 0)
+                        return true;
+                    output.dirtyFlags &= ~minerva.layout.DirtyFlags.ChildrenZIndices;
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (processdown) {
+            (function (tapins) {
+                tapins.propagateDirtyToChildren = function (input, state, output, vpinput, vpoutput) {
+                    return true;
+                };
+            })(processdown.tapins || (processdown.tapins = {}));
+            var tapins = processdown.tapins;
+        })(def.processdown || (def.processdown = {}));
+        var processdown = def.processdown;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
         (function (render) {
             var RenderContext = (function () {
                 function RenderContext(ctx) {
@@ -2016,6 +2387,7 @@ var minerva;
 
             DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ChildrenZIndices] = "DownDirtyState";
             DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.Invalidate] = "UpDirtyState";
+            DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
         })(layout.DirtyFlags || (layout.DirtyFlags = {}));
         var DirtyFlags = layout.DirtyFlags;
         (function (UIFlags) {
@@ -2036,6 +2408,11 @@ var minerva;
 
         var Updater = (function () {
             function Updater() {
+                this.$$measure = null;
+                this.$$arrange = null;
+                this.$$processdown = null;
+                this.$$render = null;
+                this.$$visualParentUpdater = null;
                 this.assets = {
                     width: NaN,
                     height: NaN,
@@ -2060,9 +2437,6 @@ var minerva;
                     dirtyFlags: 0,
                     uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */
                 };
-                this.$$measure = null;
-                this.$$arrange = null;
-                this.$$render = null;
             }
             Updater.prototype.setMeasurePipe = function (pipedef) {
                 this.$$measure = layout.createPipe(pipedef || NO_PIPE);
@@ -2071,6 +2445,11 @@ var minerva;
 
             Updater.prototype.setArrangePipe = function (pipedef) {
                 this.$$arrange = layout.createPipe(pipedef || NO_PIPE);
+                return this;
+            };
+
+            Updater.prototype.setProcessDownPipe = function (pipedef) {
+                this.$$processdown = layout.createPipe(pipedef || NO_PIPE);
                 return this;
             };
 
@@ -2087,6 +2466,14 @@ var minerva;
             Updater.prototype.arrange = function (finalRect) {
                 var pipe = this.$$arrange;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
+            };
+
+            Updater.prototype.processDown = function () {
+                var pipe = this.$$processdown;
+                var vp = this.$$visualParentUpdater;
+                var vpi = vp ? vp.assets : null;
+                var vpo = vp ? vp.$$processdown.output : null;
+                return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
             };
 
             Updater.prototype.render = function (ctx, region) {
