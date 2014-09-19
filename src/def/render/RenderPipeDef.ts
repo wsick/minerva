@@ -40,13 +40,13 @@ module minerva.def.render {
         }
 
         createState (): IState {
-            return <IState> {
+            return {
                 renderRegion: new Rect()
             };
         }
 
         createOutput (): IOutput {
-            return <IOutput> {
+            return {
             };
         }
     }

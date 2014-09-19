@@ -48,7 +48,7 @@ module minerva.def.processdown {
     }
 
     export class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
-        constructor() {
+        constructor () {
             super();
             this.addTapin('processRenderVisibility', tapins.processRenderVisibility)
                 .addTapin('processHitTestVisibility', tapins.processHitTestVisibility)
@@ -65,29 +65,36 @@ module minerva.def.processdown {
                 .addTapin('propagateDirtyToChildren', tapins.propagateDirtyToChildren);
         }
 
-        createState(): IState {
-            return <IState>{
+        createState (): IState {
+            return {
                 xformOrigin: new Point(),
                 localXform: mat3.identity(),
                 renderAsProjection: mat4.identity()
             };
         }
 
-        createOutput(): IOutput {
-            return <IOutput>{
+        createOutput (): IOutput {
+            return {
+                totalIsRenderVisible: false,
+                totalOpacity: 1.0,
+                totalIsHitTestVisible: false,
+                z: NaN,
+                compositeLayoutClip: new Rect(),
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
                 localProjection: mat4.identity(),
                 absoluteProjection: mat4.identity(),
-                totalHasRenderProjection: false
+                totalHasRenderProjection: false,
+                dirtyFlags: 0,
+                uiFlags: 0
             };
         }
 
-        prepare(input: IInput, state: IState, output: IOutput) {
+        prepare (input: IInput, state: IState, output: IOutput) {
 
         }
 
-        flush(input: IInput, state: IState, output: IOutput) {
+        flush (input: IInput, state: IState, output: IOutput) {
 
             // DirtyFlags.Transform most likely won't be set on input or outpu
         }
