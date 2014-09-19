@@ -50,10 +50,10 @@ module minerva.layout {
     }
 
     export class Updater {
-        private $$measure: IMeasurePipe=null;
-        private $$arrange: IArrangePipe=null;
-        private $$processdown: IProcessDownPipe=null;
-        private $$render: IRenderPipe=null;
+        private $$measure: IMeasurePipe = null;
+        private $$arrange: IArrangePipe = null;
+        private $$processdown: IProcessDownPipe = null;
+        private $$render: IRenderPipe = null;
 
         private $$visualParentUpdater: Updater = null;
 
