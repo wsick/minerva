@@ -29,6 +29,7 @@ module minerva.layout {
         DownDirtyState = Transform | LocalTransform | LocalProjection
             | Clip | LocalClip | LayoutClip | RenderVisibility | HitTestVisibility | ChildrenZIndices,
         UpDirtyState = Bounds | Invalidate,
+        PropagateDown = RenderVisibility | HitTestVisibility | Transform | LayoutClip
     }
     export enum UIFlags {
         None = 0,
