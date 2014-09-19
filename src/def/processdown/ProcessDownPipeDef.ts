@@ -44,7 +44,7 @@ module minerva.def.processdown {
                 .addTapin('processXform', tapins.processXform)
                 .addTapin('processLayoutClip', tapins.processLayoutClip)
                 .addTapin('processZIndices', tapins.processZIndices)
-                .addTapin('propagateDirtyToChildren', null);
+                .addTapin('propagateDirtyToChildren', tapins.propagateDirtyToChildren);
         }
 
         createState(): IState {
