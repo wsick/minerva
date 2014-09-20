@@ -1,5 +1,5 @@
 module minerva.def.processdown.tapins {
-    export var processHitTestVisibility: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
+    export var processHitTestVisibility: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean {
         if ((input.dirtyFlags & DirtyFlags.HitTestVisibility) === 0)
             return true;
 

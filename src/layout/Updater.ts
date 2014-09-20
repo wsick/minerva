@@ -85,53 +85,51 @@ module minerva.layout {
             forceInvalidate: false
         };
 
-        constructor() {
+        constructor () {
         }
 
-        setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater {
+        setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
             this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setArrangePipe(pipedef?: def.arrange.ArrangePipeDef): Updater {
+        setArrangePipe (pipedef?: def.arrange.ArrangePipeDef): Updater {
             this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setProcessDownPipe(pipedef?: def.processdown.ProcessDownPipeDef): Updater {
+        setProcessDownPipe (pipedef?: def.processdown.ProcessDownPipeDef): Updater {
             this.$$processdown = <IProcessDownPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setProcessUpPipe(pipedef?: def.processup.ProcessUpPipeDef): Updater {
+        setProcessUpPipe (pipedef?: def.processup.ProcessUpPipeDef): Updater {
             this.$$processup = <IProcessUpPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setRenderPipe(pipedef?: def.render.RenderPipeDef): Updater {
+        setRenderPipe (pipedef?: def.render.RenderPipeDef): Updater {
             this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        measure(availableSize: Size): boolean {
+        measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
             return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
         }
 
-        arrange(finalRect: Rect): boolean {
+        arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
             return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
         }
 
-        processDown(): boolean {
+        processDown (): boolean {
             var pipe = this.$$processdown;
             var vp = this.$$visualParentUpdater;
-            var vpi = vp ? vp.assets : null;
-            var vpo = vp ? vp.$$processdown.output : null;
-            return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
+            return pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null, this);
         }
 
-        processUp(): boolean {
+        processUp (): boolean {
             var pipe = this.$$processup;
             var vp = this.$$visualParentUpdater;
             var vpi = vp ? vp.assets : null;
@@ -139,9 +137,20 @@ module minerva.layout {
             return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
         }
 
-        render(ctx: def.render.RenderContext, region: Rect): boolean {
+        render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
+        }
+
+        invalidate (region: Rect) {
+
+        }
+
+        addToUpDirty () {
+        }
+
+        addToDownDirty () {
+
         }
     }
 }

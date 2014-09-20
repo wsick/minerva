@@ -1,12 +1,12 @@
 module minerva.def.processdown.tapins {
-    export var processRenderVisibility: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
+    export var processRenderVisibility: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean {
         if ((input.dirtyFlags & DirtyFlags.RenderVisibility) === 0)
             return true;
 
         //Update bounds
         output.dirtyFlags |= DirtyFlags.Bounds;
-        if (vpoutput)
-            vpoutput.dirtyFlags |= DirtyFlags.Bounds;
+        //NOTE: Removing visual parent `UpdateBounds`
+        //      In our down pass, we should only be affecting self and children
 
         //Calculate
         if (vpinput) {

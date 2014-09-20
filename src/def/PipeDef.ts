@@ -62,11 +62,12 @@ module minerva.def {
         }
 
         run (input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean {
-            this.prepare(input, state, output);
-
             contexts.unshift(output);
             contexts.unshift(state);
             contexts.unshift(input);
+
+            this.prepare.apply(this, contexts);
+
             var flag = true;
             for (var i = 0, tapins = this.$$tapins, len = tapins.length; i < len; i++) {
                 if (!tapins[i].apply(this, contexts)) {
@@ -75,7 +76,7 @@ module minerva.def {
                 }
             }
 
-            this.flush(input, state, output);
+            this.flush.apply(this, contexts);
 
             return flag;
         }
@@ -88,11 +89,11 @@ module minerva.def {
             return null;
         }
 
-        prepare (input: TInput, state: TState, output: TOutput) {
+        prepare (input: TInput, state: TState, output: TOutput, ...contexts: any[]) {
 
         }
 
-        flush (input: TInput, state: TState, output: TOutput) {
+        flush (input: TInput, state: TState, output: TOutput, ...contexts: any[]) {
 
         }
     }

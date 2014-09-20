@@ -1,15 +1,13 @@
 module minerva.def.processdown.tapins {
-    export var processXform: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
+    export var processXform: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean {
         if ((input.dirtyFlags & DirtyFlags.Transform) === 0)
             return true;
 
         //TODO: Popup needs to invalidate subtree transform
 
         if (!mat4.equal(input.localProjection, output.localProjection)) {
-            if (vpoutput)
-                helpers.invalidate(vpoutput, input.surfaceBoundsWithChildren);
-            else if (input.isTopLevel && input.surface)
-                input.surface.invalidate(input.surfaceBoundsWithChildren);
+            //NOTE: Removing visual parent (or surface) `Invalidate`
+            //      In our down pass, we should only be invalidating self and children
             output.dirtyFlags |= DirtyFlags.NewBounds;
         }
 

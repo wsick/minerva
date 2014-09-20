@@ -191,8 +191,8 @@ declare module minerva.def {
         public run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
         public createState(): TState;
         public createOutput(): TOutput;
-        public prepare(input: TInput, state: TState, output: TOutput): void;
-        public flush(input: TInput, state: TState, output: TOutput): void;
+        public prepare(input: TInput, state: TState, output: TOutput, ...contexts: any[]): void;
+        public flush(input: TInput, state: TState, output: TOutput, ...contexts: any[]): void;
     }
 }
 declare module minerva.def.arrange {
@@ -378,7 +378,7 @@ declare module minerva.def.measure.tapins {
 }
 declare module minerva.def.processdown {
     interface IProcessDownTapin extends ITapin {
-        (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean;
+        (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean;
     }
     interface IInput extends IPipeInput {
         visibility: Visibility;
@@ -391,7 +391,6 @@ declare module minerva.def.processdown {
         actualHeight: number;
         surfaceBoundsWithChildren: Rect;
         isTopLevel: boolean;
-        surface: ISurface;
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
@@ -413,7 +412,7 @@ declare module minerva.def.processdown {
         localXform: number[];
         renderAsProjection: number[];
     }
-    interface IOutput extends IPipeOutput, helpers.IInvalidateable {
+    interface IOutput extends IPipeOutput {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
@@ -426,15 +425,12 @@ declare module minerva.def.processdown {
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
     }
-    interface ISurface {
-        invalidate(dirty: Rect): any;
-    }
     class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput): void;
-        public flush(input: IInput, state: IState, output: IOutput): void;
+        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput): void;
+        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput): void;
     }
 }
 declare module minerva.def.processdown.tapins {
@@ -472,6 +468,9 @@ declare module minerva.def.processdown.tapins {
 }
 declare module minerva.def.processdown.tapins {
     var processZIndices: IProcessDownTapin;
+}
+declare module minerva.def.processdown.tapins {
+    var propagateDirtyToChildren: IProcessDownTapin;
 }
 declare module minerva.def.processup {
     interface IProcessUpTapin extends ITapin {
@@ -519,8 +518,8 @@ declare module minerva.def.processup {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput): void;
-        public flush(input: IInput, state: IState, output: IOutput): void;
+        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): void;
     }
 }
 declare module minerva.def.processup.tapins {
@@ -660,5 +659,8 @@ declare module minerva.layout {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;
+        public invalidate(region: Rect): void;
+        public addToUpDirty(): void;
+        public addToDownDirty(): void;
     }
 }

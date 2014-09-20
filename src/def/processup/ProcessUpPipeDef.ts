@@ -74,11 +74,11 @@ module minerva.def.processup {
             };
         }
 
-        prepare(input: IInput, state: IState, output: IOutput) {
+        prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput) {
 
         }
 
-        flush(input: IInput, state: IState, output: IOutput) {
+        flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput) {
 
             // DirtyFlags.Transform most likely won't be set on input or outpu
         }

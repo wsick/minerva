@@ -1,6 +1,6 @@
 module minerva.def.processdown {
     export interface IProcessDownTapin extends ITapin {
-        (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput):boolean;
+        (input: IInput, state: IState, output: IOutput, vpinput: IInput):boolean;
     }
     export interface IInput extends IPipeInput {
         visibility: Visibility;
@@ -13,7 +13,6 @@ module minerva.def.processdown {
         actualHeight: number;
         surfaceBoundsWithChildren: Rect;
         isTopLevel: boolean;
-        surface: ISurface;
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
@@ -35,7 +34,7 @@ module minerva.def.processdown {
         localXform: number[];
         renderAsProjection: number[];
     }
-    export interface IOutput extends IPipeOutput, helpers.IInvalidateable {
+    export interface IOutput extends IPipeOutput {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
@@ -48,9 +47,7 @@ module minerva.def.processdown {
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
     }
-    export interface ISurface {
-        invalidate(dirty: Rect);
-    }
+
 
     export class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor () {
@@ -89,16 +86,14 @@ module minerva.def.processdown {
                 localProjection: mat4.identity(),
                 absoluteProjection: mat4.identity(),
                 totalHasRenderProjection: false,
-                dirtyRegion: new Rect(),
                 dirtyFlags: 0
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput) {
+        prepare (input: IInput, state: IState, output: IOutput, vpinput: IInput) {
             if ((input.dirtyFlags & (DirtyFlags.LocalProjection | DirtyFlags.LocalTransform)) > 0) {
                 input.dirtyFlags |= DirtyFlags.Transform;
             }
-
             output.dirtyFlags = input.dirtyFlags;
             output.totalIsRenderVisible = input.totalIsRenderVisible;
             output.totalOpacity = input.totalOpacity;
@@ -112,17 +107,11 @@ module minerva.def.processdown {
             output.totalHasRenderProjection = input.totalHasRenderProjection;
         }
 
-        flush (input: IInput, state: IState, output: IOutput) {
-            var newDirty = output.dirtyFlags & ~input.dirtyFlags;
-            if ((newDirty & (DirtyFlags.Bounds | DirtyFlags.NewBounds)) > 0) {
-                //add up dirty - this
+        flush (input: IInput, state: IState, output: IOutput, vpinput: IInput) {
+            var upDirty = (output.dirtyFlags & ~input.dirtyFlags) & DirtyFlags.UpDirtyState;
+            if (upDirty > 0) {
+                //add dirty element to this
             }
-            var toprop = newDirty & DirtyFlags.PropagateDown;
-            if (toprop > 0) {
-                //loop through visual children
-                //  add down dirty - child
-            }
-
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.DownDirtyState;
             input.totalIsRenderVisible = output.totalIsRenderVisible;
             input.totalOpacity = output.totalOpacity;
