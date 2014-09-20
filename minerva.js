@@ -1905,14 +1905,16 @@ var minerva;
                         absoluteProjection: mat4.identity(),
                         totalHasRenderProjection: false,
                         dirtyRegion: new minerva.Rect(),
-                        dirtyFlags: 0,
-                        uiFlags: 0
+                        dirtyFlags: 0
                     };
                 };
 
                 ProcessDownPipeDef.prototype.prepare = function (input, state, output) {
+                    if ((input.dirtyFlags & (minerva.DirtyFlags.LocalProjection | minerva.DirtyFlags.LocalTransform)) > 0) {
+                        input.dirtyFlags |= minerva.DirtyFlags.Transform;
+                    }
+
                     output.dirtyFlags = input.dirtyFlags;
-                    output.uiFlags = input.uiFlags;
                     output.totalIsRenderVisible = input.totalIsRenderVisible;
                     output.totalOpacity = input.totalOpacity;
                     output.totalIsHitTestVisible = input.totalIsHitTestVisible;
@@ -1934,7 +1936,6 @@ var minerva;
                     }
 
                     input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.DownDirtyState;
-                    input.uiFlags = output.uiFlags;
                     input.totalIsRenderVisible = output.totalIsRenderVisible;
                     input.totalOpacity = output.totalOpacity;
                     input.totalIsHitTestVisible = output.totalIsHitTestVisible;
@@ -1960,7 +1961,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcAbsoluteProjection = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     var abs = output.absoluteProjection;
@@ -1986,7 +1987,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcAbsoluteXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     var abs = output.absoluteXform;
@@ -2012,7 +2013,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcLocalProjection = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     output.totalHasRenderProjection = vpinput ? vpinput.totalHasRenderProjection : false;
@@ -2040,7 +2041,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.calcRenderXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     var rx = output.renderXform;
@@ -2088,7 +2089,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processHitTestVisibility = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.HitTestVisibility) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.HitTestVisibility) === 0)
                         return true;
 
                     if (vpinput) {
@@ -2112,7 +2113,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processLayoutClip = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                         return true;
 
                     var composite = output.compositeLayoutClip;
@@ -2143,9 +2144,8 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processLocalProjection = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.LocalProjection) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.LocalProjection) === 0)
                         return true;
-                    output.dirtyFlags |= minerva.DirtyFlags.Transform;
 
                     var projection = input.projection;
                     output.z = projection ? projection.getDistanceFromXYPlane(input.actualWidth, input.actualHeight) : NaN;
@@ -2165,9 +2165,8 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processLocalXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
                         return true;
-                    output.dirtyFlags |= minerva.DirtyFlags.Transform;
 
                     var local = mat3.identity(state.localXform);
                     var render = input.renderTransform;
@@ -2194,7 +2193,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processRenderVisibility = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.RenderVisibility) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.RenderVisibility) === 0)
                         return true;
 
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
@@ -2227,7 +2226,7 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processXform = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
                     if (!mat4.equal(input.localProjection, output.localProjection)) {

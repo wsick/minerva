@@ -29,7 +29,6 @@ module minerva.def.processdown {
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
-        uiFlags: UIFlags;
     }
     export interface IState extends IPipeState {
         xformOrigin: Point;
@@ -48,7 +47,6 @@ module minerva.def.processdown {
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
-        uiFlags: UIFlags;
     }
     export interface ISurface {
         invalidate(dirty: Rect);
@@ -92,8 +90,7 @@ module minerva.def.processdown {
                 absoluteProjection: mat4.identity(),
                 totalHasRenderProjection: false,
                 dirtyRegion: new Rect(),
-                dirtyFlags: 0,
-                uiFlags: 0
+                dirtyFlags: 0
             };
         }
 
@@ -103,7 +100,6 @@ module minerva.def.processdown {
             }
 
             output.dirtyFlags = input.dirtyFlags;
-            output.uiFlags = input.uiFlags;
             output.totalIsRenderVisible = input.totalIsRenderVisible;
             output.totalOpacity = input.totalOpacity;
             output.totalIsHitTestVisible = input.totalIsHitTestVisible;
@@ -128,7 +124,6 @@ module minerva.def.processdown {
             }
 
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.DownDirtyState;
-            input.uiFlags = output.uiFlags;
             input.totalIsRenderVisible = output.totalIsRenderVisible;
             input.totalOpacity = output.totalOpacity;
             input.totalIsHitTestVisible = output.totalIsHitTestVisible;

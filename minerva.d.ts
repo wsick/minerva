@@ -407,7 +407,6 @@ declare module minerva.def.processdown {
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
-        uiFlags: UIFlags;
     }
     interface IState extends IPipeState {
         xformOrigin: Point;
@@ -426,7 +425,6 @@ declare module minerva.def.processdown {
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
-        uiFlags: UIFlags;
     }
     interface ISurface {
         invalidate(dirty: Rect): any;
