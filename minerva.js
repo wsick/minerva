@@ -2734,6 +2734,87 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (def) {
+        (function (size) {
+            var SizePipeDef = (function (_super) {
+                __extends(SizePipeDef, _super);
+                function SizePipeDef() {
+                    _super.call(this);
+                    this.addTapin('calcUseRender', size.tapins.calcUseRender).addTapin('computeActual', size.tapins.computeActual);
+                }
+                SizePipeDef.prototype.createState = function () {
+                    return {
+                        useRender: false
+                    };
+                };
+
+                SizePipeDef.prototype.createOutput = function () {
+                    return {
+                        actualSize: new minerva.Size()
+                    };
+                };
+
+                SizePipeDef.prototype.prepare = function (input, state, output) {
+                };
+
+                SizePipeDef.prototype.flush = function (input, state, output) {
+                    var as = output.actualSize;
+                    input.actualWidth = as.width;
+                    input.actualHeight = as.height;
+                };
+                return SizePipeDef;
+            })(def.PipeDef);
+            size.SizePipeDef = SizePipeDef;
+        })(def.size || (def.size = {}));
+        var size = def.size;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (size) {
+            (function (tapins) {
+                tapins.calcUseRender = function (input, state, output) {
+                    state.useRender = true;
+                    return true;
+                };
+            })(size.tapins || (size.tapins = {}));
+            var tapins = size.tapins;
+        })(def.size || (def.size = {}));
+        var size = def.size;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (def) {
+        (function (size) {
+            (function (tapins) {
+                tapins.computeActual = function (input, state, output) {
+                    var as = output.actualSize;
+                    as.width = as.height = 0;
+                    if (input.visibility !== 0 /* Visible */) {
+                        return true;
+                    }
+
+                    if (state.useRender) {
+                        minerva.Size.copyTo(input.renderSize, as);
+                        return true;
+                    }
+
+                    def.helpers.coerceSize(as, input);
+                    return true;
+                };
+            })(size.tapins || (size.tapins = {}));
+            var tapins = size.tapins;
+        })(def.size || (def.size = {}));
+        var size = def.size;
+    })(minerva.def || (minerva.def = {}));
+    var def = minerva.def;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (layout) {
         var IPipe = (function () {
             function IPipe() {
@@ -2768,6 +2849,7 @@ var minerva;
             function Updater() {
                 this.$$measure = null;
                 this.$$arrange = null;
+                this.$$size = null;
                 this.$$processdown = null;
                 this.$$processup = null;
                 this.$$render = null;
@@ -2836,6 +2918,11 @@ var minerva;
                 return this;
             };
 
+            Updater.prototype.setSizePipe = function (pipedef) {
+                this.$$size = layout.createPipe(pipedef || NO_PIPE);
+                return this;
+            };
+
             Updater.prototype.setProcessDownPipe = function (pipedef) {
                 this.$$processdown = layout.createPipe(pipedef || NO_PIPE);
                 return this;
@@ -2859,6 +2946,16 @@ var minerva;
             Updater.prototype.arrange = function (finalRect) {
                 var pipe = this.$$arrange;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
+            };
+
+            Updater.prototype.size = function (oldSize, newSize) {
+                var pipe = this.$$size;
+                var assets = this.assets;
+                oldSize.width = assets.actualWidth;
+                oldSize.height = assets.actualHeight;
+                var success = pipe.def.run(assets, pipe.state, pipe.output);
+                minerva.Size.copyTo(pipe.output.actualSize, newSize);
+                return success;
             };
 
             Updater.prototype.processDown = function () {

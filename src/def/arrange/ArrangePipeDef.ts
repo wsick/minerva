@@ -2,17 +2,10 @@ module minerva.def.arrange {
     export interface IArrangeTapin extends ITapin {
         (input: IInput, state: IState, output: IOutput, finalRect: Rect):boolean;
     }
-    export interface IInput extends IPipeInput {
-        width: number;
-        height: number;
-        minWidth: number;
-        minHeight: number;
-        maxWidth: number;
-        maxHeight: number;
+    export interface IInput extends IPipeInput, helpers.ISized {
         margin: Thickness;
         horizontalAlignment: HorizontalAlignment;
         verticalAlignment: VerticalAlignment;
-        useLayoutRounding: boolean;
         visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: DirtyFlags;

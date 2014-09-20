@@ -199,17 +199,10 @@ declare module minerva.def.arrange {
     interface IArrangeTapin extends ITapin {
         (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean;
     }
-    interface IInput extends IPipeInput {
-        width: number;
-        height: number;
-        minWidth: number;
-        minHeight: number;
-        maxWidth: number;
-        maxHeight: number;
+    interface IInput extends IPipeInput, helpers.ISized {
         margin: Thickness;
         horizontalAlignment: HorizontalAlignment;
         verticalAlignment: VerticalAlignment;
-        useLayoutRounding: boolean;
         visibility: Visibility;
         hiddenDesire: Size;
         dirtyFlags: DirtyFlags;
@@ -307,14 +300,7 @@ declare module minerva.def.measure {
     interface IMeasureTapin extends ITapin {
         (input: IInput, state: IState, output: IOutput, availableSize: Size): boolean;
     }
-    interface IInput extends IPipeInput {
-        width: number;
-        height: number;
-        minWidth: number;
-        minHeight: number;
-        maxWidth: number;
-        maxHeight: number;
-        useLayoutRounding: boolean;
+    interface IInput extends IPipeInput, helpers.ISized {
         margin: Thickness;
         previousConstraint: Size;
         visibility: Visibility;
@@ -611,6 +597,36 @@ declare module minerva.def.render.tapins {
 declare module minerva.def.render.tapins {
     var validateRegion: IRenderTapin;
 }
+declare module minerva.def.size {
+    interface ISizeTapin extends ITapin {
+        (input: IInput, state: IState, output: IOutput): boolean;
+    }
+    interface IInput extends IPipeInput, helpers.ISized {
+        visibility: Visibility;
+        renderSize: Size;
+        actualWidth: number;
+        actualHeight: number;
+    }
+    interface IState extends IPipeState {
+        useRender: boolean;
+    }
+    interface IOutput extends IPipeOutput {
+        actualSize: Size;
+    }
+    class SizePipeDef extends PipeDef<ISizeTapin, IInput, IState, IOutput> {
+        constructor();
+        public createState(): IState;
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
+    }
+}
+declare module minerva.def.size.tapins {
+    var calcUseRender: ISizeTapin;
+}
+declare module minerva.def.size.tapins {
+    var computeActual: ISizeTapin;
+}
 declare module minerva.layout {
     class IPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput> {
         public def: def.IPipeDef<TInput, TState, TOutput>;
@@ -628,6 +644,8 @@ declare module minerva.layout {
     }
     interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
     }
+    interface ISizePipe extends IPipe<def.size.IInput, def.size.IState, def.size.IOutput> {
+    }
     interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
     }
     interface IProcessUpPipe extends IPipe<def.processup.IInput, def.processup.IState, def.processup.IOutput> {
@@ -636,11 +654,14 @@ declare module minerva.layout {
     }
     interface IVisualOwner extends def.processup.IProcessVisualOwner {
     }
-    interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
+    interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.size.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
     }
+}
+declare module minerva.layout {
     class Updater {
         private $$measure;
         private $$arrange;
+        private $$size;
         private $$processdown;
         private $$processup;
         private $$render;
@@ -650,11 +671,13 @@ declare module minerva.layout {
         constructor();
         public setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater;
         public setArrangePipe(pipedef?: def.arrange.ArrangePipeDef): Updater;
+        public setSizePipe(pipedef?: def.size.SizePipeDef): Updater;
         public setProcessDownPipe(pipedef?: def.processdown.ProcessDownPipeDef): Updater;
         public setProcessUpPipe(pipedef?: def.processup.ProcessUpPipeDef): Updater;
         public setRenderPipe(pipedef?: def.render.RenderPipeDef): Updater;
         public measure(availableSize: Size): boolean;
         public arrange(finalRect: Rect): boolean;
+        public size(oldSize: Size, newSize: Size): boolean;
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;

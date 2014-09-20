@@ -2,14 +2,7 @@ module minerva.def.measure {
     export interface IMeasureTapin extends ITapin {
         (input: IInput, state: IState, output: IOutput, availableSize: Size):boolean;
     }
-    export interface IInput extends IPipeInput {
-        width: number;
-        height: number;
-        minWidth: number;
-        minHeight: number;
-        maxWidth: number;
-        maxHeight: number;
-        useLayoutRounding: boolean;
+    export interface IInput extends IPipeInput, helpers.ISized {
         margin: Thickness;
         previousConstraint: Size;
         visibility: Visibility;

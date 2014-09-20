@@ -1,18 +1,4 @@
 module minerva.layout {
-    export interface IMeasurePipe extends IPipe<def.measure.IInput, def.measure.IState, def.measure.IOutput> {
-    }
-    export interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
-    }
-    export interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
-    }
-    export interface IProcessUpPipe extends IPipe<def.processup.IInput, def.processup.IState, def.processup.IOutput> {
-    }
-    export interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
-    }
-
-    export interface IVisualOwner extends def.processup.IProcessVisualOwner {
-    }
-
     var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeInput, def.IPipeState, def.IPipeOutput>();
     var NO_VO: IVisualOwner = {
         updateBounds: function () {
@@ -21,12 +7,10 @@ module minerva.layout {
         }
     };
 
-    export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
-    }
-
     export class Updater {
         private $$measure: IMeasurePipe = null;
         private $$arrange: IArrangePipe = null;
+        private $$size: ISizePipe = null;
         private $$processdown: IProcessDownPipe = null;
         private $$processup: IProcessUpPipe = null;
         private $$render: IRenderPipe = null;
@@ -110,6 +94,11 @@ module minerva.layout {
             return this;
         }
 
+        setSizePipe (pipedef?: def.size.SizePipeDef): Updater {
+            this.$$size = <ISizePipe>createPipe(pipedef || NO_PIPE);
+            return this;
+        }
+
         setProcessDownPipe (pipedef?: def.processdown.ProcessDownPipeDef): Updater {
             this.$$processdown = <IProcessDownPipe>createPipe(pipedef || NO_PIPE);
             return this;
@@ -135,6 +124,16 @@ module minerva.layout {
         arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
             return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
+        }
+
+        size (oldSize: Size, newSize: Size): boolean {
+            var pipe = this.$$size;
+            var assets = this.assets;
+            oldSize.width = assets.actualWidth;
+            oldSize.height = assets.actualHeight;
+            var success = pipe.def.run(assets, pipe.state, pipe.output);
+            Size.copyTo(pipe.output.actualSize, newSize);
+            return success;
         }
 
         processDown (): boolean {
