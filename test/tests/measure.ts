@@ -13,7 +13,7 @@ module tests.measure {
 
     var mock = {
         input: function (): measure.IInput {
-            return <measure.IInput> {
+            return {
                 width: NaN,
                 height: NaN,
                 minWidth: 0,
@@ -25,17 +25,18 @@ module tests.measure {
                 previousConstraint: new Size(),
                 visibility: minerva.Visibility.Visible,
                 desiredSize: new Size(),
+                hiddenDesire: new Size(),
                 dirtyFlags: 0,
                 uiFlags: 0
             };
         },
         state: function (): measure.IState {
-            return <measure.IState> {
+            return {
                 availableSize: new Size()
             };
         },
         output: function (): measure.IOutput {
-            return <measure.IOutput> {
+            return {
                 error: null,
                 previousConstraint: new Size(),
                 desiredSize: new Size(),
