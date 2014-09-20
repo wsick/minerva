@@ -1,6 +1,6 @@
 module minerva.def.processup.tapins {
-    export var calcExtents: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
-        if ((output.dirtyFlags & DirtyFlags.Bounds) === 0)
+    export var calcExtents: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IVisualOwner): boolean {
+        if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 
         var e = output.extents;
@@ -12,15 +12,15 @@ module minerva.def.processup.tapins {
         e.height = ewc.height = as.height;
 
         /*
-        var node = this.Node;
-        var enumerator = node.GetVisualTreeEnumerator();
-        while (enumerator.moveNext()) {
-            var item = <UINode>enumerator.current;
-            var itemlu = item.LayoutUpdater;
-            if (itemlu.TotalIsRenderVisible)
-                rect.union(ewc, itemlu.GlobalBoundsWithChildren);
-        }
-        */
+         var node = this.Node;
+         var enumerator = node.GetVisualTreeEnumerator();
+         while (enumerator.moveNext()) {
+         var item = <UINode>enumerator.current;
+         var itemlu = item.LayoutUpdater;
+         if (itemlu.TotalIsRenderVisible)
+         rect.union(ewc, itemlu.GlobalBoundsWithChildren);
+         }
+         */
 
         return true;
     };

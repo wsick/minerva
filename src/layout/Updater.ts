@@ -6,6 +6,7 @@ module minerva.layout {
     export interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
     }
     export interface IProcessUpPipe extends IPipe<def.processup.IInput, def.processup.IState, def.processup.IOutput> {
+
     }
     export interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
     }
@@ -80,6 +81,7 @@ module minerva.layout {
             localProjection: mat4.identity(),
             absoluteProjection: mat4.identity(),
 
+            dirtyRegion: new Rect(),
             dirtyFlags: 0,
             uiFlags: UIFlags.RenderVisible | UIFlags.HitTestVisible,
             forceInvalidate: false
@@ -126,7 +128,7 @@ module minerva.layout {
         processDown (): boolean {
             var pipe = this.$$processdown;
             var vp = this.$$visualParentUpdater;
-            return pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null, this);
+            return pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
         }
 
         processUp (): boolean {
@@ -140,17 +142,6 @@ module minerva.layout {
         render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
-        }
-
-        invalidate (region: Rect) {
-
-        }
-
-        addToUpDirty () {
-        }
-
-        addToDownDirty () {
-
         }
     }
 }

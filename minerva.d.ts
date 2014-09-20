@@ -301,13 +301,6 @@ declare module minerva.def.helpers {
         useLayoutRounding: boolean;
     }
     function coerceSize(size: ISize, assets: ISized): void;
-    interface IInvalidateable {
-        totalIsRenderVisible: boolean;
-        totalOpacity: number;
-        dirtyFlags: DirtyFlags;
-        dirtyRegion: Rect;
-    }
-    function invalidate(out: IInvalidateable, region: Rect): void;
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
 }
 declare module minerva.def.measure {
@@ -474,7 +467,7 @@ declare module minerva.def.processdown.tapins {
 }
 declare module minerva.def.processup {
     interface IProcessUpTapin extends ITapin {
-        (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean;
+        (input: IInput, state: IState, output: IOutput, vo: IVisualOwner): boolean;
     }
     interface IInput extends IPipeInput {
         width: number;
@@ -494,15 +487,18 @@ declare module minerva.def.processup {
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;
         surfaceBoundsWithChildren: Rect;
+        totalIsRenderVisible: boolean;
+        totalOpacity: number;
         dirtyFlags: DirtyFlags;
+        dirtyRegion: Rect;
         forceInvalidate: boolean;
-        surface: ISurface;
     }
     interface IState extends IPipeState {
         actualSize: Size;
         invalidateSubtreePaint: boolean;
+        hasNewBounds: boolean;
     }
-    interface IOutput extends IPipeOutput, helpers.IInvalidateable {
+    interface IOutput extends IPipeOutput {
         extents: Rect;
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;
@@ -511,15 +507,16 @@ declare module minerva.def.processup {
         dirtyRegion: Rect;
         forceInvalidate: boolean;
     }
-    interface ISurface {
-        invalidate(dirty: Rect): any;
+    interface IVisualOwner {
+        updateBounds(): any;
+        invalidate(region: Rect): any;
     }
     class ProcessUpPipeDef extends PipeDef<IProcessUpTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): void;
-        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): void;
+        public prepare(input: IInput, state: IState, output: IOutput, vo: IVisualOwner): void;
+        public flush(input: IInput, state: IState, output: IOutput, vo: IVisualOwner): void;
     }
 }
 declare module minerva.def.processup.tapins {
@@ -530,9 +527,6 @@ declare module minerva.def.processup.tapins {
 }
 declare module minerva.def.processup.tapins {
     var calcPaintBounds: IProcessUpTapin;
-}
-declare module minerva.def.processup.tapins {
-    var invalidateSubtree: IProcessUpTapin;
 }
 declare module minerva.def.processup.tapins {
     var processBounds: IProcessUpTapin;
@@ -659,8 +653,5 @@ declare module minerva.layout {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;
-        public invalidate(region: Rect): void;
-        public addToUpDirty(): void;
-        public addToDownDirty(): void;
     }
 }

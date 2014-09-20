@@ -48,7 +48,6 @@ module minerva.def.processdown {
         dirtyFlags: DirtyFlags;
     }
 
-
     export class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor () {
             super();
@@ -110,7 +109,7 @@ module minerva.def.processdown {
         flush (input: IInput, state: IState, output: IOutput, vpinput: IInput) {
             var upDirty = (output.dirtyFlags & ~input.dirtyFlags) & DirtyFlags.UpDirtyState;
             if (upDirty > 0) {
-                //add dirty element to this
+                //TODO: add dirty element
             }
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.DownDirtyState;
             input.totalIsRenderVisible = output.totalIsRenderVisible;

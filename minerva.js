@@ -1640,14 +1640,6 @@ var minerva;
             }
             helpers.coerceSize = coerceSize;
 
-            function invalidate(out, region) {
-                if (!out.totalIsRenderVisible || (out.totalOpacity * 255) < 0.5)
-                    return;
-                out.dirtyFlags |= minerva.DirtyFlags.Invalidate;
-                minerva.Rect.union(out.dirtyRegion, region);
-            }
-            helpers.invalidate = invalidate;
-
             function copyGrowTransform4(dest, src, thickness, projection) {
                 minerva.Rect.copyTo(src, dest);
                 minerva.Thickness.growRect(thickness, dest);
@@ -2283,12 +2275,13 @@ var minerva;
                 __extends(ProcessUpPipeDef, _super);
                 function ProcessUpPipeDef() {
                     _super.call(this);
-                    this.addTapin('calcActualSize', processup.tapins.calcActualSize).addTapin('calcExtents', processup.tapins.calcExtents).addTapin('calcPaintBounds', processup.tapins.calcPaintBounds).addTapin('processBounds', processup.tapins.processBounds).addTapin('processNewBounds', processup.tapins.processNewBounds).addTapin('invalidateSubtree', processup.tapins.invalidateSubtree).addTapin('processInvalidate', processup.tapins.processInvalidate);
+                    this.addTapin('calcActualSize', processup.tapins.calcActualSize).addTapin('calcExtents', processup.tapins.calcExtents).addTapin('calcPaintBounds', processup.tapins.calcPaintBounds).addTapin('processBounds', processup.tapins.processBounds).addTapin('processNewBounds', processup.tapins.processNewBounds).addTapin('processInvalidate', processup.tapins.processInvalidate);
                 }
                 ProcessUpPipeDef.prototype.createState = function () {
                     return {
                         invalidateSubtreePaint: false,
-                        actualSize: new minerva.Size()
+                        actualSize: new minerva.Size(),
+                        hasNewBounds: false
                     };
                 };
 
@@ -2300,16 +2293,28 @@ var minerva;
                         surfaceBoundsWithChildren: new minerva.Rect(),
                         dirtyFlags: 0,
                         dirtyRegion: new minerva.Rect(),
-                        forceInvalidate: false,
-                        totalIsRenderVisible: false,
-                        totalOpacity: 1.0
+                        forceInvalidate: false
                     };
                 };
 
-                ProcessUpPipeDef.prototype.prepare = function (input, state, output, vpinput, vpoutput) {
+                ProcessUpPipeDef.prototype.prepare = function (input, state, output, vo) {
+                    output.dirtyFlags = input.dirtyFlags;
+                    minerva.Rect.copyTo(input.extents, output.extents);
+                    minerva.Rect.copyTo(input.extentsWithChildren, output.extentsWithChildren);
+                    minerva.Rect.copyTo(input.globalBoundsWithChildren, output.globalBoundsWithChildren);
+                    minerva.Rect.copyTo(input.surfaceBoundsWithChildren, output.surfaceBoundsWithChildren);
+                    minerva.Rect.copyTo(input.dirtyRegion, output.dirtyRegion);
+                    output.forceInvalidate = input.forceInvalidate;
                 };
 
-                ProcessUpPipeDef.prototype.flush = function (input, state, output, vpinput, vpoutput) {
+                ProcessUpPipeDef.prototype.flush = function (input, state, output, vo) {
+                    input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.UpDirtyState;
+                    minerva.Rect.copyTo(output.extents, input.extents);
+                    minerva.Rect.copyTo(output.extentsWithChildren, input.extentsWithChildren);
+                    minerva.Rect.copyTo(output.globalBoundsWithChildren, input.globalBoundsWithChildren);
+                    minerva.Rect.copyTo(output.surfaceBoundsWithChildren, input.surfaceBoundsWithChildren);
+                    minerva.Rect.copyTo(output.dirtyRegion, input.dirtyRegion);
+                    input.forceInvalidate = output.forceInvalidate;
                 };
                 return ProcessUpPipeDef;
             })(def.PipeDef);
@@ -2324,8 +2329,8 @@ var minerva;
     (function (def) {
         (function (processup) {
             (function (tapins) {
-                tapins.calcActualSize = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                tapins.calcActualSize = function (input, state, output, vo) {
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
                     var as = state.actualSize;
@@ -2351,8 +2356,8 @@ var minerva;
     (function (def) {
         (function (processup) {
             (function (tapins) {
-                tapins.calcExtents = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                tapins.calcExtents = function (input, state, output, vo) {
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
                     var e = output.extents;
@@ -2377,8 +2382,8 @@ var minerva;
     (function (def) {
         (function (processup) {
             (function (tapins) {
-                tapins.calcPaintBounds = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                tapins.calcPaintBounds = function (input, state, output, vo) {
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
                     def.helpers.copyGrowTransform4(input.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
@@ -2398,36 +2403,18 @@ var minerva;
     (function (def) {
         (function (processup) {
             (function (tapins) {
-                tapins.invalidateSubtree = function (input, state, output, vpinput, vpoutput) {
-                    if (!state.invalidateSubtreePaint)
+                tapins.processBounds = function (input, state, output, vo) {
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
-                    def.helpers.invalidate(output, output.surfaceBoundsWithChildren);
-                    return true;
-                };
-            })(processup.tapins || (processup.tapins = {}));
-            var tapins = processup.tapins;
-        })(def.processup || (def.processup = {}));
-        var processup = def.processup;
-    })(minerva.def || (minerva.def = {}));
-    var def = minerva.def;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (def) {
-        (function (processup) {
-            (function (tapins) {
-                tapins.processBounds = function (input, state, output, vpinput, vpoutput) {
-                    output.dirtyFlags &= ~minerva.DirtyFlags.Bounds;
-
-                    if (vpoutput && !minerva.Rect.isEqual(input.globalBoundsWithChildren, output.globalBoundsWithChildren)) {
-                        vpoutput.dirtyFlags |= minerva.DirtyFlags.Bounds;
-                        def.helpers.invalidate(vpoutput, input.surfaceBoundsWithChildren);
-                        def.helpers.invalidate(vpoutput, output.surfaceBoundsWithChildren);
+                    state.hasNewBounds = false;
+                    if (!minerva.Rect.isEqual(input.globalBoundsWithChildren, output.globalBoundsWithChildren)) {
+                        vo.updateBounds();
+                        vo.invalidate(input.surfaceBoundsWithChildren);
+                        state.hasNewBounds = true;
+                    } else if (!minerva.Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate) {
+                        state.hasNewBounds = true;
                     }
-
-                    state.invalidateSubtreePaint = !minerva.Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate;
                     output.forceInvalidate = false;
-
                     return true;
                 };
             })(processup.tapins || (processup.tapins = {}));
@@ -2442,15 +2429,11 @@ var minerva;
     (function (def) {
         (function (processup) {
             (function (tapins) {
-                tapins.processInvalidate = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.Invalidate) === 0)
+                tapins.processInvalidate = function (input, state, output, vo) {
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Invalidate) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.Invalidate;
                     var dirty = output.dirtyRegion;
-                    if (vpoutput)
-                        def.helpers.invalidate(vpoutput, dirty);
-                    else if (input.surface)
-                        input.surface.invalidate(dirty);
+                    vo.invalidate(dirty);
                     dirty.x = dirty.y = dirty.width = dirty.height = 0;
                     return true;
                 };
@@ -2466,15 +2449,11 @@ var minerva;
     (function (def) {
         (function (processup) {
             (function (tapins) {
-                tapins.processNewBounds = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.NewBounds) === 0)
+                tapins.processNewBounds = function (input, state, output, vo) {
+                    if ((input.dirtyFlags & minerva.DirtyFlags.NewBounds) === 0 && !state.hasNewBounds)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.NewBounds;
-                    if (vpoutput)
-                        def.helpers.invalidate(vpoutput, output.surfaceBoundsWithChildren);
-                    else if (input.isTopLevel)
-                        state.invalidateSubtreePaint = true;
-
+                    output.dirtyFlags |= minerva.DirtyFlags.Invalidate;
+                    minerva.Rect.union(output.dirtyRegion, output.surfaceBoundsWithChildren);
                     return true;
                 };
             })(processup.tapins || (processup.tapins = {}));
@@ -2835,6 +2814,7 @@ var minerva;
                     carrierProjection: mat4.identity(),
                     localProjection: mat4.identity(),
                     absoluteProjection: mat4.identity(),
+                    dirtyRegion: new minerva.Rect(),
                     dirtyFlags: 0,
                     uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */,
                     forceInvalidate: false
@@ -2878,7 +2858,7 @@ var minerva;
             Updater.prototype.processDown = function () {
                 var pipe = this.$$processdown;
                 var vp = this.$$visualParentUpdater;
-                return pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null, this);
+                return pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
             };
 
             Updater.prototype.processUp = function () {
@@ -2892,15 +2872,6 @@ var minerva;
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
-            };
-
-            Updater.prototype.invalidate = function (region) {
-            };
-
-            Updater.prototype.addToUpDirty = function () {
-            };
-
-            Updater.prototype.addToDownDirty = function () {
             };
             return Updater;
         })();

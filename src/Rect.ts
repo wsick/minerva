@@ -5,33 +5,33 @@ module minerva {
         width: number;
         height: number;
 
-        constructor(x?: number, y?: number, width?: number, height?: number) {
+        constructor (x?: number, y?: number, width?: number, height?: number) {
             this.x = x == null ? 0 : x;
             this.y = y == null ? 0 : y;
             this.width = width == null ? 0 : width;
             this.height = height == null ? 0 : height;
         }
 
-        static isEqual(rect1: Rect, rect2: Rect): boolean {
+        static isEqual (rect1: Rect, rect2: Rect): boolean {
             return rect1.x === rect2.x
                 && rect1.y === rect2.y
                 && rect1.width === rect2.width
                 && rect1.height === rect2.height;
         }
 
-        static isEmpty(src: Rect): boolean {
+        static isEmpty (src: Rect): boolean {
             return src.width === 0
                 || src.height === 0;
         }
 
-        static copyTo(src: Rect, dest: Rect) {
+        static copyTo (src: Rect, dest: Rect) {
             dest.x = src.x;
             dest.y = src.y;
             dest.width = src.width;
             dest.height = src.height;
         }
 
-        static roundOut(r: Rect) {
+        static roundOut (r: Rect) {
             var x = Math.floor(r.x);
             var y = Math.floor(r.y);
             r.width = Math.ceil(r.x + r.width) - x;
@@ -40,7 +40,7 @@ module minerva {
             r.y = y;
         }
 
-        static intersection(dest: Rect, rect2: Rect) {
+        static intersection (dest: Rect, rect2: Rect) {
             var x = Math.max(dest.x, rect2.x);
             var y = Math.max(dest.y, rect2.y);
             dest.width = Math.max(0, Math.min(dest.x + dest.width, rect2.x + rect2.width) - x);
@@ -49,7 +49,7 @@ module minerva {
             dest.y = y;
         }
 
-        static union(dest: Rect, rect2: Rect) {
+        static union (dest: Rect, rect2: Rect) {
             if (rect2.width <= 0 || rect2.height <= 0)
                 return;
             if (dest.width <= 0 || dest.height <= 0) {
@@ -65,7 +65,7 @@ module minerva {
             dest.y = y;
         }
 
-        static isContainedIn(src: Rect, test: Rect) {
+        static isContainedIn (src: Rect, test: Rect) {
             var sl = src.x;
             var st = src.y;
             var sr = src.x + src.width;
@@ -83,7 +83,7 @@ module minerva {
             return true;
         }
 
-        private static clipmask(clip: number[]): number {
+        private static clipmask (clip: number[]): number {
             var mask = 0;
 
             if (-clip[0] + clip[3] < 0) mask |= (1 << 0);
@@ -96,7 +96,7 @@ module minerva {
             return mask;
         }
 
-        static transform4(dest: Rect, projection: number[]) {
+        static transform4 (dest: Rect, projection: number[]) {
             if (!projection)
                 return;
 
@@ -164,7 +164,7 @@ module minerva {
             }
         }
 
-        static extendTo(dest: Rect, x: number, y: number) {
+        static extendTo (dest: Rect, x: number, y: number) {
             var rx = dest.x;
             var ry = dest.y;
             var rw = dest.width;

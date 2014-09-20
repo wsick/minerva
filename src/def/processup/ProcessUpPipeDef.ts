@@ -1,6 +1,6 @@
 module minerva.def.processup {
     export interface IProcessUpTapin extends ITapin {
-        (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput):boolean;
+        (input: IInput, state: IState, output: IOutput, vo: IVisualOwner):boolean;
     }
     export interface IInput extends IPipeInput {
         width: number;
@@ -20,15 +20,18 @@ module minerva.def.processup {
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;
         surfaceBoundsWithChildren: Rect;
+        totalIsRenderVisible: boolean;
+        totalOpacity: number;
         dirtyFlags: DirtyFlags;
+        dirtyRegion: Rect;
         forceInvalidate: boolean;
-        surface: ISurface;
     }
     export interface IState extends IPipeState {
         actualSize: Size;
         invalidateSubtreePaint: boolean;
+        hasNewBounds: boolean;
     }
-    export interface IOutput extends IPipeOutput, helpers.IInvalidateable {
+    export interface IOutput extends IPipeOutput {
         extents: Rect;
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;
@@ -37,30 +40,31 @@ module minerva.def.processup {
         dirtyRegion: Rect;
         forceInvalidate: boolean;
     }
-    export interface ISurface {
-        invalidate(dirty: Rect);
+    export interface IVisualOwner {
+        updateBounds();
+        invalidate(region: Rect);
     }
 
     export class ProcessUpPipeDef extends PipeDef<IProcessUpTapin, IInput, IState, IOutput> {
-        constructor() {
+        constructor () {
             super();
             this.addTapin('calcActualSize', tapins.calcActualSize)
                 .addTapin('calcExtents', tapins.calcExtents)
                 .addTapin('calcPaintBounds', tapins.calcPaintBounds)
                 .addTapin('processBounds', tapins.processBounds)
                 .addTapin('processNewBounds', tapins.processNewBounds)
-                .addTapin('invalidateSubtree', tapins.invalidateSubtree)
                 .addTapin('processInvalidate', tapins.processInvalidate);
         }
 
-        createState(): IState {
+        createState (): IState {
             return {
                 invalidateSubtreePaint: false,
-                actualSize: new Size()
+                actualSize: new Size(),
+                hasNewBounds: false
             };
         }
 
-        createOutput(): IOutput {
+        createOutput (): IOutput {
             return {
                 extents: new Rect(),
                 extentsWithChildren: new Rect(),
@@ -68,19 +72,28 @@ module minerva.def.processup {
                 surfaceBoundsWithChildren: new Rect(),
                 dirtyFlags: 0,
                 dirtyRegion: new Rect(),
-                forceInvalidate: false,
-                totalIsRenderVisible: false,
-                totalOpacity: 1.0
+                forceInvalidate: false
             };
         }
 
-        prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput) {
-
+        prepare (input: IInput, state: IState, output: IOutput, vo: IVisualOwner) {
+            output.dirtyFlags = input.dirtyFlags;
+            Rect.copyTo(input.extents, output.extents);
+            Rect.copyTo(input.extentsWithChildren, output.extentsWithChildren);
+            Rect.copyTo(input.globalBoundsWithChildren, output.globalBoundsWithChildren);
+            Rect.copyTo(input.surfaceBoundsWithChildren, output.surfaceBoundsWithChildren);
+            Rect.copyTo(input.dirtyRegion, output.dirtyRegion);
+            output.forceInvalidate = input.forceInvalidate;
         }
 
-        flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput) {
-
-            // DirtyFlags.Transform most likely won't be set on input or outpu
+        flush (input: IInput, state: IState, output: IOutput, vo: IVisualOwner) {
+            input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.UpDirtyState;
+            Rect.copyTo(output.extents, input.extents);
+            Rect.copyTo(output.extentsWithChildren, input.extentsWithChildren);
+            Rect.copyTo(output.globalBoundsWithChildren, input.globalBoundsWithChildren);
+            Rect.copyTo(output.surfaceBoundsWithChildren, input.surfaceBoundsWithChildren);
+            Rect.copyTo(output.dirtyRegion, input.dirtyRegion);
+            input.forceInvalidate = output.forceInvalidate;
         }
     }
 }
