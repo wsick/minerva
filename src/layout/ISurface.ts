@@ -1,4 +1,4 @@
 module minerva.layout {
-    export interface ISurface extends def.processup.IVisualOwner {
+    export interface ISurface extends IVisualOwner {
     }
 }

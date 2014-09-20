@@ -10,7 +10,16 @@ module minerva.layout {
     export interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
     }
 
+    export interface IVisualOwner extends def.processup.IProcessVisualOwner {
+    }
+
     var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeInput, def.IPipeState, def.IPipeOutput>();
+    var NO_VO: IVisualOwner = {
+        updateBounds: function () {
+        },
+        invalidate: function (region: Rect) {
+        }
+    };
 
     export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
     }
@@ -46,7 +55,6 @@ module minerva.layout {
             projection: null,
             effectPadding: new Thickness(),
 
-            surface: null,
             isTopLevel: false,
 
             previousConstraint: new Size(),
@@ -137,7 +145,7 @@ module minerva.layout {
 
         processUp (): boolean {
             var pipe = this.$$processup;
-            var vo: def.processup.IVisualOwner = this.$$visualParentUpdater || this.$$surface;
+            var vo = this.$$getVisualOwner();
             return pipe.def.run(this.assets, pipe.state, pipe.output, vo);
         }
 
@@ -147,6 +155,14 @@ module minerva.layout {
         }
 
         ///////
+
+        private $$getVisualOwner (): IVisualOwner {
+            if (this.$$visualParentUpdater)
+                return this.$$visualParentUpdater;
+            if (this.assets.isTopLevel && this.$$surface)
+                return this.$$surface;
+            return NO_VO;
+        }
 
         updateBounds (forceRedraw?: boolean) {
             var assets = this.assets;

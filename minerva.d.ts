@@ -383,7 +383,6 @@ declare module minerva.def.processdown {
         actualWidth: number;
         actualHeight: number;
         surfaceBoundsWithChildren: Rect;
-        isTopLevel: boolean;
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
@@ -467,7 +466,7 @@ declare module minerva.def.processdown.tapins {
 }
 declare module minerva.def.processup {
     interface IProcessUpTapin extends ITapin {
-        (input: IInput, state: IState, output: IOutput, vo: IVisualOwner): boolean;
+        (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): boolean;
     }
     interface IInput extends IPipeInput {
         width: number;
@@ -477,7 +476,6 @@ declare module minerva.def.processup {
         maxWidth: number;
         maxHeight: number;
         useLayoutRounding: boolean;
-        isTopLevel: boolean;
         actualWidth: number;
         actualHeight: number;
         effectPadding: Thickness;
@@ -507,7 +505,7 @@ declare module minerva.def.processup {
         dirtyRegion: Rect;
         forceInvalidate: boolean;
     }
-    interface IVisualOwner {
+    interface IProcessVisualOwner {
         updateBounds(): any;
         invalidate(region: Rect): any;
     }
@@ -515,8 +513,8 @@ declare module minerva.def.processup {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, vo: IVisualOwner): void;
-        public flush(input: IInput, state: IState, output: IOutput, vo: IVisualOwner): void;
+        public prepare(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): void;
+        public flush(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): void;
     }
 }
 declare module minerva.def.processup.tapins {
@@ -622,7 +620,7 @@ declare module minerva.layout {
     function createPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipeDef<TInput, TState, TOutput>): IPipe<TInput, TState, TOutput>;
 }
 declare module minerva.layout {
-    interface ISurface extends def.processup.IVisualOwner {
+    interface ISurface extends IVisualOwner {
     }
 }
 declare module minerva.layout {
@@ -635,6 +633,8 @@ declare module minerva.layout {
     interface IProcessUpPipe extends IPipe<def.processup.IInput, def.processup.IState, def.processup.IOutput> {
     }
     interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
+    }
+    interface IVisualOwner extends def.processup.IProcessVisualOwner {
     }
     interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
     }
@@ -658,6 +658,7 @@ declare module minerva.layout {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;
+        private $$getVisualOwner();
         public updateBounds(forceRedraw?: boolean): void;
         public invalidate(region: Rect): void;
     }

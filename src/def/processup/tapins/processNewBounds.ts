@@ -1,5 +1,5 @@
 module minerva.def.processup.tapins {
-    export var processNewBounds: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IVisualOwner): boolean {
+    export var processNewBounds: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): boolean {
         if ((input.dirtyFlags & DirtyFlags.NewBounds) === 0 && !state.hasNewBounds)
             return true;
         output.dirtyFlags |= DirtyFlags.Invalidate;

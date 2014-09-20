@@ -1,6 +1,6 @@
 module minerva.def.processup {
     export interface IProcessUpTapin extends ITapin {
-        (input: IInput, state: IState, output: IOutput, vo: IVisualOwner):boolean;
+        (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner):boolean;
     }
     export interface IInput extends IPipeInput {
         width: number;
@@ -10,7 +10,6 @@ module minerva.def.processup {
         maxWidth: number;
         maxHeight: number;
         useLayoutRounding: boolean;
-        isTopLevel: boolean;
         actualWidth: number;
         actualHeight: number;
         effectPadding: Thickness;
@@ -40,7 +39,7 @@ module minerva.def.processup {
         dirtyRegion: Rect;
         forceInvalidate: boolean;
     }
-    export interface IVisualOwner {
+    export interface IProcessVisualOwner {
         updateBounds();
         invalidate(region: Rect);
     }
@@ -76,7 +75,7 @@ module minerva.def.processup {
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput, vo: IVisualOwner) {
+        prepare (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner) {
             output.dirtyFlags = input.dirtyFlags;
             Rect.copyTo(input.extents, output.extents);
             Rect.copyTo(input.extentsWithChildren, output.extentsWithChildren);
@@ -86,7 +85,7 @@ module minerva.def.processup {
             output.forceInvalidate = input.forceInvalidate;
         }
 
-        flush (input: IInput, state: IState, output: IOutput, vo: IVisualOwner) {
+        flush (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner) {
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.UpDirtyState;
             Rect.copyTo(output.extents, input.extents);
             Rect.copyTo(output.extentsWithChildren, input.extentsWithChildren);

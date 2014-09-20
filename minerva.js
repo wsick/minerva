@@ -2757,6 +2757,12 @@ var minerva;
 (function (minerva) {
     (function (layout) {
         var NO_PIPE = new minerva.def.PipeDef();
+        var NO_VO = {
+            updateBounds: function () {
+            },
+            invalidate: function (region) {
+            }
+        };
 
         var Updater = (function () {
             function Updater() {
@@ -2787,7 +2793,6 @@ var minerva;
                     renderTransformOrigin: new minerva.Point(),
                     projection: null,
                     effectPadding: new minerva.Thickness(),
-                    surface: null,
                     isTopLevel: false,
                     previousConstraint: new minerva.Size(),
                     desiredSize: new minerva.Size(),
@@ -2864,13 +2869,21 @@ var minerva;
 
             Updater.prototype.processUp = function () {
                 var pipe = this.$$processup;
-                var vo = this.$$visualParentUpdater || this.$$surface;
+                var vo = this.$$getVisualOwner();
                 return pipe.def.run(this.assets, pipe.state, pipe.output, vo);
             };
 
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
+            };
+
+            Updater.prototype.$$getVisualOwner = function () {
+                if (this.$$visualParentUpdater)
+                    return this.$$visualParentUpdater;
+                if (this.assets.isTopLevel && this.$$surface)
+                    return this.$$surface;
+                return NO_VO;
             };
 
             Updater.prototype.updateBounds = function (forceRedraw) {

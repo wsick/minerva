@@ -12,7 +12,6 @@ module minerva.def.processdown {
         actualWidth: number;
         actualHeight: number;
         surfaceBoundsWithChildren: Rect;
-        isTopLevel: boolean;
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
