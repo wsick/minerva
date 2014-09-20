@@ -60,6 +60,7 @@ module minerva.layout {
 
             actualWidth: 0,
             actualHeight: 0,
+            z: NaN,
 
             totalIsRenderVisible: true,
             totalOpacity: 1.0,

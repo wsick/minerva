@@ -1,9 +1,7 @@
 module minerva.def.processdown.tapins {
     export var processLocalXform: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
-        if ((output.dirtyFlags & DirtyFlags.LocalTransform) === 0)
+        if ((input.dirtyFlags & DirtyFlags.LocalTransform) === 0)
             return true;
-        output.dirtyFlags &= ~DirtyFlags.LocalTransform;
-        output.dirtyFlags |= DirtyFlags.Transform;
 
         var local = mat3.identity(state.localXform);
         var render = input.renderTransform;

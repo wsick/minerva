@@ -389,9 +389,13 @@ declare module minerva.def.processdown {
         projection: IProjection;
         actualWidth: number;
         actualHeight: number;
+        surfaceBoundsWithChildren: Rect;
+        isTopLevel: boolean;
+        surface: ISurface;
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
+        z: number;
         layoutClip: Rect;
         compositeLayoutClip: Rect;
         layoutXform: number[];
@@ -410,7 +414,7 @@ declare module minerva.def.processdown {
         localXform: number[];
         renderAsProjection: number[];
     }
-    interface IOutput extends IPipeOutput {
+    interface IOutput extends IPipeOutput, helpers.IInvalidateable {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         totalIsHitTestVisible: boolean;
@@ -423,6 +427,9 @@ declare module minerva.def.processdown {
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
         uiFlags: UIFlags;
+    }
+    interface ISurface {
+        invalidate(dirty: Rect): any;
     }
     class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor();
@@ -467,9 +474,6 @@ declare module minerva.def.processdown.tapins {
 }
 declare module minerva.def.processdown.tapins {
     var processZIndices: IProcessDownTapin;
-}
-declare module minerva.def.processdown.tapins {
-    var propagateDirtyToChildren: IProcessDownTapin;
 }
 declare module minerva.def.processup {
     interface IProcessUpTapin extends ITapin {

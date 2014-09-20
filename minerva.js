@@ -41,6 +41,7 @@ var minerva;
 
         DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ChildrenZIndices] = "DownDirtyState";
         DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.Invalidate] = "UpDirtyState";
+
         DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
     })(minerva.DirtyFlags || (minerva.DirtyFlags = {}));
     var DirtyFlags = minerva.DirtyFlags;
@@ -1881,7 +1882,7 @@ var minerva;
                 __extends(ProcessDownPipeDef, _super);
                 function ProcessDownPipeDef() {
                     _super.call(this);
-                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('processZIndices', processdown.tapins.processZIndices).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
+                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('processZIndices', processdown.tapins.processZIndices);
                 }
                 ProcessDownPipeDef.prototype.createState = function () {
                     return {
@@ -1903,15 +1904,47 @@ var minerva;
                         localProjection: mat4.identity(),
                         absoluteProjection: mat4.identity(),
                         totalHasRenderProjection: false,
+                        dirtyRegion: new minerva.Rect(),
                         dirtyFlags: 0,
                         uiFlags: 0
                     };
                 };
 
                 ProcessDownPipeDef.prototype.prepare = function (input, state, output) {
+                    output.dirtyFlags = input.dirtyFlags;
+                    output.uiFlags = input.uiFlags;
+                    output.totalIsRenderVisible = input.totalIsRenderVisible;
+                    output.totalOpacity = input.totalOpacity;
+                    output.totalIsHitTestVisible = input.totalIsHitTestVisible;
+                    output.z = input.z;
+                    minerva.Rect.copyTo(input.compositeLayoutClip, output.compositeLayoutClip);
+                    mat3.set(input.renderXform, output.renderXform);
+                    mat3.set(input.absoluteXform, output.absoluteXform);
+                    mat4.set(input.localProjection, output.localProjection);
+                    mat4.set(input.absoluteProjection, output.absoluteProjection);
+                    output.totalHasRenderProjection = input.totalHasRenderProjection;
                 };
 
                 ProcessDownPipeDef.prototype.flush = function (input, state, output) {
+                    var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+                    if ((newDirty & (minerva.DirtyFlags.Bounds | minerva.DirtyFlags.NewBounds)) > 0) {
+                    }
+                    var toprop = newDirty & minerva.DirtyFlags.PropagateDown;
+                    if (toprop > 0) {
+                    }
+
+                    input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.DownDirtyState;
+                    input.uiFlags = output.uiFlags;
+                    input.totalIsRenderVisible = output.totalIsRenderVisible;
+                    input.totalOpacity = output.totalOpacity;
+                    input.totalIsHitTestVisible = output.totalIsHitTestVisible;
+                    input.z = output.z;
+                    minerva.Rect.copyTo(output.compositeLayoutClip, input.compositeLayoutClip);
+                    mat3.set(output.renderXform, input.renderXform);
+                    mat3.set(output.absoluteXform, input.absoluteXform);
+                    mat4.set(output.localProjection, input.localProjection);
+                    mat4.set(output.absoluteProjection, input.absoluteProjection);
+                    input.totalHasRenderProjection = output.totalHasRenderProjection;
                 };
                 return ProcessDownPipeDef;
             })(def.PipeDef);
@@ -2057,7 +2090,6 @@ var minerva;
                 tapins.processHitTestVisibility = function (input, state, output, vpinput, vpoutput) {
                     if ((output.dirtyFlags & minerva.DirtyFlags.HitTestVisibility) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.HitTestVisibility;
 
                     if (vpinput) {
                         output.totalIsHitTestVisible = vpinput.totalIsHitTestVisible && input.isHitTestVisible;
@@ -2082,7 +2114,6 @@ var minerva;
                 tapins.processLayoutClip = function (input, state, output, vpinput, vpoutput) {
                     if ((output.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.LayoutClip;
 
                     var composite = output.compositeLayoutClip;
                     var vpc = vpinput ? vpinput.compositeLayoutClip : null;
@@ -2114,7 +2145,6 @@ var minerva;
                 tapins.processLocalProjection = function (input, state, output, vpinput, vpoutput) {
                     if ((output.dirtyFlags & minerva.DirtyFlags.LocalProjection) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.LocalProjection;
                     output.dirtyFlags |= minerva.DirtyFlags.Transform;
 
                     var projection = input.projection;
@@ -2137,7 +2167,6 @@ var minerva;
                 tapins.processLocalXform = function (input, state, output, vpinput, vpoutput) {
                     if ((output.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.LocalTransform;
                     output.dirtyFlags |= minerva.DirtyFlags.Transform;
 
                     var local = mat3.identity(state.localXform);
@@ -2167,7 +2196,6 @@ var minerva;
                 tapins.processRenderVisibility = function (input, state, output, vpinput, vpoutput) {
                     if ((output.dirtyFlags & minerva.DirtyFlags.RenderVisibility) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.RenderVisibility;
 
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     if (vpoutput)
@@ -2201,9 +2229,12 @@ var minerva;
                 tapins.processXform = function (input, state, output, vpinput, vpoutput) {
                     if ((output.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.Transform;
 
                     if (!mat4.equal(input.localProjection, output.localProjection)) {
+                        if (vpoutput)
+                            def.helpers.invalidate(vpoutput, input.surfaceBoundsWithChildren);
+                        else if (input.isTopLevel && input.surface)
+                            input.surface.invalidate(input.surfaceBoundsWithChildren);
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
                     }
 
@@ -2224,24 +2255,6 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.processZIndices = function (input, state, output, vpinput, vpoutput) {
-                    if ((output.dirtyFlags & minerva.DirtyFlags.ChildrenZIndices) === 0)
-                        return true;
-                    output.dirtyFlags &= ~minerva.DirtyFlags.ChildrenZIndices;
-                    return true;
-                };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(def.processdown || (def.processdown = {}));
-        var processdown = def.processdown;
-    })(minerva.def || (minerva.def = {}));
-    var def = minerva.def;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (def) {
-        (function (processdown) {
-            (function (tapins) {
-                tapins.propagateDirtyToChildren = function (input, state, output, vpinput, vpoutput) {
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
@@ -2795,6 +2808,7 @@ var minerva;
                     compositeLayoutClip: new minerva.Rect(),
                     actualWidth: 0,
                     actualHeight: 0,
+                    z: NaN,
                     totalIsRenderVisible: true,
                     totalOpacity: 1.0,
                     totalIsHitTestVisible: true,

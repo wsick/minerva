@@ -1,8 +1,7 @@
 module minerva.def.processdown.tapins {
     export var processRenderVisibility: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, vpoutput: IOutput): boolean {
-        if ((output.dirtyFlags & DirtyFlags.RenderVisibility) === 0)
+        if ((input.dirtyFlags & DirtyFlags.RenderVisibility) === 0)
             return true;
-        output.dirtyFlags &= ~DirtyFlags.RenderVisibility;
 
         //Update bounds
         output.dirtyFlags |= DirtyFlags.Bounds;
