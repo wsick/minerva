@@ -622,6 +622,10 @@ declare module minerva.layout {
     function createPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipeDef<TInput, TState, TOutput>): IPipe<TInput, TState, TOutput>;
 }
 declare module minerva.layout {
+    interface ISurface extends def.processup.IVisualOwner {
+    }
+}
+declare module minerva.layout {
     interface IMeasurePipe extends IPipe<def.measure.IInput, def.measure.IState, def.measure.IOutput> {
     }
     interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
@@ -641,6 +645,7 @@ declare module minerva.layout {
         private $$processup;
         private $$render;
         private $$visualParentUpdater;
+        private $$surface;
         public assets: IUpdaterAssets;
         constructor();
         public setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater;
@@ -653,5 +658,7 @@ declare module minerva.layout {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;
+        public updateBounds(forceRedraw?: boolean): void;
+        public invalidate(region: Rect): void;
     }
 }

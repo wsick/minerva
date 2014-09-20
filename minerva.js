@@ -2766,6 +2766,7 @@ var minerva;
                 this.$$processup = null;
                 this.$$render = null;
                 this.$$visualParentUpdater = null;
+                this.$$surface = null;
                 this.assets = {
                     width: NaN,
                     height: NaN,
@@ -2863,15 +2864,30 @@ var minerva;
 
             Updater.prototype.processUp = function () {
                 var pipe = this.$$processup;
-                var vp = this.$$visualParentUpdater;
-                var vpi = vp ? vp.assets : null;
-                var vpo = vp ? vp.$$processup.output : null;
-                return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
+                var vo = this.$$visualParentUpdater || this.$$surface;
+                return pipe.def.run(this.assets, pipe.state, pipe.output, vo);
             };
 
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
+            };
+
+            Updater.prototype.updateBounds = function (forceRedraw) {
+                var assets = this.assets;
+                assets.dirtyFlags |= minerva.DirtyFlags.Bounds;
+
+                if (forceRedraw === true)
+                    assets.forceInvalidate = true;
+            };
+
+            Updater.prototype.invalidate = function (region) {
+                var assets = this.assets;
+                if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
+                    return;
+                assets.dirtyFlags |= minerva.DirtyFlags.Invalidate;
+
+                minerva.Rect.union(assets.dirtyRegion, region);
             };
             return Updater;
         })();

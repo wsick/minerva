@@ -6,7 +6,6 @@ module minerva.layout {
     export interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
     }
     export interface IProcessUpPipe extends IPipe<def.processup.IInput, def.processup.IState, def.processup.IOutput> {
-
     }
     export interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
     }
@@ -24,6 +23,7 @@ module minerva.layout {
         private $$render: IRenderPipe = null;
 
         private $$visualParentUpdater: Updater = null;
+        private $$surface: ISurface = null;
 
         assets: IUpdaterAssets = {
             width: NaN,
@@ -90,6 +90,8 @@ module minerva.layout {
         constructor () {
         }
 
+        /////// PREPARE PIPES
+
         setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
             this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE);
             return this;
@@ -115,6 +117,8 @@ module minerva.layout {
             return this;
         }
 
+        /////// RUN PIPES
+
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
             return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
@@ -133,15 +137,32 @@ module minerva.layout {
 
         processUp (): boolean {
             var pipe = this.$$processup;
-            var vp = this.$$visualParentUpdater;
-            var vpi = vp ? vp.assets : null;
-            var vpo = vp ? vp.$$processup.output : null;
-            return pipe.def.run(this.assets, pipe.state, pipe.output, vpi, vpo);
+            var vo: def.processup.IVisualOwner = this.$$visualParentUpdater || this.$$surface;
+            return pipe.def.run(this.assets, pipe.state, pipe.output, vo);
         }
 
         render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
+        }
+
+        ///////
+
+        updateBounds (forceRedraw?: boolean) {
+            var assets = this.assets;
+            assets.dirtyFlags |= DirtyFlags.Bounds;
+            //TODO: add dirty element
+            if (forceRedraw === true)
+                assets.forceInvalidate = true;
+        }
+
+        invalidate (region: Rect) {
+            var assets = this.assets;
+            if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
+                return;
+            assets.dirtyFlags |= DirtyFlags.Invalidate;
+            //TODO: add dirty element
+            Rect.union(assets.dirtyRegion, region);
         }
     }
 }
