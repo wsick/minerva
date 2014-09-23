@@ -1986,12 +1986,11 @@ var minerva;
                         return true;
 
                     var abs = output.absoluteXform;
-                    if (vpinput)
-                        mat3.set(vpinput.absoluteXform, abs);
-                    else
-                        mat3.identity(abs);
 
-                    mat3.multiply(output.renderXform, abs, abs);
+                    if (vpinput)
+                        mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
+                    else
+                        mat3.set(output.renderXform, abs);
 
                     return true;
                 };

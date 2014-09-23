@@ -4,12 +4,11 @@ module minerva.def.processdown.tapins {
             return true;
 
         var abs = output.absoluteXform;
+        //abs = vp abs * render
         if (vpinput)
-            mat3.set(vpinput.absoluteXform, abs);
+            mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
         else
-            mat3.identity(abs);
-
-        mat3.multiply(output.renderXform, abs, abs); //abs = abs * render
+            mat3.set(output.renderXform, abs);
 
         return true;
     };
