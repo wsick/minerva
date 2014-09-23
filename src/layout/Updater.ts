@@ -121,21 +121,27 @@ module minerva.layout {
 
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
-            if (pipe.output.newUpDirty)
-                this.$$addUpDirty();
-            if (pipe.output.newDownDirty)
-                this.$$addDownDirty();
+            var output = pipe.output;
+            var success = pipe.def.run(this.assets, pipe.state, output, availableSize);
+            if (output.newUpDirty)
+                Updater.$$addUpDirty(this);
+            if (output.newDownDirty)
+                Updater.$$addDownDirty(this);
+            if (output.newUiFlags)
+                Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
             return success;
         }
 
         arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
-            if (pipe.output.newUpDirty)
-                this.$$addUpDirty();
-            if (pipe.output.newDownDirty)
-                this.$$addDownDirty();
+            var output = pipe.output;
+            var success = pipe.def.run(this.assets, pipe.state, output, finalRect);
+            if (output.newUpDirty)
+                Updater.$$addUpDirty(this);
+            if (output.newDownDirty)
+                Updater.$$addDownDirty(this);
+            if (output.newUiFlags)
+                Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
             return success;
         }
 
@@ -162,7 +168,7 @@ module minerva.layout {
             var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
             this.$$inDownDirty = false;
             if (pipe.output.newUpDirty)
-                this.$$addUpDirty();
+                Updater.$$addUpDirty(this);
             return success;
         }
 
@@ -217,17 +223,26 @@ module minerva.layout {
             return -1;
         }
 
-        private $$addUpDirty () {
-            if (this.$$surface && !this.$$inUpDirty) {
-                this.$$surface.addUpDirty(this);
-                this.$$inUpDirty = true;
+        /////// STATIC HELPERS
+
+        private static $$addUpDirty (updater: Updater) {
+            if (updater.$$surface && !updater.$$inUpDirty) {
+                updater.$$surface.addUpDirty(updater);
+                updater.$$inUpDirty = true;
             }
         }
 
-        private $$addDownDirty () {
-            if (this.$$surface && !this.$$inDownDirty) {
-                this.$$surface.addDownDirty(this);
-                this.$$inDownDirty = true;
+        private static $$addDownDirty (updater: Updater) {
+            if (updater.$$surface && !updater.$$inDownDirty) {
+                updater.$$surface.addDownDirty(updater);
+                updater.$$inDownDirty = true;
+            }
+        }
+
+        private static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
+            var vpu = updater;
+            while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) > 0) {
+                vpu.assets.uiFlags |= flags;
             }
         }
     }

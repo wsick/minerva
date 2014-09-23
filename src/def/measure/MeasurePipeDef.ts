@@ -23,6 +23,7 @@ module minerva.def.measure {
         uiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
+        newUiFlags: UIFlags;
     }
 
     export class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
@@ -55,7 +56,8 @@ module minerva.def.measure {
                 dirtyFlags: 0,
                 uiFlags: 0,
                 newUpDirty: 0,
-                newDownDirty: 0
+                newDownDirty: 0,
+                newUiFlags: 0
             };
         }
 
@@ -69,10 +71,7 @@ module minerva.def.measure {
             var newDirty = output.dirtyFlags & ~input.dirtyFlags;
             output.newUpDirty = newDirty & DirtyFlags.UpDirtyState;
             output.newDownDirty = newDirty & DirtyFlags.DownDirtyState;
-            var newUi = output.uiFlags & ~input.uiFlags;
-            if (newUi > 0) {
-                //TODO: Propagate flags up
-            }
+            output.newUiFlags = output.uiFlags & ~input.uiFlags;
             input.dirtyFlags = output.dirtyFlags;
             input.uiFlags = output.uiFlags;
             Size.copyTo(output.previousConstraint, input.previousConstraint);

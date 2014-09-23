@@ -37,6 +37,7 @@ module minerva.def.arrange {
         uiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
+        newUiFlags: UIFlags;
     }
 
     export class ArrangePipeDef extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
@@ -83,7 +84,8 @@ module minerva.def.arrange {
                 renderSize: new Size(),
                 lastRenderSize: null,
                 newUpDirty: 0,
-                newDownDirty: 0
+                newDownDirty: 0,
+                newUiFlags: 0
             };
         }
 
@@ -100,10 +102,7 @@ module minerva.def.arrange {
             var newDirty = output.dirtyFlags & ~input.dirtyFlags;
             output.newUpDirty = newDirty & DirtyFlags.UpDirtyState;
             output.newDownDirty = newDirty & DirtyFlags.DownDirtyState;
-            var newUi = output.uiFlags & ~input.uiFlags;
-            if (newUi > 0) {
-                //TODO: Propagate flags up
-            }
+            output.newUiFlags = output.uiFlags & ~input.uiFlags;
             input.dirtyFlags = output.dirtyFlags;
             input.uiFlags = output.uiFlags;
             Rect.copyTo(output.layoutSlot, input.layoutSlot);
