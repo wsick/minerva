@@ -2539,6 +2539,13 @@ var minerva;
                     geom.Draw(this);
                     this.raw.clip();
                 };
+
+                RenderContext.prototype.clipRect = function (rect) {
+                    var raw = this.raw;
+                    raw.beginPath();
+                    raw.rect(rect.x, rect.y, rect.width, rect.height);
+                    raw.clip();
+                };
                 return RenderContext;
             })();
             render.RenderContext = RenderContext;
@@ -2821,6 +2828,8 @@ var minerva;
         var Surface = (function () {
             function Surface() {
                 this.$$canvas = null;
+                this.$$ctx = null;
+                this.$$layers = [];
                 this.$$downDirty = [];
                 this.$$upDirty = [];
                 this.$$dirtyRegion = null;
@@ -2834,6 +2843,23 @@ var minerva;
                     this.$$dirtyRegion = new minerva.Rect(region.x, region.y, region.width, region.height);
                 else
                     minerva.Rect.union(this.$$dirtyRegion, region);
+            };
+
+            Surface.prototype.render = function () {
+                var region = this.$$dirtyRegion;
+                if (!region || minerva.Rect.isEmpty(region))
+                    return;
+                this.$$dirtyRegion = null;
+                minerva.Rect.roundOut(region);
+
+                var ctx = this.$$ctx;
+                ctx.raw.clearRect(region.x, region.y, region.width, region.height);
+                ctx.save();
+                ctx.clipRect(region);
+                for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
+                    layers[i].render(ctx, region);
+                }
+                ctx.restore();
             };
 
             Surface.prototype.addUpDirty = function (updater) {

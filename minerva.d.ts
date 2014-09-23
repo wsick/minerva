@@ -546,6 +546,7 @@ declare module minerva.def.render {
         public transformMatrix(mat: number[]): void;
         public pretransformMatrix(mat: number[]): void;
         public clipGeometry(geom: IGeometry): void;
+        public clipRect(rect: Rect): void;
     }
 }
 declare module minerva.def.render {
@@ -638,11 +639,14 @@ declare module minerva.def.sizing.tapins {
 declare module minerva.engine {
     class Surface implements layout.ISurface {
         private $$canvas;
+        private $$ctx;
+        private $$layers;
         private $$downDirty;
         private $$upDirty;
         private $$dirtyRegion;
         public updateBounds(): void;
         public invalidate(region?: Rect): void;
+        public render(): void;
         public addUpDirty(updater: layout.Updater): void;
         public addDownDirty(updater: layout.Updater): void;
         private $$processDown();

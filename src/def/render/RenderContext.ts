@@ -72,5 +72,12 @@ module minerva.def.render {
             geom.Draw(this);
             this.raw.clip();
         }
+
+        clipRect (rect: Rect) {
+            var raw = this.raw;
+            raw.beginPath();
+            raw.rect(rect.x, rect.y, rect.width, rect.height);
+            raw.clip();
+        }
     }
 }

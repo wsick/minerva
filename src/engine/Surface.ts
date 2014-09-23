@@ -1,6 +1,10 @@
 module minerva.engine {
     export class Surface implements layout.ISurface {
         private $$canvas: HTMLCanvasElement = null;
+        private $$ctx: def.render.RenderContext = null;
+
+        private $$layers: layout.Updater[] = [];
+
         private $$downDirty: layout.Updater[] = [];
         private $$upDirty: layout.Updater[] = [];
         private $$dirtyRegion: Rect = null;
@@ -15,6 +19,23 @@ module minerva.engine {
                 this.$$dirtyRegion = new Rect(region.x, region.y, region.width, region.height);
             else
                 Rect.union(this.$$dirtyRegion, region);
+        }
+
+        render () {
+            var region = this.$$dirtyRegion;
+            if (!region || Rect.isEmpty(region))
+                return;
+            this.$$dirtyRegion = null;
+            Rect.roundOut(region);
+
+            var ctx = this.$$ctx;
+            ctx.raw.clearRect(region.x, region.y, region.width, region.height);
+            ctx.save();
+            ctx.clipRect(region);
+            for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
+                layers[i].render(ctx, region);
+            }
+            ctx.restore();
         }
 
         addUpDirty (updater: layout.Updater) {
