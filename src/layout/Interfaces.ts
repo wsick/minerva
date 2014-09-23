@@ -3,7 +3,7 @@ module minerva.layout {
     }
     export interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
     }
-    export interface ISizePipe extends IPipe<def.size.IInput, def.size.IState, def.size.IOutput> {
+    export interface ISizingPipe extends IPipe<def.sizing.IInput, def.sizing.IState, def.sizing.IOutput> {
     }
     export interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
     }
@@ -15,6 +15,6 @@ module minerva.layout {
     export interface IVisualOwner extends def.processup.IProcessVisualOwner {
     }
 
-    export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.size.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
+    export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.sizing.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
     }
 }

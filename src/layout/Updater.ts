@@ -10,7 +10,7 @@ module minerva.layout {
     export class Updater {
         private $$measure: IMeasurePipe = null;
         private $$arrange: IArrangePipe = null;
-        private $$size: ISizePipe = null;
+        private $$sizing: ISizingPipe = null;
         private $$processdown: IProcessDownPipe = null;
         private $$processup: IProcessUpPipe = null;
         private $$render: IRenderPipe = null;
@@ -94,8 +94,8 @@ module minerva.layout {
             return this;
         }
 
-        setSizePipe (pipedef?: def.size.SizePipeDef): Updater {
-            this.$$size = <ISizePipe>createPipe(pipedef || NO_PIPE);
+        setSizingPipe (pipedef?: def.sizing.SizingPipeDef): Updater {
+            this.$$sizing = <ISizingPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
@@ -126,8 +126,8 @@ module minerva.layout {
             return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
         }
 
-        size (oldSize: Size, newSize: Size): boolean {
-            var pipe = this.$$size;
+        sizing (oldSize: Size, newSize: Size): boolean {
+            var pipe = this.$$sizing;
             var assets = this.assets;
             oldSize.width = assets.actualWidth;
             oldSize.height = assets.actualHeight;

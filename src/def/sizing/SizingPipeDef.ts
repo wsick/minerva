@@ -1,5 +1,5 @@
-module minerva.def.size {
-    export interface ISizeTapin extends ITapin {
+module minerva.def.sizing {
+    export interface ISizingTapin extends ITapin {
         (input: IInput, state: IState, output: IOutput):boolean;
     }
     export interface IInput extends IPipeInput, helpers.ISized {
@@ -15,29 +15,29 @@ module minerva.def.size {
         actualSize: Size;
     }
 
-    export class SizePipeDef extends PipeDef<ISizeTapin, IInput, IState, IOutput> {
-        constructor () {
+    export class SizingPipeDef extends PipeDef<ISizingTapin, IInput, IState, IOutput> {
+        constructor() {
             super();
             this.addTapin('calcUseRender', tapins.calcUseRender)
                 .addTapin('computeActual', tapins.computeActual);
         }
 
-        createState (): IState {
+        createState(): IState {
             return {
                 useRender: false
             };
         }
 
-        createOutput (): IOutput {
+        createOutput(): IOutput {
             return {
                 actualSize: new Size()
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput) {
+        prepare(input: IInput, state: IState, output: IOutput) {
         }
 
-        flush (input: IInput, state: IState, output: IOutput) {
+        flush(input: IInput, state: IState, output: IOutput) {
             var as = output.actualSize;
             input.actualWidth = as.width;
             input.actualHeight = as.height;

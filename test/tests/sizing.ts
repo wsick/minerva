@@ -1,16 +1,16 @@
 /// <reference path="../qunit.d.ts" />
 /// <reference path="../lib/minerva/minerva" />
 
-module tests.size {
-    QUnit.module("Size Pipe");
+module tests.sizing {
+    QUnit.module("Sizing Pipe");
 
-    import size = minerva.def.size;
-    import tapins = minerva.def.size.tapins;
+    import sizing = minerva.def.sizing;
+    import tapins = minerva.def.sizing.tapins;
     import Visibility = minerva.Visibility;
     import Size = minerva.Size;
 
     var mock = {
-        input: function (): size.IInput {
+        input: function (): sizing.IInput {
             return {
                 width: NaN,
                 height: NaN,
@@ -25,12 +25,12 @@ module tests.size {
                 actualHeight: 0
             };
         },
-        state: function (): size.IState {
+        state: function (): sizing.IState {
             return {
                 useRender: false
             };
         },
-        output: function (): size.IOutput {
+        output: function (): sizing.IOutput {
             return {
                 actualSize: new Size()
             }
