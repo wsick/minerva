@@ -1,8 +1,8 @@
-/// <reference path="../qunit.d.ts" />
-/// <reference path="../lib/minerva/minerva" />
+/// <reference path="../../qunit" />
+/// <reference path="../../lib/minerva/minerva" />
 
-module tests.sizing {
-    QUnit.module("Sizing Pipe");
+module minerva.tests.sizing.tapins {
+    QUnit.module("Sizing Pipe Tapins");
 
     import sizing = minerva.def.sizing;
     import tapins = minerva.def.sizing.tapins;

@@ -1,8 +1,8 @@
-/// <reference path="../qunit.d.ts" />
-/// <reference path="../lib/minerva/minerva" />
+/// <reference path="../../qunit" />
+/// <reference path="../../lib/minerva/minerva" />
 
-module tests.processup {
-    QUnit.module("Process Up Pipe");
+module minerva.tests.processup.tapins {
+    QUnit.module("Process Up Pipe Tapins");
 
     import processup = minerva.def.processup;
     import tapins = minerva.def.processup.tapins;

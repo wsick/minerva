@@ -1,8 +1,8 @@
-/// <reference path="../qunit.d.ts" />
-/// <reference path="../lib/minerva/minerva" />
+/// <reference path="../../qunit" />
+/// <reference path="../../lib/minerva/minerva" />
 
-module tests.render {
-    QUnit.module("Render Pipe");
+module minerva.tests.render.tapins {
+    QUnit.module("Render Pipe Tapins");
 
     import render = minerva.def.render;
     import tapins = minerva.def.render.tapins;

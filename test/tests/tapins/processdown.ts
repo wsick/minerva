@@ -1,8 +1,8 @@
-/// <reference path="../qunit.d.ts" />
-/// <reference path="../lib/minerva/minerva" />
+/// <reference path="../../qunit" />
+/// <reference path="../../lib/minerva/minerva" />
 
-module tests.processdown {
-    QUnit.module("Process Down Pipe");
+module minerva.tests.processdown.tapins {
+    QUnit.module("Process Down Pipe Tapins");
 
     import processdown = minerva.def.processdown;
     import tapins = minerva.def.processdown.tapins;

@@ -1,8 +1,8 @@
-/// <reference path="../qunit.d.ts" />
-/// <reference path="../lib/minerva/minerva" />
+/// <reference path="../../qunit" />
+/// <reference path="../../lib/minerva/minerva" />
 
-module tests.arrange {
-    QUnit.module("Arrange Pipe");
+module minerva.tests.arrange.tapins {
+    QUnit.module("Arrange Pipe Tapins");
 
     import arrange = minerva.def.arrange;
     import tapins = minerva.def.arrange.tapins;
