@@ -2043,7 +2043,7 @@ var minerva;
                     mat3.set(input.carrierXform, rx);
                     mat3.multiply(rx, input.layoutXform, rx);
                     mat3.multiply(rx, state.localXform, rx);
-                    mat4.toAffineMat3(rx, state.renderAsProjection);
+                    mat3.toAffineMat4(rx, state.renderAsProjection);
 
                     return true;
                 };
@@ -2195,7 +2195,7 @@ var minerva;
 
                     if (vpinput) {
                         output.totalOpacity = vpinput.totalOpacity * input.opacity;
-                        output.totalIsRenderVisible = (vpinput.visibility === 0 /* Visible */) && (input.visibility === 0 /* Visible */);
+                        output.totalIsRenderVisible = vpinput.totalIsRenderVisible && (input.visibility === 0 /* Visible */);
                     } else {
                         output.totalOpacity = input.opacity;
                         output.totalIsRenderVisible = input.visibility === 0 /* Visible */;

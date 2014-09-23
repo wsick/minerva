@@ -11,7 +11,7 @@ module minerva.def.processdown.tapins {
         //Calculate
         if (vpinput) {
             output.totalOpacity = vpinput.totalOpacity * input.opacity;
-            output.totalIsRenderVisible = (vpinput.visibility === Visibility.Visible) && (input.visibility === Visibility.Visible);
+            output.totalIsRenderVisible = vpinput.totalIsRenderVisible && (input.visibility === Visibility.Visible);
         } else {
             output.totalOpacity = input.opacity;
             output.totalIsRenderVisible = input.visibility === Visibility.Visible;

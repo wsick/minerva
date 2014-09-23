@@ -66,8 +66,43 @@ module tests.processdown {
         }
     };
 
+    function typedToArray (typed) {
+        var arr = [];
+        for (var i = 0; i < typed.length; i++) {
+            arr.push(typed[i]);
+        }
+        return arr;
+    }
+
     QUnit.test("processRenderVisibility", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.processRenderVisibility(input, state, output, vpinput));
+        assert.strictEqual(output.totalOpacity, 1.0);
+        assert.strictEqual(output.totalIsRenderVisible, true);
+        assert.notStrictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
+        assert.notStrictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
+
+        input.dirtyFlags |= DirtyFlags.RenderVisibility;
+        input.opacity = 0.5;
+        vpinput.totalOpacity = 0.5;
+        assert.ok(tapins.processRenderVisibility(input, state, output, vpinput));
+        assert.strictEqual(output.totalOpacity, 0.25);
+        assert.strictEqual(output.totalIsRenderVisible, true);
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
+        assert.notStrictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
+
+        input.opacity = 1.0;
+        vpinput.totalOpacity = 1.0;
+        vpinput.totalIsRenderVisible = false;
+        assert.ok(tapins.processRenderVisibility(input, state, output, vpinput));
+        assert.strictEqual(output.totalOpacity, 1.0);
+        assert.strictEqual(output.totalIsRenderVisible, false);
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
     });
 
     QUnit.test("processHitTestVisibility", (assert) => {
@@ -94,19 +129,76 @@ module tests.processdown {
     });
 
     QUnit.test("calcXformOrigin", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.calcXformOrigin(input, state, output, vpinput));
+        assert.deepEqual(state.xformOrigin, new Point(0, 0));
+
+        input.renderTransformOrigin = new Point(0.5, 0.75);
+        input.actualWidth = 100;
+        input.actualHeight = 200;
+        assert.ok(tapins.calcXformOrigin(input, state, output, vpinput));
+        assert.deepEqual(state.xformOrigin, new Point(50, 150));
     });
 
     QUnit.test("processLocalXform", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.processLocalXform(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(state.localXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+
+        input.dirtyFlags |= DirtyFlags.LocalTransform;
+        input.renderTransform = [1, 0, 5, 0, 2, 0, 0, 0, 1];
+        state.xformOrigin = new Point(50, 100);
+        assert.ok(tapins.processLocalXform(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(state.localXform), [1, 0, 5, 0, 2, 100, 0, 0, 1]);
     });
 
     QUnit.test("processLocalProjection", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.processLocalProjection(input, state, output, vpinput));
+        assert.ok(isNaN(output.z));
+
+        input.projection = {
+            getDistanceFromXYPlane (objectWidth: number, objectHeight: number) {
+                return 10;
+            },
+            getTransform (): number[] {
+                return mat4.identity()
+            }
+        };
+        input.dirtyFlags |= DirtyFlags.LocalProjection;
+        assert.ok(tapins.processLocalProjection(input, state, output, vpinput));
+        assert.strictEqual(output.z, 10);
     });
 
     QUnit.test("calcRenderXform", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(output.renderXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+        assert.deepEqual(typedToArray(state.renderAsProjection), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+        input.dirtyFlags |= DirtyFlags.Transform;
+        mat3.set([2, 0, 0, 0, 2, 0, 0, 0, 1], input.carrierXform);
+        mat3.set([1, 0, 10, 0, 1, 50, 0, 0, 1], input.layoutXform);
+        mat3.set([-1, 0, 0, 0, 1, 0, 0, 0, 1], state.localXform);
+        assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
+        assert.deepEqual(typedToArray(state.renderAsProjection), [-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
     });
 
     QUnit.test("calcLocalProjection", (assert) => {
