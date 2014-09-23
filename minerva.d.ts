@@ -385,7 +385,6 @@ declare module minerva.layout.draft {
         sizingList: Updater[];
     }
     class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
-        static instance: LayoutPipeDef;
         constructor();
         public prepare(data: ILayoutPipeData): void;
         public flush(data: ILayoutPipeData): void;

@@ -1277,7 +1277,7 @@ var minerva;
     (function (engine) {
         var Surface = (function () {
             function Surface() {
-                this.$$layout = minerva.layout.draft.LayoutPipeDef.instance;
+                this.$$layout = new minerva.layout.draft.LayoutPipeDef();
                 this.$$canvas = null;
                 this.$$ctx = null;
                 this.$$layers = [];
@@ -2104,7 +2104,6 @@ var minerva;
 
                 LayoutPipeDef.prototype.flush = function (data) {
                 };
-                LayoutPipeDef.instance = new LayoutPipeDef();
                 return LayoutPipeDef;
             })(minerva.pipe.PipeDef);
             draft.LayoutPipeDef = LayoutPipeDef;

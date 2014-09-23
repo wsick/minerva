@@ -5,7 +5,7 @@ module minerva.engine {
     }
 
     export class Surface implements layout.ISurface {
-        private $$layout = layout.draft.LayoutPipeDef.instance;
+        private $$layout = new layout.draft.LayoutPipeDef();
 
         private $$canvas: HTMLCanvasElement = null;
         private $$ctx: layout.render.RenderContext = null;

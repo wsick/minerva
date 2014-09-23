@@ -10,8 +10,6 @@ module minerva.layout.draft {
         sizingList: Updater[];
     }
     export class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
-        static instance = new LayoutPipeDef();
-
         constructor () {
             super();
             this.addTapin('flushPrevious', tapins.flushPrevious)
