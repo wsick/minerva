@@ -1,5 +1,5 @@
 module minerva.layout.processdown {
-    export interface IProcessDownTapin extends pipe.ITapin {
+    export interface IProcessDownTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, vpinput: IInput):boolean;
     }
     export interface IInput extends pipe.IPipeInput {

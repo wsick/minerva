@@ -1,5 +1,5 @@
 module minerva.layout.sizing {
-    export interface ISizingTapin extends pipe.ITapin {
+    export interface ISizingTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput):boolean;
     }
     export interface IInput extends pipe.IPipeInput, helpers.ISized {

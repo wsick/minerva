@@ -1,5 +1,5 @@
 module minerva.layout.processup {
-    export interface IProcessUpTapin extends pipe.ITapin {
+    export interface IProcessUpTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner):boolean;
     }
     export interface IInput extends pipe.IPipeInput {

@@ -1,5 +1,5 @@
 module minerva.layout {
-    var NO_PIPE = new pipe.TriPipeDef<pipe.ITapin, pipe.IPipeInput, pipe.IPipeState, pipe.IPipeOutput>();
+    var NO_PIPE = new pipe.TriPipeDef<pipe.ITriTapin, pipe.IPipeInput, pipe.IPipeState, pipe.IPipeOutput>();
     var NO_VO: IVisualOwner = {
         updateBounds: function () {
         },

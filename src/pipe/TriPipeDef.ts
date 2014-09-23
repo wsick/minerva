@@ -1,9 +1,9 @@
 module minerva.pipe {
-    export interface ITapin {
+    export interface ITriTapin {
         (assets: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
 
-    export class TriPipeDef<T extends ITapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements ITriPipeDef<TInput, TState, TOutput> {
+    export class TriPipeDef<T extends ITriTapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements ITriPipeDef<TInput, TState, TOutput> {
         private $$names: string[] = [];
         private $$tapins: T[] = [];
 

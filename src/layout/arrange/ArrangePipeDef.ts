@@ -1,5 +1,5 @@
 module minerva.layout.arrange {
-    export interface IArrangeTapin extends pipe.ITapin {
+    export interface IArrangeTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, finalRect: Rect):boolean;
     }
     export interface IInput extends pipe.IPipeInput, helpers.ISized {

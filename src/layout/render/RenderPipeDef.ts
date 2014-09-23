@@ -1,5 +1,5 @@
 module minerva.layout.render {
-    export interface IRenderTapin extends pipe.ITapin {
+    export interface IRenderTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect):boolean;
     }
     export interface IInput extends pipe.IPipeInput {

@@ -162,10 +162,10 @@ declare module minerva {
     }
 }
 declare module minerva.pipe {
-    interface ITapin {
+    interface ITriTapin {
         (assets: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
-    class TriPipeDef<T extends ITapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements ITriPipeDef<TInput, TState, TOutput> {
+    class TriPipeDef<T extends ITriTapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements ITriPipeDef<TInput, TState, TOutput> {
         private $$names;
         private $$tapins;
         public addTapin(name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput>;
@@ -255,7 +255,7 @@ declare module minerva.layout {
     }
 }
 declare module minerva.layout.arrange {
-    interface IArrangeTapin extends pipe.ITapin {
+    interface IArrangeTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean;
     }
     interface IInput extends pipe.IPipeInput, helpers.ISized {
@@ -359,7 +359,7 @@ declare module minerva.layout.helpers {
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
 }
 declare module minerva.layout.measure {
-    interface IMeasureTapin extends pipe.ITapin {
+    interface IMeasureTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, availableSize: Size): boolean;
     }
     interface IInput extends pipe.IPipeInput, helpers.ISized {
@@ -421,7 +421,7 @@ declare module minerva.layout.measure.tapins {
     var validateVisibility: IMeasureTapin;
 }
 declare module minerva.layout.processdown {
-    interface IProcessDownTapin extends pipe.ITapin {
+    interface IProcessDownTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean;
     }
     interface IInput extends pipe.IPipeInput {
@@ -517,7 +517,7 @@ declare module minerva.layout.processdown.tapins {
     var propagateDirtyToChildren: IProcessDownTapin;
 }
 declare module minerva.layout.processup {
-    interface IProcessUpTapin extends pipe.ITapin {
+    interface IProcessUpTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): boolean;
     }
     interface IInput extends pipe.IPipeInput {
@@ -609,7 +609,7 @@ declare module minerva.layout.render {
     }
 }
 declare module minerva.layout.render {
-    interface IRenderTapin extends pipe.ITapin {
+    interface IRenderTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect): boolean;
     }
     interface IInput extends pipe.IPipeInput {
@@ -666,7 +666,7 @@ declare module minerva.layout.render.tapins {
     var validateRegion: IRenderTapin;
 }
 declare module minerva.layout.sizing {
-    interface ISizingTapin extends pipe.ITapin {
+    interface ISizingTapin extends pipe.ITriTapin {
         (input: IInput, state: IState, output: IOutput): boolean;
     }
     interface IInput extends pipe.IPipeInput, helpers.ISized {
