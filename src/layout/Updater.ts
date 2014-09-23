@@ -82,54 +82,64 @@ module minerva.layout {
             forceInvalidate: false
         };
 
-        constructor() {
+        constructor () {
         }
 
         /////// PREPARE PIPES
 
-        setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater {
+        setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
             this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setArrangePipe(pipedef?: def.arrange.ArrangePipeDef): Updater {
+        setArrangePipe (pipedef?: def.arrange.ArrangePipeDef): Updater {
             this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setSizingPipe(pipedef?: def.sizing.SizingPipeDef): Updater {
+        setSizingPipe (pipedef?: def.sizing.SizingPipeDef): Updater {
             this.$$sizing = <ISizingPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setProcessDownPipe(pipedef?: def.processdown.ProcessDownPipeDef): Updater {
+        setProcessDownPipe (pipedef?: def.processdown.ProcessDownPipeDef): Updater {
             this.$$processdown = <IProcessDownPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setProcessUpPipe(pipedef?: def.processup.ProcessUpPipeDef): Updater {
+        setProcessUpPipe (pipedef?: def.processup.ProcessUpPipeDef): Updater {
             this.$$processup = <IProcessUpPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setRenderPipe(pipedef?: def.render.RenderPipeDef): Updater {
+        setRenderPipe (pipedef?: def.render.RenderPipeDef): Updater {
             this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE);
             return this;
         }
 
         /////// RUN PIPES
 
-        measure(availableSize: Size): boolean {
+        measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
-            return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
+            if (pipe.output.newUpDirty)
+                this.$$addUpDirty();
+            if (pipe.output.newDownDirty)
+                this.$$addDownDirty();
+            return success;
         }
 
-        arrange(finalRect: Rect): boolean {
+        arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
-            return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
+            if (pipe.output.newUpDirty)
+                this.$$addUpDirty();
+            if (pipe.output.newDownDirty)
+                this.$$addDownDirty();
+            return success;
         }
 
-        sizing(oldSize: Size, newSize: Size): boolean {
+        sizing (oldSize: Size, newSize: Size): boolean {
             var pipe = this.$$sizing;
             var assets = this.assets;
             oldSize.width = assets.actualWidth;
@@ -139,7 +149,7 @@ module minerva.layout {
             return success;
         }
 
-        processDown(): boolean {
+        processDown (): boolean {
             if (!this.$$inDownDirty)
                 return true;
             if (this.$$visualParentUpdater && this.$$visualParentUpdater.$$inDownDirty) {
@@ -151,10 +161,12 @@ module minerva.layout {
             var vp = this.$$visualParentUpdater;
             var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
             this.$$inDownDirty = false;
+            if (pipe.output.newUpDirty)
+                this.$$addUpDirty();
             return success;
         }
 
-        processUp(): boolean {
+        processUp (): boolean {
             if (!this.$$inUpDirty)
                 return true;
 
@@ -165,14 +177,14 @@ module minerva.layout {
             return success;
         }
 
-        render(ctx: def.render.RenderContext, region: Rect): boolean {
+        render (ctx: def.render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
         }
 
         ///////
 
-        private $$getVisualOwner(): IVisualOwner {
+        private $$getVisualOwner (): IVisualOwner {
             if (this.$$visualParentUpdater)
                 return this.$$visualParentUpdater;
             if (this.assets.isTopLevel && this.$$surface)
@@ -180,29 +192,43 @@ module minerva.layout {
             return NO_VO;
         }
 
-        updateBounds(forceRedraw?: boolean) {
+        updateBounds (forceRedraw?: boolean) {
             var assets = this.assets;
             assets.dirtyFlags |= DirtyFlags.Bounds;
-            //TODO: add dirty element
+            this.$$addUpDirty();
             if (forceRedraw === true)
                 assets.forceInvalidate = true;
         }
 
-        invalidate(region: Rect) {
+        invalidate (region: Rect) {
             var assets = this.assets;
             if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
                 return;
             assets.dirtyFlags |= DirtyFlags.Invalidate;
-            //TODO: add dirty element
+            this.$$addUpDirty();
             Rect.union(assets.dirtyRegion, region);
         }
 
-        findChildInList(list: Updater[]) {
+        findChildInList (list: Updater[]) {
             for (var i = 0, len = list.length; i < len; i++) {
                 if (list[i].$$visualParentUpdater === this)
                     return i;
             }
             return -1;
+        }
+
+        private $$addUpDirty () {
+            if (this.$$surface && !this.$$inUpDirty) {
+                this.$$surface.addUpDirty(this);
+                this.$$inUpDirty = true;
+            }
+        }
+
+        private $$addDownDirty () {
+            if (this.$$surface && !this.$$inDownDirty) {
+                this.$$surface.addDownDirty(this);
+                this.$$inDownDirty = true;
+            }
         }
     }
 }

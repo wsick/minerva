@@ -21,6 +21,8 @@ module minerva.def.measure {
         hiddenDesire: Size;
         dirtyFlags: DirtyFlags;
         uiFlags: UIFlags;
+        newUpDirty: DirtyFlags;
+        newDownDirty: DirtyFlags;
     }
 
     export class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
@@ -51,7 +53,9 @@ module minerva.def.measure {
                 desiredSize: new Size(),
                 hiddenDesire: new Size(),
                 dirtyFlags: 0,
-                uiFlags: 0
+                uiFlags: 0,
+                newUpDirty: 0,
+                newDownDirty: 0
             };
         }
 
@@ -63,9 +67,8 @@ module minerva.def.measure {
 
         flush (input: IInput, state: IState, output: IOutput) {
             var newDirty = output.dirtyFlags & ~input.dirtyFlags;
-            if (newDirty > 0) {
-                //TODO: Add dirty elements
-            }
+            output.newUpDirty = newDirty & DirtyFlags.UpDirtyState;
+            output.newDownDirty = newDirty & DirtyFlags.DownDirtyState;
             var newUi = output.uiFlags & ~input.uiFlags;
             if (newUi > 0) {
                 //TODO: Propagate flags up

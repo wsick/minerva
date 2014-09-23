@@ -40,7 +40,7 @@ var minerva;
         DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
 
         DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ChildrenZIndices] = "DownDirtyState";
-        DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.Invalidate] = "UpDirtyState";
+        DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.NewBounds | DirtyFlags.Invalidate] = "UpDirtyState";
 
         DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
     })(minerva.DirtyFlags || (minerva.DirtyFlags = {}));
@@ -1206,7 +1206,9 @@ var minerva;
                         layoutXform: mat3.identity(),
                         layoutClip: new minerva.Rect(),
                         renderSize: new minerva.Size(),
-                        lastRenderSize: null
+                        lastRenderSize: null,
+                        newUpDirty: 0,
+                        newDownDirty: 0
                     };
                 };
 
@@ -1221,8 +1223,8 @@ var minerva;
 
                 ArrangePipeDef.prototype.flush = function (input, state, output) {
                     var newDirty = output.dirtyFlags & ~input.dirtyFlags;
-                    if (newDirty > 0) {
-                    }
+                    output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
+                    output.newDownDirty = newDirty & minerva.DirtyFlags.DownDirtyState;
                     var newUi = output.uiFlags & ~input.uiFlags;
                     if (newUi > 0) {
                     }
@@ -1675,7 +1677,9 @@ var minerva;
                         desiredSize: new minerva.Size(),
                         hiddenDesire: new minerva.Size(),
                         dirtyFlags: 0,
-                        uiFlags: 0
+                        uiFlags: 0,
+                        newUpDirty: 0,
+                        newDownDirty: 0
                     };
                 };
 
@@ -1687,8 +1691,8 @@ var minerva;
 
                 MeasurePipeDef.prototype.flush = function (input, state, output) {
                     var newDirty = output.dirtyFlags & ~input.dirtyFlags;
-                    if (newDirty > 0) {
-                    }
+                    output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
+                    output.newDownDirty = newDirty & minerva.DirtyFlags.DownDirtyState;
                     var newUi = output.uiFlags & ~input.uiFlags;
                     if (newUi > 0) {
                     }
@@ -1905,7 +1909,8 @@ var minerva;
                         localProjection: mat4.identity(),
                         absoluteProjection: mat4.identity(),
                         totalHasRenderProjection: false,
-                        dirtyFlags: 0
+                        dirtyFlags: 0,
+                        newUpDirty: 0
                     };
                 };
 
@@ -1927,9 +1932,7 @@ var minerva;
                 };
 
                 ProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput) {
-                    var upDirty = (output.dirtyFlags & ~input.dirtyFlags) & minerva.DirtyFlags.UpDirtyState;
-                    if (upDirty > 0) {
-                    }
+                    output.newUpDirty = (output.dirtyFlags & ~input.dirtyFlags) & minerva.DirtyFlags.UpDirtyState;
                     input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.DownDirtyState;
                     input.totalIsRenderVisible = output.totalIsRenderVisible;
                     input.totalOpacity = output.totalOpacity;
@@ -2819,13 +2822,28 @@ var minerva;
     (function (engine) {
         var Surface = (function () {
             function Surface() {
+                this.$$canvas = null;
                 this.$$downDirty = [];
                 this.$$upDirty = [];
+                this.$$dirtyRegion = null;
             }
             Surface.prototype.updateBounds = function () {
             };
 
             Surface.prototype.invalidate = function (region) {
+                region = region || new minerva.Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
+                if (!this.$$dirtyRegion)
+                    this.$$dirtyRegion = new minerva.Rect(region.x, region.y, region.width, region.height);
+                else
+                    minerva.Rect.union(this.$$dirtyRegion, region);
+            };
+
+            Surface.prototype.addUpDirty = function (updater) {
+                this.$$upDirty.push(updater);
+            };
+
+            Surface.prototype.addDownDirty = function (updater) {
+                this.$$downDirty.push(updater);
             };
 
             Surface.prototype.$$processDown = function () {
@@ -2991,12 +3009,22 @@ var minerva;
 
             Updater.prototype.measure = function (availableSize) {
                 var pipe = this.$$measure;
-                return pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
+                if (pipe.output.newUpDirty)
+                    this.$$addUpDirty();
+                if (pipe.output.newDownDirty)
+                    this.$$addDownDirty();
+                return success;
             };
 
             Updater.prototype.arrange = function (finalRect) {
                 var pipe = this.$$arrange;
-                return pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
+                if (pipe.output.newUpDirty)
+                    this.$$addUpDirty();
+                if (pipe.output.newDownDirty)
+                    this.$$addDownDirty();
+                return success;
             };
 
             Updater.prototype.sizing = function (oldSize, newSize) {
@@ -3020,6 +3048,8 @@ var minerva;
                 var vp = this.$$visualParentUpdater;
                 var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
                 this.$$inDownDirty = false;
+                if (pipe.output.newUpDirty)
+                    this.$$addUpDirty();
                 return success;
             };
 
@@ -3050,7 +3080,7 @@ var minerva;
             Updater.prototype.updateBounds = function (forceRedraw) {
                 var assets = this.assets;
                 assets.dirtyFlags |= minerva.DirtyFlags.Bounds;
-
+                this.$$addUpDirty();
                 if (forceRedraw === true)
                     assets.forceInvalidate = true;
             };
@@ -3060,7 +3090,7 @@ var minerva;
                 if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
                     return;
                 assets.dirtyFlags |= minerva.DirtyFlags.Invalidate;
-
+                this.$$addUpDirty();
                 minerva.Rect.union(assets.dirtyRegion, region);
             };
 
@@ -3070,6 +3100,20 @@ var minerva;
                         return i;
                 }
                 return -1;
+            };
+
+            Updater.prototype.$$addUpDirty = function () {
+                if (this.$$surface && !this.$$inUpDirty) {
+                    this.$$surface.addUpDirty(this);
+                    this.$$inUpDirty = true;
+                }
+            };
+
+            Updater.prototype.$$addDownDirty = function () {
+                if (this.$$surface && !this.$$inDownDirty) {
+                    this.$$surface.addDownDirty(this);
+                    this.$$inDownDirty = true;
+                }
             };
             return Updater;
         })();

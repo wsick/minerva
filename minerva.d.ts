@@ -232,6 +232,8 @@ declare module minerva.def.arrange {
         renderSize: Size;
         lastRenderSize: Size;
         uiFlags: UIFlags;
+        newUpDirty: DirtyFlags;
+        newDownDirty: DirtyFlags;
     }
     class ArrangePipeDef extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -319,6 +321,8 @@ declare module minerva.def.measure {
         hiddenDesire: Size;
         dirtyFlags: DirtyFlags;
         uiFlags: UIFlags;
+        newUpDirty: DirtyFlags;
+        newDownDirty: DirtyFlags;
     }
     class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor();
@@ -402,6 +406,7 @@ declare module minerva.def.processdown {
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
+        newUpDirty: DirtyFlags;
     }
     class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor();
@@ -630,10 +635,14 @@ declare module minerva.def.sizing.tapins {
 }
 declare module minerva.engine {
     class Surface implements layout.ISurface {
+        private $$canvas;
         private $$downDirty;
         private $$upDirty;
+        private $$dirtyRegion;
         public updateBounds(): void;
-        public invalidate(region: Rect): void;
+        public invalidate(region?: Rect): void;
+        public addUpDirty(updater: layout.Updater): void;
+        public addDownDirty(updater: layout.Updater): void;
         private $$processDown();
         private $$processUp();
     }
@@ -662,6 +671,8 @@ declare module minerva.layout {
     interface IVisualOwner extends def.processup.IProcessVisualOwner {
     }
     interface ISurface extends IVisualOwner {
+        addUpDirty(updater: Updater): any;
+        addDownDirty(updater: Updater): any;
     }
     interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.sizing.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
     }
@@ -696,5 +707,7 @@ declare module minerva.layout {
         public updateBounds(forceRedraw?: boolean): void;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
+        private $$addUpDirty();
+        private $$addDownDirty();
     }
 }

@@ -45,6 +45,7 @@ module minerva.def.processdown {
         absoluteProjection: number[];
         totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
+        newUpDirty: DirtyFlags;
     }
 
     export class ProcessDownPipeDef extends PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
@@ -84,7 +85,8 @@ module minerva.def.processdown {
                 localProjection: mat4.identity(),
                 absoluteProjection: mat4.identity(),
                 totalHasRenderProjection: false,
-                dirtyFlags: 0
+                dirtyFlags: 0,
+                newUpDirty: 0
             };
         }
 
@@ -106,10 +108,7 @@ module minerva.def.processdown {
         }
 
         flush (input: IInput, state: IState, output: IOutput, vpinput: IInput) {
-            var upDirty = (output.dirtyFlags & ~input.dirtyFlags) & DirtyFlags.UpDirtyState;
-            if (upDirty > 0) {
-                //TODO: add dirty element
-            }
+            output.newUpDirty = (output.dirtyFlags & ~input.dirtyFlags) & DirtyFlags.UpDirtyState;
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.DownDirtyState;
             input.totalIsRenderVisible = output.totalIsRenderVisible;
             input.totalOpacity = output.totalOpacity;

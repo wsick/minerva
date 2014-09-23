@@ -19,7 +19,7 @@ module minerva {
 
         DownDirtyState = Transform | LocalTransform | LocalProjection
             | Clip | LocalClip | LayoutClip | RenderVisibility | HitTestVisibility | ChildrenZIndices,
-        UpDirtyState = Bounds | Invalidate,
+        UpDirtyState = Bounds | NewBounds | Invalidate,
 
         PropagateDown = RenderVisibility | HitTestVisibility | Transform | LayoutClip
     }

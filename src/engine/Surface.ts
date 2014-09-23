@@ -1,17 +1,31 @@
 module minerva.engine {
     export class Surface implements layout.ISurface {
+        private $$canvas: HTMLCanvasElement = null;
         private $$downDirty: layout.Updater[] = [];
         private $$upDirty: layout.Updater[] = [];
+        private $$dirtyRegion: Rect = null;
 
-        updateBounds() {
-
-        }
-
-        invalidate(region: Rect) {
+        updateBounds () {
 
         }
 
-        private $$processDown() {
+        invalidate (region?: Rect) {
+            region = region || new Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
+            if (!this.$$dirtyRegion)
+                this.$$dirtyRegion = new Rect(region.x, region.y, region.width, region.height);
+            else
+                Rect.union(this.$$dirtyRegion, region);
+        }
+
+        addUpDirty (updater: layout.Updater) {
+            this.$$upDirty.push(updater);
+        }
+
+        addDownDirty (updater: layout.Updater) {
+            this.$$downDirty.push(updater);
+        }
+
+        private $$processDown () {
             //Down --> RenderVisibility, HitTestVisibility, Transformation, Clip, ChildrenZIndices
             var list = this.$$downDirty;
             for (var updater = list[0]; updater != null;) {
@@ -26,7 +40,7 @@ module minerva.engine {
             }
         }
 
-        private $$processUp() {
+        private $$processUp () {
             //Up --> Bounds, Invalidation
             var list = this.$$upDirty;
             for (var updater = list[0]; updater != null;) {

@@ -42,7 +42,9 @@ module minerva.tests.measure.tapins {
                 desiredSize: new Size(),
                 hiddenDesire: new Size(),
                 dirtyFlags: 0,
-                uiFlags: 0
+                uiFlags: 0,
+                newUpDirty: 0,
+                newDownDirty: 0
             }
         }
     };

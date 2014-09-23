@@ -61,7 +61,9 @@ module minerva.tests.arrange.tapins {
                 renderSize: new Size(),
                 lastRenderSize: new Size(),
                 dirtyFlags: 0,
-                uiFlags: 0
+                uiFlags: 0,
+                newUpDirty: 0,
+                newDownDirty: 0
             }
         }
     };

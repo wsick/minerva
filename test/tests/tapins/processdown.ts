@@ -61,7 +61,8 @@ module minerva.tests.processdown.tapins {
                 localProjection: mat4.identity(),
                 absoluteProjection: mat4.identity(),
                 totalHasRenderProjection: false,
-                dirtyFlags: 0
+                dirtyFlags: 0,
+                newUpDirty: 0
             };
         }
     };
