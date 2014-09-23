@@ -1,5 +1,5 @@
 module minerva.layout {
-    var NO_PIPE = new pipe.PipeDef<pipe.ITapin, pipe.IPipeInput, pipe.IPipeState, pipe.IPipeOutput>();
+    var NO_PIPE = new pipe.TriPipeDef<pipe.ITapin, pipe.IPipeInput, pipe.IPipeState, pipe.IPipeOutput>();
     var NO_VO: IVisualOwner = {
         updateBounds: function () {
         },
@@ -88,32 +88,32 @@ module minerva.layout {
         /////// PREPARE PIPES
 
         setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
-            this.$$measure = <IMeasurePipe>pipe.createPipe(pipedef || NO_PIPE);
+            this.$$measure = <IMeasurePipe>pipe.createTriPipe(pipedef || NO_PIPE);
             return this;
         }
 
         setArrangePipe (pipedef?: arrange.ArrangePipeDef): Updater {
-            this.$$arrange = <IArrangePipe>pipe.createPipe(pipedef || NO_PIPE);
+            this.$$arrange = <IArrangePipe>pipe.createTriPipe(pipedef || NO_PIPE);
             return this;
         }
 
         setSizingPipe (pipedef?: sizing.SizingPipeDef): Updater {
-            this.$$sizing = <ISizingPipe>pipe.createPipe(pipedef || NO_PIPE);
+            this.$$sizing = <ISizingPipe>pipe.createTriPipe(pipedef || NO_PIPE);
             return this;
         }
 
         setProcessDownPipe (pipedef?: processdown.ProcessDownPipeDef): Updater {
-            this.$$processdown = <IProcessDownPipe>pipe.createPipe(pipedef || NO_PIPE);
+            this.$$processdown = <IProcessDownPipe>pipe.createTriPipe(pipedef || NO_PIPE);
             return this;
         }
 
         setProcessUpPipe (pipedef?: processup.ProcessUpPipeDef): Updater {
-            this.$$processup = <IProcessUpPipe>pipe.createPipe(pipedef || NO_PIPE);
+            this.$$processup = <IProcessUpPipe>pipe.createTriPipe(pipedef || NO_PIPE);
             return this;
         }
 
         setRenderPipe (pipedef?: render.RenderPipeDef): Updater {
-            this.$$render = <IRenderPipe>pipe.createPipe(pipedef || NO_PIPE);
+            this.$$render = <IRenderPipe>pipe.createTriPipe(pipedef || NO_PIPE);
             return this;
         }
 

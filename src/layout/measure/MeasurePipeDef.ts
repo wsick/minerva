@@ -26,7 +26,7 @@ module minerva.layout.measure {
         newUiFlags: UIFlags;
     }
 
-    export class MeasurePipeDef extends pipe.PipeDef<IMeasureTapin, IInput, IState, IOutput> {
+    export class MeasurePipeDef extends pipe.TriPipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('validate', tapins.validate)

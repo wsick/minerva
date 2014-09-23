@@ -15,7 +15,7 @@ module minerva.layout.sizing {
         actualSize: Size;
     }
 
-    export class SizingPipeDef extends pipe.PipeDef<ISizingTapin, IInput, IState, IOutput> {
+    export class SizingPipeDef extends pipe.TriPipeDef<ISizingTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('calcUseRender', tapins.calcUseRender)

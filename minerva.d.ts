@@ -165,14 +165,14 @@ declare module minerva.pipe {
     interface ITapin {
         (assets: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
-    class PipeDef<T extends ITapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipeDef<TInput, TState, TOutput> {
+    class TriPipeDef<T extends ITapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements ITriPipeDef<TInput, TState, TOutput> {
         private $$names;
         private $$tapins;
-        public addTapin(name: string, tapin: T): PipeDef<T, TInput, TState, TOutput>;
-        public addTapinBefore(name: string, tapin: T, before?: string): PipeDef<T, TInput, TState, TOutput>;
-        public addTapinAfter(name: string, tapin: T, after?: string): PipeDef<T, TInput, TState, TOutput>;
-        public replaceTapin(name: string, tapin: T): PipeDef<T, TInput, TState, TOutput>;
-        public removeTapin(name: string): PipeDef<T, TInput, TState, TOutput>;
+        public addTapin(name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput>;
+        public addTapinBefore(name: string, tapin: T, before?: string): TriPipeDef<T, TInput, TState, TOutput>;
+        public addTapinAfter(name: string, tapin: T, after?: string): TriPipeDef<T, TInput, TState, TOutput>;
+        public replaceTapin(name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput>;
+        public removeTapin(name: string): TriPipeDef<T, TInput, TState, TOutput>;
         public run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
         public createState(): TState;
         public createOutput(): TOutput;
@@ -198,17 +198,17 @@ declare module minerva.engine {
     }
 }
 declare module minerva.layout {
-    interface IMeasurePipe extends pipe.IPipe<measure.IInput, measure.IState, measure.IOutput> {
+    interface IMeasurePipe extends pipe.ITriPipe<measure.IInput, measure.IState, measure.IOutput> {
     }
-    interface IArrangePipe extends pipe.IPipe<arrange.IInput, arrange.IState, arrange.IOutput> {
+    interface IArrangePipe extends pipe.ITriPipe<arrange.IInput, arrange.IState, arrange.IOutput> {
     }
-    interface ISizingPipe extends pipe.IPipe<sizing.IInput, sizing.IState, sizing.IOutput> {
+    interface ISizingPipe extends pipe.ITriPipe<sizing.IInput, sizing.IState, sizing.IOutput> {
     }
-    interface IProcessDownPipe extends pipe.IPipe<processdown.IInput, processdown.IState, processdown.IOutput> {
+    interface IProcessDownPipe extends pipe.ITriPipe<processdown.IInput, processdown.IState, processdown.IOutput> {
     }
-    interface IProcessUpPipe extends pipe.IPipe<processup.IInput, processup.IState, processup.IOutput> {
+    interface IProcessUpPipe extends pipe.ITriPipe<processup.IInput, processup.IState, processup.IOutput> {
     }
-    interface IRenderPipe extends pipe.IPipe<render.IInput, render.IState, render.IOutput> {
+    interface IRenderPipe extends pipe.ITriPipe<render.IInput, render.IState, render.IOutput> {
     }
     interface IVisualOwner extends processup.IProcessVisualOwner {
     }
@@ -295,7 +295,7 @@ declare module minerva.layout.arrange {
         newDownDirty: DirtyFlags;
         newUiFlags: UIFlags;
     }
-    class ArrangePipeDef extends pipe.PipeDef<IArrangeTapin, IInput, IState, IOutput> {
+    class ArrangePipeDef extends pipe.TriPipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -385,7 +385,7 @@ declare module minerva.layout.measure {
         newDownDirty: DirtyFlags;
         newUiFlags: UIFlags;
     }
-    class MeasurePipeDef extends pipe.PipeDef<IMeasureTapin, IInput, IState, IOutput> {
+    class MeasurePipeDef extends pipe.TriPipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -469,7 +469,7 @@ declare module minerva.layout.processdown {
         dirtyFlags: DirtyFlags;
         newUpDirty: DirtyFlags;
     }
-    class ProcessDownPipeDef extends pipe.PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
+    class ProcessDownPipeDef extends pipe.TriPipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -562,7 +562,7 @@ declare module minerva.layout.processup {
         updateBounds(): any;
         invalidate(region: Rect): any;
     }
-    class ProcessUpPipeDef extends pipe.PipeDef<IProcessUpTapin, IInput, IState, IOutput> {
+    class ProcessUpPipeDef extends pipe.TriPipeDef<IProcessUpTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -632,7 +632,7 @@ declare module minerva.layout.render {
     interface IGeometry {
         Draw(ctx: RenderContext): any;
     }
-    class RenderPipeDef extends pipe.PipeDef<IRenderTapin, IInput, IState, IOutput> {
+    class RenderPipeDef extends pipe.TriPipeDef<IRenderTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -681,7 +681,7 @@ declare module minerva.layout.sizing {
     interface IOutput extends pipe.IPipeOutput {
         actualSize: Size;
     }
-    class SizingPipeDef extends pipe.PipeDef<ISizingTapin, IInput, IState, IOutput> {
+    class SizingPipeDef extends pipe.TriPipeDef<ISizingTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
@@ -696,25 +696,25 @@ declare module minerva.layout.sizing.tapins {
     var computeActual: ISizingTapin;
 }
 declare module minerva.pipe {
-    class IPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
-        public def: IPipeDef<TInput, TState, TOutput>;
-        public state: TState;
-        public output: TOutput;
-    }
-    function createPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput>(pipedef: IPipeDef<TInput, TState, TOutput>): IPipe<TInput, TState, TOutput>;
-}
-declare module minerva.pipe {
     interface IPipeInput {
     }
     interface IPipeState {
     }
     interface IPipeOutput {
     }
-    interface IPipeDef<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
+    interface ITriPipeDef<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
         run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
         createState(): TState;
         createOutput(): TOutput;
         prepare(input: TInput, state: TState, output: TOutput): any;
         flush(input: TInput, state: TState, output: TOutput): any;
     }
+}
+declare module minerva.pipe {
+    class ITriPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
+        public def: ITriPipeDef<TInput, TState, TOutput>;
+        public state: TState;
+        public output: TOutput;
+    }
+    function createTriPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput>(pipedef: ITriPipeDef<TInput, TState, TOutput>): ITriPipe<TInput, TState, TOutput>;
 }

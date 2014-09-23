@@ -1058,18 +1058,18 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (pipe) {
-        var PipeDef = (function () {
-            function PipeDef() {
+        var TriPipeDef = (function () {
+            function TriPipeDef() {
                 this.$$names = [];
                 this.$$tapins = [];
             }
-            PipeDef.prototype.addTapin = function (name, tapin) {
+            TriPipeDef.prototype.addTapin = function (name, tapin) {
                 this.$$names.push(name);
                 this.$$tapins.push(tapin);
                 return this;
             };
 
-            PipeDef.prototype.addTapinBefore = function (name, tapin, before) {
+            TriPipeDef.prototype.addTapinBefore = function (name, tapin, before) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !before ? -1 : names.indexOf(before);
@@ -1083,7 +1083,7 @@ var minerva;
                 return this;
             };
 
-            PipeDef.prototype.addTapinAfter = function (name, tapin, after) {
+            TriPipeDef.prototype.addTapinAfter = function (name, tapin, after) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !after ? -1 : names.indexOf(after);
@@ -1097,7 +1097,7 @@ var minerva;
                 return this;
             };
 
-            PipeDef.prototype.replaceTapin = function (name, tapin) {
+            TriPipeDef.prototype.replaceTapin = function (name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = names.indexOf(name);
@@ -1107,7 +1107,7 @@ var minerva;
                 return this;
             };
 
-            PipeDef.prototype.removeTapin = function (name) {
+            TriPipeDef.prototype.removeTapin = function (name) {
                 var names = this.$$names;
                 var index = names.indexOf(name);
                 if (index === -1)
@@ -1117,7 +1117,7 @@ var minerva;
                 return this;
             };
 
-            PipeDef.prototype.run = function (input, state, output) {
+            TriPipeDef.prototype.run = function (input, state, output) {
                 var contexts = [];
                 for (var _i = 0; _i < (arguments.length - 3); _i++) {
                     contexts[_i] = arguments[_i + 3];
@@ -1141,30 +1141,30 @@ var minerva;
                 return flag;
             };
 
-            PipeDef.prototype.createState = function () {
+            TriPipeDef.prototype.createState = function () {
                 return null;
             };
 
-            PipeDef.prototype.createOutput = function () {
+            TriPipeDef.prototype.createOutput = function () {
                 return null;
             };
 
-            PipeDef.prototype.prepare = function (input, state, output) {
+            TriPipeDef.prototype.prepare = function (input, state, output) {
                 var contexts = [];
                 for (var _i = 0; _i < (arguments.length - 3); _i++) {
                     contexts[_i] = arguments[_i + 3];
                 }
             };
 
-            PipeDef.prototype.flush = function (input, state, output) {
+            TriPipeDef.prototype.flush = function (input, state, output) {
                 var contexts = [];
                 for (var _i = 0; _i < (arguments.length - 3); _i++) {
                     contexts[_i] = arguments[_i + 3];
                 }
             };
-            return PipeDef;
+            return TriPipeDef;
         })();
-        pipe.PipeDef = PipeDef;
+        pipe.TriPipeDef = TriPipeDef;
     })(minerva.pipe || (minerva.pipe = {}));
     var pipe = minerva.pipe;
 })(minerva || (minerva = {}));
@@ -1253,7 +1253,7 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (layout) {
-        var NO_PIPE = new minerva.pipe.PipeDef();
+        var NO_PIPE = new minerva.pipe.TriPipeDef();
         var NO_VO = {
             updateBounds: function () {
             },
@@ -1327,32 +1327,32 @@ var minerva;
                 };
             }
             Updater.prototype.setMeasurePipe = function (pipedef) {
-                this.$$measure = minerva.pipe.createPipe(pipedef || NO_PIPE);
+                this.$$measure = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.setArrangePipe = function (pipedef) {
-                this.$$arrange = minerva.pipe.createPipe(pipedef || NO_PIPE);
+                this.$$arrange = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.setSizingPipe = function (pipedef) {
-                this.$$sizing = minerva.pipe.createPipe(pipedef || NO_PIPE);
+                this.$$sizing = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.setProcessDownPipe = function (pipedef) {
-                this.$$processdown = minerva.pipe.createPipe(pipedef || NO_PIPE);
+                this.$$processdown = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.setProcessUpPipe = function (pipedef) {
-                this.$$processup = minerva.pipe.createPipe(pipedef || NO_PIPE);
+                this.$$processup = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
             };
 
             Updater.prototype.setRenderPipe = function (pipedef) {
-                this.$$render = minerva.pipe.createPipe(pipedef || NO_PIPE);
+                this.$$render = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
             };
 
@@ -1550,7 +1550,7 @@ var minerva;
                         input.lastRenderSize = output.lastRenderSize;
                 };
                 return ArrangePipeDef;
-            })(minerva.pipe.PipeDef);
+            })(minerva.pipe.TriPipeDef);
             arrange.ArrangePipeDef = ArrangePipeDef;
         })(layout.arrange || (layout.arrange = {}));
         var arrange = layout.arrange;
@@ -2015,7 +2015,7 @@ var minerva;
                     minerva.Size.copyTo(output.desiredSize, input.desiredSize);
                 };
                 return MeasurePipeDef;
-            })(minerva.pipe.PipeDef);
+            })(minerva.pipe.TriPipeDef);
             measure.MeasurePipeDef = MeasurePipeDef;
         })(layout.measure || (layout.measure = {}));
         var measure = layout.measure;
@@ -2258,7 +2258,7 @@ var minerva;
                     input.totalHasRenderProjection = output.totalHasRenderProjection;
                 };
                 return ProcessDownPipeDef;
-            })(minerva.pipe.PipeDef);
+            })(minerva.pipe.TriPipeDef);
             processdown.ProcessDownPipeDef = ProcessDownPipeDef;
         })(layout.processdown || (layout.processdown = {}));
         var processdown = layout.processdown;
@@ -2632,7 +2632,7 @@ var minerva;
                     input.forceInvalidate = output.forceInvalidate;
                 };
                 return ProcessUpPipeDef;
-            })(minerva.pipe.PipeDef);
+            })(minerva.pipe.TriPipeDef);
             processup.ProcessUpPipeDef = ProcessUpPipeDef;
         })(layout.processup || (layout.processup = {}));
         var processup = layout.processup;
@@ -2888,7 +2888,7 @@ var minerva;
                     return {};
                 };
                 return RenderPipeDef;
-            })(minerva.pipe.PipeDef);
+            })(minerva.pipe.TriPipeDef);
             render.RenderPipeDef = RenderPipeDef;
         })(layout.render || (layout.render = {}));
         var render = layout.render;
@@ -3086,7 +3086,7 @@ var minerva;
                     input.actualHeight = as.height;
                 };
                 return SizingPipeDef;
-            })(minerva.pipe.PipeDef);
+            })(minerva.pipe.TriPipeDef);
             sizing.SizingPipeDef = SizingPipeDef;
         })(layout.sizing || (layout.sizing = {}));
         var sizing = layout.sizing;
@@ -3139,21 +3139,21 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (pipe) {
-        var IPipe = (function () {
-            function IPipe() {
+        var ITriPipe = (function () {
+            function ITriPipe() {
             }
-            return IPipe;
+            return ITriPipe;
         })();
-        pipe.IPipe = IPipe;
+        pipe.ITriPipe = ITriPipe;
 
-        function createPipe(pipedef) {
+        function createTriPipe(pipedef) {
             return {
                 def: pipedef,
                 state: pipedef.createState(),
                 output: pipedef.createOutput()
             };
         }
-        pipe.createPipe = createPipe;
+        pipe.createTriPipe = createTriPipe;
     })(minerva.pipe || (minerva.pipe = {}));
     var pipe = minerva.pipe;
 })(minerva || (minerva = {}));

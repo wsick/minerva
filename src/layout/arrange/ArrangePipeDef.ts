@@ -40,7 +40,7 @@ module minerva.layout.arrange {
         newUiFlags: UIFlags;
     }
 
-    export class ArrangePipeDef extends pipe.PipeDef<IArrangeTapin, IInput, IState, IOutput> {
+    export class ArrangePipeDef extends pipe.TriPipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('applyRounding', tapins.applyRounding)

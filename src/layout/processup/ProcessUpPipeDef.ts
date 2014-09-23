@@ -45,7 +45,7 @@ module minerva.layout.processup {
         invalidate(region: Rect);
     }
 
-    export class ProcessUpPipeDef extends pipe.PipeDef<IProcessUpTapin, IInput, IState, IOutput> {
+    export class ProcessUpPipeDef extends pipe.TriPipeDef<IProcessUpTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('calcActualSize', tapins.calcActualSize)

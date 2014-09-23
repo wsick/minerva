@@ -3,17 +3,17 @@ module minerva.pipe {
         (assets: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
 
-    export class PipeDef<T extends ITapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements IPipeDef<TInput, TState, TOutput> {
+    export class TriPipeDef<T extends ITapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements ITriPipeDef<TInput, TState, TOutput> {
         private $$names: string[] = [];
         private $$tapins: T[] = [];
 
-        addTapin (name: string, tapin: T): PipeDef<T, TInput, TState, TOutput> {
+        addTapin (name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput> {
             this.$$names.push(name);
             this.$$tapins.push(tapin);
             return this;
         }
 
-        addTapinBefore (name: string, tapin: T, before?: string): PipeDef<T, TInput, TState, TOutput> {
+        addTapinBefore (name: string, tapin: T, before?: string): TriPipeDef<T, TInput, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !before ? -1 : names.indexOf(before);
@@ -27,7 +27,7 @@ module minerva.pipe {
             return this;
         }
 
-        addTapinAfter (name: string, tapin: T, after?: string): PipeDef<T, TInput, TState, TOutput> {
+        addTapinAfter (name: string, tapin: T, after?: string): TriPipeDef<T, TInput, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !after ? -1 : names.indexOf(after);
@@ -41,7 +41,7 @@ module minerva.pipe {
             return this;
         }
 
-        replaceTapin (name: string, tapin: T): PipeDef<T, TInput, TState, TOutput> {
+        replaceTapin (name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = names.indexOf(name);
@@ -51,7 +51,7 @@ module minerva.pipe {
             return this;
         }
 
-        removeTapin (name: string): PipeDef<T, TInput, TState, TOutput> {
+        removeTapin (name: string): TriPipeDef<T, TInput, TState, TOutput> {
             var names = this.$$names;
             var index = names.indexOf(name);
             if (index === -1)

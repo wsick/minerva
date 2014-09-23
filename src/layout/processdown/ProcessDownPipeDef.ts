@@ -48,7 +48,7 @@ module minerva.layout.processdown {
         newUpDirty: DirtyFlags;
     }
 
-    export class ProcessDownPipeDef extends pipe.PipeDef<IProcessDownTapin, IInput, IState, IOutput> {
+    export class ProcessDownPipeDef extends pipe.TriPipeDef<IProcessDownTapin, IInput, IState, IOutput> {
         constructor () {
             super();
             this.addTapin('processRenderVisibility', tapins.processRenderVisibility)
