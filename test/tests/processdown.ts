@@ -249,7 +249,19 @@ module tests.processdown {
     });
 
     QUnit.test("calcAbsoluteProjection", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.calcAbsoluteProjection(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(output.absoluteProjection), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+        input.dirtyFlags |= DirtyFlags.Transform;
+        mat4.createScale(2, 4, 1, vpinput.absoluteProjection);
+        mat4.createTranslate(50, 100, 0, output.localProjection);
+        assert.ok(tapins.calcAbsoluteProjection(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(output.absoluteProjection), [2, 0, 0, 0, 0, 4, 0, 0, 0, 0, 1, 0, 50, 100, 0, 1]);
     });
 
     QUnit.test("processXform", (assert) => {

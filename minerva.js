@@ -1960,12 +1960,11 @@ var minerva;
                         return true;
 
                     var abs = output.absoluteProjection;
-                    if (vpinput)
-                        mat4.set(vpinput.absoluteProjection, abs);
-                    else
-                        mat4.identity(abs);
 
-                    mat4.multiply(output.localProjection, abs, abs);
+                    if (vpinput)
+                        mat4.multiply(output.localProjection, vpinput.absoluteProjection, abs);
+                    else
+                        mat4.set(output.localProjection, abs);
 
                     return true;
                 };
