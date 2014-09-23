@@ -53,9 +53,10 @@ var minerva;
         UIFlags[UIFlags["TotalRenderVisible"] = 0x08] = "TotalRenderVisible";
         UIFlags[UIFlags["TotalHitTestVisible"] = 0x10] = "TotalHitTestVisible";
 
-        UIFlags[UIFlags["ArrangeHint"] = 0x800] = "ArrangeHint";
-        UIFlags[UIFlags["MeasureHint"] = 0x1000] = "MeasureHint";
+        UIFlags[UIFlags["MeasureHint"] = 0x800] = "MeasureHint";
+        UIFlags[UIFlags["ArrangeHint"] = 0x1000] = "ArrangeHint";
         UIFlags[UIFlags["SizeHint"] = 0x2000] = "SizeHint";
+        UIFlags[UIFlags["Hints"] = UIFlags.MeasureHint | UIFlags.ArrangeHint | UIFlags.SizeHint] = "Hints";
     })(minerva.UIFlags || (minerva.UIFlags = {}));
     var UIFlags = minerva.UIFlags;
 })(minerva || (minerva = {}));
@@ -1058,6 +1059,109 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (pipe) {
+        var PipeDef = (function () {
+            function PipeDef() {
+                this.$$names = [];
+                this.$$tapins = [];
+            }
+            PipeDef.prototype.addTapin = function (name, tapin) {
+                this.$$names.push(name);
+                this.$$tapins.push(tapin);
+                return this;
+            };
+
+            PipeDef.prototype.addTapinBefore = function (name, tapin, before) {
+                var names = this.$$names;
+                var tapins = this.$$tapins;
+                var index = !before ? -1 : names.indexOf(before);
+                if (index === -1) {
+                    names.unshift(name);
+                    tapins.unshift(tapin);
+                } else {
+                    names.splice(index, 0, name);
+                    tapins.splice(index, 0, tapin);
+                }
+                return this;
+            };
+
+            PipeDef.prototype.addTapinAfter = function (name, tapin, after) {
+                var names = this.$$names;
+                var tapins = this.$$tapins;
+                var index = !after ? -1 : names.indexOf(after);
+                if (index === -1 || index === names.length - 1) {
+                    names.push(name);
+                    tapins.push(tapin);
+                } else {
+                    names.splice(index + 1, 0, name);
+                    tapins.splice(index + 1, 0, tapin);
+                }
+                return this;
+            };
+
+            PipeDef.prototype.replaceTapin = function (name, tapin) {
+                var names = this.$$names;
+                var tapins = this.$$tapins;
+                var index = names.indexOf(name);
+                if (index === -1)
+                    throw new Error("Could not replace pipe tap-in. No pipe tap-in named `" + name + "`.");
+                tapins[index] = tapin;
+                return this;
+            };
+
+            PipeDef.prototype.removeTapin = function (name) {
+                var names = this.$$names;
+                var index = names.indexOf(name);
+                if (index === -1)
+                    throw new Error("Could not replace pipe tap-in. No pipe tap-in named `" + name + "`.");
+                names.splice(index, 1);
+                this.$$tapins.splice(index, 1);
+                return this;
+            };
+
+            PipeDef.prototype.run = function (data) {
+                var contexts = [];
+                for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                    contexts[_i] = arguments[_i + 1];
+                }
+                contexts.unshift(data);
+
+                this.prepare.apply(this, contexts);
+
+                var flag = true;
+                for (var i = 0, tapins = this.$$tapins, len = tapins.length; i < len; i++) {
+                    if (!tapins[i].apply(this, contexts)) {
+                        flag = false;
+                        break;
+                    }
+                }
+
+                this.flush.apply(this, contexts);
+
+                return flag;
+            };
+
+            PipeDef.prototype.prepare = function (data) {
+                var contexts = [];
+                for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                    contexts[_i] = arguments[_i + 1];
+                }
+            };
+
+            PipeDef.prototype.flush = function (data) {
+                var contexts = [];
+                for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                    contexts[_i] = arguments[_i + 1];
+                }
+            };
+            return PipeDef;
+        })();
+        pipe.PipeDef = PipeDef;
+    })(minerva.pipe || (minerva.pipe = {}));
+    var pipe = minerva.pipe;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (pipe) {
         var TriPipeDef = (function () {
             function TriPipeDef() {
                 this.$$names = [];
@@ -1173,6 +1277,7 @@ var minerva;
     (function (engine) {
         var Surface = (function () {
             function Surface() {
+                this.$$layout = minerva.layout.draft.LayoutPipeDef.instance;
                 this.$$canvas = null;
                 this.$$ctx = null;
                 this.$$layers = [];
@@ -1216,37 +1321,93 @@ var minerva;
                 this.$$downDirty.push(updater);
             };
 
-            Surface.prototype.$$processDown = function () {
-                var list = this.$$downDirty;
-                for (var updater = list[0]; updater != null;) {
-                    if (updater.processDown()) {
-                        list.shift();
-                    } else {
-                        list.push(list.shift());
-                    }
+            Surface.prototype.updateLayout = function () {
+                var pass = {
+                    count: 0,
+                    maxCount: 250,
+                    assets: null,
+                    flag: 0 /* None */,
+                    measureList: [],
+                    arrangeList: [],
+                    sizingList: []
+                };
+                var updated = false;
+                var layersUpdated = true;
+                while (pass.count < pass.maxCount && layersUpdated) {
+                    layersUpdated = engine.updateLayers(this.$$layers, this.$$layout, pass);
+                    updated = engine.process(this.$$downDirty, this.$$upDirty) || layersUpdated || updated;
                 }
-                if (list.length > 0) {
-                    console.warn("[MINERVA] Finished DownDirty pass, not empty.");
-                }
-            };
 
-            Surface.prototype.$$processUp = function () {
-                var list = this.$$upDirty;
-                for (var updater = list[0]; updater != null;) {
-                    var childIndex = updater.findChildInList(list);
-                    if (childIndex > -1) {
-                        list.splice(childIndex + 1, 0, list.shift());
-                    } else if (updater.processUp()) {
-                        list.shift();
-                    }
+                if (pass.count >= pass.maxCount) {
+                    console.error("[MINERVA] Aborting infinite update loop");
                 }
-                if (list.length > 0) {
-                    console.warn("Finished UpDirty pass, not empty.");
-                }
+
+                return updated;
             };
             return Surface;
         })();
         engine.Surface = Surface;
+    })(minerva.engine || (minerva.engine = {}));
+    var engine = minerva.engine;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (engine) {
+        function process(down, up) {
+            var updated = down.length > 0 || up.length > 0;
+            processDown(down);
+            processUp(up);
+            return updated;
+        }
+        engine.process = process;
+
+        function processDown(list) {
+            for (var updater = list[0]; updater != null;) {
+                if (updater.processDown()) {
+                    list.shift();
+                } else {
+                    list.push(list.shift());
+                }
+            }
+            if (list.length > 0) {
+                console.warn("[MINERVA] Finished DownDirty pass, not empty.");
+            }
+        }
+
+        function processUp(list) {
+            for (var updater = list[0]; updater != null;) {
+                var childIndex = updater.findChildInList(list);
+                if (childIndex > -1) {
+                    list.splice(childIndex + 1, 0, list.shift());
+                } else if (updater.processUp()) {
+                    list.shift();
+                }
+            }
+            if (list.length > 0) {
+                console.warn("[MINERVA] Finished UpDirty pass, not empty.");
+            }
+        }
+    })(minerva.engine || (minerva.engine = {}));
+    var engine = minerva.engine;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (engine) {
+        function updateLayers(layers, layoutPipe, pass) {
+            var updated = false;
+            for (var i = 0, len = layers.length; i < len; i++) {
+                var layer = layers[i];
+                if ((layer.assets.uiFlags & minerva.UIFlags.Hints) === 0)
+                    continue;
+                while (pass.count < pass.maxCount) {
+                    if (layoutPipe.run(pass))
+                        updated = true;
+                    pass.count++;
+                }
+            }
+            return updated;
+        }
+        engine.updateLayers = updateLayers;
     })(minerva.engine || (minerva.engine = {}));
     var engine = minerva.engine;
 })(minerva || (minerva = {}));
@@ -1931,6 +2092,185 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (layout) {
+        (function (draft) {
+            var LayoutPipeDef = (function (_super) {
+                __extends(LayoutPipeDef, _super);
+                function LayoutPipeDef() {
+                    _super.call(this);
+                    this.addTapin('flushPrevious', draft.tapins.flushPrevious).addTapin('determinePhase', draft.tapins.determinePhase).addTapin('prepareMeasure', draft.tapins.prepareMeasure).addTapin('measure', draft.tapins.measure).addTapin('prepareArrange', draft.tapins.prepareArrange).addTapin('arrange', draft.tapins.arrange).addTapin('prepareSizing', draft.tapins.prepareSizing).addTapin('sizing', draft.tapins.sizing);
+                }
+                LayoutPipeDef.prototype.prepare = function (data) {
+                };
+
+                LayoutPipeDef.prototype.flush = function (data) {
+                };
+                LayoutPipeDef.instance = new LayoutPipeDef();
+                return LayoutPipeDef;
+            })(minerva.pipe.PipeDef);
+            draft.LayoutPipeDef = LayoutPipeDef;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.arrange = function (data) {
+                    if (data.flag !== 4096 /* ArrangeHint */)
+                        return true;
+
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.determinePhase = function (data) {
+                    data.flag = 0 /* None */;
+                    var assets = data.assets;
+                    if (assets.visibility !== 0 /* Visible */)
+                        return true;
+
+                    if ((assets.uiFlags & 2048 /* MeasureHint */) > 0) {
+                        data.flag = 2048 /* MeasureHint */;
+                    } else if ((assets.uiFlags & 4096 /* ArrangeHint */) > 0) {
+                        data.flag = 4096 /* ArrangeHint */;
+                    } else if ((assets.uiFlags & 8192 /* SizeHint */) > 0) {
+                        data.flag = 8192 /* SizeHint */;
+                    } else {
+                        return false;
+                    }
+
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.flushPrevious = function (data) {
+                    var updater;
+                    while ((updater = data.arrangeList.shift()) != null) {
+                    }
+                    while ((updater = data.sizingList.shift()) != null) {
+                    }
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.measure = function (data) {
+                    if (data.flag !== 2048 /* MeasureHint */)
+                        return true;
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.prepareArrange = function (data) {
+                    if (data.flag !== 4096 /* ArrangeHint */)
+                        return true;
+
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.prepareMeasure = function (data) {
+                    if (data.flag !== 2048 /* MeasureHint */)
+                        return true;
+
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.prepareSizing = function (data) {
+                    if (data.flag !== 8192 /* SizeHint */)
+                        return true;
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.sizing = function (data) {
+                    if (data.flag !== 8192 /* SizeHint */)
+                        return true;
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
         (function (helpers) {
             function coerceSize(size, assets) {
                 var cw = Math.max(assets.minWidth, size.width);
@@ -2124,7 +2464,7 @@ var minerva;
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, availableSize) {
                     output.dirtyFlags |= minerva.DirtyFlags.Arrange;
-                    output.uiFlags |= 2048 /* ArrangeHint */;
+                    output.uiFlags |= 4096 /* ArrangeHint */;
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     return true;
                 };

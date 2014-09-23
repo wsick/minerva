@@ -43,9 +43,10 @@ declare module minerva {
         HitTestVisible = 4,
         TotalRenderVisible = 8,
         TotalHitTestVisible = 16,
-        ArrangeHint = 2048,
-        MeasureHint = 4096,
+        MeasureHint = 2048,
+        ArrangeHint = 4096,
         SizeHint = 8192,
+        Hints,
     }
 }
 declare module minerva {
@@ -162,8 +163,25 @@ declare module minerva {
     }
 }
 declare module minerva.pipe {
+    interface ITapin {
+        (data: IPipeData, ...contexts: any[]): boolean;
+    }
+    class PipeDef<T extends ITapin, TData extends IPipeData> implements IPipeDef<TData> {
+        private $$names;
+        private $$tapins;
+        public addTapin(name: string, tapin: T): PipeDef<T, TData>;
+        public addTapinBefore(name: string, tapin: T, before?: string): PipeDef<T, TData>;
+        public addTapinAfter(name: string, tapin: T, after?: string): PipeDef<T, TData>;
+        public replaceTapin(name: string, tapin: T): PipeDef<T, TData>;
+        public removeTapin(name: string): PipeDef<T, TData>;
+        public run(data: TData, ...contexts: any[]): boolean;
+        public prepare(data: TData, ...contexts: any[]): void;
+        public flush(data: TData, ...contexts: any[]): void;
+    }
+}
+declare module minerva.pipe {
     interface ITriTapin {
-        (assets: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
+        (input: IPipeInput, state: IPipeState, output: IPipeOutput, ...contexts: any[]): boolean;
     }
     class TriPipeDef<T extends ITriTapin, TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> implements ITriPipeDef<TInput, TState, TOutput> {
         private $$names;
@@ -181,7 +199,12 @@ declare module minerva.pipe {
     }
 }
 declare module minerva.engine {
+    interface IPass extends layout.draft.ILayoutPipeData {
+        count: number;
+        maxCount: number;
+    }
     class Surface implements layout.ISurface {
+        private $$layout;
         private $$canvas;
         private $$ctx;
         private $$layers;
@@ -193,9 +216,14 @@ declare module minerva.engine {
         public render(): void;
         public addUpDirty(updater: layout.Updater): void;
         public addDownDirty(updater: layout.Updater): void;
-        private $$processDown();
-        private $$processUp();
+        public updateLayout(): boolean;
     }
+}
+declare module minerva.engine {
+    function process(down: layout.Updater[], up: layout.Updater[]): boolean;
+}
+declare module minerva.engine {
+    function updateLayers(layers: layout.Updater[], layoutPipe: layout.draft.LayoutPipeDef, pass: IPass): boolean;
 }
 declare module minerva.layout {
     interface IMeasurePipe extends pipe.ITriPipe<measure.IInput, measure.IState, measure.IOutput> {
@@ -344,6 +372,48 @@ declare module minerva.layout.arrange.tapins {
 }
 declare module minerva.layout.arrange.tapins {
     var validateVisibility: IArrangeTapin;
+}
+declare module minerva.layout.draft {
+    interface ILayoutTapin extends pipe.ITapin {
+        (data: ILayoutPipeData): boolean;
+    }
+    interface ILayoutPipeData extends pipe.IPipeData {
+        assets: IUpdaterAssets;
+        flag: UIFlags;
+        measureList: Updater[];
+        arrangeList: Updater[];
+        sizingList: Updater[];
+    }
+    class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
+        static instance: LayoutPipeDef;
+        constructor();
+        public prepare(data: ILayoutPipeData): void;
+        public flush(data: ILayoutPipeData): void;
+    }
+}
+declare module minerva.layout.draft.tapins {
+    var arrange: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var determinePhase: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var flushPrevious: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var measure: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var prepareArrange: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var prepareMeasure: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var prepareSizing: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var sizing: ILayoutTapin;
 }
 declare module minerva.layout.helpers {
     interface ISized {
@@ -694,6 +764,15 @@ declare module minerva.layout.sizing.tapins {
 }
 declare module minerva.layout.sizing.tapins {
     var computeActual: ISizingTapin;
+}
+declare module minerva.pipe {
+    interface IPipeData {
+    }
+    interface IPipeDef<TData extends IPipeData> {
+        run(...contexts: any[]): boolean;
+        prepare(data: TData): any;
+        flush(data: TData): any;
+    }
 }
 declare module minerva.pipe {
     interface IPipeInput {

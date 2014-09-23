@@ -1,4 +1,4 @@
-module minerva.layout.layout.tapins {
+module minerva.layout.draft.tapins {
     export var determinePhase: ILayoutTapin = function (data: ILayoutPipeData): boolean {
         data.flag = UIFlags.None;
         var assets = data.assets;
@@ -11,6 +11,8 @@ module minerva.layout.layout.tapins {
             data.flag = UIFlags.ArrangeHint;
         } else if ((assets.uiFlags & UIFlags.SizeHint) > 0) {
             data.flag = UIFlags.SizeHint;
+        } else {
+            return false;
         }
 
         return true;

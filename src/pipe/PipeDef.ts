@@ -3,7 +3,7 @@ module minerva.pipe {
         (data: IPipeData, ...contexts: any[]): boolean;
     }
 
-    export class PipeDef<T extends ITapin, TData extends IPipeData> implements IPipeData<TData> {
+    export class PipeDef<T extends ITapin, TData extends IPipeData> implements IPipeDef<TData> {
         private $$names: string[] = [];
         private $$tapins: T[] = [];
 

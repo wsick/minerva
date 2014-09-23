@@ -31,8 +31,9 @@ module minerva {
         TotalRenderVisible = 0x08,
         TotalHitTestVisible = 0x10,
 
-        ArrangeHint = 0x800,
-        MeasureHint = 0x1000,
+        MeasureHint = 0x800,
+        ArrangeHint = 0x1000,
         SizeHint = 0x2000,
+        Hints = MeasureHint | ArrangeHint | SizeHint
     }
 }

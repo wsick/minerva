@@ -1,4 +1,4 @@
-module minerva.layout.layout.tapins {
+module minerva.layout.draft.tapins {
     export var flushPrevious: ILayoutTapin = function (data: ILayoutPipeData): boolean {
         var updater: Updater;
         while ((updater = data.arrangeList.shift()) != null) {

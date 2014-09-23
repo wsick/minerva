@@ -1,5 +1,12 @@
 module minerva.engine {
+    export interface IPass extends layout.draft.ILayoutPipeData {
+        count: number;
+        maxCount: number;
+    }
+
     export class Surface implements layout.ISurface {
+        private $$layout = layout.draft.LayoutPipeDef.instance;
+
         private $$canvas: HTMLCanvasElement = null;
         private $$ctx: layout.render.RenderContext = null;
 
@@ -46,36 +53,28 @@ module minerva.engine {
             this.$$downDirty.push(updater);
         }
 
-        private $$processDown () {
-            //Down --> RenderVisibility, HitTestVisibility, Transformation, Clip, ChildrenZIndices
-            var list = this.$$downDirty;
-            for (var updater = list[0]; updater != null;) {
-                if (updater.processDown()) {
-                    list.shift();
-                } else {
-                    list.push(list.shift());
-                }
+        updateLayout (): boolean {
+            var pass: IPass = {
+                count: 0,
+                maxCount: 250,
+                assets: null,
+                flag: UIFlags.None,
+                measureList: [],
+                arrangeList: [],
+                sizingList: []
+            };
+            var updated = false;
+            var layersUpdated = true;
+            while (pass.count < pass.maxCount && layersUpdated) {
+                layersUpdated = updateLayers(this.$$layers, this.$$layout, pass);
+                updated = process(this.$$downDirty, this.$$upDirty) || layersUpdated || updated;
             }
-            if (list.length > 0) {
-                console.warn("[MINERVA] Finished DownDirty pass, not empty.");
-            }
-        }
 
-        private $$processUp () {
-            //Up --> Bounds, Invalidation
-            var list = this.$$upDirty;
-            for (var updater = list[0]; updater != null;) {
-                var childIndex = updater.findChildInList(list);
-                if (childIndex > -1) {
-                    // OPTIMIZATION: Parent is overzealous, children will invalidate him
-                    list.splice(childIndex + 1, 0, list.shift());
-                } else if (updater.processUp()) {
-                    list.shift();
-                }
+            if (pass.count >= pass.maxCount) {
+                console.error("[MINERVA] Aborting infinite update loop");
             }
-            if (list.length > 0) {
-                console.warn("Finished UpDirty pass, not empty.");
-            }
+
+            return updated;
         }
     }
 }

@@ -1,7 +1,16 @@
-module minerva.layout.layout.tapins {
+module minerva.layout.draft.tapins {
     export var prepareMeasure: ILayoutTapin = function (data: ILayoutPipeData): boolean {
         if (data.flag !== UIFlags.MeasureHint)
             return true;
+
+        /*
+        var last = lu.PreviousConstraint;
+        var available = size.copyTo(this.Extents);
+        if (lu.IsContainer && (!last || (!size.isEqual(last, available)))) {
+            lu.InvalidateMeasure();
+            lu.PreviousConstraint = available;
+        }
+        */
 
         /*
         var walker = new DeepUpdaterTreeWalker(data.element);
