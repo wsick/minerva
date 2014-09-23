@@ -1899,7 +1899,7 @@ var minerva;
                         totalOpacity: 1.0,
                         totalIsHitTestVisible: false,
                         z: NaN,
-                        compositeLayoutClip: new minerva.Rect(),
+                        compositeLayoutClip: null,
                         renderXform: mat3.identity(),
                         absoluteXform: mat3.identity(),
                         localProjection: mat4.identity(),
@@ -2109,17 +2109,18 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                         return true;
 
-                    var composite = output.compositeLayoutClip;
+                    var lc = input.layoutClip;
                     var vpc = vpinput ? vpinput.compositeLayoutClip : null;
-                    if (!minerva.Rect.isEmpty(input.layoutClip)) {
-                        minerva.Rect.copyTo(input.layoutClip, composite);
-                        if (vpc)
-                            minerva.Rect.intersection(composite, vpc);
+                    if (!lc) {
+                        if (!vpc) {
+                            output.compositeLayoutClip = null;
+                        } else {
+                            output.compositeLayoutClip = new minerva.Rect(vpc.x, vpc.y, vpc.width, vpc.height);
+                        }
                     } else {
+                        output.compositeLayoutClip = new minerva.Rect(lc.x, lc.y, lc.width, lc.height);
                         if (vpc)
-                            minerva.Rect.copyTo(vpc, composite);
-                        else
-                            composite.x = composite.y = composite.width = composite.height = 0;
+                            minerva.Rect.intersection(output.compositeLayoutClip, vpc);
                     }
 
                     return true;
@@ -2933,7 +2934,7 @@ var minerva;
                     lastRenderSize: new minerva.Size(),
                     layoutSlot: new minerva.Rect(),
                     layoutClip: new minerva.Rect(),
-                    compositeLayoutClip: new minerva.Rect(),
+                    compositeLayoutClip: null,
                     actualWidth: 0,
                     actualHeight: 0,
                     z: NaN,

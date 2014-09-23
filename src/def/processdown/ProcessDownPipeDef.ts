@@ -78,7 +78,7 @@ module minerva.def.processdown {
                 totalOpacity: 1.0,
                 totalIsHitTestVisible: false,
                 z: NaN,
-                compositeLayoutClip: new Rect(),
+                compositeLayoutClip: null,
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
                 localProjection: mat4.identity(),

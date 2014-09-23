@@ -55,7 +55,7 @@ module tests.processdown {
                 totalOpacity: 1.0,
                 totalIsHitTestVisible: true,
                 z: NaN,
-                compositeLayoutClip: new Rect(),
+                compositeLayoutClip: null,
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
                 localProjection: mat4.identity(),
@@ -265,14 +265,54 @@ module tests.processdown {
     });
 
     QUnit.test("processXform", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.processXform(input, state, output, vpinput));
+        assert.notStrictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
+        assert.notStrictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
+
+        input.dirtyFlags = DirtyFlags.Transform;
+        assert.ok(tapins.processXform(input, state, output, vpinput));
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
+        assert.notStrictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
+
+        mat4.createScale(3, 2, 1, output.localProjection);
+        assert.ok(tapins.processXform(input, state, output, vpinput));
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
     });
 
     QUnit.test("processLayoutClip", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.processLayoutClip(input, state, output, null));
+        assert.equal(output.compositeLayoutClip, null);
+
+        input.dirtyFlags |= DirtyFlags.LayoutClip;
+        input.layoutClip = null;
+        assert.ok(tapins.processLayoutClip(input, state, output, null));
+        assert.equal(output.compositeLayoutClip, null);
+
+        input.layoutClip = new Rect(10, 20, 90, 80);
+        assert.ok(tapins.processLayoutClip(input, state, output, null));
+        assert.deepEqual(output.compositeLayoutClip, new Rect(10, 20, 90, 80));
+
+        vpinput.compositeLayoutClip = new Rect(30, 30, 20, 100);
+        assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
+        assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 70));
+
+        input.layoutClip = null;
+        assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
+        assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 100));
     });
 
     QUnit.test("processZIndices", (assert) => {
-        ok(true);
+        assert.ok(true);
     });
 }

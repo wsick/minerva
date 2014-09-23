@@ -52,7 +52,7 @@ module minerva.layout {
             lastRenderSize: new Size(),
             layoutSlot: new Rect(),
             layoutClip: new Rect(),
-            compositeLayoutClip: new Rect(),
+            compositeLayoutClip: null,
 
             actualWidth: 0,
             actualHeight: 0,
