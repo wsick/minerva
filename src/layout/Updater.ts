@@ -1,5 +1,5 @@
 module minerva.layout {
-    var NO_PIPE = new def.PipeDef<def.ITapin, def.IPipeInput, def.IPipeState, def.IPipeOutput>();
+    var NO_PIPE = new pipe.PipeDef<pipe.ITapin, pipe.IPipeInput, pipe.IPipeState, pipe.IPipeOutput>();
     var NO_VO: IVisualOwner = {
         updateBounds: function () {
         },
@@ -87,33 +87,33 @@ module minerva.layout {
 
         /////// PREPARE PIPES
 
-        setMeasurePipe (pipedef?: def.measure.MeasurePipeDef): Updater {
-            this.$$measure = <IMeasurePipe>createPipe(pipedef || NO_PIPE);
+        setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
+            this.$$measure = <IMeasurePipe>pipe.createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setArrangePipe (pipedef?: def.arrange.ArrangePipeDef): Updater {
-            this.$$arrange = <IArrangePipe>createPipe(pipedef || NO_PIPE);
+        setArrangePipe (pipedef?: arrange.ArrangePipeDef): Updater {
+            this.$$arrange = <IArrangePipe>pipe.createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setSizingPipe (pipedef?: def.sizing.SizingPipeDef): Updater {
-            this.$$sizing = <ISizingPipe>createPipe(pipedef || NO_PIPE);
+        setSizingPipe (pipedef?: sizing.SizingPipeDef): Updater {
+            this.$$sizing = <ISizingPipe>pipe.createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setProcessDownPipe (pipedef?: def.processdown.ProcessDownPipeDef): Updater {
-            this.$$processdown = <IProcessDownPipe>createPipe(pipedef || NO_PIPE);
+        setProcessDownPipe (pipedef?: processdown.ProcessDownPipeDef): Updater {
+            this.$$processdown = <IProcessDownPipe>pipe.createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setProcessUpPipe (pipedef?: def.processup.ProcessUpPipeDef): Updater {
-            this.$$processup = <IProcessUpPipe>createPipe(pipedef || NO_PIPE);
+        setProcessUpPipe (pipedef?: processup.ProcessUpPipeDef): Updater {
+            this.$$processup = <IProcessUpPipe>pipe.createPipe(pipedef || NO_PIPE);
             return this;
         }
 
-        setRenderPipe (pipedef?: def.render.RenderPipeDef): Updater {
-            this.$$render = <IRenderPipe>createPipe(pipedef || NO_PIPE);
+        setRenderPipe (pipedef?: render.RenderPipeDef): Updater {
+            this.$$render = <IRenderPipe>pipe.createPipe(pipedef || NO_PIPE);
             return this;
         }
 
@@ -182,7 +182,7 @@ module minerva.layout {
             return success;
         }
 
-        render (ctx: def.render.RenderContext, region: Rect): boolean {
+        render (ctx: render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
         }

@@ -1,7 +1,7 @@
 module minerva.engine {
     export class Surface implements layout.ISurface {
         private $$canvas: HTMLCanvasElement = null;
-        private $$ctx: def.render.RenderContext = null;
+        private $$ctx: layout.render.RenderContext = null;
 
         private $$layers: layout.Updater[] = [];
 

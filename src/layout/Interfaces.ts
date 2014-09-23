@@ -1,24 +1,24 @@
 module minerva.layout {
-    export interface IMeasurePipe extends IPipe<def.measure.IInput, def.measure.IState, def.measure.IOutput> {
+    export interface IMeasurePipe extends pipe.IPipe<measure.IInput, measure.IState, measure.IOutput> {
     }
-    export interface IArrangePipe extends IPipe<def.arrange.IInput, def.arrange.IState, def.arrange.IOutput> {
+    export interface IArrangePipe extends pipe.IPipe<arrange.IInput, arrange.IState, arrange.IOutput> {
     }
-    export interface ISizingPipe extends IPipe<def.sizing.IInput, def.sizing.IState, def.sizing.IOutput> {
+    export interface ISizingPipe extends pipe.IPipe<sizing.IInput, sizing.IState, sizing.IOutput> {
     }
-    export interface IProcessDownPipe extends IPipe<def.processdown.IInput, def.processdown.IState, def.processdown.IOutput> {
+    export interface IProcessDownPipe extends pipe.IPipe<processdown.IInput, processdown.IState, processdown.IOutput> {
     }
-    export interface IProcessUpPipe extends IPipe<def.processup.IInput, def.processup.IState, def.processup.IOutput> {
+    export interface IProcessUpPipe extends pipe.IPipe<processup.IInput, processup.IState, processup.IOutput> {
     }
-    export interface IRenderPipe extends IPipe<def.render.IInput, def.render.IState, def.render.IOutput> {
+    export interface IRenderPipe extends pipe.IPipe<render.IInput, render.IState, render.IOutput> {
     }
 
-    export interface IVisualOwner extends def.processup.IProcessVisualOwner {
+    export interface IVisualOwner extends processup.IProcessVisualOwner {
     }
     export interface ISurface extends IVisualOwner {
         addUpDirty (updater: layout.Updater);
         addDownDirty (updater: layout.Updater);
     }
 
-    export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.sizing.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
+    export interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
     }
 }
