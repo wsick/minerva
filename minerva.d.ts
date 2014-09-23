@@ -481,6 +481,7 @@ declare module minerva.def.processup {
         actualSize: Size;
         invalidateSubtreePaint: boolean;
         hasNewBounds: boolean;
+        hasInvalidate: boolean;
     }
     interface IOutput extends IPipeOutput {
         extents: Rect;

@@ -42,7 +42,8 @@ module tests.processup {
             return {
                 actualSize: new Size(),
                 invalidateSubtreePaint: false,
-                hasNewBounds: false
+                hasNewBounds: false,
+                hasInvalidate: false
             };
         },
         output: function (): processup.IOutput {
@@ -54,6 +55,18 @@ module tests.processup {
                 dirtyFlags: 0,
                 dirtyRegion: new Rect(),
                 forceInvalidate: false
+            };
+        },
+        visualOwner: function () {
+            return {
+                boundsUpdated: false,
+                dirty: new Rect(),
+                updateBounds() {
+                    this.boundsUpdated = true;
+                },
+                invalidate(region: Rect) {
+                    Rect.union(this.dirty, region);
+                }
             };
         }
     };
@@ -72,7 +85,7 @@ module tests.processup {
         input.actualHeight = 200;
         input.minWidth = 175;
         input.maxHeight = 175;
-        assert.ok(tapins.calcActualSize(input,state,output,vo));
+        assert.ok(tapins.calcActualSize(input, state, output, vo));
         assert.deepEqual(state.actualSize, new Size(175, 175));
     });
 
@@ -108,22 +121,75 @@ module tests.processup {
 
         input.dirtyFlags |= DirtyFlags.Bounds;
         input.effectPadding = new Thickness(5, 10, 5, 10);
+        mat4.createScale(2, 4, 6, input.absoluteProjection);
         assert.ok(tapins.calcPaintBounds(input, state, output, vo));
-        assert.deepEqual(output.globalBoundsWithChildren, new Rect());
-        assert.deepEqual(output.surfaceBoundsWithChildren, new Rect());
-
-        ok(false);
+        assert.deepEqual(output.globalBoundsWithChildren, new Rect(-5, -10, 160, 320));
+        assert.deepEqual(output.surfaceBoundsWithChildren, new Rect(-10, -40, 320, 1280));
     });
 
     QUnit.test("processBounds", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vo = mock.visualOwner();
+
+        input.dirtyFlags |= DirtyFlags.Bounds;
+        output.extentsWithChildren = new Rect(0, 0, 100, 100);
+        assert.ok(tapins.processBounds(input, state, output, vo));
+        assert.ok(!vo.boundsUpdated);
+        assert.deepEqual(vo.dirty, new Rect(0, 0, 0, 0));
+        assert.ok(state.hasNewBounds);
+
+        input.forceInvalidate = true;
+        assert.ok(tapins.processBounds(input, state, output, vo));
+        assert.ok(state.hasNewBounds);
+        assert.ok(!output.forceInvalidate);
+
+        vo = mock.visualOwner();
+        output.globalBoundsWithChildren = new Rect(0, 0, 100, 100);
+        input.surfaceBoundsWithChildren = new Rect(10, 10, 50, 50);
+        assert.ok(tapins.processBounds(input, state, output, vo));
+        assert.ok(vo.boundsUpdated);
+        assert.deepEqual(vo.dirty, new Rect(10, 10, 50, 50));
+        assert.ok(state.hasNewBounds);
     });
 
     QUnit.test("processNewBounds", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vo = mock.visualOwner();
+
+        input.dirtyFlags |= DirtyFlags.NewBounds;
+        state.hasNewBounds = false;
+        output.surfaceBoundsWithChildren = new Rect(0, 0, 50, 50);
+        output.dirtyRegion = new Rect(25, 25, 50, 50);
+        assert.ok(tapins.processNewBounds(input, state, output, vo));
+        assert.strictEqual(output.dirtyFlags, DirtyFlags.Invalidate);
+        assert.ok(state.hasInvalidate);
+        assert.deepEqual(output.dirtyRegion, new Rect(0, 0, 75, 75));
+
+        input.dirtyFlags = 0;
+        state.hasNewBounds = true;
+        output.surfaceBoundsWithChildren = new Rect(0, 0, 50, 50);
+        output.dirtyRegion = new Rect(25, 25, 50, 50);
+        assert.ok(tapins.processNewBounds(input, state, output, vo));
+        assert.strictEqual(output.dirtyFlags, DirtyFlags.Invalidate);
+        assert.ok(state.hasInvalidate);
+        assert.deepEqual(output.dirtyRegion, new Rect(0, 0, 75, 75));
     });
 
     QUnit.test("processInvalidate", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vo = mock.visualOwner();
+
+        state.hasInvalidate = true;
+        vo.dirty = new Rect(0, 0, 25, 25);
+        output.dirtyRegion = new Rect(50, 50, 100, 100);
+        assert.ok(tapins.processInvalidate(input, state, output, vo));
+        assert.deepEqual(output.dirtyRegion, new Rect(0, 0, 0, 0));
+        assert.deepEqual(vo.dirty, new Rect(0, 0, 150, 150));
     });
 }

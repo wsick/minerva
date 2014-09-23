@@ -2281,7 +2281,8 @@ var minerva;
                     return {
                         invalidateSubtreePaint: false,
                         actualSize: new minerva.Size(),
-                        hasNewBounds: false
+                        hasNewBounds: false,
+                        hasInvalidate: false
                     };
                 };
 
@@ -2386,8 +2387,8 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
-                    def.helpers.copyGrowTransform4(input.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
-                    def.helpers.copyGrowTransform4(input.surfaceBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.absoluteProjection);
+                    def.helpers.copyGrowTransform4(output.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
+                    def.helpers.copyGrowTransform4(output.surfaceBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.absoluteProjection);
 
                     return true;
                 };
@@ -2430,7 +2431,7 @@ var minerva;
         (function (processup) {
             (function (tapins) {
                 tapins.processInvalidate = function (input, state, output, vo) {
-                    if ((input.dirtyFlags & minerva.DirtyFlags.Invalidate) === 0)
+                    if ((input.dirtyFlags & minerva.DirtyFlags.Invalidate) === 0 && !state.hasInvalidate)
                         return true;
                     var dirty = output.dirtyRegion;
                     vo.invalidate(dirty);
@@ -2453,6 +2454,7 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.NewBounds) === 0 && !state.hasNewBounds)
                         return true;
                     output.dirtyFlags |= minerva.DirtyFlags.Invalidate;
+                    state.hasInvalidate = true;
                     minerva.Rect.union(output.dirtyRegion, output.surfaceBoundsWithChildren);
                     return true;
                 };

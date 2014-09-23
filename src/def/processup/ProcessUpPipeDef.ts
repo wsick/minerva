@@ -29,6 +29,7 @@ module minerva.def.processup {
         actualSize: Size;
         invalidateSubtreePaint: boolean;
         hasNewBounds: boolean;
+        hasInvalidate: boolean;
     }
     export interface IOutput extends IPipeOutput {
         extents: Rect;
@@ -59,7 +60,8 @@ module minerva.def.processup {
             return {
                 invalidateSubtreePaint: false,
                 actualSize: new Size(),
-                hasNewBounds: false
+                hasNewBounds: false,
+                hasInvalidate: false
             };
         }
 
