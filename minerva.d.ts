@@ -234,6 +234,7 @@ declare module minerva.def.arrange {
         uiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
+        newUiFlags: UIFlags;
     }
     class ArrangePipeDef extends PipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor();
@@ -323,6 +324,7 @@ declare module minerva.def.measure {
         uiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
+        newUiFlags: UIFlags;
     }
     class MeasurePipeDef extends PipeDef<IMeasureTapin, IInput, IState, IOutput> {
         constructor();
@@ -703,11 +705,12 @@ declare module minerva.layout {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: def.render.RenderContext, region: Rect): boolean;
-        private $$getVisualOwner();
         public updateBounds(forceRedraw?: boolean): void;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
-        private $$addUpDirty();
-        private $$addDownDirty();
+        private static $$getVisualOnwer(updater);
+        private static $$addUpDirty(updater);
+        private static $$addDownDirty(updater);
+        private static $$propagateUiFlagsUp(updater, flags);
     }
 }

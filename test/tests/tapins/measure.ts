@@ -44,7 +44,8 @@ module minerva.tests.measure.tapins {
                 dirtyFlags: 0,
                 uiFlags: 0,
                 newUpDirty: 0,
-                newDownDirty: 0
+                newDownDirty: 0,
+                newUiFlags: 0
             }
         }
     };

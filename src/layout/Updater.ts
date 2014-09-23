@@ -177,8 +177,7 @@ module minerva.layout {
                 return true;
 
             var pipe = this.$$processup;
-            var vo = this.$$getVisualOwner();
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, vo);
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, Updater.$$getVisualOnwer(this));
             this.$$inUpDirty = false;
             return success;
         }
@@ -190,18 +189,10 @@ module minerva.layout {
 
         ///////
 
-        private $$getVisualOwner (): IVisualOwner {
-            if (this.$$visualParentUpdater)
-                return this.$$visualParentUpdater;
-            if (this.assets.isTopLevel && this.$$surface)
-                return this.$$surface;
-            return NO_VO;
-        }
-
         updateBounds (forceRedraw?: boolean) {
             var assets = this.assets;
             assets.dirtyFlags |= DirtyFlags.Bounds;
-            this.$$addUpDirty();
+            Updater.$$addUpDirty(this);
             if (forceRedraw === true)
                 assets.forceInvalidate = true;
         }
@@ -211,7 +202,7 @@ module minerva.layout {
             if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
                 return;
             assets.dirtyFlags |= DirtyFlags.Invalidate;
-            this.$$addUpDirty();
+            Updater.$$addUpDirty(this);
             Rect.union(assets.dirtyRegion, region);
         }
 
@@ -224,6 +215,14 @@ module minerva.layout {
         }
 
         /////// STATIC HELPERS
+
+        private static $$getVisualOnwer (updater: Updater): IVisualOwner {
+            if (updater.$$visualParentUpdater)
+                return updater.$$visualParentUpdater;
+            if (updater.assets.isTopLevel && updater.$$surface)
+                return updater.$$surface;
+            return NO_VO;
+        }
 
         private static $$addUpDirty (updater: Updater) {
             if (updater.$$surface && !updater.$$inUpDirty) {

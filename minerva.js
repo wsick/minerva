@@ -1208,7 +1208,8 @@ var minerva;
                         renderSize: new minerva.Size(),
                         lastRenderSize: null,
                         newUpDirty: 0,
-                        newDownDirty: 0
+                        newDownDirty: 0,
+                        newUiFlags: 0
                     };
                 };
 
@@ -1225,9 +1226,7 @@ var minerva;
                     var newDirty = output.dirtyFlags & ~input.dirtyFlags;
                     output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
                     output.newDownDirty = newDirty & minerva.DirtyFlags.DownDirtyState;
-                    var newUi = output.uiFlags & ~input.uiFlags;
-                    if (newUi > 0) {
-                    }
+                    output.newUiFlags = output.uiFlags & ~input.uiFlags;
                     input.dirtyFlags = output.dirtyFlags;
                     input.uiFlags = output.uiFlags;
                     minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
@@ -1346,7 +1345,7 @@ var minerva;
                 tapins.buildRenderSize = function (input, state, output, finalRect) {
                     minerva.Size.copyTo(output.arrangedSize, output.renderSize);
                     if (!minerva.Size.isEqual(input.renderSize, output.renderSize)) {
-                        if (!input.lastRenderSize) {
+                        if (input.lastRenderSize.width <= 0 && input.lastRenderSize.height <= 0) {
                             minerva.Size.copyTo(input.renderSize, output.lastRenderSize);
                             output.uiFlags |= 8192 /* SizeHint */;
                         }
@@ -1679,7 +1678,8 @@ var minerva;
                         dirtyFlags: 0,
                         uiFlags: 0,
                         newUpDirty: 0,
-                        newDownDirty: 0
+                        newDownDirty: 0,
+                        newUiFlags: 0
                     };
                 };
 
@@ -1693,9 +1693,7 @@ var minerva;
                     var newDirty = output.dirtyFlags & ~input.dirtyFlags;
                     output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
                     output.newDownDirty = newDirty & minerva.DirtyFlags.DownDirtyState;
-                    var newUi = output.uiFlags & ~input.uiFlags;
-                    if (newUi > 0) {
-                    }
+                    output.newUiFlags = output.uiFlags & ~input.uiFlags;
                     input.dirtyFlags = output.dirtyFlags;
                     input.uiFlags = output.uiFlags;
                     minerva.Size.copyTo(output.previousConstraint, input.previousConstraint);
@@ -3009,21 +3007,27 @@ var minerva;
 
             Updater.prototype.measure = function (availableSize) {
                 var pipe = this.$$measure;
-                var success = pipe.def.run(this.assets, pipe.state, pipe.output, availableSize);
-                if (pipe.output.newUpDirty)
-                    this.$$addUpDirty();
-                if (pipe.output.newDownDirty)
-                    this.$$addDownDirty();
+                var output = pipe.output;
+                var success = pipe.def.run(this.assets, pipe.state, output, availableSize);
+                if (output.newUpDirty)
+                    Updater.$$addUpDirty(this);
+                if (output.newDownDirty)
+                    Updater.$$addDownDirty(this);
+                if (output.newUiFlags)
+                    Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
                 return success;
             };
 
             Updater.prototype.arrange = function (finalRect) {
                 var pipe = this.$$arrange;
-                var success = pipe.def.run(this.assets, pipe.state, pipe.output, finalRect);
-                if (pipe.output.newUpDirty)
-                    this.$$addUpDirty();
-                if (pipe.output.newDownDirty)
-                    this.$$addDownDirty();
+                var output = pipe.output;
+                var success = pipe.def.run(this.assets, pipe.state, output, finalRect);
+                if (output.newUpDirty)
+                    Updater.$$addUpDirty(this);
+                if (output.newDownDirty)
+                    Updater.$$addDownDirty(this);
+                if (output.newUiFlags)
+                    Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
                 return success;
             };
 
@@ -3049,7 +3053,7 @@ var minerva;
                 var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
                 this.$$inDownDirty = false;
                 if (pipe.output.newUpDirty)
-                    this.$$addUpDirty();
+                    Updater.$$addUpDirty(this);
                 return success;
             };
 
@@ -3058,8 +3062,7 @@ var minerva;
                     return true;
 
                 var pipe = this.$$processup;
-                var vo = this.$$getVisualOwner();
-                var success = pipe.def.run(this.assets, pipe.state, pipe.output, vo);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, Updater.$$getVisualOnwer(this));
                 this.$$inUpDirty = false;
                 return success;
             };
@@ -3069,18 +3072,10 @@ var minerva;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
             };
 
-            Updater.prototype.$$getVisualOwner = function () {
-                if (this.$$visualParentUpdater)
-                    return this.$$visualParentUpdater;
-                if (this.assets.isTopLevel && this.$$surface)
-                    return this.$$surface;
-                return NO_VO;
-            };
-
             Updater.prototype.updateBounds = function (forceRedraw) {
                 var assets = this.assets;
                 assets.dirtyFlags |= minerva.DirtyFlags.Bounds;
-                this.$$addUpDirty();
+                Updater.$$addUpDirty(this);
                 if (forceRedraw === true)
                     assets.forceInvalidate = true;
             };
@@ -3090,7 +3085,7 @@ var minerva;
                 if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
                     return;
                 assets.dirtyFlags |= minerva.DirtyFlags.Invalidate;
-                this.$$addUpDirty();
+                Updater.$$addUpDirty(this);
                 minerva.Rect.union(assets.dirtyRegion, region);
             };
 
@@ -3102,17 +3097,32 @@ var minerva;
                 return -1;
             };
 
-            Updater.prototype.$$addUpDirty = function () {
-                if (this.$$surface && !this.$$inUpDirty) {
-                    this.$$surface.addUpDirty(this);
-                    this.$$inUpDirty = true;
+            Updater.$$getVisualOnwer = function (updater) {
+                if (updater.$$visualParentUpdater)
+                    return updater.$$visualParentUpdater;
+                if (updater.assets.isTopLevel && updater.$$surface)
+                    return updater.$$surface;
+                return NO_VO;
+            };
+
+            Updater.$$addUpDirty = function (updater) {
+                if (updater.$$surface && !updater.$$inUpDirty) {
+                    updater.$$surface.addUpDirty(updater);
+                    updater.$$inUpDirty = true;
                 }
             };
 
-            Updater.prototype.$$addDownDirty = function () {
-                if (this.$$surface && !this.$$inDownDirty) {
-                    this.$$surface.addDownDirty(this);
-                    this.$$inDownDirty = true;
+            Updater.$$addDownDirty = function (updater) {
+                if (updater.$$surface && !updater.$$inDownDirty) {
+                    updater.$$surface.addDownDirty(updater);
+                    updater.$$inDownDirty = true;
+                }
+            };
+
+            Updater.$$propagateUiFlagsUp = function (updater, flags) {
+                var vpu = updater;
+                while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) > 0) {
+                    vpu.assets.uiFlags |= flags;
                 }
             };
             return Updater;

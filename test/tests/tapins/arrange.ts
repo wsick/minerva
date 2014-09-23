@@ -12,7 +12,7 @@ module minerva.tests.arrange.tapins {
     import DirtyFlags = minerva.DirtyFlags;
     import UIFlags = minerva.UIFlags;
 
-    function typedToArray(typed) {
+    function typedToArray (typed) {
         var arr = [];
         for (var i = 0; i < typed.length; i++) {
             arr.push(typed[i]);
@@ -22,7 +22,7 @@ module minerva.tests.arrange.tapins {
 
     var mock = {
         input: function (): arrange.IInput {
-            return <arrange.IInput> {
+            return {
                 width: NaN,
                 height: NaN,
                 minWidth: 0,
@@ -35,13 +35,17 @@ module minerva.tests.arrange.tapins {
                 verticalAlignment: minerva.VerticalAlignment.Stretch,
                 visibility: minerva.Visibility.Visible,
                 hiddenDesire: new Size(),
-                layoutSlot: new Rect(),
                 dirtyFlags: 0,
-                uiFlags: 0
+                uiFlags: 0,
+                layoutSlot: new Rect(),
+                renderSize: new Size(),
+                lastRenderSize: new Size(),
+                layoutClip: new Rect(),
+                isTopLevel: false
             };
         },
         state: function (): arrange.IState {
-            return <arrange.IState> {
+            return {
                 finalRect: new Rect(),
                 finalSize: new Size(),
                 framework: new Size(),
@@ -52,7 +56,7 @@ module minerva.tests.arrange.tapins {
             };
         },
         output: function (): arrange.IOutput {
-            return <arrange.IOutput> {
+            return {
                 error: null,
                 layoutSlot: new Rect(),
                 arrangedSize: new Size(),
@@ -63,7 +67,8 @@ module minerva.tests.arrange.tapins {
                 dirtyFlags: 0,
                 uiFlags: 0,
                 newUpDirty: 0,
-                newDownDirty: 0
+                newDownDirty: 0,
+                newUiFlags: 0
             }
         }
     };
