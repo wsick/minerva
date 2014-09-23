@@ -14,6 +14,8 @@ module minerva.layout {
 
     export interface IVisualOwner extends def.processup.IProcessVisualOwner {
     }
+    export interface ISurface extends IVisualOwner {
+    }
 
     export interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.sizing.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
     }

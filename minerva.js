@@ -2817,6 +2817,54 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (engine) {
+        var Surface = (function () {
+            function Surface() {
+                this.$$downDirty = [];
+                this.$$upDirty = [];
+            }
+            Surface.prototype.updateBounds = function () {
+            };
+
+            Surface.prototype.invalidate = function (region) {
+            };
+
+            Surface.prototype.$$processDown = function () {
+                var list = this.$$downDirty;
+                for (var updater = list[0]; updater != null;) {
+                    if (updater.processDown()) {
+                        list.shift();
+                    } else {
+                        list.push(list.shift());
+                    }
+                }
+                if (list.length > 0) {
+                    console.warn("[MINERVA] Finished DownDirty pass, not empty.");
+                }
+            };
+
+            Surface.prototype.$$processUp = function () {
+                var list = this.$$upDirty;
+                for (var updater = list[0]; updater != null;) {
+                    var childIndex = updater.findChildInList(list);
+                    if (childIndex > -1) {
+                        list.splice(childIndex + 1, 0, list.shift());
+                    } else if (updater.processUp()) {
+                        list.shift();
+                    }
+                }
+                if (list.length > 0) {
+                    console.warn("Finished UpDirty pass, not empty.");
+                }
+            };
+            return Surface;
+        })();
+        engine.Surface = Surface;
+    })(minerva.engine || (minerva.engine = {}));
+    var engine = minerva.engine;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (layout) {
         var IPipe = (function () {
             function IPipe() {
@@ -2857,6 +2905,8 @@ var minerva;
                 this.$$render = null;
                 this.$$visualParentUpdater = null;
                 this.$$surface = null;
+                this.$$inDownDirty = false;
+                this.$$inUpDirty = false;
                 this.assets = {
                     width: NaN,
                     height: NaN,
@@ -2961,15 +3011,28 @@ var minerva;
             };
 
             Updater.prototype.processDown = function () {
+                if (!this.$$inDownDirty)
+                    return true;
+                if (this.$$visualParentUpdater && this.$$visualParentUpdater.$$inDownDirty) {
+                    return false;
+                }
+
                 var pipe = this.$$processdown;
                 var vp = this.$$visualParentUpdater;
-                return pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
+                this.$$inDownDirty = false;
+                return success;
             };
 
             Updater.prototype.processUp = function () {
+                if (!this.$$inUpDirty)
+                    return true;
+
                 var pipe = this.$$processup;
                 var vo = this.$$getVisualOwner();
-                return pipe.def.run(this.assets, pipe.state, pipe.output, vo);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, vo);
+                this.$$inUpDirty = false;
+                return success;
             };
 
             Updater.prototype.render = function (ctx, region) {
@@ -3000,6 +3063,14 @@ var minerva;
                 assets.dirtyFlags |= minerva.DirtyFlags.Invalidate;
 
                 minerva.Rect.union(assets.dirtyRegion, region);
+            };
+
+            Updater.prototype.findChildInList = function (list) {
+                for (var i = 0, len = list.length; i < len; i++) {
+                    if (list[i].$$visualParentUpdater === this)
+                        return i;
+                }
+                return -1;
             };
             return Updater;
         })();

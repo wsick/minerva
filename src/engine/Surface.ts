@@ -1,7 +1,5 @@
 module minerva.engine {
-    export interface ISurface extends layout.IVisualOwner {
-    }
-    export class Surface implements ISurface {
+    export class Surface implements layout.ISurface {
         private $$downDirty: layout.Updater[] = [];
         private $$upDirty: layout.Updater[] = [];
 

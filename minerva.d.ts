@@ -628,6 +628,16 @@ declare module minerva.def.sizing.tapins {
 declare module minerva.def.sizing.tapins {
     var computeActual: ISizingTapin;
 }
+declare module minerva.engine {
+    class Surface implements layout.ISurface {
+        private $$downDirty;
+        private $$upDirty;
+        public updateBounds(): void;
+        public invalidate(region: Rect): void;
+        private $$processDown();
+        private $$processUp();
+    }
+}
 declare module minerva.layout {
     class IPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput> {
         public def: def.IPipeDef<TInput, TState, TOutput>;
@@ -635,10 +645,6 @@ declare module minerva.layout {
         public output: TOutput;
     }
     function createPipe<TInput extends def.IPipeInput, TState extends def.IPipeState, TOutput extends def.IPipeOutput>(pipedef: def.IPipeDef<TInput, TState, TOutput>): IPipe<TInput, TState, TOutput>;
-}
-declare module minerva.layout {
-    interface ISurface extends IVisualOwner {
-    }
 }
 declare module minerva.layout {
     interface IMeasurePipe extends IPipe<def.measure.IInput, def.measure.IState, def.measure.IOutput> {
@@ -655,6 +661,8 @@ declare module minerva.layout {
     }
     interface IVisualOwner extends def.processup.IProcessVisualOwner {
     }
+    interface ISurface extends IVisualOwner {
+    }
     interface IUpdaterAssets extends def.measure.IInput, def.arrange.IInput, def.sizing.IInput, def.processdown.IInput, def.processup.IInput, def.render.IInput {
     }
 }
@@ -668,6 +676,8 @@ declare module minerva.layout {
         private $$render;
         private $$visualParentUpdater;
         private $$surface;
+        private $$inDownDirty;
+        private $$inUpDirty;
         public assets: IUpdaterAssets;
         constructor();
         public setMeasurePipe(pipedef?: def.measure.MeasurePipeDef): Updater;
@@ -685,5 +695,6 @@ declare module minerva.layout {
         private $$getVisualOwner();
         public updateBounds(forceRedraw?: boolean): void;
         public invalidate(region: Rect): void;
+        public findChildInList(list: Updater[]): number;
     }
 }
