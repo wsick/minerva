@@ -6,15 +6,19 @@
     * `addTapinAfter(name, tapin, after)`
     * `replaceTapin(name, tapin)`
     * `removeTapin(name)`
-* A pipe also contains methods to configure state and output
+* A tri-pipe also contains methods to configure state and output
     * `createState()`
     * `createOutput()`
 
 ## Tapin
-* A tapin is a function that takes input, state, output as parameters
+* A tapin is a function that takes data as a parameter
 * A tapin is registered in the pipeline with a name
 * A tapin must return `true`/`false`.  If `false` or nothing is returned, then pipeline will abort.
-* A tapin will receive the following 3 input parameters.
+* A tapin may receive extra input parameters. Example: RenderPipe has `ctx` and `region` that are used for render pass context.
+
+## TriTapin
+* A tritapin is a function that takes input, state, output as parameters
+* A tritapin will receive the following 3 input parameters.
     * `input`
         * Pipeline input
         * Read-only (should not be mutated)
@@ -28,4 +32,3 @@
         * Write-only
         * For layout pipes, the `Updater` expects a certain set of outputs to be set upon pipeline completion
         * Can also be used to report layout errors
-* A tapin may receive extra input parameters. Example: RenderPipe has `ctx` and `region` that are used for render pass context.
