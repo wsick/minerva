@@ -202,7 +202,34 @@ module tests.processdown {
     });
 
     QUnit.test("calcLocalProjection", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        assert.ok(tapins.calcLocalProjection(input, state, output, vpinput));
+        assert.ok(!output.totalHasRenderProjection);
+
+        input.dirtyFlags |= DirtyFlags.Transform;
+        vpinput.totalHasRenderProjection = true;
+        assert.ok(tapins.calcLocalProjection(input, state, output, vpinput));
+        assert.ok(output.totalHasRenderProjection);
+        assert.deepEqual(typedToArray(output.localProjection), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+        vpinput.totalHasRenderProjection = false;
+        input.projection = {
+            getDistanceFromXYPlane (objectWidth: number, objectHeight: number) {
+                return 10;
+            },
+            getTransform (): number[] {
+                return mat4.identity()
+            }
+        };
+        mat4.set([1, 0, 0, 100, 0, 1, 0, 200, 0, 0, 1, 0, 0, 0, 0, 1], input.carrierProjection);
+        mat4.set([-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1], state.renderAsProjection);
+        assert.ok(tapins.calcLocalProjection(input, state, output, vpinput));
+        assert.ok(output.totalHasRenderProjection);
+        assert.deepEqual(typedToArray(output.localProjection), [-2, 0, 0, -210, 0, 2, 0, 450, 0, 0, 1, 0, 0, 0, 0, 1]);
     });
 
     QUnit.test("calcAbsoluteXform", (assert) => {
