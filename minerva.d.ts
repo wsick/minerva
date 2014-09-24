@@ -56,6 +56,12 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IWalker<T> {
+        step(): boolean;
+        current: T;
+    }
+}
+declare module minerva {
     interface IPoint {
         x: number;
         y: number;
@@ -378,11 +384,13 @@ declare module minerva.layout.draft {
         (data: ILayoutPipeData): boolean;
     }
     interface ILayoutPipeData extends pipe.IPipeData {
+        updater: Updater;
         assets: IUpdaterAssets;
         flag: UIFlags;
         measureList: Updater[];
         arrangeList: Updater[];
         sizingList: Updater[];
+        surfaceSize: Size;
     }
     class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
         constructor();

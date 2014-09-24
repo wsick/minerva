@@ -1325,11 +1325,13 @@ var minerva;
                 var pass = {
                     count: 0,
                     maxCount: 250,
+                    updater: null,
                     assets: null,
                     flag: 0 /* None */,
                     measureList: [],
                     arrangeList: [],
-                    sizingList: []
+                    sizingList: [],
+                    surfaceSize: new minerva.Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight)
                 };
                 var updated = false;
                 var layersUpdated = true;
@@ -1356,9 +1358,10 @@ var minerva;
         function draft(layers, layoutPipe, pass) {
             var updated = false;
             for (var i = 0, len = layers.length; i < len; i++) {
-                var layer = layers[i];
-                if ((layer.assets.uiFlags & minerva.UIFlags.Hints) === 0)
+                pass.updater = layers[i];
+                if ((pass.updater.assets.uiFlags & minerva.UIFlags.Hints) === 0)
                     continue;
+                pass.assets = pass.updater.assets;
                 while (pass.count < pass.maxCount) {
                     if (layoutPipe.run(pass))
                         updated = true;
@@ -2223,6 +2226,12 @@ var minerva;
                 tapins.prepareMeasure = function (data) {
                     if (data.flag !== 2048 /* MeasureHint */)
                         return true;
+
+                    var last = data.assets.previousConstraint;
+                    if ((!last || (!minerva.Size.isEqual(last, data.surfaceSize)))) {
+                        data.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
+                        minerva.Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
+                    }
 
                     return true;
                 };

@@ -3,6 +3,11 @@ module minerva.layout.draft.tapins {
         if (data.flag !== UIFlags.ArrangeHint)
             return true;
 
+        if (data.arrangeList.length <= 0)
+            return false;
+
+
+
         return true;
     };
 }

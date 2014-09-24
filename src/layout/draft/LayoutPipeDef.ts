@@ -3,11 +3,13 @@ module minerva.layout.draft {
         (data: ILayoutPipeData): boolean;
     }
     export interface ILayoutPipeData extends pipe.IPipeData {
+        updater: Updater;
         assets: IUpdaterAssets;
         flag: UIFlags;
         measureList: Updater[];
         arrangeList: Updater[];
         sizingList: Updater[];
+        surfaceSize: Size;
     }
     export class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
         constructor () {

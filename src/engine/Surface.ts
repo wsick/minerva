@@ -16,11 +16,11 @@ module minerva.engine {
         private $$upDirty: layout.Updater[] = [];
         private $$dirtyRegion: Rect = null;
 
-        updateBounds () {
+        updateBounds() {
 
         }
 
-        invalidate (region?: Rect) {
+        invalidate(region?: Rect) {
             region = region || new Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
             if (!this.$$dirtyRegion)
                 this.$$dirtyRegion = new Rect(region.x, region.y, region.width, region.height);
@@ -28,7 +28,7 @@ module minerva.engine {
                 Rect.union(this.$$dirtyRegion, region);
         }
 
-        render () {
+        render() {
             var region = this.$$dirtyRegion;
             if (!region || Rect.isEmpty(region))
                 return;
@@ -45,23 +45,25 @@ module minerva.engine {
             ctx.restore();
         }
 
-        addUpDirty (updater: layout.Updater) {
+        addUpDirty(updater: layout.Updater) {
             this.$$upDirty.push(updater);
         }
 
-        addDownDirty (updater: layout.Updater) {
+        addDownDirty(updater: layout.Updater) {
             this.$$downDirty.push(updater);
         }
 
-        updateLayout (): boolean {
+        updateLayout(): boolean {
             var pass: IPass = {
                 count: 0,
                 maxCount: 250,
+                updater: null,
                 assets: null,
                 flag: UIFlags.None,
                 measureList: [],
                 arrangeList: [],
-                sizingList: []
+                sizingList: [],
+                surfaceSize: new Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight)
             };
             var updated = false;
             var layersUpdated = true;

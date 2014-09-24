@@ -3,35 +3,27 @@ module minerva.layout.draft.tapins {
         if (data.flag !== UIFlags.MeasureHint)
             return true;
 
-        /*
-        var last = lu.PreviousConstraint;
-        var available = size.copyTo(this.Extents);
-        if (lu.IsContainer && (!last || (!size.isEqual(last, available)))) {
-            lu.InvalidateMeasure();
-            lu.PreviousConstraint = available;
+        var last = data.assets.previousConstraint;
+        if ((!last || (!Size.isEqual(last, data.surfaceSize)))) {
+            data.assets.dirtyFlags |= DirtyFlags.Measure;
+            Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
         }
-        */
 
-        /*
-        var walker = new DeepUpdaterTreeWalker(data.element);
-        var childu: Updater;
-        while ((childu = walker.step()) != null) {
-            var childAssets = childu.assets;
-
-            if (childAssets.visibility !== Visibility.Visible) {
+        for (var walker = Updater.walkDeep(data.updater); walker.step();) {
+            var assets = walker.current.assets;
+            if (assets.visibility !== Visibility.Visible) {
                 walker.skipBranch();
                 continue;
             }
-            if ((childAssets.uiFlags & UIFlags.MeasureHint) === 0) {
+            if ((assets.uiFlags & UIFlags.MeasureHint) === 0) {
                 walker.skipBranch();
                 continue;
             }
 
-            childAssets.uiFlags &= ~UIFlags.MeasureHint;
-            if ((childAssets.dirtyFlags & DirtyFlags.Measure) > 0)
-                data.measureList.push(childu);
+            assets.uiFlags &= ~UIFlags.MeasureHint;
+            if ((assets.dirtyFlags & DirtyFlags.Measure) > 0)
+                data.measureList.push(walker.current);
         }
-        */
 
         return true;
     };

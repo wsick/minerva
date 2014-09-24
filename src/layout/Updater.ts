@@ -189,6 +189,18 @@ module minerva.layout {
 
         ///////
 
+        invalidateMeasure() {
+            this.assets.dirtyFlags |= DirtyFlags.Measure;
+            this.assets.uiFlags |= UIFlags.MeasureHint;
+            //TODO: Propagate up
+        }
+
+        invalidateArrange() {
+            this.assets.dirtyFlags |= DirtyFlags.Arrange;
+            this.assets.uiFlags |= UIFlags.ArrangeHint;
+            //TODO: Propagate up
+        }
+
         updateBounds (forceRedraw?: boolean) {
             var assets = this.assets;
             assets.dirtyFlags |= DirtyFlags.Bounds;
@@ -215,6 +227,70 @@ module minerva.layout {
         }
 
         /////// STATIC HELPERS
+
+        static walk(updater: Updater): IWalker<Updater> {
+            //TODO: Implement walk
+            return null;
+        }
+
+        static walkDeep(updater: Updater): IDeepWalker<Updater> {
+            //TODO: Implement walkDeep
+            return null;
+        }
+
+        static doMeasure(updater: Updater) {
+            var assets = updater.assets;
+            var last = assets.previousConstraint;
+            var old = new Size();
+
+            //TODO: Set last to infinite if not attached, no visual parent, layout container, and no last
+
+            if (last) {
+                Size.copyTo(assets.desiredSize, old);
+                updater.measure(last);
+                if (Size.isEqual(old, assets.desiredSize))
+                    return;
+            }
+
+            var vp = updater.$$visualParentUpdater;
+            if (vp)
+                vp.invalidateMeasure();
+
+            assets.dirtyFlags &= ~DirtyFlags.Measure;
+        }
+
+        static doArrange(updater: Updater) {
+            var assets = updater.assets;
+            var last = assets.layoutSlot || undefined;
+
+            var vp = updater.$$visualParentUpdater;
+            if (vp) {
+                var desired: size;
+                if (this.IsLayoutContainer) {
+                    desired = size.copyTo(this.DesiredSize);
+                    if (n.IsAttached && n.IsTopLevel && !n.ParentNode) {
+                        var measure = this.PreviousConstraint;
+                        if (measure)
+                            size.max(desired, measure);
+                        else
+                            desired = size.copyTo(surface.Extents);
+                    }
+                } else {
+                    desired = size.fromRaw(fe.ActualWidth, fe.ActualHeight);
+                }
+
+                var viewport = rect.fromSize(desired);
+                viewport.X = Controls.Canvas.GetLeft(fe);
+                viewport.Y = Controls.Canvas.GetTop(fe);
+                last = viewport;
+            }
+
+            if (last) {
+                updater.arrange(last);
+            } else if (vp) {
+                vp.invalidateArrange();
+            }
+        }
 
         private static $$getVisualOnwer (updater: Updater): IVisualOwner {
             if (updater.$$visualParentUpdater)
