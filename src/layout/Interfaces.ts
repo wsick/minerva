@@ -15,10 +15,14 @@ module minerva.layout {
     export interface IVisualOwner extends processup.IProcessVisualOwner {
     }
     export interface ISurface extends IVisualOwner {
+        width: number;
+        height: number;
         addUpDirty (updater: layout.Updater);
         addDownDirty (updater: layout.Updater);
     }
 
     export interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
+        isLayoutContainer: boolean;
+        isContainer: boolean;
     }
 }

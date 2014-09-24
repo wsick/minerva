@@ -8,7 +8,7 @@ module minerva.layout.draft.tapins {
 
         var updater: Updater;
         while ((updater = data.measureList.shift()) != null) {
-            Updater.doMeasure(updater);
+            updater.doMeasure();
         }
 
         return true;

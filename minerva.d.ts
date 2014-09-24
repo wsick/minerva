@@ -60,6 +60,11 @@ declare module minerva {
         step(): boolean;
         current: T;
     }
+    interface IDeepWalker<T> {
+        step(): boolean;
+        current: T;
+        skipBranch(): any;
+    }
 }
 declare module minerva {
     interface IPoint {
@@ -217,6 +222,8 @@ declare module minerva.engine {
         private $$downDirty;
         private $$upDirty;
         private $$dirtyRegion;
+        public width : number;
+        public height : number;
         public updateBounds(): void;
         public invalidate(region?: Rect): void;
         public render(): void;
@@ -247,16 +254,22 @@ declare module minerva.layout {
     interface IVisualOwner extends processup.IProcessVisualOwner {
     }
     interface ISurface extends IVisualOwner {
+        width: number;
+        height: number;
         addUpDirty(updater: Updater): any;
         addDownDirty(updater: Updater): any;
     }
     interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
+        isLayoutContainer: boolean;
+        isContainer: boolean;
     }
 }
 declare module minerva.layout {
     class Updater {
         private $$measure;
+        private $$measureBinder;
         private $$arrange;
+        private $$arrangeBinder;
         private $$sizing;
         private $$processdown;
         private $$processup;
@@ -267,25 +280,44 @@ declare module minerva.layout {
         private $$inUpDirty;
         public assets: IUpdaterAssets;
         constructor();
+        public setContainerMode(isLayoutContainer: boolean, isContainer?: boolean): void;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
+        public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
         public setArrangePipe(pipedef?: arrange.ArrangePipeDef): Updater;
+        public setArrangeBinder(ab?: arrange.IArrangeBinder): Updater;
         public setSizingPipe(pipedef?: sizing.SizingPipeDef): Updater;
         public setProcessDownPipe(pipedef?: processdown.ProcessDownPipeDef): Updater;
         public setProcessUpPipe(pipedef?: processup.ProcessUpPipeDef): Updater;
         public setRenderPipe(pipedef?: render.RenderPipeDef): Updater;
+        public doMeasure(): void;
         public measure(availableSize: Size): boolean;
+        public doArrange(): void;
         public arrange(finalRect: Rect): boolean;
         public sizing(oldSize: Size, newSize: Size): boolean;
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: render.RenderContext, region: Rect): boolean;
+        public invalidateMeasure(): void;
+        public invalidateArrange(): void;
         public updateBounds(forceRedraw?: boolean): void;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
+        static walk(updater: Updater): IWalker<Updater>;
+        static walkDeep(updater: Updater): IDeepWalker<Updater>;
         private static $$getVisualOnwer(updater);
         private static $$addUpDirty(updater);
         private static $$addDownDirty(updater);
         private static $$propagateUiFlagsUp(updater, flags);
+    }
+}
+declare module minerva.layout.arrange {
+    interface IArrangeBinder {
+        bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+    }
+    class ArrangeBinder implements IArrangeBinder {
+        public bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+        public expandViewport(viewport: Rect, updater: Updater, surface: ISurface): void;
+        public shiftViewport(viewport: Rect, updater: Updater, surface: ISurface): void;
     }
 }
 declare module minerva.layout.arrange {
@@ -434,6 +466,14 @@ declare module minerva.layout.helpers {
     }
     function coerceSize(size: ISize, assets: ISized): void;
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
+}
+declare module minerva.layout.measure {
+    interface IMeasureBinder {
+        bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+    }
+    class MeasureBinder implements IMeasureBinder {
+        public bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+    }
 }
 declare module minerva.layout.measure {
     interface IMeasureTapin extends pipe.ITriTapin {

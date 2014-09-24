@@ -9,7 +9,9 @@ module minerva.layout {
 
     export class Updater {
         private $$measure: IMeasurePipe = null;
+        private $$measureBinder: measure.IMeasureBinder = null;
         private $$arrange: IArrangePipe = null;
+        private $$arrangeBinder: arrange.IArrangeBinder = null;
         private $$sizing: ISizingPipe = null;
         private $$processdown: IProcessDownPipe = null;
         private $$processup: IProcessUpPipe = null;
@@ -43,6 +45,8 @@ module minerva.layout {
             effectPadding: new Thickness(),
 
             isTopLevel: false,
+            isLayoutContainer: false,
+            isContainer: false,
 
             previousConstraint: new Size(),
             desiredSize: new Size(),
@@ -83,6 +87,18 @@ module minerva.layout {
         };
 
         constructor () {
+            this.setMeasureBinder()
+                .setArrangeBinder();
+        }
+
+        setContainerMode (isLayoutContainer: boolean, isContainer?: boolean) {
+            var assets = this.assets;
+            if (isLayoutContainer != null)
+                assets.isLayoutContainer = isLayoutContainer;
+            if (isContainer != null)
+                assets.isContainer = isContainer;
+            else
+                assets.isContainer = isLayoutContainer;
         }
 
         /////// PREPARE PIPES
@@ -92,8 +108,18 @@ module minerva.layout {
             return this;
         }
 
+        setMeasureBinder (mb?: measure.IMeasureBinder): Updater {
+            this.$$measureBinder = mb || new measure.MeasureBinder();
+            return this;
+        }
+
         setArrangePipe (pipedef?: arrange.ArrangePipeDef): Updater {
             this.$$arrange = <IArrangePipe>pipe.createTriPipe(pipedef || NO_PIPE);
+            return this;
+        }
+
+        setArrangeBinder (ab?: arrange.IArrangeBinder): Updater {
+            this.$$arrangeBinder = ab || new arrange.ArrangeBinder();
             return this;
         }
 
@@ -119,6 +145,10 @@ module minerva.layout {
 
         /////// RUN PIPES
 
+        doMeasure () {
+            this.$$measureBinder.bind(this, this.$$surface, this.$$visualParentUpdater);
+        }
+
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
             var output = pipe.output;
@@ -130,6 +160,10 @@ module minerva.layout {
             if (output.newUiFlags)
                 Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
             return success;
+        }
+
+        doArrange () {
+            this.$$arrangeBinder.bind(this, this.$$surface, this.$$visualParentUpdater);
         }
 
         arrange (finalRect: Rect): boolean {
@@ -189,16 +223,14 @@ module minerva.layout {
 
         ///////
 
-        invalidateMeasure() {
+        invalidateMeasure () {
             this.assets.dirtyFlags |= DirtyFlags.Measure;
-            this.assets.uiFlags |= UIFlags.MeasureHint;
-            //TODO: Propagate up
+            Updater.$$propagateUiFlagsUp(this, UIFlags.MeasureHint);
         }
 
-        invalidateArrange() {
+        invalidateArrange () {
             this.assets.dirtyFlags |= DirtyFlags.Arrange;
-            this.assets.uiFlags |= UIFlags.ArrangeHint;
-            //TODO: Propagate up
+            Updater.$$propagateUiFlagsUp(this, UIFlags.ArrangeHint);
         }
 
         updateBounds (forceRedraw?: boolean) {
@@ -228,68 +260,14 @@ module minerva.layout {
 
         /////// STATIC HELPERS
 
-        static walk(updater: Updater): IWalker<Updater> {
+        static walk (updater: Updater): IWalker<Updater> {
             //TODO: Implement walk
             return null;
         }
 
-        static walkDeep(updater: Updater): IDeepWalker<Updater> {
+        static walkDeep (updater: Updater): IDeepWalker<Updater> {
             //TODO: Implement walkDeep
             return null;
-        }
-
-        static doMeasure(updater: Updater) {
-            var assets = updater.assets;
-            var last = assets.previousConstraint;
-            var old = new Size();
-
-            //TODO: Set last to infinite if not attached, no visual parent, layout container, and no last
-
-            if (last) {
-                Size.copyTo(assets.desiredSize, old);
-                updater.measure(last);
-                if (Size.isEqual(old, assets.desiredSize))
-                    return;
-            }
-
-            var vp = updater.$$visualParentUpdater;
-            if (vp)
-                vp.invalidateMeasure();
-
-            assets.dirtyFlags &= ~DirtyFlags.Measure;
-        }
-
-        static doArrange(updater: Updater) {
-            var assets = updater.assets;
-            var last = assets.layoutSlot || undefined;
-
-            var vp = updater.$$visualParentUpdater;
-            if (vp) {
-                var desired: size;
-                if (this.IsLayoutContainer) {
-                    desired = size.copyTo(this.DesiredSize);
-                    if (n.IsAttached && n.IsTopLevel && !n.ParentNode) {
-                        var measure = this.PreviousConstraint;
-                        if (measure)
-                            size.max(desired, measure);
-                        else
-                            desired = size.copyTo(surface.Extents);
-                    }
-                } else {
-                    desired = size.fromRaw(fe.ActualWidth, fe.ActualHeight);
-                }
-
-                var viewport = rect.fromSize(desired);
-                viewport.X = Controls.Canvas.GetLeft(fe);
-                viewport.Y = Controls.Canvas.GetTop(fe);
-                last = viewport;
-            }
-
-            if (last) {
-                updater.arrange(last);
-            } else if (vp) {
-                vp.invalidateArrange();
-            }
         }
 
         private static $$getVisualOnwer (updater: Updater): IVisualOwner {
@@ -315,6 +293,7 @@ module minerva.layout {
         }
 
         private static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
+            updater.assets.uiFlags |= flags;
             var vpu = updater;
             while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) > 0) {
                 vpu.assets.uiFlags |= flags;

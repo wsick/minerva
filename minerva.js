@@ -1285,6 +1285,22 @@ var minerva;
                 this.$$upDirty = [];
                 this.$$dirtyRegion = null;
             }
+            Object.defineProperty(Surface.prototype, "width", {
+                get: function () {
+                    return this.$$canvas.offsetWidth;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            Object.defineProperty(Surface.prototype, "height", {
+                get: function () {
+                    return this.$$canvas.offsetHeight;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
             Surface.prototype.updateBounds = function () {
             };
 
@@ -1428,7 +1444,9 @@ var minerva;
         var Updater = (function () {
             function Updater() {
                 this.$$measure = null;
+                this.$$measureBinder = null;
                 this.$$arrange = null;
+                this.$$arrangeBinder = null;
                 this.$$sizing = null;
                 this.$$processdown = null;
                 this.$$processup = null;
@@ -1458,6 +1476,8 @@ var minerva;
                     projection: null,
                     effectPadding: new minerva.Thickness(),
                     isTopLevel: false,
+                    isLayoutContainer: false,
+                    isContainer: false,
                     previousConstraint: new minerva.Size(),
                     desiredSize: new minerva.Size(),
                     hiddenDesire: new minerva.Size(),
@@ -1489,14 +1509,35 @@ var minerva;
                     uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */,
                     forceInvalidate: false
                 };
+                this.setMeasureBinder().setArrangeBinder();
             }
+            Updater.prototype.setContainerMode = function (isLayoutContainer, isContainer) {
+                var assets = this.assets;
+                if (isLayoutContainer != null)
+                    assets.isLayoutContainer = isLayoutContainer;
+                if (isContainer != null)
+                    assets.isContainer = isContainer;
+                else
+                    assets.isContainer = isLayoutContainer;
+            };
+
             Updater.prototype.setMeasurePipe = function (pipedef) {
                 this.$$measure = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
             };
 
+            Updater.prototype.setMeasureBinder = function (mb) {
+                this.$$measureBinder = mb || new layout.measure.MeasureBinder();
+                return this;
+            };
+
             Updater.prototype.setArrangePipe = function (pipedef) {
                 this.$$arrange = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
+                return this;
+            };
+
+            Updater.prototype.setArrangeBinder = function (ab) {
+                this.$$arrangeBinder = ab || new layout.arrange.ArrangeBinder();
                 return this;
             };
 
@@ -1520,6 +1561,10 @@ var minerva;
                 return this;
             };
 
+            Updater.prototype.doMeasure = function () {
+                this.$$measureBinder.bind(this, this.$$surface, this.$$visualParentUpdater);
+            };
+
             Updater.prototype.measure = function (availableSize) {
                 var pipe = this.$$measure;
                 var output = pipe.output;
@@ -1531,6 +1576,10 @@ var minerva;
                 if (output.newUiFlags)
                     Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
                 return success;
+            };
+
+            Updater.prototype.doArrange = function () {
+                this.$$arrangeBinder.bind(this, this.$$surface, this.$$visualParentUpdater);
             };
 
             Updater.prototype.arrange = function (finalRect) {
@@ -1587,6 +1636,16 @@ var minerva;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
             };
 
+            Updater.prototype.invalidateMeasure = function () {
+                this.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
+                Updater.$$propagateUiFlagsUp(this, 2048 /* MeasureHint */);
+            };
+
+            Updater.prototype.invalidateArrange = function () {
+                this.assets.dirtyFlags |= minerva.DirtyFlags.Arrange;
+                Updater.$$propagateUiFlagsUp(this, 4096 /* ArrangeHint */);
+            };
+
             Updater.prototype.updateBounds = function (forceRedraw) {
                 var assets = this.assets;
                 assets.dirtyFlags |= minerva.DirtyFlags.Bounds;
@@ -1612,6 +1671,14 @@ var minerva;
                 return -1;
             };
 
+            Updater.walk = function (updater) {
+                return null;
+            };
+
+            Updater.walkDeep = function (updater) {
+                return null;
+            };
+
             Updater.$$getVisualOnwer = function (updater) {
                 if (updater.$$visualParentUpdater)
                     return updater.$$visualParentUpdater;
@@ -1635,6 +1702,7 @@ var minerva;
             };
 
             Updater.$$propagateUiFlagsUp = function (updater, flags) {
+                updater.assets.uiFlags |= flags;
                 var vpu = updater;
                 while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) > 0) {
                     vpu.assets.uiFlags |= flags;
@@ -1643,6 +1711,59 @@ var minerva;
             return Updater;
         })();
         layout.Updater = Updater;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (arrange) {
+            var ArrangeBinder = (function () {
+                function ArrangeBinder() {
+                }
+                ArrangeBinder.prototype.bind = function (updater, surface, visualParent) {
+                    var last = updater.assets.layoutSlot || undefined;
+                    if (!visualParent) {
+                        last = new minerva.Rect();
+                        this.expandViewport(last, updater, surface);
+                        this.shiftViewport(last, updater, surface);
+                    }
+
+                    if (last) {
+                        return updater.arrange(last);
+                    } else if (visualParent) {
+                        visualParent.invalidateArrange();
+                    }
+                    return false;
+                };
+
+                ArrangeBinder.prototype.expandViewport = function (viewport, updater, surface) {
+                    var assets = updater.assets;
+                    if (assets.isLayoutContainer) {
+                        minerva.Size.copyTo(assets.desiredSize, viewport);
+                        if (surface) {
+                            var measure = assets.previousConstraint;
+                            if (measure) {
+                                viewport.width = Math.max(viewport.width, measure.width);
+                                viewport.height = Math.max(viewport.height, measure.height);
+                            } else {
+                                viewport.width = surface.width;
+                                viewport.height = surface.height;
+                            }
+                        }
+                    } else {
+                        viewport.width = assets.actualWidth;
+                        viewport.height = assets.actualHeight;
+                    }
+                };
+
+                ArrangeBinder.prototype.shiftViewport = function (viewport, updater, surface) {
+                };
+                return ArrangeBinder;
+            })();
+            arrange.ArrangeBinder = ArrangeBinder;
+        })(layout.arrange || (layout.arrange = {}));
+        var arrange = layout.arrange;
     })(minerva.layout || (minerva.layout = {}));
     var layout = minerva.layout;
 })(minerva || (minerva = {}));
@@ -2124,6 +2245,14 @@ var minerva;
                     if (data.flag !== 4096 /* ArrangeHint */)
                         return true;
 
+                    if (data.arrangeList.length <= 0)
+                        return false;
+
+                    var updater;
+                    while ((updater = data.arrangeList.shift()) != null) {
+                        updater.doArrange();
+                    }
+
                     return true;
                 };
             })(draft.tapins || (draft.tapins = {}));
@@ -2191,6 +2320,15 @@ var minerva;
                 tapins.measure = function (data) {
                     if (data.flag !== 2048 /* MeasureHint */)
                         return true;
+
+                    if (data.measureList.length <= 0)
+                        return false;
+
+                    var updater;
+                    while ((updater = data.measureList.shift()) != null) {
+                        updater.doMeasure();
+                    }
+
                     return true;
                 };
             })(draft.tapins || (draft.tapins = {}));
@@ -2208,6 +2346,22 @@ var minerva;
                 tapins.prepareArrange = function (data) {
                     if (data.flag !== 4096 /* ArrangeHint */)
                         return true;
+
+                    for (var walker = layout.Updater.walkDeep(data.updater); walker.step();) {
+                        var assets = walker.current.assets;
+                        if (assets.visibility !== 0 /* Visible */) {
+                            walker.skipBranch();
+                            continue;
+                        }
+                        if ((assets.uiFlags & 4096 /* ArrangeHint */) === 0) {
+                            walker.skipBranch();
+                            continue;
+                        }
+
+                        assets.uiFlags &= ~4096 /* ArrangeHint */;
+                        if ((assets.dirtyFlags & minerva.DirtyFlags.Arrange) > 0)
+                            data.arrangeList.push(walker.current);
+                    }
 
                     return true;
                 };
@@ -2228,9 +2382,25 @@ var minerva;
                         return true;
 
                     var last = data.assets.previousConstraint;
-                    if ((!last || (!minerva.Size.isEqual(last, data.surfaceSize)))) {
+                    if (data.assets.isContainer && (!last || (!minerva.Size.isEqual(last, data.surfaceSize)))) {
                         data.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
                         minerva.Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
+                    }
+
+                    for (var walker = layout.Updater.walkDeep(data.updater); walker.step();) {
+                        var assets = walker.current.assets;
+                        if (assets.visibility !== 0 /* Visible */) {
+                            walker.skipBranch();
+                            continue;
+                        }
+                        if ((assets.uiFlags & 2048 /* MeasureHint */) === 0) {
+                            walker.skipBranch();
+                            continue;
+                        }
+
+                        assets.uiFlags &= ~2048 /* MeasureHint */;
+                        if ((assets.dirtyFlags & minerva.DirtyFlags.Measure) > 0)
+                            data.measureList.push(walker.current);
                     }
 
                     return true;
@@ -2250,6 +2420,23 @@ var minerva;
                 tapins.prepareSizing = function (data) {
                     if (data.flag !== 8192 /* SizeHint */)
                         return true;
+
+                    for (var walker = layout.Updater.walkDeep(data.updater); walker.step();) {
+                        var assets = walker.current.assets;
+                        if (assets.visibility !== 0 /* Visible */) {
+                            walker.skipBranch();
+                            continue;
+                        }
+                        if ((assets.uiFlags & 8192 /* SizeHint */) === 0) {
+                            walker.skipBranch();
+                            continue;
+                        }
+
+                        assets.uiFlags &= ~8192 /* SizeHint */;
+                        if (assets.lastRenderSize !== undefined)
+                            data.sizingList.push(walker.current);
+                    }
+
                     return true;
                 };
             })(draft.tapins || (draft.tapins = {}));
@@ -2312,6 +2499,43 @@ var minerva;
             helpers.copyGrowTransform4 = copyGrowTransform4;
         })(layout.helpers || (layout.helpers = {}));
         var helpers = layout.helpers;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (measure) {
+            var MeasureBinder = (function () {
+                function MeasureBinder() {
+                }
+                MeasureBinder.prototype.bind = function (updater, surface, visualParent) {
+                    var assets = updater.assets;
+                    var last = assets.previousConstraint;
+                    var old = new minerva.Size();
+
+                    if (!surface && !last && !visualParent)
+                        last = new minerva.Size(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+
+                    var success = false;
+                    if (last) {
+                        minerva.Size.copyTo(assets.desiredSize, old);
+                        success = updater.measure(last);
+                        if (minerva.Size.isEqual(old, assets.desiredSize))
+                            return success;
+                    }
+
+                    if (visualParent)
+                        visualParent.invalidateMeasure();
+
+                    assets.dirtyFlags &= ~minerva.DirtyFlags.Measure;
+                    return success;
+                };
+                return MeasureBinder;
+            })();
+            measure.MeasureBinder = MeasureBinder;
+        })(layout.measure || (layout.measure = {}));
+        var measure = layout.measure;
     })(minerva.layout || (minerva.layout = {}));
     var layout = minerva.layout;
 })(minerva || (minerva = {}));
