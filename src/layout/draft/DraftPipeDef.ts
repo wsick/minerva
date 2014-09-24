@@ -1,8 +1,8 @@
 module minerva.layout.draft {
-    export interface ILayoutTapin extends pipe.ITapin {
-        (data: ILayoutPipeData): boolean;
+    export interface IDraftTapin extends pipe.ITapin {
+        (data: IDraftPipeData): boolean;
     }
-    export interface ILayoutPipeData extends pipe.IPipeData {
+    export interface IDraftPipeData extends pipe.IPipeData {
         updater: Updater;
         assets: IUpdaterAssets;
         flag: UIFlags;
@@ -17,7 +17,7 @@ module minerva.layout.draft {
         oldSize: Size;
         newSize: Size;
     }
-    export class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
+    export class DraftPipeDef extends pipe.PipeDef<IDraftTapin, IDraftPipeData> {
         constructor () {
             super();
             this.addTapin('flushPrevious', tapins.flushPrevious)
@@ -31,10 +31,10 @@ module minerva.layout.draft {
                 .addTapin('notifyResize', tapins.notifyResize);
         }
 
-        prepare (data: ILayoutPipeData) {
+        prepare (data: IDraftPipeData) {
         }
 
-        flush (data: ILayoutPipeData) {
+        flush (data: IDraftPipeData) {
         }
     }
 }

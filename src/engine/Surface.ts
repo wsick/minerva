@@ -1,11 +1,11 @@
 module minerva.engine {
-    export interface IPass extends layout.draft.ILayoutPipeData {
+    export interface IPass extends layout.draft.IDraftPipeData {
         count: number;
         maxCount: number;
     }
 
     export class Surface implements layout.ISurface {
-        private $$layout = new layout.draft.LayoutPipeDef();
+        private $$layout = new layout.draft.DraftPipeDef();
 
         private $$canvas: HTMLCanvasElement = null;
         private $$ctx: layout.render.RenderContext = null;

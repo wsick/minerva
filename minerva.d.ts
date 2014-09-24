@@ -210,7 +210,7 @@ declare module minerva.pipe {
     }
 }
 declare module minerva.engine {
-    interface IPass extends layout.draft.ILayoutPipeData {
+    interface IPass extends layout.draft.IDraftPipeData {
         count: number;
         maxCount: number;
     }
@@ -233,7 +233,7 @@ declare module minerva.engine {
     }
 }
 declare module minerva.engine {
-    function draft(layers: layout.Updater[], layoutPipe: layout.draft.LayoutPipeDef, pass: IPass): boolean;
+    function draft(layers: layout.Updater[], layoutPipe: layout.draft.DraftPipeDef, pass: IPass): boolean;
 }
 declare module minerva.engine {
     function process(down: layout.Updater[], up: layout.Updater[]): boolean;
@@ -413,10 +413,10 @@ declare module minerva.layout.arrange.tapins {
     var validateVisibility: IArrangeTapin;
 }
 declare module minerva.layout.draft {
-    interface ILayoutTapin extends pipe.ITapin {
-        (data: ILayoutPipeData): boolean;
+    interface IDraftTapin extends pipe.ITapin {
+        (data: IDraftPipeData): boolean;
     }
-    interface ILayoutPipeData extends pipe.IPipeData {
+    interface IDraftPipeData extends pipe.IPipeData {
         updater: Updater;
         assets: IUpdaterAssets;
         flag: UIFlags;
@@ -431,38 +431,38 @@ declare module minerva.layout.draft {
         oldSize: Size;
         newSize: Size;
     }
-    class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
+    class DraftPipeDef extends pipe.PipeDef<IDraftTapin, IDraftPipeData> {
         constructor();
-        public prepare(data: ILayoutPipeData): void;
-        public flush(data: ILayoutPipeData): void;
+        public prepare(data: IDraftPipeData): void;
+        public flush(data: IDraftPipeData): void;
     }
 }
 declare module minerva.layout.draft.tapins {
-    var arrange: ILayoutTapin;
+    var arrange: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var determinePhase: ILayoutTapin;
+    var determinePhase: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var flushPrevious: ILayoutTapin;
+    var flushPrevious: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var measure: ILayoutTapin;
+    var measure: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var notifyResize: ILayoutTapin;
+    var notifyResize: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var prepareArrange: ILayoutTapin;
+    var prepareArrange: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var prepareMeasure: ILayoutTapin;
+    var prepareMeasure: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var prepareSizing: ILayoutTapin;
+    var prepareSizing: IDraftTapin;
 }
 declare module minerva.layout.draft.tapins {
-    var sizing: ILayoutTapin;
+    var sizing: IDraftTapin;
 }
 declare module minerva.layout.helpers {
     interface ISized {

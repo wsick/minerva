@@ -1,5 +1,5 @@
 module minerva.layout.draft.tapins {
-    export var prepareArrange: ILayoutTapin = function (data: ILayoutPipeData): boolean {
+    export var prepareArrange: IDraftTapin = function (data: IDraftPipeData): boolean {
         if (data.flag !== UIFlags.ArrangeHint)
             return true;
 

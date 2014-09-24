@@ -1,5 +1,5 @@
 module minerva.layout.draft.tapins {
-    export var notifyResize: ILayoutTapin = function (data: ILayoutPipeData): boolean {
+    export var notifyResize: IDraftTapin = function (data: IDraftPipeData): boolean {
         if (data.flag !== UIFlags.SizeHint)
             return true;
         if (data.sizingUpdates.length <= 0)

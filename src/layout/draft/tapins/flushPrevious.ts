@@ -1,5 +1,5 @@
 module minerva.layout.draft.tapins {
-    export var flushPrevious: ILayoutTapin = function (data: ILayoutPipeData): boolean {
+    export var flushPrevious: IDraftTapin = function (data: IDraftPipeData): boolean {
         var updater: Updater;
         while ((updater = data.arrangeList.shift()) != null) {
             //TODO: Propagate ArrangeHint up

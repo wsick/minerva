@@ -1,5 +1,5 @@
 module minerva.layout.draft.tapins {
-    export var determinePhase: ILayoutTapin = function (data: ILayoutPipeData): boolean {
+    export var determinePhase: IDraftTapin = function (data: IDraftPipeData): boolean {
         data.flag = UIFlags.None;
         var assets = data.assets;
         if (assets.visibility !== Visibility.Visible)

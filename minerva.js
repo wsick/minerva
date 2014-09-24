@@ -1277,7 +1277,7 @@ var minerva;
     (function (engine) {
         var Surface = (function () {
             function Surface() {
-                this.$$layout = new minerva.layout.draft.LayoutPipeDef();
+                this.$$layout = new minerva.layout.draft.DraftPipeDef();
                 this.$$canvas = null;
                 this.$$ctx = null;
                 this.$$layers = [];
@@ -2222,20 +2222,20 @@ var minerva;
 (function (minerva) {
     (function (layout) {
         (function (draft) {
-            var LayoutPipeDef = (function (_super) {
-                __extends(LayoutPipeDef, _super);
-                function LayoutPipeDef() {
+            var DraftPipeDef = (function (_super) {
+                __extends(DraftPipeDef, _super);
+                function DraftPipeDef() {
                     _super.call(this);
                     this.addTapin('flushPrevious', draft.tapins.flushPrevious).addTapin('determinePhase', draft.tapins.determinePhase).addTapin('prepareMeasure', draft.tapins.prepareMeasure).addTapin('measure', draft.tapins.measure).addTapin('prepareArrange', draft.tapins.prepareArrange).addTapin('arrange', draft.tapins.arrange).addTapin('prepareSizing', draft.tapins.prepareSizing).addTapin('sizing', draft.tapins.sizing).addTapin('notifyResize', draft.tapins.notifyResize);
                 }
-                LayoutPipeDef.prototype.prepare = function (data) {
+                DraftPipeDef.prototype.prepare = function (data) {
                 };
 
-                LayoutPipeDef.prototype.flush = function (data) {
+                DraftPipeDef.prototype.flush = function (data) {
                 };
-                return LayoutPipeDef;
+                return DraftPipeDef;
             })(minerva.pipe.PipeDef);
-            draft.LayoutPipeDef = LayoutPipeDef;
+            draft.DraftPipeDef = DraftPipeDef;
         })(layout.draft || (layout.draft = {}));
         var draft = layout.draft;
     })(minerva.layout || (minerva.layout = {}));
