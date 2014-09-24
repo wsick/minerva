@@ -308,7 +308,7 @@ declare module minerva.layout {
         private static $$getVisualOnwer(updater);
         private static $$addUpDirty(updater);
         private static $$addDownDirty(updater);
-        private static $$propagateUiFlagsUp(updater, flags);
+        static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags): void;
     }
 }
 declare module minerva.layout.arrange {

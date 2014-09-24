@@ -2305,8 +2305,10 @@ var minerva;
                 tapins.flushPrevious = function (data) {
                     var updater;
                     while ((updater = data.arrangeList.shift()) != null) {
+                        layout.Updater.$$propagateUiFlagsUp(updater, 4096 /* ArrangeHint */);
                     }
                     while ((updater = data.sizingList.shift()) != null) {
+                        layout.Updater.$$propagateUiFlagsUp(updater, 8192 /* SizeHint */);
                     }
                     return true;
                 };

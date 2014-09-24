@@ -297,7 +297,7 @@ module minerva.layout {
             }
         }
 
-        private static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
+        static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
             updater.assets.uiFlags |= flags;
             var vpu = updater;
             while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) > 0) {
