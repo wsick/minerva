@@ -1334,7 +1334,7 @@ var minerva;
                 var updated = false;
                 var layersUpdated = true;
                 while (pass.count < pass.maxCount && layersUpdated) {
-                    layersUpdated = engine.updateLayers(this.$$layers, this.$$layout, pass);
+                    layersUpdated = engine.draft(this.$$layers, this.$$layout, pass);
                     updated = engine.process(this.$$downDirty, this.$$upDirty) || layersUpdated || updated;
                 }
 
@@ -1347,6 +1347,27 @@ var minerva;
             return Surface;
         })();
         engine.Surface = Surface;
+    })(minerva.engine || (minerva.engine = {}));
+    var engine = minerva.engine;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (engine) {
+        function draft(layers, layoutPipe, pass) {
+            var updated = false;
+            for (var i = 0, len = layers.length; i < len; i++) {
+                var layer = layers[i];
+                if ((layer.assets.uiFlags & minerva.UIFlags.Hints) === 0)
+                    continue;
+                while (pass.count < pass.maxCount) {
+                    if (layoutPipe.run(pass))
+                        updated = true;
+                    pass.count++;
+                }
+            }
+            return updated;
+        }
+        engine.draft = draft;
     })(minerva.engine || (minerva.engine = {}));
     var engine = minerva.engine;
 })(minerva || (minerva = {}));
@@ -1387,27 +1408,6 @@ var minerva;
                 console.warn("[MINERVA] Finished UpDirty pass, not empty.");
             }
         }
-    })(minerva.engine || (minerva.engine = {}));
-    var engine = minerva.engine;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (engine) {
-        function updateLayers(layers, layoutPipe, pass) {
-            var updated = false;
-            for (var i = 0, len = layers.length; i < len; i++) {
-                var layer = layers[i];
-                if ((layer.assets.uiFlags & minerva.UIFlags.Hints) === 0)
-                    continue;
-                while (pass.count < pass.maxCount) {
-                    if (layoutPipe.run(pass))
-                        updated = true;
-                    pass.count++;
-                }
-            }
-            return updated;
-        }
-        engine.updateLayers = updateLayers;
     })(minerva.engine || (minerva.engine = {}));
     var engine = minerva.engine;
 })(minerva || (minerva = {}));

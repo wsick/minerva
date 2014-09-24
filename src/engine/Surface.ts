@@ -66,7 +66,7 @@ module minerva.engine {
             var updated = false;
             var layersUpdated = true;
             while (pass.count < pass.maxCount && layersUpdated) {
-                layersUpdated = updateLayers(this.$$layers, this.$$layout, pass);
+                layersUpdated = draft(this.$$layers, this.$$layout, pass);
                 updated = process(this.$$downDirty, this.$$upDirty) || layersUpdated || updated;
             }
 
