@@ -71,7 +71,8 @@ module minerva.engine {
                 measureList: [],
                 arrangeList: [],
                 sizingList: [],
-                surfaceSize: new Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight)
+                surfaceSize: new Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight),
+                sizingUpdates: []
             };
             var updated = false;
             var layersUpdated = true;

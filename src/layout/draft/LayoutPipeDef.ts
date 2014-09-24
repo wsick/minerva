@@ -10,6 +10,12 @@ module minerva.layout.draft {
         arrangeList: Updater[];
         sizingList: Updater[];
         surfaceSize: Size;
+        sizingUpdates: ISizingUpdate[];
+    }
+    export interface ISizingUpdate {
+        updater: Updater;
+        oldSize: Size;
+        newSize: Size;
     }
     export class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
         constructor () {
@@ -21,7 +27,8 @@ module minerva.layout.draft {
                 .addTapin('prepareArrange', tapins.prepareArrange)
                 .addTapin('arrange', tapins.arrange)
                 .addTapin('prepareSizing', tapins.prepareSizing)
-                .addTapin('sizing', tapins.sizing);
+                .addTapin('sizing', tapins.sizing)
+                .addTapin('notifyResize', tapins.notifyResize);
         }
 
         prepare (data: ILayoutPipeData) {

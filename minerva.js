@@ -1347,7 +1347,8 @@ var minerva;
                     measureList: [],
                     arrangeList: [],
                     sizingList: [],
-                    surfaceSize: new minerva.Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight)
+                    surfaceSize: new minerva.Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight),
+                    sizingUpdates: []
                 };
                 var updated = false;
                 var layersUpdated = true;
@@ -1521,6 +1522,9 @@ var minerva;
                     assets.isContainer = isLayoutContainer;
             };
 
+            Updater.prototype.onSizeChanged = function (oldSize, newSize) {
+            };
+
             Updater.prototype.setMeasurePipe = function (pipedef) {
                 this.$$measure = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
                 return this;
@@ -1598,10 +1602,11 @@ var minerva;
             Updater.prototype.sizing = function (oldSize, newSize) {
                 var pipe = this.$$sizing;
                 var assets = this.assets;
-                oldSize.width = assets.actualWidth;
-                oldSize.height = assets.actualHeight;
+                if (assets.lastRenderSize)
+                    minerva.Size.copyTo(assets.lastRenderSize, oldSize);
                 var success = pipe.def.run(assets, pipe.state, pipe.output);
                 minerva.Size.copyTo(pipe.output.actualSize, newSize);
+                assets.lastRenderSize = undefined;
                 return success;
             };
 
@@ -2221,7 +2226,7 @@ var minerva;
                 __extends(LayoutPipeDef, _super);
                 function LayoutPipeDef() {
                     _super.call(this);
-                    this.addTapin('flushPrevious', draft.tapins.flushPrevious).addTapin('determinePhase', draft.tapins.determinePhase).addTapin('prepareMeasure', draft.tapins.prepareMeasure).addTapin('measure', draft.tapins.measure).addTapin('prepareArrange', draft.tapins.prepareArrange).addTapin('arrange', draft.tapins.arrange).addTapin('prepareSizing', draft.tapins.prepareSizing).addTapin('sizing', draft.tapins.sizing);
+                    this.addTapin('flushPrevious', draft.tapins.flushPrevious).addTapin('determinePhase', draft.tapins.determinePhase).addTapin('prepareMeasure', draft.tapins.prepareMeasure).addTapin('measure', draft.tapins.measure).addTapin('prepareArrange', draft.tapins.prepareArrange).addTapin('arrange', draft.tapins.arrange).addTapin('prepareSizing', draft.tapins.prepareSizing).addTapin('sizing', draft.tapins.sizing).addTapin('notifyResize', draft.tapins.notifyResize);
                 }
                 LayoutPipeDef.prototype.prepare = function (data) {
                 };
@@ -2327,6 +2332,31 @@ var minerva;
                     var updater;
                     while ((updater = data.measureList.shift()) != null) {
                         updater.doMeasure();
+                    }
+
+                    return true;
+                };
+            })(draft.tapins || (draft.tapins = {}));
+            var tapins = draft.tapins;
+        })(layout.draft || (layout.draft = {}));
+        var draft = layout.draft;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (draft) {
+            (function (tapins) {
+                tapins.notifyResize = function (data) {
+                    if (data.flag !== 8192 /* SizeHint */)
+                        return true;
+                    if (data.sizingUpdates.length <= 0)
+                        return true;
+
+                    var update;
+                    while ((update = data.sizingUpdates.pop()) != null) {
+                        update.updater.onSizeChanged(update.oldSize, update.newSize);
                     }
 
                     return true;
@@ -2454,6 +2484,26 @@ var minerva;
                 tapins.sizing = function (data) {
                     if (data.flag !== 8192 /* SizeHint */)
                         return true;
+
+                    if (data.sizingList.length <= 0)
+                        return false;
+
+                    var updater;
+                    var oldSize = new minerva.Size();
+                    var newSize = new minerva.Size();
+                    while ((updater = data.sizingList.pop()) != null) {
+                        updater.sizing(oldSize, newSize);
+                        if (!minerva.Size.isEqual(oldSize, new minerva.Size)) {
+                            data.sizingUpdates.push({
+                                updater: updater,
+                                oldSize: oldSize,
+                                newSize: newSize
+                            });
+                            oldSize = new minerva.Size();
+                            newSize = new minerva.Size();
+                        }
+                    }
+
                     return true;
                 };
             })(draft.tapins || (draft.tapins = {}));

@@ -101,6 +101,10 @@ module minerva.layout {
                 assets.isContainer = isLayoutContainer;
         }
 
+        onSizeChanged(oldSize: Size, newSize: Size) {
+            //TODO: Raise SizeChanged
+        }
+
         /////// PREPARE PIPES
 
         setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
@@ -182,10 +186,11 @@ module minerva.layout {
         sizing (oldSize: Size, newSize: Size): boolean {
             var pipe = this.$$sizing;
             var assets = this.assets;
-            oldSize.width = assets.actualWidth;
-            oldSize.height = assets.actualHeight;
+            if (assets.lastRenderSize)
+                Size.copyTo(assets.lastRenderSize, oldSize);
             var success = pipe.def.run(assets, pipe.state, pipe.output);
             Size.copyTo(pipe.output.actualSize, newSize);
+            assets.lastRenderSize = undefined;
             return success;
         }
 

@@ -281,6 +281,7 @@ declare module minerva.layout {
         public assets: IUpdaterAssets;
         constructor();
         public setContainerMode(isLayoutContainer: boolean, isContainer?: boolean): void;
+        public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
         public setArrangePipe(pipedef?: arrange.ArrangePipeDef): Updater;
@@ -423,6 +424,12 @@ declare module minerva.layout.draft {
         arrangeList: Updater[];
         sizingList: Updater[];
         surfaceSize: Size;
+        sizingUpdates: ISizingUpdate[];
+    }
+    interface ISizingUpdate {
+        updater: Updater;
+        oldSize: Size;
+        newSize: Size;
     }
     class LayoutPipeDef extends pipe.PipeDef<ILayoutTapin, ILayoutPipeData> {
         constructor();
@@ -441,6 +448,9 @@ declare module minerva.layout.draft.tapins {
 }
 declare module minerva.layout.draft.tapins {
     var measure: ILayoutTapin;
+}
+declare module minerva.layout.draft.tapins {
+    var notifyResize: ILayoutTapin;
 }
 declare module minerva.layout.draft.tapins {
     var prepareArrange: ILayoutTapin;
