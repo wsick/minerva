@@ -1,4 +1,5 @@
 module minerva.layout.render {
+    var ARC_TO_BEZIER = 0.55228475;
     export class RenderContext {
         private $$transforms = [];
         currentTransform = mat3.identity();
@@ -8,7 +9,15 @@ module minerva.layout.render {
         constructor (ctx: CanvasRenderingContext2D) {
             Object.defineProperty(this, 'raw', { value: ctx, writable: false });
             Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
-            Object.defineProperty(this, 'hasFillRule', {value: getHasFillRule(), writable: false });
+            Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false });
+        }
+
+        static get hasFillRule (): boolean {
+            if (navigator.appName === "Microsoft Internet Explorer") {
+                var version = getIEVersion();
+                return version < 0 || version > 10;
+            }
+            return true;
         }
 
         save () {
@@ -81,14 +90,63 @@ module minerva.layout.render {
             raw.rect(rect.x, rect.y, rect.width, rect.height);
             raw.clip();
         }
-    }
 
-    function getHasFillRule (): boolean {
-        if (navigator.appName === "Microsoft Internet Explorer") {
-            var version = getIEVersion();
-            return version < 0 || version > 10;
+        fillEx (brush: IBrush, region: Rect, fillRule?: string) {
+            var raw = this.raw;
+            brush.setupBrush(raw, region);
+            raw.fillStyle = brush.toHtml5Object();
+            if (!fillRule)
+                return raw.fill();
+            (<any>raw).fillRule = raw.msFillRule = fillRule;
+            raw.fill(fillRule);
         }
-        return true;
+
+        drawRectEx (extents: Rect, cr?: ICornerRadius) {
+            var raw = this.raw;
+            if (!cr || CornerRadius.isEmpty(cr)) {
+                raw.rect(extents.x, extents.y, extents.width, extents.height);
+                return;
+            }
+
+            var top_adj = Math.max(cr.topLeft + cr.topRight - extents.width, 0) / 2;
+            var bottom_adj = Math.max(cr.bottomLeft + cr.bottomRight - extents.width, 0) / 2;
+            var left_adj = Math.max(cr.topLeft + cr.bottomLeft - extents.height, 0) / 2;
+            var right_adj = Math.max(cr.topRight + cr.bottomRight - extents.height, 0) / 2;
+
+            var tlt = cr.topLeft - top_adj;
+            raw.moveTo(extents.x + tlt, extents.y);
+
+            var trt = cr.topRight - top_adj;
+            var trr = cr.topRight - right_adj;
+            raw.lineTo(extents.x + extents.width - trt, extents.y);
+            raw.bezierCurveTo(
+                    extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y,
+                    extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER,
+                    extents.x + extents.width, extents.y + trr);
+
+            var brr = cr.bottomRight - right_adj;
+            var brb = cr.bottomRight - bottom_adj;
+            raw.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
+            raw.bezierCurveTo(
+                    extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER,
+                    extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height,
+                    extents.x + extents.width - brb, extents.y + extents.height);
+
+            var blb = cr.bottomLeft - bottom_adj;
+            var bll = cr.bottomLeft - left_adj;
+            raw.lineTo(extents.x + blb, extents.y + extents.height);
+            raw.bezierCurveTo(
+                    extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height,
+                extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER,
+                extents.x, extents.y + extents.height - bll);
+
+            var tll = cr.topLeft - left_adj;
+            raw.lineTo(extents.x, extents.y + tll);
+            raw.bezierCurveTo(
+                extents.x, extents.y + tll - tll * ARC_TO_BEZIER,
+                    extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y,
+                    extents.x + tlt, extents.y);
+        }
     }
 
     function getIEVersion (): number {

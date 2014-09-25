@@ -18,6 +18,13 @@ module minerva {
             this.bottomLeft = bottomLeft == null ? 0 : bottomLeft;
         }
 
+        static isEmpty (cr: ICornerRadius): boolean {
+            return cr.topLeft === 0
+                && cr.topRight === 0
+                && cr.bottomRight === 0
+                && cr.bottomLeft === 0;
+        }
+
         static clear (dest: ICornerRadius) {
             dest.topLeft = dest.topRight = dest.bottomRight = dest.bottomLeft = 0;
         }

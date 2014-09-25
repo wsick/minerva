@@ -30,6 +30,12 @@ module minerva {
             return thickness.left === 0 && thickness.top === 0 && thickness.right === 0 && thickness.bottom === 0;
         }
 
+        static isBalanced (thickness: Thickness): boolean {
+            return thickness.left === thickness.top
+                && thickness.left === thickness.right
+                && thickness.left === thickness.bottom;
+        }
+
         static shrinkSize (thickness: Thickness, dest: Size) {
             var w = dest.width;
             var h = dest.height;
