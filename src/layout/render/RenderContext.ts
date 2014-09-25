@@ -3,10 +3,12 @@ module minerva.layout.render {
         private $$transforms = [];
         currentTransform = mat3.identity();
         raw: CanvasRenderingContext2D;
+        hasFillRule: boolean;
 
         constructor (ctx: CanvasRenderingContext2D) {
             Object.defineProperty(this, 'raw', { value: ctx, writable: false });
             Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
+            Object.defineProperty(this, 'hasFillRule', {value: getHasFillRule(), writable: false });
         }
 
         save () {
@@ -79,5 +81,20 @@ module minerva.layout.render {
             raw.rect(rect.x, rect.y, rect.width, rect.height);
             raw.clip();
         }
+    }
+
+    function getHasFillRule (): boolean {
+        if (navigator.appName === "Microsoft Internet Explorer") {
+            var version = getIEVersion();
+            return version < 0 || version > 10;
+        }
+        return true;
+    }
+
+    function getIEVersion (): number {
+        var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+        if (re.exec(navigator.userAgent) != null)
+            return parseFloat(RegExp.$1);
+        return -1;
     }
 }

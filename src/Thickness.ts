@@ -26,6 +26,10 @@ module minerva {
             dest.bottom = thickness.bottom;
         }
 
+        static isEmpty (thickness: Thickness): boolean {
+            return thickness.left === 0 && thickness.top === 0 && thickness.right === 0 && thickness.bottom === 0;
+        }
+
         static shrinkSize (thickness: Thickness, dest: Size) {
             var w = dest.width;
             var h = dest.height;
@@ -49,6 +53,13 @@ module minerva {
                 dest.height = 0;
         }
 
+        static shrinkCornerRadius (thickness: Thickness, dest: ICornerRadius) {
+            dest.topLeft = Math.max(dest.topLeft - Math.max(thickness.left, thickness.top) * 0.5, 0);
+            dest.topRight = Math.max(dest.topRight - Math.max(thickness.right, thickness.top) * 0.5, 0);
+            dest.bottomRight = Math.max(dest.bottomRight - Math.max(thickness.right, thickness.bottom) * 0.5, 0);
+            dest.bottomLeft = Math.max(dest.bottomLeft - Math.max(thickness.left, thickness.bottom) * 0.5, 0);
+        }
+
         static growSize (thickness: Thickness, dest: Size) {
             var w = dest.width;
             var h = dest.height;
@@ -70,6 +81,13 @@ module minerva {
                 dest.width = 0;
             if (dest.height < 0)
                 dest.height = 0;
+        }
+
+        static growCornerRadius (thickness: Thickness, dest: ICornerRadius) {
+            dest.topLeft = dest.topLeft ? Math.max(dest.topLeft + Math.max(thickness.left, thickness.top) * 0.5, 0) : 0;
+            dest.topRight = dest.topRight ? Math.max(dest.topRight + Math.max(thickness.right, thickness.top) * 0.5, 0) : 0;
+            dest.bottomRight = dest.bottomRight ? Math.max(dest.bottomRight + Math.max(thickness.right, thickness.bottom) * 0.5, 0) : 0;
+            dest.bottomLeft = dest.bottomLeft ? Math.max(dest.bottomLeft + Math.max(thickness.left, thickness.bottom) * 0.5, 0) : 0;
         }
     }
 }
