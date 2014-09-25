@@ -22,5 +22,10 @@ module minerva {
             return size1.width === size2.width
                 && size1.height === size2.height;
         }
+
+        static min (dest: ISize, size2: ISize) {
+            dest.width = Math.min(dest.width, size2.width);
+            dest.height = Math.min(dest.height, size2.height);
+        }
     }
 }

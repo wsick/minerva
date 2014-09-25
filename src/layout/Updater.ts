@@ -91,7 +91,7 @@ module minerva.layout {
                 .setArrangeBinder();
         }
 
-        setContainerMode (isLayoutContainer: boolean, isContainer?: boolean) {
+        setContainerMode (isLayoutContainer: boolean, isContainer?: boolean): Updater {
             var assets = this.assets;
             if (isLayoutContainer != null)
                 assets.isLayoutContainer = isLayoutContainer;
@@ -99,9 +99,10 @@ module minerva.layout {
                 assets.isContainer = isContainer;
             else
                 assets.isContainer = isLayoutContainer;
+            return this;
         }
 
-        onSizeChanged(oldSize: Size, newSize: Size) {
+        onSizeChanged (oldSize: Size, newSize: Size) {
             //TODO: Raise SizeChanged
         }
 

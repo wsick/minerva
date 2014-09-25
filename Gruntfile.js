@@ -19,7 +19,7 @@ module.exports = function (grunt) {
         },
         typescript: {
             build: {
-                src: ['src/_Version.ts', 'src/*.ts', 'src/**/*.ts'],
+                src: ['src/_Version.ts', 'src/*.ts', 'src/pipe/*.ts', 'src/layout/*.ts', 'src/layout/**/*.ts', 'src/**/*.ts'],
                 dest: '<%= meta.name %>.js',
                 options: {
                     target: 'es5',

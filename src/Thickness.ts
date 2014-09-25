@@ -12,6 +12,20 @@ module minerva {
             this.bottom = bottom == null ? 0 : bottom;
         }
 
+        static add (dest: Thickness, t2: Thickness) {
+            dest.left += t2.left;
+            dest.top += t2.top;
+            dest.right += t2.right;
+            dest.bottom += t2.bottom;
+        }
+
+        static copyTo (thickness: Thickness, dest: Thickness) {
+            dest.left = thickness.left;
+            dest.top = thickness.top;
+            dest.right = thickness.right;
+            dest.bottom = thickness.bottom;
+        }
+
         static shrinkSize (thickness: Thickness, dest: Size) {
             var w = dest.width;
             var h = dest.height;

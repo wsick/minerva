@@ -13,7 +13,7 @@ module minerva.pipe {
             return this;
         }
 
-        addTapinBefore (name: string, tapin: T, before?: string): TriPipeDef<T, TInput, TState, TOutput> {
+        addTapinBefore (before: string, name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !before ? -1 : names.indexOf(before);
@@ -27,7 +27,7 @@ module minerva.pipe {
             return this;
         }
 
-        addTapinAfter (name: string, tapin: T, after?: string): TriPipeDef<T, TInput, TState, TOutput> {
+        addTapinAfter (after: string, name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput> {
             var names = this.$$names;
             var tapins = this.$$tapins;
             var index = !after ? -1 : names.indexOf(after);
