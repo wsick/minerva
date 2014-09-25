@@ -12,8 +12,6 @@ module minerva.controls.border.arrange {
             state.childRect = new Rect();
             return state;
         }
-
-        static instance = new ArrangePipeDef();
     }
 
     export interface IInput extends layout.arrange.IInput {
@@ -39,6 +37,7 @@ module minerva.controls.border.arrange {
         Thickness.shrinkSize(tb, cr);
         return true;
     }
+
     export function doOverride (input: IInput, state: IState, output: layout.arrange.IOutput, finalRect: Rect): boolean {
         if (input.childUpdater)
             input.childUpdater.arrange(state.childRect);

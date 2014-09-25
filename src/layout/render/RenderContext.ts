@@ -1,5 +1,16 @@
 module minerva.layout.render {
     var ARC_TO_BEZIER = 0.55228475;
+    var caps: string[] = [
+        "butt", //flat
+        "square", //square
+        "round", //round
+        "butt" //triangle
+    ];
+    var joins: string[] = [
+        "miter",
+        "bevel",
+        "round"
+    ];
     export class RenderContext {
         private $$transforms = [];
         currentTransform = mat3.identity();
@@ -146,6 +157,25 @@ module minerva.layout.render {
                 extents.x, extents.y + tll - tll * ARC_TO_BEZIER,
                     extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y,
                     extents.x + tlt, extents.y);
+        }
+
+        setupStroke (pars: IStrokeParameters): boolean {
+            if (!pars) return false;
+            var raw = this.raw;
+            raw.lineWidth = pars.thickness;
+            raw.lineCap = caps[pars.startCap || pars.endCap || 0] || caps[0];
+            raw.lineJoin = joins[pars.join || 0] || joins[0];
+            raw.miterLimit = pars.miterLimit;
+            return true;
+        }
+
+        strokeEx (brush: IBrush, pars: IStrokeParameters, region: Rect) {
+            if (!region || !this.setupStroke(pars))
+                return;
+            var raw = this.raw;
+            brush.setupBrush(raw, region);
+            raw.strokeStyle = brush.toHtml5Object();
+            raw.stroke();
         }
     }
 

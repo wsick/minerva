@@ -25,6 +25,13 @@ module minerva {
                 && cr.bottomLeft === 0;
         }
 
+        static isEqual (cr1: ICornerRadius, cr2: ICornerRadius): boolean {
+            return cr1.topLeft === cr2.topLeft
+                && cr1.topRight === cr2.topRight
+                && cr1.bottomRight === cr2.bottomRight
+                && cr1.bottomLeft === cr2.bottomLeft;
+        }
+
         static clear (dest: ICornerRadius) {
             dest.topLeft = dest.topRight = dest.bottomRight = dest.bottomLeft = 0;
         }

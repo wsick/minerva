@@ -14,8 +14,6 @@ module minerva.controls.border.measure {
             state.totalBorder = new Thickness();
             return state;
         }
-
-        static instance = new MeasurePipeDef();
     }
 
     export interface IInput extends layout.measure.IInput {

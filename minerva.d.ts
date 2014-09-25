@@ -16,6 +16,25 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface ICornerRadius {
+        topLeft: number;
+        topRight: number;
+        bottomRight: number;
+        bottomLeft: number;
+    }
+    class CornerRadius implements ICornerRadius {
+        public topLeft: number;
+        public topRight: number;
+        public bottomRight: number;
+        public bottomLeft: number;
+        constructor(topLeft?: number, topRight?: number, bottomRight?: number, bottomLeft?: number);
+        static isEmpty(cr: ICornerRadius): boolean;
+        static isEqual(cr1: ICornerRadius, cr2: ICornerRadius): boolean;
+        static clear(dest: ICornerRadius): void;
+        static copyTo(cr2: ICornerRadius, dest: ICornerRadius): void;
+    }
+}
+declare module minerva {
     enum DirtyFlags {
         Transform,
         LocalTransform,
@@ -50,9 +69,36 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IBrush {
+        isTransparent(): boolean;
+        setupBrush(ctx: CanvasRenderingContext2D, region: Rect): any;
+        toHtml5Object(): any;
+    }
+}
+declare module minerva {
     interface IProjection {
         getDistanceFromXYPlane(objectWidth: number, objectHeight: number): number;
         getTransform(): number[];
+    }
+}
+declare module minerva {
+    interface IStrokeParameters {
+        thickness: number;
+        join: PenLineJoin;
+        startCap: PenLineCap;
+        endCap: PenLineCap;
+        miterLimit: number;
+    }
+    enum PenLineJoin {
+        Miter = 0,
+        Bevel = 1,
+        Round = 2,
+    }
+    enum PenLineCap {
+        Flat = 0,
+        Square = 1,
+        Round = 2,
+        Triangle = 3,
     }
 }
 declare module minerva {
@@ -139,6 +185,7 @@ declare module minerva {
         private static clipmask(clip);
         static transform4(dest: Rect, projection: number[]): void;
         static extendTo(dest: Rect, x: number, y: number): void;
+        static shrink(dest: Rect, left: number, top: number, right: number, bottom: number): void;
     }
 }
 declare module minerva {
@@ -152,6 +199,7 @@ declare module minerva {
         constructor(width?: number, height?: number);
         static copyTo(src: ISize, dest: ISize): void;
         static isEqual(size1: ISize, size2: ISize): boolean;
+        static min(dest: ISize, size2: ISize): void;
     }
 }
 declare module minerva {
@@ -161,10 +209,16 @@ declare module minerva {
         public right: number;
         public bottom: number;
         constructor(left?: number, top?: number, right?: number, bottom?: number);
+        static add(dest: Thickness, t2: Thickness): void;
+        static copyTo(thickness: Thickness, dest: Thickness): void;
+        static isEmpty(thickness: Thickness): boolean;
+        static isBalanced(thickness: Thickness): boolean;
         static shrinkSize(thickness: Thickness, dest: Size): Size;
         static shrinkRect(thickness: Thickness, dest: Rect): void;
+        static shrinkCornerRadius(thickness: Thickness, dest: ICornerRadius): void;
         static growSize(thickness: Thickness, dest: Size): Size;
         static growRect(thickness: Thickness, dest: Rect): void;
+        static growCornerRadius(thickness: Thickness, dest: ICornerRadius): void;
     }
 }
 declare module minerva {
@@ -172,6 +226,41 @@ declare module minerva {
         Visible = 0,
         Collapsed = 1,
     }
+}
+declare module minerva {
+    function singleton(type: Function): any;
+}
+declare module minerva.pipe {
+    interface IPipeData {
+    }
+    interface IPipeDef<TData extends IPipeData> {
+        run(...contexts: any[]): boolean;
+        prepare(data: TData): any;
+        flush(data: TData): any;
+    }
+}
+declare module minerva.pipe {
+    interface IPipeInput {
+    }
+    interface IPipeState {
+    }
+    interface IPipeOutput {
+    }
+    interface ITriPipeDef<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
+        run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
+        createState(): TState;
+        createOutput(): TOutput;
+        prepare(input: TInput, state: TState, output: TOutput): any;
+        flush(input: TInput, state: TState, output: TOutput): any;
+    }
+}
+declare module minerva.pipe {
+    class ITriPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
+        public def: ITriPipeDef<TInput, TState, TOutput>;
+        public state: TState;
+        public output: TOutput;
+    }
+    function createTriPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput>(pipedef: ITriPipeDef<TInput, TState, TOutput>): ITriPipe<TInput, TState, TOutput>;
 }
 declare module minerva.pipe {
     interface ITapin {
@@ -181,8 +270,8 @@ declare module minerva.pipe {
         private $$names;
         private $$tapins;
         public addTapin(name: string, tapin: T): PipeDef<T, TData>;
-        public addTapinBefore(name: string, tapin: T, before?: string): PipeDef<T, TData>;
-        public addTapinAfter(name: string, tapin: T, after?: string): PipeDef<T, TData>;
+        public addTapinBefore(before: string, name: string, tapin: T): PipeDef<T, TData>;
+        public addTapinAfter(after: string, name: string, tapin: T): PipeDef<T, TData>;
         public replaceTapin(name: string, tapin: T): PipeDef<T, TData>;
         public removeTapin(name: string): PipeDef<T, TData>;
         public run(data: TData, ...contexts: any[]): boolean;
@@ -198,8 +287,8 @@ declare module minerva.pipe {
         private $$names;
         private $$tapins;
         public addTapin(name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput>;
-        public addTapinBefore(name: string, tapin: T, before?: string): TriPipeDef<T, TInput, TState, TOutput>;
-        public addTapinAfter(name: string, tapin: T, after?: string): TriPipeDef<T, TInput, TState, TOutput>;
+        public addTapinBefore(before: string, name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput>;
+        public addTapinAfter(after: string, name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput>;
         public replaceTapin(name: string, tapin: T): TriPipeDef<T, TInput, TState, TOutput>;
         public removeTapin(name: string): TriPipeDef<T, TInput, TState, TOutput>;
         public run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
@@ -208,35 +297,6 @@ declare module minerva.pipe {
         public prepare(input: TInput, state: TState, output: TOutput, ...contexts: any[]): void;
         public flush(input: TInput, state: TState, output: TOutput, ...contexts: any[]): void;
     }
-}
-declare module minerva.engine {
-    interface IPass extends layout.draft.IDraftPipeData {
-        count: number;
-        maxCount: number;
-    }
-    class Surface implements layout.ISurface {
-        private $$layout;
-        private $$canvas;
-        private $$ctx;
-        private $$layers;
-        private $$downDirty;
-        private $$upDirty;
-        private $$dirtyRegion;
-        public width : number;
-        public height : number;
-        public updateBounds(): void;
-        public invalidate(region?: Rect): void;
-        public render(): void;
-        public addUpDirty(updater: layout.Updater): void;
-        public addDownDirty(updater: layout.Updater): void;
-        public updateLayout(): boolean;
-    }
-}
-declare module minerva.engine {
-    function draft(layers: layout.Updater[], layoutPipe: layout.draft.DraftPipeDef, pass: IPass): boolean;
-}
-declare module minerva.engine {
-    function process(down: layout.Updater[], up: layout.Updater[]): boolean;
 }
 declare module minerva.layout {
     interface IMeasurePipe extends pipe.ITriPipe<measure.IInput, measure.IState, measure.IOutput> {
@@ -280,7 +340,7 @@ declare module minerva.layout {
         private $$inUpDirty;
         public assets: IUpdaterAssets;
         constructor();
-        public setContainerMode(isLayoutContainer: boolean, isContainer?: boolean): void;
+        public setContainerMode(isLayoutContainer: boolean, isContainer?: boolean): Updater;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
@@ -310,6 +370,19 @@ declare module minerva.layout {
         private static $$addDownDirty(updater);
         static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags): void;
     }
+}
+declare module minerva.layout.helpers {
+    interface ISized {
+        width: number;
+        height: number;
+        minWidth: number;
+        minHeight: number;
+        maxWidth: number;
+        maxHeight: number;
+        useLayoutRounding: boolean;
+    }
+    function coerceSize(size: ISize, assets: ISized): void;
+    function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
 }
 declare module minerva.layout.arrange {
     interface IArrangeBinder {
@@ -463,19 +536,6 @@ declare module minerva.layout.draft.tapins {
 }
 declare module minerva.layout.draft.tapins {
     var sizing: IDraftTapin;
-}
-declare module minerva.layout.helpers {
-    interface ISized {
-        width: number;
-        height: number;
-        minWidth: number;
-        minHeight: number;
-        maxWidth: number;
-        maxHeight: number;
-        useLayoutRounding: boolean;
-    }
-    function coerceSize(size: ISize, assets: ISized): void;
-    function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
 }
 declare module minerva.layout.measure {
     interface IMeasureBinder {
@@ -720,7 +780,9 @@ declare module minerva.layout.render {
         private $$transforms;
         public currentTransform: number[];
         public raw: CanvasRenderingContext2D;
+        public hasFillRule: boolean;
         constructor(ctx: CanvasRenderingContext2D);
+        static hasFillRule : boolean;
         public save(): void;
         public restore(): void;
         public setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
@@ -733,6 +795,10 @@ declare module minerva.layout.render {
         public pretransformMatrix(mat: number[]): void;
         public clipGeometry(geom: IGeometry): void;
         public clipRect(rect: Rect): void;
+        public fillEx(brush: IBrush, region: Rect, fillRule?: string): void;
+        public drawRectEx(extents: Rect, cr?: ICornerRadius): void;
+        public setupStroke(pars: IStrokeParameters): boolean;
+        public strokeEx(brush: IBrush, pars: IStrokeParameters, region: Rect): void;
     }
 }
 declare module minerva.layout.render {
@@ -822,35 +888,126 @@ declare module minerva.layout.sizing.tapins {
 declare module minerva.layout.sizing.tapins {
     var computeActual: ISizingTapin;
 }
-declare module minerva.pipe {
-    interface IPipeData {
+declare module minerva.controls.border.arrange {
+    class ArrangePipeDef extends layout.arrange.ArrangePipeDef {
+        constructor();
+        public createState(): IState;
     }
-    interface IPipeDef<TData extends IPipeData> {
-        run(...contexts: any[]): boolean;
-        prepare(data: TData): any;
-        flush(data: TData): any;
+    interface IInput extends layout.arrange.IInput {
+        padding: Thickness;
+        borderThickness: Thickness;
+        childUpdater: Updater;
+    }
+    interface IState extends layout.arrange.IState {
+        totalBorder: Thickness;
+        childRect: Rect;
+    }
+    function preOverride(input: IInput, state: IState, output: layout.arrange.IOutput, finalRect: Rect): boolean;
+    function doOverride(input: IInput, state: IState, output: layout.arrange.IOutput, finalRect: Rect): boolean;
+}
+declare module minerva.controls.border.measure {
+    class MeasurePipeDef extends layout.measure.MeasurePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+    interface IInput extends layout.measure.IInput {
+        padding: Thickness;
+        borderThickness: Thickness;
+        childUpdater: Updater;
+    }
+    interface IState extends layout.measure.IState {
+        totalBorder: Thickness;
+    }
+    function preOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
+    function doOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
+    function postOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
+}
+declare module minerva.controls.border {
+    interface IUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
+    }
+    class Updater extends layout.Updater {
+        public assets: IUpdaterAssets;
+        constructor();
     }
 }
-declare module minerva.pipe {
-    interface IPipeInput {
+declare module minerva.controls.border.render {
+    class RenderPipeDef extends layout.render.RenderPipeDef {
+        constructor();
+        public createState(): IState;
     }
-    interface IPipeState {
+    interface IInput extends layout.render.IInput {
+        extents: Rect;
+        backgroundBrush: IBrush;
+        borderBrush: IBrush;
+        borderThickness: Thickness;
+        cornerRadius: CornerRadius;
     }
-    interface IPipeOutput {
-    }
-    interface ITriPipeDef<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
-        run(input: TInput, state: TState, output: TOutput, ...contexts: any[]): boolean;
-        createState(): TState;
-        createOutput(): TOutput;
-        prepare(input: TInput, state: TState, output: TOutput): any;
-        flush(input: TInput, state: TState, output: TOutput): any;
+    interface IState extends layout.render.IState {
+        shouldRender: boolean;
+        fillExtents: Rect;
+        innerCornerRadius: CornerRadius;
+        outerCornerRadius: CornerRadius;
     }
 }
-declare module minerva.pipe {
-    class ITriPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput> {
-        public def: ITriPipeDef<TInput, TState, TOutput>;
-        public state: TState;
-        public output: TOutput;
+declare module minerva.controls.border.render {
+    class ShimRenderPipeDef extends RenderPipeDef {
+        constructor();
+        public createState(): IShimState;
     }
-    function createTriPipe<TInput extends IPipeInput, TState extends IPipeState, TOutput extends IPipeOutput>(pipedef: ITriPipeDef<TInput, TState, TOutput>): ITriPipe<TInput, TState, TOutput>;
+    interface IShimState extends IState {
+        middleCornerRadius: CornerRadius;
+        strokeExtents: Rect;
+        pattern: CanvasPattern;
+        oldMetrics: any;
+    }
+}
+declare module minerva.controls.border.render.tapins {
+    function calcInnerOuter(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.controls.border.render.tapins {
+    function calcShouldRender(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.controls.border.render.tapins {
+    function doRender(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.controls.border.render.tapins.shim {
+    function calcBalanced(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.controls.border.render.tapins.shim {
+    function createPattern(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.controls.border.render.tapins.shim {
+    function doRender(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.controls.border.render.tapins.shim {
+    function invalidatePattern(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.engine {
+    interface IPass extends layout.draft.IDraftPipeData {
+        count: number;
+        maxCount: number;
+    }
+    class Surface implements layout.ISurface {
+        private $$layout;
+        private $$canvas;
+        private $$ctx;
+        private $$layers;
+        private $$downDirty;
+        private $$upDirty;
+        private $$dirtyRegion;
+        public width : number;
+        public height : number;
+        public updateBounds(): void;
+        public invalidate(region?: Rect): void;
+        public render(): void;
+        public addUpDirty(updater: layout.Updater): void;
+        public addDownDirty(updater: layout.Updater): void;
+        public updateLayout(): boolean;
+    }
+}
+declare module minerva.engine {
+    function draft(layers: layout.Updater[], layoutPipe: layout.draft.DraftPipeDef, pass: IPass): boolean;
+}
+declare module minerva.engine {
+    function process(down: layout.Updater[], up: layout.Updater[]): boolean;
 }

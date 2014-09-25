@@ -21,6 +21,37 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var CornerRadius = (function () {
+        function CornerRadius(topLeft, topRight, bottomRight, bottomLeft) {
+            this.topLeft = topLeft == null ? 0 : topLeft;
+            this.topRight = topRight == null ? 0 : topRight;
+            this.bottomRight = bottomRight == null ? 0 : bottomRight;
+            this.bottomLeft = bottomLeft == null ? 0 : bottomLeft;
+        }
+        CornerRadius.isEmpty = function (cr) {
+            return cr.topLeft === 0 && cr.topRight === 0 && cr.bottomRight === 0 && cr.bottomLeft === 0;
+        };
+
+        CornerRadius.isEqual = function (cr1, cr2) {
+            return cr1.topLeft === cr2.topLeft && cr1.topRight === cr2.topRight && cr1.bottomRight === cr2.bottomRight && cr1.bottomLeft === cr2.bottomLeft;
+        };
+
+        CornerRadius.clear = function (dest) {
+            dest.topLeft = dest.topRight = dest.bottomRight = dest.bottomLeft = 0;
+        };
+
+        CornerRadius.copyTo = function (cr2, dest) {
+            dest.topLeft = cr2.topLeft;
+            dest.topRight = cr2.topRight;
+            dest.bottomRight = cr2.bottomRight;
+            dest.bottomLeft = cr2.bottomLeft;
+        };
+        return CornerRadius;
+    })();
+    minerva.CornerRadius = CornerRadius;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (DirtyFlags) {
         DirtyFlags[DirtyFlags["Transform"] = 1 << 0] = "Transform";
         DirtyFlags[DirtyFlags["LocalTransform"] = 1 << 1] = "LocalTransform";
@@ -59,6 +90,25 @@ var minerva;
         UIFlags[UIFlags["Hints"] = UIFlags.MeasureHint | UIFlags.ArrangeHint | UIFlags.SizeHint] = "Hints";
     })(minerva.UIFlags || (minerva.UIFlags = {}));
     var UIFlags = minerva.UIFlags;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    
+
+    (function (PenLineJoin) {
+        PenLineJoin[PenLineJoin["Miter"] = 0] = "Miter";
+        PenLineJoin[PenLineJoin["Bevel"] = 1] = "Bevel";
+        PenLineJoin[PenLineJoin["Round"] = 2] = "Round";
+    })(minerva.PenLineJoin || (minerva.PenLineJoin = {}));
+    var PenLineJoin = minerva.PenLineJoin;
+
+    (function (PenLineCap) {
+        PenLineCap[PenLineCap["Flat"] = 0] = "Flat";
+        PenLineCap[PenLineCap["Square"] = 1] = "Square";
+        PenLineCap[PenLineCap["Round"] = 2] = "Round";
+        PenLineCap[PenLineCap["Triangle"] = 3] = "Triangle";
+    })(minerva.PenLineCap || (minerva.PenLineCap = {}));
+    var PenLineCap = minerva.PenLineCap;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -967,6 +1017,17 @@ var minerva;
             dest.width = rw;
             dest.height = rh;
         };
+
+        Rect.shrink = function (dest, left, top, right, bottom) {
+            dest.x += left;
+            dest.y += top;
+            dest.width -= left + right;
+            dest.height -= top + bottom;
+            if (dest.width < 0)
+                dest.width = 0;
+            if (dest.height < 0)
+                dest.height = 0;
+        };
         return Rect;
     })();
     minerva.Rect = Rect;
@@ -986,6 +1047,11 @@ var minerva;
         Size.isEqual = function (size1, size2) {
             return size1.width === size2.width && size1.height === size2.height;
         };
+
+        Size.min = function (dest, size2) {
+            dest.width = Math.min(dest.width, size2.width);
+            dest.height = Math.min(dest.height, size2.height);
+        };
         return Size;
     })();
     minerva.Size = Size;
@@ -999,6 +1065,28 @@ var minerva;
             this.right = right == null ? 0 : right;
             this.bottom = bottom == null ? 0 : bottom;
         }
+        Thickness.add = function (dest, t2) {
+            dest.left += t2.left;
+            dest.top += t2.top;
+            dest.right += t2.right;
+            dest.bottom += t2.bottom;
+        };
+
+        Thickness.copyTo = function (thickness, dest) {
+            dest.left = thickness.left;
+            dest.top = thickness.top;
+            dest.right = thickness.right;
+            dest.bottom = thickness.bottom;
+        };
+
+        Thickness.isEmpty = function (thickness) {
+            return thickness.left === 0 && thickness.top === 0 && thickness.right === 0 && thickness.bottom === 0;
+        };
+
+        Thickness.isBalanced = function (thickness) {
+            return thickness.left === thickness.top && thickness.left === thickness.right && thickness.left === thickness.bottom;
+        };
+
         Thickness.shrinkSize = function (thickness, dest) {
             var w = dest.width;
             var h = dest.height;
@@ -1020,6 +1108,13 @@ var minerva;
                 dest.width = 0;
             if (dest.height < 0)
                 dest.height = 0;
+        };
+
+        Thickness.shrinkCornerRadius = function (thickness, dest) {
+            dest.topLeft = Math.max(dest.topLeft - Math.max(thickness.left, thickness.top) * 0.5, 0);
+            dest.topRight = Math.max(dest.topRight - Math.max(thickness.right, thickness.top) * 0.5, 0);
+            dest.bottomRight = Math.max(dest.bottomRight - Math.max(thickness.right, thickness.bottom) * 0.5, 0);
+            dest.bottomLeft = Math.max(dest.bottomLeft - Math.max(thickness.left, thickness.bottom) * 0.5, 0);
         };
 
         Thickness.growSize = function (thickness, dest) {
@@ -1044,6 +1139,13 @@ var minerva;
             if (dest.height < 0)
                 dest.height = 0;
         };
+
+        Thickness.growCornerRadius = function (thickness, dest) {
+            dest.topLeft = dest.topLeft ? Math.max(dest.topLeft + Math.max(thickness.left, thickness.top) * 0.5, 0) : 0;
+            dest.topRight = dest.topRight ? Math.max(dest.topRight + Math.max(thickness.right, thickness.top) * 0.5, 0) : 0;
+            dest.bottomRight = dest.bottomRight ? Math.max(dest.bottomRight + Math.max(thickness.right, thickness.bottom) * 0.5, 0) : 0;
+            dest.bottomLeft = dest.bottomLeft ? Math.max(dest.bottomLeft + Math.max(thickness.left, thickness.bottom) * 0.5, 0) : 0;
+        };
         return Thickness;
     })();
     minerva.Thickness = Thickness;
@@ -1055,6 +1157,37 @@ var minerva;
         Visibility[Visibility["Collapsed"] = 1] = "Collapsed";
     })(minerva.Visibility || (minerva.Visibility = {}));
     var Visibility = minerva.Visibility;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    function singleton(type) {
+        var x = type;
+        if (!x.$$instance)
+            x.$$instance = new x();
+        return x.$$instance;
+    }
+    minerva.singleton = singleton;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (pipe) {
+        var ITriPipe = (function () {
+            function ITriPipe() {
+            }
+            return ITriPipe;
+        })();
+        pipe.ITriPipe = ITriPipe;
+
+        function createTriPipe(pipedef) {
+            return {
+                def: pipedef,
+                state: pipedef.createState(),
+                output: pipedef.createOutput()
+            };
+        }
+        pipe.createTriPipe = createTriPipe;
+    })(minerva.pipe || (minerva.pipe = {}));
+    var pipe = minerva.pipe;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -1070,7 +1203,7 @@ var minerva;
                 return this;
             };
 
-            PipeDef.prototype.addTapinBefore = function (name, tapin, before) {
+            PipeDef.prototype.addTapinBefore = function (before, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !before ? -1 : names.indexOf(before);
@@ -1084,7 +1217,7 @@ var minerva;
                 return this;
             };
 
-            PipeDef.prototype.addTapinAfter = function (name, tapin, after) {
+            PipeDef.prototype.addTapinAfter = function (after, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !after ? -1 : names.indexOf(after);
@@ -1173,7 +1306,7 @@ var minerva;
                 return this;
             };
 
-            TriPipeDef.prototype.addTapinBefore = function (name, tapin, before) {
+            TriPipeDef.prototype.addTapinBefore = function (before, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !before ? -1 : names.indexOf(before);
@@ -1187,7 +1320,7 @@ var minerva;
                 return this;
             };
 
-            TriPipeDef.prototype.addTapinAfter = function (name, tapin, after) {
+            TriPipeDef.prototype.addTapinAfter = function (after, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
                 var index = !after ? -1 : names.indexOf(after);
@@ -1271,165 +1404,6 @@ var minerva;
         pipe.TriPipeDef = TriPipeDef;
     })(minerva.pipe || (minerva.pipe = {}));
     var pipe = minerva.pipe;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (engine) {
-        var Surface = (function () {
-            function Surface() {
-                this.$$layout = new minerva.layout.draft.DraftPipeDef();
-                this.$$canvas = null;
-                this.$$ctx = null;
-                this.$$layers = [];
-                this.$$downDirty = [];
-                this.$$upDirty = [];
-                this.$$dirtyRegion = null;
-            }
-            Object.defineProperty(Surface.prototype, "width", {
-                get: function () {
-                    return this.$$canvas.offsetWidth;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-            Object.defineProperty(Surface.prototype, "height", {
-                get: function () {
-                    return this.$$canvas.offsetHeight;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-            Surface.prototype.updateBounds = function () {
-            };
-
-            Surface.prototype.invalidate = function (region) {
-                region = region || new minerva.Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
-                if (!this.$$dirtyRegion)
-                    this.$$dirtyRegion = new minerva.Rect(region.x, region.y, region.width, region.height);
-                else
-                    minerva.Rect.union(this.$$dirtyRegion, region);
-            };
-
-            Surface.prototype.render = function () {
-                var region = this.$$dirtyRegion;
-                if (!region || minerva.Rect.isEmpty(region))
-                    return;
-                this.$$dirtyRegion = null;
-                minerva.Rect.roundOut(region);
-
-                var ctx = this.$$ctx;
-                ctx.raw.clearRect(region.x, region.y, region.width, region.height);
-                ctx.save();
-                ctx.clipRect(region);
-                for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
-                    layers[i].render(ctx, region);
-                }
-                ctx.restore();
-            };
-
-            Surface.prototype.addUpDirty = function (updater) {
-                this.$$upDirty.push(updater);
-            };
-
-            Surface.prototype.addDownDirty = function (updater) {
-                this.$$downDirty.push(updater);
-            };
-
-            Surface.prototype.updateLayout = function () {
-                var pass = {
-                    count: 0,
-                    maxCount: 250,
-                    updater: null,
-                    assets: null,
-                    flag: 0 /* None */,
-                    measureList: [],
-                    arrangeList: [],
-                    sizingList: [],
-                    surfaceSize: new minerva.Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight),
-                    sizingUpdates: []
-                };
-                var updated = false;
-                var layersUpdated = true;
-                while (pass.count < pass.maxCount && layersUpdated) {
-                    layersUpdated = engine.draft(this.$$layers, this.$$layout, pass);
-                    updated = engine.process(this.$$downDirty, this.$$upDirty) || layersUpdated || updated;
-                }
-
-                if (pass.count >= pass.maxCount) {
-                    console.error("[MINERVA] Aborting infinite update loop");
-                }
-
-                return updated;
-            };
-            return Surface;
-        })();
-        engine.Surface = Surface;
-    })(minerva.engine || (minerva.engine = {}));
-    var engine = minerva.engine;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (engine) {
-        function draft(layers, layoutPipe, pass) {
-            var updated = false;
-            for (var i = 0, len = layers.length; i < len; i++) {
-                pass.updater = layers[i];
-                if ((pass.updater.assets.uiFlags & minerva.UIFlags.Hints) === 0)
-                    continue;
-                pass.assets = pass.updater.assets;
-                while (pass.count < pass.maxCount) {
-                    if (layoutPipe.run(pass))
-                        updated = true;
-                    pass.count++;
-                }
-            }
-            return updated;
-        }
-        engine.draft = draft;
-    })(minerva.engine || (minerva.engine = {}));
-    var engine = minerva.engine;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (engine) {
-        function process(down, up) {
-            var updated = down.length > 0 || up.length > 0;
-            processDown(down);
-            processUp(up);
-            return updated;
-        }
-        engine.process = process;
-
-        function processDown(list) {
-            for (var updater = list[0]; updater != null;) {
-                if (updater.processDown()) {
-                    list.shift();
-                } else {
-                    list.push(list.shift());
-                }
-            }
-            if (list.length > 0) {
-                console.warn("[MINERVA] Finished DownDirty pass, not empty.");
-            }
-        }
-
-        function processUp(list) {
-            for (var updater = list[0]; updater != null;) {
-                var childIndex = updater.findChildInList(list);
-                if (childIndex > -1) {
-                    list.splice(childIndex + 1, 0, list.shift());
-                } else if (updater.processUp()) {
-                    list.shift();
-                }
-            }
-            if (list.length > 0) {
-                console.warn("[MINERVA] Finished UpDirty pass, not empty.");
-            }
-        }
-    })(minerva.engine || (minerva.engine = {}));
-    var engine = minerva.engine;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -1520,6 +1494,7 @@ var minerva;
                     assets.isContainer = isContainer;
                 else
                     assets.isContainer = isLayoutContainer;
+                return this;
             };
 
             Updater.prototype.onSizeChanged = function (oldSize, newSize) {
@@ -1716,6 +1691,45 @@ var minerva;
             return Updater;
         })();
         layout.Updater = Updater;
+    })(minerva.layout || (minerva.layout = {}));
+    var layout = minerva.layout;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (layout) {
+        (function (helpers) {
+            function coerceSize(size, assets) {
+                var cw = Math.max(assets.minWidth, size.width);
+                var ch = Math.max(assets.minHeight, size.height);
+
+                if (!isNaN(assets.width))
+                    cw = assets.width;
+
+                if (!isNaN(assets.height))
+                    ch = assets.height;
+
+                cw = Math.max(Math.min(cw, assets.maxWidth), assets.minWidth);
+                ch = Math.max(Math.min(ch, assets.maxHeight), assets.minHeight);
+
+                if (assets.useLayoutRounding) {
+                    cw = Math.round(cw);
+                    ch = Math.round(ch);
+                }
+
+                size.width = cw;
+                size.height = ch;
+            }
+            helpers.coerceSize = coerceSize;
+
+            function copyGrowTransform4(dest, src, thickness, projection) {
+                minerva.Rect.copyTo(src, dest);
+                minerva.Thickness.growRect(thickness, dest);
+                if (projection)
+                    minerva.Rect.transform4(dest, projection);
+            }
+            helpers.copyGrowTransform4 = copyGrowTransform4;
+        })(layout.helpers || (layout.helpers = {}));
+        var helpers = layout.helpers;
     })(minerva.layout || (minerva.layout = {}));
     var layout = minerva.layout;
 })(minerva || (minerva = {}));
@@ -2512,45 +2526,6 @@ var minerva;
             var tapins = draft.tapins;
         })(layout.draft || (layout.draft = {}));
         var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (layout) {
-        (function (helpers) {
-            function coerceSize(size, assets) {
-                var cw = Math.max(assets.minWidth, size.width);
-                var ch = Math.max(assets.minHeight, size.height);
-
-                if (!isNaN(assets.width))
-                    cw = assets.width;
-
-                if (!isNaN(assets.height))
-                    ch = assets.height;
-
-                cw = Math.max(Math.min(cw, assets.maxWidth), assets.minWidth);
-                ch = Math.max(Math.min(ch, assets.maxHeight), assets.minHeight);
-
-                if (assets.useLayoutRounding) {
-                    cw = Math.round(cw);
-                    ch = Math.round(ch);
-                }
-
-                size.width = cw;
-                size.height = ch;
-            }
-            helpers.coerceSize = coerceSize;
-
-            function copyGrowTransform4(dest, src, thickness, projection) {
-                minerva.Rect.copyTo(src, dest);
-                minerva.Thickness.growRect(thickness, dest);
-                if (projection)
-                    minerva.Rect.transform4(dest, projection);
-            }
-            helpers.copyGrowTransform4 = copyGrowTransform4;
-        })(layout.helpers || (layout.helpers = {}));
-        var helpers = layout.helpers;
     })(minerva.layout || (minerva.layout = {}));
     var layout = minerva.layout;
 })(minerva || (minerva = {}));
@@ -3407,13 +3382,38 @@ var minerva;
 (function (minerva) {
     (function (layout) {
         (function (render) {
+            var ARC_TO_BEZIER = 0.55228475;
+            var caps = [
+                "butt",
+                "square",
+                "round",
+                "butt"
+            ];
+            var joins = [
+                "miter",
+                "bevel",
+                "round"
+            ];
             var RenderContext = (function () {
                 function RenderContext(ctx) {
                     this.$$transforms = [];
                     this.currentTransform = mat3.identity();
                     Object.defineProperty(this, 'raw', { value: ctx, writable: false });
                     Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
+                    Object.defineProperty(this, 'hasFillRule', { value: RenderContext.hasFillRule, writable: false });
                 }
+                Object.defineProperty(RenderContext, "hasFillRule", {
+                    get: function () {
+                        if (navigator.appName === "Microsoft Internet Explorer") {
+                            var version = getIEVersion();
+                            return version < 0 || version > 10;
+                        }
+                        return true;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+
                 RenderContext.prototype.save = function () {
                     this.$$transforms.push(mat3.clone(this.currentTransform));
                     this.raw.save();
@@ -3484,9 +3484,81 @@ var minerva;
                     raw.rect(rect.x, rect.y, rect.width, rect.height);
                     raw.clip();
                 };
+
+                RenderContext.prototype.fillEx = function (brush, region, fillRule) {
+                    var raw = this.raw;
+                    brush.setupBrush(raw, region);
+                    raw.fillStyle = brush.toHtml5Object();
+                    if (!fillRule)
+                        return raw.fill();
+                    raw.fillRule = raw.msFillRule = fillRule;
+                    raw.fill(fillRule);
+                };
+
+                RenderContext.prototype.drawRectEx = function (extents, cr) {
+                    var raw = this.raw;
+                    if (!cr || minerva.CornerRadius.isEmpty(cr)) {
+                        raw.rect(extents.x, extents.y, extents.width, extents.height);
+                        return;
+                    }
+
+                    var top_adj = Math.max(cr.topLeft + cr.topRight - extents.width, 0) / 2;
+                    var bottom_adj = Math.max(cr.bottomLeft + cr.bottomRight - extents.width, 0) / 2;
+                    var left_adj = Math.max(cr.topLeft + cr.bottomLeft - extents.height, 0) / 2;
+                    var right_adj = Math.max(cr.topRight + cr.bottomRight - extents.height, 0) / 2;
+
+                    var tlt = cr.topLeft - top_adj;
+                    raw.moveTo(extents.x + tlt, extents.y);
+
+                    var trt = cr.topRight - top_adj;
+                    var trr = cr.topRight - right_adj;
+                    raw.lineTo(extents.x + extents.width - trt, extents.y);
+                    raw.bezierCurveTo(extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y, extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER, extents.x + extents.width, extents.y + trr);
+
+                    var brr = cr.bottomRight - right_adj;
+                    var brb = cr.bottomRight - bottom_adj;
+                    raw.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
+                    raw.bezierCurveTo(extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER, extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height, extents.x + extents.width - brb, extents.y + extents.height);
+
+                    var blb = cr.bottomLeft - bottom_adj;
+                    var bll = cr.bottomLeft - left_adj;
+                    raw.lineTo(extents.x + blb, extents.y + extents.height);
+                    raw.bezierCurveTo(extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height, extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER, extents.x, extents.y + extents.height - bll);
+
+                    var tll = cr.topLeft - left_adj;
+                    raw.lineTo(extents.x, extents.y + tll);
+                    raw.bezierCurveTo(extents.x, extents.y + tll - tll * ARC_TO_BEZIER, extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y, extents.x + tlt, extents.y);
+                };
+
+                RenderContext.prototype.setupStroke = function (pars) {
+                    if (!pars)
+                        return false;
+                    var raw = this.raw;
+                    raw.lineWidth = pars.thickness;
+                    raw.lineCap = caps[pars.startCap || pars.endCap || 0] || caps[0];
+                    raw.lineJoin = joins[pars.join || 0] || joins[0];
+                    raw.miterLimit = pars.miterLimit;
+                    return true;
+                };
+
+                RenderContext.prototype.strokeEx = function (brush, pars, region) {
+                    if (!region || !this.setupStroke(pars))
+                        return;
+                    var raw = this.raw;
+                    brush.setupBrush(raw, region);
+                    raw.strokeStyle = brush.toHtml5Object();
+                    raw.stroke();
+                };
                 return RenderContext;
             })();
             render.RenderContext = RenderContext;
+
+            function getIEVersion() {
+                var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+                if (re.exec(navigator.userAgent) != null)
+                    return parseFloat(RegExp.$1);
+                return -1;
+            }
         })(layout.render || (layout.render = {}));
         var render = layout.render;
     })(minerva.layout || (minerva.layout = {}));
@@ -3762,23 +3834,623 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (pipe) {
-        var ITriPipe = (function () {
-            function ITriPipe() {
-            }
-            return ITriPipe;
-        })();
-        pipe.ITriPipe = ITriPipe;
+    (function (controls) {
+        (function (border) {
+            (function (arrange) {
+                var ArrangePipeDef = (function (_super) {
+                    __extends(ArrangePipeDef, _super);
+                    function ArrangePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'preOverride', preOverride).replaceTapin('doOverride', doOverride);
+                    }
+                    ArrangePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.totalBorder = new minerva.Thickness();
+                        state.childRect = new minerva.Rect();
+                        return state;
+                    };
+                    return ArrangePipeDef;
+                })(minerva.layout.arrange.ArrangePipeDef);
+                arrange.ArrangePipeDef = ArrangePipeDef;
 
-        function createTriPipe(pipedef) {
-            return {
-                def: pipedef,
-                state: pipedef.createState(),
-                output: pipedef.createOutput()
+                function preOverride(input, state, output, finalRect) {
+                    if (!input.childUpdater)
+                        return true;
+                    var tb = state.totalBorder;
+                    minerva.Thickness.copyTo(input.padding, tb);
+                    minerva.Thickness.add(tb, input.borderThickness);
+
+                    var cr = state.childRect;
+                    cr.x = cr.y = 0;
+                    minerva.Size.copyTo(state.finalSize, cr);
+                    minerva.Thickness.shrinkSize(tb, cr);
+                    return true;
+                }
+                arrange.preOverride = preOverride;
+
+                function doOverride(input, state, output, finalRect) {
+                    if (input.childUpdater)
+                        input.childUpdater.arrange(state.childRect);
+                    return true;
+                }
+                arrange.doOverride = doOverride;
+            })(border.arrange || (border.arrange = {}));
+            var arrange = border.arrange;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (measure) {
+                var MeasurePipeDef = (function (_super) {
+                    __extends(MeasurePipeDef, _super);
+                    function MeasurePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'preOverride', preOverride).replaceTapin('doOverride', doOverride).addTapinAfter('doOverride', 'postOverride', postOverride);
+                    }
+                    MeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.totalBorder = new minerva.Thickness();
+                        return state;
+                    };
+                    return MeasurePipeDef;
+                })(minerva.layout.measure.MeasurePipeDef);
+                measure.MeasurePipeDef = MeasurePipeDef;
+
+                function preOverride(input, state, output, availableSize) {
+                    var tb = state.totalBorder;
+                    minerva.Thickness.copyTo(input.padding, tb);
+                    minerva.Thickness.add(tb, input.borderThickness);
+                    minerva.Thickness.shrinkSize(tb, state.availableSize);
+                    return true;
+                }
+                measure.preOverride = preOverride;
+
+                function doOverride(input, state, output, availableSize) {
+                    var childu = input.childUpdater;
+                    var ds = output.desiredSize;
+                    if (childu) {
+                        childu.measure(state.availableSize);
+                        minerva.Size.copyTo(childu.assets.desiredSize, ds);
+                    }
+                    return true;
+                }
+                measure.doOverride = doOverride;
+
+                function postOverride(input, state, output, availableSize) {
+                    minerva.Thickness.growSize(state.totalBorder, output.desiredSize);
+                    minerva.Size.min(output.desiredSize, state.availableSize);
+                    return true;
+                }
+                measure.postOverride = postOverride;
+            })(border.measure || (border.measure = {}));
+            var measure = border.measure;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            var Updater = (function (_super) {
+                __extends(Updater, _super);
+                function Updater() {
+                    _super.call(this);
+                    this.setContainerMode(true).setMeasurePipe(minerva.singleton(border.measure.MeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.ArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));
+
+                    var assets = this.assets;
+                    assets.padding = new minerva.Thickness();
+                    assets.borderThickness = new minerva.Thickness();
+                    assets.childUpdater = null;
+                }
+                return Updater;
+            })(minerva.layout.Updater);
+            border.Updater = Updater;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                var RenderPipeDef = (function (_super) {
+                    __extends(RenderPipeDef, _super);
+                    function RenderPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doRender', 'calcShouldRender', render.tapins.calcShouldRender).addTapinBefore('doRender', 'calcInnerOuter', render.tapins.calcInnerOuter).replaceTapin('doRender', render.tapins.doRender);
+                    }
+                    RenderPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.fillExtents = new minerva.Rect();
+                        state.innerCornerRadius = new minerva.CornerRadius();
+                        state.outerCornerRadius = new minerva.CornerRadius();
+                        return state;
+                    };
+                    return RenderPipeDef;
+                })(minerva.layout.render.RenderPipeDef);
+                render.RenderPipeDef = RenderPipeDef;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                var ShimRenderPipeDef = (function (_super) {
+                    __extends(ShimRenderPipeDef, _super);
+                    function ShimRenderPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doRender', 'calcBalanced', render.tapins.shim.calcBalanced).addTapinBefore('doRender', 'invalidatePattern', render.tapins.shim.invalidatePattern).addTapinBefore('doRender', 'createPattern', render.tapins.shim.createPattern).replaceTapin('doRender', render.tapins.shim.doRender);
+                    }
+                    ShimRenderPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.middleCornerRadius = new minerva.CornerRadius();
+                        state.strokeExtents = new minerva.Rect();
+                        state.pattern = null;
+                        state.oldMetrics = null;
+                        return state;
+                    };
+                    return ShimRenderPipeDef;
+                })(render.RenderPipeDef);
+                render.ShimRenderPipeDef = ShimRenderPipeDef;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                (function (tapins) {
+                    function calcInnerOuter(input, state, output, ctx, region) {
+                        if (!state.shouldRender)
+                            return true;
+
+                        minerva.Rect.copyTo(input.extents, state.fillExtents);
+
+                        var bt = input.borderThickness;
+                        minerva.Thickness.shrinkRect(bt, state.fillExtents);
+
+                        var ia = state.innerCornerRadius;
+                        minerva.CornerRadius.copyTo(input.cornerRadius, ia);
+                        minerva.Thickness.shrinkCornerRadius(bt, ia);
+
+                        var oa = state.outerCornerRadius;
+                        minerva.CornerRadius.copyTo(input.cornerRadius, oa);
+                        minerva.Thickness.growCornerRadius(bt, oa);
+
+                        return true;
+                    }
+                    tapins.calcInnerOuter = calcInnerOuter;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                (function (tapins) {
+                    function calcShouldRender(input, state, output, ctx, region) {
+                        state.shouldRender = false;
+                        if (!input.backgroundBrush && !input.borderBrush)
+                            return true;
+                        if (minerva.Rect.isEmpty(input.extents))
+                            return true;
+                        var fillOnly = !input.borderBrush || !input.borderThickness || minerva.Thickness.isEmpty(input.borderThickness);
+                        if (fillOnly && !input.backgroundBrush)
+                            return true;
+                        state.shouldRender = true;
+                        return true;
+                    }
+                    tapins.calcShouldRender = calcShouldRender;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                (function (tapins) {
+                    function doRender(input, state, output, ctx, region) {
+                        if (!state.shouldRender)
+                            return true;
+                        ctx.save();
+
+                        var borderBrush = input.borderBrush;
+                        var extents = input.extents;
+                        var fillExtents = state.fillExtents;
+                        var raw = ctx.raw;
+                        if (borderBrush && !minerva.Rect.isEmpty(extents)) {
+                            raw.beginPath();
+                            ctx.drawRectEx(extents, state.outerCornerRadius);
+                            ctx.drawRectEx(fillExtents, state.innerCornerRadius);
+                            ctx.fillEx(borderBrush, extents, "evenodd");
+                        }
+                        var backgroundBrush = input.backgroundBrush;
+                        if (backgroundBrush && !minerva.Rect.isEmpty(fillExtents)) {
+                            raw.beginPath();
+                            ctx.drawRectEx(fillExtents, state.innerCornerRadius);
+                            ctx.fillEx(backgroundBrush, fillExtents);
+                        }
+
+                        ctx.restore();
+                        return true;
+                    }
+                    tapins.doRender = doRender;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                (function (tapins) {
+                    (function (shim) {
+                        function calcBalanced(input, state, output, ctx, region) {
+                            if (!state.shouldRender || minerva.Thickness.isEmpty(input.borderThickness))
+                                return true;
+
+                            if (minerva.Thickness.isBalanced(input.borderThickness)) {
+                                var icr = state.innerCornerRadius;
+                                var ocr = state.outerCornerRadius;
+                                var mcr = state.middleCornerRadius;
+                                mcr.topLeft = (icr.topLeft + ocr.topLeft) / 2.0;
+                                mcr.topRight = (icr.topRight + ocr.topRight) / 2.0;
+                                mcr.bottomRight = (icr.bottomRight + ocr.bottomRight) / 2.0;
+                                mcr.bottomLeft = (icr.bottomLeft + ocr.bottomLeft) / 2.0;
+                                minerva.Rect.copyTo(input.extents, state.strokeExtents);
+                                var bt = input.borderThickness;
+                                minerva.Rect.shrink(state.strokeExtents, bt.left / 2.0, bt.top / 2.0, bt.right / 2.0, bt.bottom / 2.0);
+                            }
+
+                            return true;
+                        }
+                        shim.calcBalanced = calcBalanced;
+                    })(tapins.shim || (tapins.shim = {}));
+                    var shim = tapins.shim;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                (function (tapins) {
+                    (function (shim) {
+                        function createPattern(input, state, output, ctx, region) {
+                            if (!state.shouldRender || minerva.Thickness.isBalanced(input.borderThickness))
+                                return true;
+
+                            if (!state.pattern) {
+                                state.pattern = createBorderPattern(input.borderBrush, input.extents, state.fillExtents, state.outerCornerRadius, state.innerCornerRadius);
+                            }
+
+                            return true;
+                        }
+                        shim.createPattern = createPattern;
+
+                        var tempCtx;
+
+                        function createBorderPattern(borderBrush, extents, fillExtents, oa, ia) {
+                            tempCtx = tempCtx || new minerva.layout.render.RenderContext(document.createElement('canvas').getContext('2d'));
+                            var raw = tempCtx.raw;
+                            minerva.Size.copyTo(extents, raw.canvas);
+                            raw.beginPath();
+                            tempCtx.drawRectEx(extents, oa);
+                            tempCtx.fillEx(borderBrush, extents);
+                            raw.globalCompositeOperation = "xor";
+                            raw.beginPath();
+                            tempCtx.drawRectEx(fillExtents, ia);
+                            raw.fill();
+                            return raw.createPattern(raw.canvas, "no-repeat");
+                        }
+                    })(tapins.shim || (tapins.shim = {}));
+                    var shim = tapins.shim;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                (function (tapins) {
+                    (function (shim) {
+                        function doRender(input, state, output, ctx, region) {
+                            if (!state.shouldRender)
+                                return true;
+                            ctx.save();
+
+                            var raw = ctx.raw;
+                            if (minerva.Thickness.isBalanced(input.borderThickness)) {
+                                raw.beginPath();
+                                ctx.drawRectEx(state.strokeExtents, state.middleCornerRadius);
+                                ctx.strokeEx(input.borderBrush, { thickness: input.borderThickness.left, endCap: 0, startCap: 0, miterLimit: 0, join: 0 }, state.strokeExtents);
+                            } else {
+                                raw.beginPath();
+                                raw.fillStyle = state.pattern;
+                                ctx.drawRectEx(input.extents, state.outerCornerRadius);
+                                raw.fill();
+                            }
+
+                            ctx.restore();
+                            return true;
+                        }
+                        shim.doRender = doRender;
+                    })(tapins.shim || (tapins.shim = {}));
+                    var shim = tapins.shim;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (render) {
+                (function (tapins) {
+                    (function (shim) {
+                        function invalidatePattern(input, state, output, ctx, region) {
+                            if (!state.shouldRender)
+                                return true;
+
+                            if (minerva.Thickness.isEmpty(input.borderThickness)) {
+                                state.pattern = null;
+                                return true;
+                            }
+
+                            if (!state.oldMetrics) {
+                                state.oldMetrics = {};
+                                setOldMetrics(input, state, state.oldMetrics);
+                                state.pattern = null;
+                                return true;
+                            }
+
+                            if (didMetricsChange(input, state, state.oldMetrics))
+                                state.pattern = null;
+
+                            setOldMetrics(input, state, state.oldMetrics);
+                            return true;
+                        }
+                        shim.invalidatePattern = invalidatePattern;
+
+                        function setOldMetrics(input, state, metrics) {
+                            metrics.borderBrush = input.borderBrush;
+                            metrics.borderThickness = input.borderThickness;
+                            metrics.extents = input.extents;
+                            metrics.fillExtents = state.fillExtents;
+                            metrics.outerCornerRadius = state.outerCornerRadius;
+                            metrics.innerCornerRadius = state.innerCornerRadius;
+                        }
+
+                        function didMetricsChange(input, state, metrics) {
+                            return metrics.borderBrush !== input.borderBrush || !minerva.Rect.isEqual(metrics.extents, input.extents) || !minerva.Rect.isEqual(metrics.fillExtents, state.fillExtents) || !minerva.CornerRadius.isEqual(metrics.outerCornerRadius, state.outerCornerRadius) || !minerva.CornerRadius.isEqual(metrics.innerCornerRadius, state.innerCornerRadius);
+                        }
+                    })(tapins.shim || (tapins.shim = {}));
+                    var shim = tapins.shim;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(border.render || (border.render = {}));
+            var render = border.render;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (engine) {
+        var Surface = (function () {
+            function Surface() {
+                this.$$layout = new minerva.layout.draft.DraftPipeDef();
+                this.$$canvas = null;
+                this.$$ctx = null;
+                this.$$layers = [];
+                this.$$downDirty = [];
+                this.$$upDirty = [];
+                this.$$dirtyRegion = null;
+            }
+            Object.defineProperty(Surface.prototype, "width", {
+                get: function () {
+                    return this.$$canvas.offsetWidth;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            Object.defineProperty(Surface.prototype, "height", {
+                get: function () {
+                    return this.$$canvas.offsetHeight;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            Surface.prototype.updateBounds = function () {
             };
+
+            Surface.prototype.invalidate = function (region) {
+                region = region || new minerva.Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
+                if (!this.$$dirtyRegion)
+                    this.$$dirtyRegion = new minerva.Rect(region.x, region.y, region.width, region.height);
+                else
+                    minerva.Rect.union(this.$$dirtyRegion, region);
+            };
+
+            Surface.prototype.render = function () {
+                var region = this.$$dirtyRegion;
+                if (!region || minerva.Rect.isEmpty(region))
+                    return;
+                this.$$dirtyRegion = null;
+                minerva.Rect.roundOut(region);
+
+                var ctx = this.$$ctx;
+                ctx.raw.clearRect(region.x, region.y, region.width, region.height);
+                ctx.save();
+                ctx.clipRect(region);
+                for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
+                    layers[i].render(ctx, region);
+                }
+                ctx.restore();
+            };
+
+            Surface.prototype.addUpDirty = function (updater) {
+                this.$$upDirty.push(updater);
+            };
+
+            Surface.prototype.addDownDirty = function (updater) {
+                this.$$downDirty.push(updater);
+            };
+
+            Surface.prototype.updateLayout = function () {
+                var pass = {
+                    count: 0,
+                    maxCount: 250,
+                    updater: null,
+                    assets: null,
+                    flag: 0 /* None */,
+                    measureList: [],
+                    arrangeList: [],
+                    sizingList: [],
+                    surfaceSize: new minerva.Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight),
+                    sizingUpdates: []
+                };
+                var updated = false;
+                var layersUpdated = true;
+                while (pass.count < pass.maxCount && layersUpdated) {
+                    layersUpdated = engine.draft(this.$$layers, this.$$layout, pass);
+                    updated = engine.process(this.$$downDirty, this.$$upDirty) || layersUpdated || updated;
+                }
+
+                if (pass.count >= pass.maxCount) {
+                    console.error("[MINERVA] Aborting infinite update loop");
+                }
+
+                return updated;
+            };
+            return Surface;
+        })();
+        engine.Surface = Surface;
+    })(minerva.engine || (minerva.engine = {}));
+    var engine = minerva.engine;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (engine) {
+        function draft(layers, layoutPipe, pass) {
+            var updated = false;
+            for (var i = 0, len = layers.length; i < len; i++) {
+                pass.updater = layers[i];
+                if ((pass.updater.assets.uiFlags & minerva.UIFlags.Hints) === 0)
+                    continue;
+                pass.assets = pass.updater.assets;
+                while (pass.count < pass.maxCount) {
+                    if (layoutPipe.run(pass))
+                        updated = true;
+                    pass.count++;
+                }
+            }
+            return updated;
         }
-        pipe.createTriPipe = createTriPipe;
-    })(minerva.pipe || (minerva.pipe = {}));
-    var pipe = minerva.pipe;
+        engine.draft = draft;
+    })(minerva.engine || (minerva.engine = {}));
+    var engine = minerva.engine;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (engine) {
+        function process(down, up) {
+            var updated = down.length > 0 || up.length > 0;
+            processDown(down);
+            processUp(up);
+            return updated;
+        }
+        engine.process = process;
+
+        function processDown(list) {
+            for (var updater = list[0]; updater != null;) {
+                if (updater.processDown()) {
+                    list.shift();
+                } else {
+                    list.push(list.shift());
+                }
+            }
+            if (list.length > 0) {
+                console.warn("[MINERVA] Finished DownDirty pass, not empty.");
+            }
+        }
+
+        function processUp(list) {
+            for (var updater = list[0]; updater != null;) {
+                var childIndex = updater.findChildInList(list);
+                if (childIndex > -1) {
+                    list.splice(childIndex + 1, 0, list.shift());
+                } else if (updater.processUp()) {
+                    list.shift();
+                }
+            }
+            if (list.length > 0) {
+                console.warn("[MINERVA] Finished UpDirty pass, not empty.");
+            }
+        }
+    })(minerva.engine || (minerva.engine = {}));
+    var engine = minerva.engine;
 })(minerva || (minerva = {}));
 //# sourceMappingURL=minerva.js.map
