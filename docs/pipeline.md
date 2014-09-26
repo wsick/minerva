@@ -2,8 +2,8 @@
 * Composed of tapins
 * A pipe has a set of methods to help configure the tapin workflow
     * `addTapin(name, tapin)`
-    * `addTapinBefore(name, tapin, before)`
-    * `addTapinAfter(name, tapin, after)`
+    * `addTapinBefore(before, name, tapin)`
+    * `addTapinAfter(after, name, tapin)`
     * `replaceTapin(name, tapin)`
     * `removeTapin(name)`
 * A tri-pipe also contains methods to configure state and output
