@@ -10,6 +10,8 @@ After building [Fayde](http://github.com/bsick7/fayde) presentation engine, we r
 
 We expect a 10x (worst case) to 100x (best case) performance improvement.  We also expect a stable and configurable presentation layer due to the philosophy of unit testing.
 
+A great side effect of a microservices pipeline architecture is the highly configurable nature.  Currently, presentation code is coupled to controls.  Instead, these pieces of functionality are injected by the defining entities.
+
 Documentation
 =======
 
