@@ -1,7 +1,7 @@
 Presentation Engine
 ========
 
-The presentation engine consists of the following Pipes broken into TriPipes.
+The presentation engine consists of the following Pipes broken into TriPipes.  See [pipeline](pipeline.md) for notes on pipes.
 
 * [Draft](draft/draft.md) `Pipe`
   * [Measure](draft/measure.md) `TriPipe`
