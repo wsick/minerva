@@ -7,7 +7,7 @@ The presentation engine consists of the following Pipes broken into TriPipes.
   * [Measure](draft/measure.md) `TriPipe`
   * [Arrange](draft/arrange.md) `TriPipe`
   * [Sizing](draft/sizing.md) `TriPipe`
-* [Process](process/process.md) (Pipe)
+* [Process](process/process.md) `Pipe`
   * [Process Down](process/processdown.md) `TriPipe`
   * [Process Up](process/processup.md) `TriPipe`
 * Render
