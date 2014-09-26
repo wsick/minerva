@@ -8,7 +8,7 @@ module minerva.layout.measure {
             var last = assets.previousConstraint;
             var old = new Size();
 
-            if (!surface && !last && !visualParent /*&& isLayoutContainer */)
+            if (!surface && !last && !visualParent && updater.assets.isLayoutContainer)
                 last = new Size(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
 
             var success = false;
