@@ -1006,7 +1006,7 @@ declare module minerva.engine {
     }
 }
 declare module minerva.engine {
-    function draft(layers: layout.Updater[], layoutPipe: layout.draft.DraftPipeDef, pass: IPass): boolean;
+    function draft(layers: layout.Updater[], draftPipe: layout.draft.DraftPipeDef, pass: IPass): boolean;
 }
 declare module minerva.engine {
     function process(down: layout.Updater[], up: layout.Updater[]): boolean;

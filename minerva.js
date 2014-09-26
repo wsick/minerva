@@ -2541,7 +2541,7 @@ var minerva;
                     var last = assets.previousConstraint;
                     var old = new minerva.Size();
 
-                    if (!surface && !last && !visualParent)
+                    if (!surface && !last && !visualParent && updater.assets.isLayoutContainer)
                         last = new minerva.Size(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
 
                     var success = false;
@@ -4394,7 +4394,7 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (engine) {
-        function draft(layers, layoutPipe, pass) {
+        function draft(layers, draftPipe, pass) {
             var updated = false;
             for (var i = 0, len = layers.length; i < len; i++) {
                 pass.updater = layers[i];
@@ -4402,7 +4402,7 @@ var minerva;
                     continue;
                 pass.assets = pass.updater.assets;
                 while (pass.count < pass.maxCount) {
-                    if (layoutPipe.run(pass))
+                    if (draftPipe.run(pass))
                         updated = true;
                     pass.count++;
                 }
