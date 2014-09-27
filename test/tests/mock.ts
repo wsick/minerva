@@ -1,21 +1,24 @@
 module minerva.tests.mock {
-    var root = new layout.Updater();
+    export function createTree (outItems?: layout.Updater[]) {
+        var root = new layout.Updater();
 
-    var child1 = new layout.Updater();
-    var gchild1 = new layout.Updater();
-    var gchild2 = new layout.Updater();
-    var gchild3 = new layout.Updater();
+        var child1 = new layout.Updater();
+        var gchild1 = new layout.Updater();
+        var gchild2 = new layout.Updater();
+        var gchild3 = new layout.Updater();
 
-    var child2 = new layout.Updater();
-    var gchild4 = new layout.Updater();
-    var ggchild1 = new layout.Updater();
+        var child2 = new layout.Updater();
+        var gchild4 = new layout.Updater();
+        var ggchild1 = new layout.Updater();
 
-    connect(root, [child1, child2]);
-    connect(child1, [gchild1, gchild2, gchild3]);
-    connect(child2, [gchild4]);
-    connect(gchild4, [ggchild1]);
+        connect(root, [child1, child2]);
+        connect(child1, [gchild1, gchild2, gchild3]);
+        connect(child2, [gchild4]);
+        connect(gchild4, [ggchild1]);
 
-    export function getTreeRoot () {
+        if (outItems)
+            outItems.push(root, child1, gchild1, gchild2, gchild3, child2, gchild4, ggchild1);
+
         return root;
     }
 
@@ -39,7 +42,8 @@ module minerva.tests.mock {
     QUnit.module("mock");
 
     QUnit.test("walkDeep", (assert) => {
-        var expected = [root, child1, gchild1, gchild2, gchild3, child2, gchild4, ggchild1];
+        var expected: layout.Updater[] = [];
+        var root = createTree(expected);
         var i = 0;
         for (var walker = root.walkDeep(); walker.step(); i++) {
             assert.strictEqual(walker.current, expected[i]);
@@ -48,7 +52,9 @@ module minerva.tests.mock {
     });
 
     QUnit.test("walkDeep reverse", (assert) => {
-        var expected = [root, child2, gchild4, ggchild1, child1, gchild3, gchild2, gchild1];
+        var expected: layout.Updater[] = [];
+        var root = createTree(expected);
+        expected = [expected[0], expected[5], expected[6], expected[7], expected[1], expected[4], expected[3], expected[2]];
         var i = 0;
         for (var walker = root.walkDeep(WalkDirection.Reverse); walker.step(); i++) {
             assert.strictEqual(walker.current, expected[i]);

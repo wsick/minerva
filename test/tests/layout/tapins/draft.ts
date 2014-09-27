@@ -73,6 +73,8 @@ module minerva.layout.draft.tapins.tests {
     });
 
     QUnit.test("prepareMeasure", (assert) => {
+        var root = minerva.tests.mock.createTree();
+
         assert.ok(true);
     });
 
