@@ -5,10 +5,10 @@ module minerva.layout.draft.tapins.tests {
     QUnit.module("Draft Pipe Tapins");
 
     var mock = {
-        data: function (): IDraftPipeData {
+        data: function (updater?: Updater): IDraftPipeData {
             return {
-                updater: null,
-                assets: null,
+                updater: updater,
+                assets: updater ? updater.assets : null,
                 flag: UIFlags.None,
                 measureList: [],
                 arrangeList: [],
@@ -44,5 +44,59 @@ module minerva.layout.draft.tapins.tests {
         assert.strictEqual(sibling.assets.uiFlags & UIFlags.SizeHint, UIFlags.SizeHint);
         assert.strictEqual(vp.assets.uiFlags & UIFlags.SizeHint, UIFlags.SizeHint);
         assert.strictEqual(data.sizingList.length, 0);
+    });
+
+    QUnit.test("determinePhase", (assert) => {
+        var data = mock.data(mock.createUpdater());
+        var assets = data.updater.assets;
+
+        assets.visibility = Visibility.Collapsed;
+        assert.ok(tapins.determinePhase(data));
+        assert.strictEqual(data.flag, UIFlags.None);
+
+        assets.visibility = Visibility.Visible;
+        assets.uiFlags |= (UIFlags.MeasureHint | UIFlags.ArrangeHint | UIFlags.SizeHint);
+        assert.ok(tapins.determinePhase(data));
+        assert.strictEqual(data.flag, UIFlags.MeasureHint);
+
+        assets.uiFlags &= ~UIFlags.MeasureHint;
+        assert.ok(tapins.determinePhase(data));
+        assert.strictEqual(data.flag, UIFlags.ArrangeHint);
+
+        assets.uiFlags &= ~UIFlags.ArrangeHint;
+        assert.ok(tapins.determinePhase(data));
+        assert.strictEqual(data.flag, UIFlags.SizeHint);
+
+        assets.uiFlags &= ~UIFlags.SizeHint;
+        assert.ok(!tapins.determinePhase(data));
+        assert.strictEqual(data.flag, UIFlags.None);
+    });
+
+    QUnit.test("prepareMeasure", (assert) => {
+        assert.ok(true);
+    });
+
+    QUnit.test("measure", (assert) => {
+        assert.ok(true);
+    });
+
+    QUnit.test("prepareArrange", (assert) => {
+        assert.ok(true);
+    });
+
+    QUnit.test("arrange", (assert) => {
+        assert.ok(true);
+    });
+
+    QUnit.test("prepareSizing", (assert) => {
+        assert.ok(true);
+    });
+
+    QUnit.test("sizing", (assert) => {
+        assert.ok(true);
+    });
+
+    QUnit.test("notifyResize", (assert) => {
+        assert.ok(true);
     });
 }
