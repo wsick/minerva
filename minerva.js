@@ -1497,6 +1497,11 @@ var minerva;
                 return this;
             };
 
+            Updater.prototype.setVisualParent = function (visualParent) {
+                this.$$visualParentUpdater = visualParent;
+                return this;
+            };
+
             Updater.prototype.onSizeChanged = function (oldSize, newSize) {
             };
 
@@ -1684,7 +1689,7 @@ var minerva;
             Updater.$$propagateUiFlagsUp = function (updater, flags) {
                 updater.assets.uiFlags |= flags;
                 var vpu = updater;
-                while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) > 0) {
+                while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) === 0) {
                     vpu.assets.uiFlags |= flags;
                 }
             };

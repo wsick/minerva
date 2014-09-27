@@ -341,6 +341,7 @@ declare module minerva.layout {
         public assets: IUpdaterAssets;
         constructor();
         public setContainerMode(isLayoutContainer: boolean, isContainer?: boolean): Updater;
+        public setVisualParent(visualParent: Updater): Updater;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;

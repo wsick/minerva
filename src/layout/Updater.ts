@@ -102,6 +102,11 @@ module minerva.layout {
             return this;
         }
 
+        setVisualParent (visualParent: Updater): Updater {
+            this.$$visualParentUpdater = visualParent;
+            return this;
+        }
+
         onSizeChanged (oldSize: Size, newSize: Size) {
             //TODO: Raise SizeChanged
         }
@@ -301,7 +306,7 @@ module minerva.layout {
         static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
             updater.assets.uiFlags |= flags;
             var vpu = updater;
-            while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) > 0) {
+            while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) === 0) {
                 vpu.assets.uiFlags |= flags;
             }
         }
