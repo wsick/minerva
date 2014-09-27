@@ -112,6 +112,16 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (WalkDirection) {
+        WalkDirection[WalkDirection["Forward"] = 0] = "Forward";
+        WalkDirection[WalkDirection["Reverse"] = 1] = "Reverse";
+        WalkDirection[WalkDirection["ZForward"] = 2] = "ZForward";
+        WalkDirection[WalkDirection["ZReverse"] = 3] = "ZReverse";
+    })(minerva.WalkDirection || (minerva.WalkDirection = {}));
+    var WalkDirection = minerva.WalkDirection;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     var Point = (function () {
         function Point(x, y) {
             this.x = x == null ? 0 : x;
@@ -1497,12 +1507,45 @@ var minerva;
                 return this;
             };
 
+            Updater.prototype.onSizeChanged = function (oldSize, newSize) {
+            };
+
             Updater.prototype.setVisualParent = function (visualParent) {
                 this.$$visualParentUpdater = visualParent;
                 return this;
             };
 
-            Updater.prototype.onSizeChanged = function (oldSize, newSize) {
+            Updater.prototype.walk = function (dir) {
+                return {
+                    current: undefined,
+                    step: function () {
+                        return false;
+                    }
+                };
+            };
+
+            Updater.prototype.walkDeep = function (dir) {
+                var last = undefined;
+                var walkList = [this];
+                dir = dir || 0 /* Forward */;
+                var revdir = (dir === 0 /* Forward */ || dir === 2 /* ZForward */) ? dir + 1 : dir - 1;
+
+                return {
+                    current: undefined,
+                    step: function () {
+                        if (last) {
+                            for (var subwalker = last.walk(revdir); subwalker.step();) {
+                                walkList.unshift(subwalker.current);
+                            }
+                        }
+
+                        this.current = last = walkList.shift();
+                        return this.current !== undefined;
+                    },
+                    skipBranch: function () {
+                        last = undefined;
+                    }
+                };
             };
 
             Updater.prototype.setMeasurePipe = function (pipedef) {
@@ -1654,14 +1697,6 @@ var minerva;
                         return i;
                 }
                 return -1;
-            };
-
-            Updater.walk = function (updater) {
-                return null;
-            };
-
-            Updater.walkDeep = function (updater) {
-                return null;
             };
 
             Updater.$$getVisualOnwer = function (updater) {
@@ -2398,7 +2433,7 @@ var minerva;
                     if (data.flag !== 4096 /* ArrangeHint */)
                         return true;
 
-                    for (var walker = layout.Updater.walkDeep(data.updater); walker.step();) {
+                    for (var walker = data.updater.walkDeep(); walker.step();) {
                         var assets = walker.current.assets;
                         if (assets.visibility !== 0 /* Visible */) {
                             walker.skipBranch();
@@ -2438,7 +2473,7 @@ var minerva;
                         minerva.Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
                     }
 
-                    for (var walker = layout.Updater.walkDeep(data.updater); walker.step();) {
+                    for (var walker = data.updater.walkDeep(); walker.step();) {
                         var assets = walker.current.assets;
                         if (assets.visibility !== 0 /* Visible */) {
                             walker.skipBranch();
@@ -2472,7 +2507,7 @@ var minerva;
                     if (data.flag !== 8192 /* SizeHint */)
                         return true;
 
-                    for (var walker = layout.Updater.walkDeep(data.updater); walker.step();) {
+                    for (var walker = data.updater.walkDeep(); walker.step();) {
                         var assets = walker.current.assets;
                         if (assets.visibility !== 0 /* Visible */) {
                             walker.skipBranch();

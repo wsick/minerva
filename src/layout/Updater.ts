@@ -102,13 +102,49 @@ module minerva.layout {
             return this;
         }
 
+        onSizeChanged (oldSize: Size, newSize: Size) {
+            //TODO: Raise SizeChanged
+        }
+
+        /////// TREE
+
         setVisualParent (visualParent: Updater): Updater {
             this.$$visualParentUpdater = visualParent;
             return this;
         }
 
-        onSizeChanged (oldSize: Size, newSize: Size) {
-            //TODO: Raise SizeChanged
+        walk (dir?: WalkDirection): IWalker<Updater> {
+            //TODO: Implement walk
+            return {
+                current: undefined,
+                step: function (): boolean {
+                    return false;
+                }
+            };
+        }
+
+        walkDeep (dir?: WalkDirection): IDeepWalker<Updater> {
+            var last: Updater = undefined;
+            var walkList: Updater[] = [this];
+            dir = dir || WalkDirection.Forward;
+            var revdir = (dir === WalkDirection.Forward || dir === WalkDirection.ZForward) ? dir + 1 : dir - 1;
+
+            return {
+                current: undefined,
+                step: function (): boolean {
+                    if (last) {
+                        for (var subwalker = last.walk(revdir); subwalker.step();) {
+                            walkList.unshift(subwalker.current);
+                        }
+                    }
+
+                    this.current = last = walkList.shift();
+                    return this.current !== undefined;
+                },
+                skipBranch: function () {
+                    last = undefined;
+                }
+            };
         }
 
         /////// PREPARE PIPES
@@ -270,16 +306,6 @@ module minerva.layout {
         }
 
         /////// STATIC HELPERS
-
-        static walk (updater: Updater): IWalker<Updater> {
-            //TODO: Implement walk
-            return null;
-        }
-
-        static walkDeep (updater: Updater): IDeepWalker<Updater> {
-            //TODO: Implement walkDeep
-            return null;
-        }
 
         private static $$getVisualOnwer (updater: Updater): IVisualOwner {
             if (updater.$$visualParentUpdater)

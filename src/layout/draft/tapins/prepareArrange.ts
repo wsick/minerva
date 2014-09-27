@@ -3,7 +3,7 @@ module minerva.layout.draft.tapins {
         if (data.flag !== UIFlags.ArrangeHint)
             return true;
 
-        for (var walker = Updater.walkDeep(data.updater); walker.step();) {
+        for (var walker = data.updater.walkDeep(); walker.step();) {
             var assets = walker.current.assets;
             if (assets.visibility !== Visibility.Visible) {
                 walker.skipBranch();

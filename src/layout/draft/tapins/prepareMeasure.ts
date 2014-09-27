@@ -9,7 +9,7 @@ module minerva.layout.draft.tapins {
             Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
         }
 
-        for (var walker = Updater.walkDeep(data.updater); walker.step();) {
+        for (var walker = data.updater.walkDeep(); walker.step();) {
             var assets = walker.current.assets;
             if (assets.visibility !== Visibility.Visible) {
                 walker.skipBranch();

@@ -111,6 +111,12 @@ declare module minerva {
         current: T;
         skipBranch(): any;
     }
+    enum WalkDirection {
+        Forward = 0,
+        Reverse = 1,
+        ZForward = 2,
+        ZReverse = 3,
+    }
 }
 declare module minerva {
     interface IPoint {
@@ -341,8 +347,10 @@ declare module minerva.layout {
         public assets: IUpdaterAssets;
         constructor();
         public setContainerMode(isLayoutContainer: boolean, isContainer?: boolean): Updater;
-        public setVisualParent(visualParent: Updater): Updater;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
+        public setVisualParent(visualParent: Updater): Updater;
+        public walk(dir?: WalkDirection): IWalker<Updater>;
+        public walkDeep(dir?: WalkDirection): IDeepWalker<Updater>;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
         public setArrangePipe(pipedef?: arrange.ArrangePipeDef): Updater;
@@ -364,8 +372,6 @@ declare module minerva.layout {
         public updateBounds(forceRedraw?: boolean): void;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
-        static walk(updater: Updater): IWalker<Updater>;
-        static walkDeep(updater: Updater): IDeepWalker<Updater>;
         private static $$getVisualOnwer(updater);
         private static $$addUpDirty(updater);
         private static $$addDownDirty(updater);

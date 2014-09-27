@@ -9,4 +9,11 @@ module minerva {
         current: T;
         skipBranch();
     }
+
+    export enum WalkDirection {
+        Forward = 0,
+        Reverse = 1,
+        ZForward = 2,
+        ZReverse = 3
+    }
 }
