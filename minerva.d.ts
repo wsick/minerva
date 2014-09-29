@@ -987,25 +987,25 @@ declare module minerva.controls.border.render {
     }
 }
 declare module minerva.controls.border.render.tapins {
-    function calcInnerOuter(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+    function calcInnerOuter(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins {
-    function calcShouldRender(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+    function calcShouldRender(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins {
-    function doRender(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+    function doRender(input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function calcBalanced(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+    function calcBalanced(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function createPattern(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+    function createPattern(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function doRender(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+    function doRender(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function invalidatePattern(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+    function invalidatePattern(input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean;
 }
 declare module minerva.engine {
     interface IPass extends layout.draft.IDraftPipeData {

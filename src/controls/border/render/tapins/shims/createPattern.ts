@@ -1,5 +1,5 @@
 module minerva.controls.border.render.tapins.shim {
-    export function createPattern (input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean {
+    export function createPattern (input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean {
         if (!state.shouldRender || Thickness.isBalanced(input.borderThickness))
             return true;
 

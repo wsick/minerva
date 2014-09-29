@@ -4105,7 +4105,7 @@ var minerva;
         (function (border) {
             (function (render) {
                 (function (tapins) {
-                    function calcInnerOuter(input, state, output, ctx, region) {
+                    function calcInnerOuter(input, state, output, ctx, region, tree) {
                         if (!state.shouldRender)
                             return true;
 
@@ -4140,7 +4140,7 @@ var minerva;
         (function (border) {
             (function (render) {
                 (function (tapins) {
-                    function calcShouldRender(input, state, output, ctx, region) {
+                    function calcShouldRender(input, state, output, ctx, region, tree) {
                         state.shouldRender = false;
                         if (!input.backgroundBrush && !input.borderBrush)
                             return true;
@@ -4168,7 +4168,7 @@ var minerva;
         (function (border) {
             (function (render) {
                 (function (tapins) {
-                    function doRender(input, state, output, ctx, region) {
+                    function doRender(input, state, output, ctx, region, tree) {
                         if (!state.shouldRender)
                             return true;
                         ctx.save();
@@ -4210,7 +4210,7 @@ var minerva;
             (function (render) {
                 (function (tapins) {
                     (function (shim) {
-                        function calcBalanced(input, state, output, ctx, region) {
+                        function calcBalanced(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender || minerva.Thickness.isEmpty(input.borderThickness))
                                 return true;
 
@@ -4248,7 +4248,7 @@ var minerva;
             (function (render) {
                 (function (tapins) {
                     (function (shim) {
-                        function createPattern(input, state, output, ctx, region) {
+                        function createPattern(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender || minerva.Thickness.isBalanced(input.borderThickness))
                                 return true;
 
@@ -4293,7 +4293,7 @@ var minerva;
             (function (render) {
                 (function (tapins) {
                     (function (shim) {
-                        function doRender(input, state, output, ctx, region) {
+                        function doRender(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender)
                                 return true;
                             ctx.save();
@@ -4332,7 +4332,7 @@ var minerva;
             (function (render) {
                 (function (tapins) {
                     (function (shim) {
-                        function invalidatePattern(input, state, output, ctx, region) {
+                        function invalidatePattern(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender)
                                 return true;
 

@@ -1,5 +1,5 @@
 module minerva.controls.border.render.tapins.shim {
-    export function calcBalanced (input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean {
+    export function calcBalanced (input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean {
         if (!state.shouldRender || Thickness.isEmpty(input.borderThickness))
             return true;
 

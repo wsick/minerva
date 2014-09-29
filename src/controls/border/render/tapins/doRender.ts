@@ -1,5 +1,5 @@
 module minerva.controls.border.render.tapins {
-    export function doRender (input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect): boolean {
+    export function doRender (input: IInput, state: IState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean {
         if (!state.shouldRender)
             return true;
         ctx.save();
