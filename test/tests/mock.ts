@@ -61,4 +61,19 @@ module minerva.tests.mock {
         }
         assert.strictEqual(i, 8);
     });
+
+    QUnit.test("walkDeep skipBranch", (assert) => {
+        var expected: layout.Updater[] = [];
+        var root = createTree(expected);
+        expected[1].assets.visibility = Visibility.Collapsed;
+        var i = 0;
+        for (var walker = root.walkDeep(); walker.step();) {
+            if (walker.current.assets.visibility === Visibility.Collapsed) {
+                walker.skipBranch();
+                continue;
+            }
+            i++;
+        }
+        assert.strictEqual(i, 4);
+    });
 }
