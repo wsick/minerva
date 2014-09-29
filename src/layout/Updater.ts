@@ -1,5 +1,4 @@
 module minerva.layout {
-    var NO_PIPE = new pipe.TriPipeDef<pipe.ITriTapin, pipe.IPipeInput, pipe.IPipeState, pipe.IPipeOutput>();
     var NO_VO: IVisualOwner = {
         updateBounds: function () {
         },
@@ -150,7 +149,8 @@ module minerva.layout {
         /////// PREPARE PIPES
 
         setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
-            this.$$measure = <IMeasurePipe>pipe.createTriPipe(pipedef || NO_PIPE);
+            var def = pipedef || new measure.MeasurePipeDef();
+            this.$$measure = <IMeasurePipe>pipe.createTriPipe(def);
             return this;
         }
 
@@ -160,7 +160,8 @@ module minerva.layout {
         }
 
         setArrangePipe (pipedef?: arrange.ArrangePipeDef): Updater {
-            this.$$arrange = <IArrangePipe>pipe.createTriPipe(pipedef || NO_PIPE);
+            var def = pipedef || new arrange.ArrangePipeDef();
+            this.$$arrange = <IArrangePipe>pipe.createTriPipe(def);
             return this;
         }
 
@@ -170,22 +171,30 @@ module minerva.layout {
         }
 
         setSizingPipe (pipedef?: sizing.SizingPipeDef): Updater {
-            this.$$sizing = <ISizingPipe>pipe.createTriPipe(pipedef || NO_PIPE);
+            var def = pipedef || new sizing.SizingPipeDef();
+            this.$$sizing = <ISizingPipe>pipe.createTriPipe(def);
             return this;
         }
 
         setProcessDownPipe (pipedef?: processdown.ProcessDownPipeDef): Updater {
-            this.$$processdown = <IProcessDownPipe>pipe.createTriPipe(pipedef || NO_PIPE);
+            var def: pipe.TriPipeDef<processdown.IProcessDownTapin, processdown.IInput, processdown.IState, processdown.IOutput> = pipedef;
+            if (!def)
+                def = new processdown.ProcessDownPipeDef();
+            this.$$processdown = <IProcessDownPipe>pipe.createTriPipe(def);
             return this;
         }
 
         setProcessUpPipe (pipedef?: processup.ProcessUpPipeDef): Updater {
-            this.$$processup = <IProcessUpPipe>pipe.createTriPipe(pipedef || NO_PIPE);
+            var def: pipe.TriPipeDef<processup.IProcessUpTapin, processup.IInput, processup.IState, processup.IOutput> = pipedef;
+            if (!def)
+                def = new processup.ProcessUpPipeDef();
+            this.$$processup = <IProcessUpPipe>pipe.createTriPipe(def);
             return this;
         }
 
         setRenderPipe (pipedef?: render.RenderPipeDef): Updater {
-            this.$$render = <IRenderPipe>pipe.createTriPipe(pipedef || NO_PIPE);
+            var def = pipedef || new render.RenderPipeDef();
+            this.$$render = <IRenderPipe>pipe.createTriPipe(def);
             return this;
         }
 

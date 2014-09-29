@@ -1418,7 +1418,6 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (layout) {
-        var NO_PIPE = new minerva.pipe.TriPipeDef();
         var NO_VO = {
             updateBounds: function () {
             },
@@ -1549,7 +1548,8 @@ var minerva;
             };
 
             Updater.prototype.setMeasurePipe = function (pipedef) {
-                this.$$measure = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
+                var def = pipedef || new layout.measure.MeasurePipeDef();
+                this.$$measure = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
@@ -1559,7 +1559,8 @@ var minerva;
             };
 
             Updater.prototype.setArrangePipe = function (pipedef) {
-                this.$$arrange = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
+                var def = pipedef || new layout.arrange.ArrangePipeDef();
+                this.$$arrange = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
@@ -1569,22 +1570,30 @@ var minerva;
             };
 
             Updater.prototype.setSizingPipe = function (pipedef) {
-                this.$$sizing = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
+                var def = pipedef || new layout.sizing.SizingPipeDef();
+                this.$$sizing = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
             Updater.prototype.setProcessDownPipe = function (pipedef) {
-                this.$$processdown = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
+                var def = pipedef;
+                if (!def)
+                    def = new layout.processdown.ProcessDownPipeDef();
+                this.$$processdown = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
             Updater.prototype.setProcessUpPipe = function (pipedef) {
-                this.$$processup = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
+                var def = pipedef;
+                if (!def)
+                    def = new layout.processup.ProcessUpPipeDef();
+                this.$$processup = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
             Updater.prototype.setRenderPipe = function (pipedef) {
-                this.$$render = minerva.pipe.createTriPipe(pipedef || NO_PIPE);
+                var def = pipedef || new layout.render.RenderPipeDef();
+                this.$$render = minerva.pipe.createTriPipe(def);
                 return this;
             };
 

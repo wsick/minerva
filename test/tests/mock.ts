@@ -1,15 +1,15 @@
 module minerva.tests.mock {
     export function createTree (outItems?: layout.Updater[]) {
-        var root = new layout.Updater();
+        var root = createUpdater();
 
-        var child1 = new layout.Updater();
-        var gchild1 = new layout.Updater();
-        var gchild2 = new layout.Updater();
-        var gchild3 = new layout.Updater();
+        var child1 = createUpdater();
+        var gchild1 = createUpdater();
+        var gchild2 = createUpdater();
+        var gchild3 = createUpdater();
 
-        var child2 = new layout.Updater();
-        var gchild4 = new layout.Updater();
-        var ggchild1 = new layout.Updater();
+        var child2 = createUpdater();
+        var gchild4 = createUpdater();
+        var ggchild1 = createUpdater();
 
         connect(root, [child1, child2]);
         connect(child1, [gchild1, gchild2, gchild3]);
@@ -20,6 +20,17 @@ module minerva.tests.mock {
             outItems.push(root, child1, gchild1, gchild2, gchild3, child2, gchild4, ggchild1);
 
         return root;
+    }
+
+    function createUpdater(): layout.Updater {
+        var upd = new layout.Updater()
+            .setMeasurePipe()
+            .setArrangePipe()
+            .setSizingPipe()
+            .setProcessDownPipe()
+            .setProcessUpPipe()
+            .setRenderPipe();
+        return upd;
     }
 
     function connect (parent: layout.Updater, children: layout.Updater[]) {

@@ -97,7 +97,20 @@ module minerva.layout.draft.tapins.tests {
     });
 
     QUnit.test("measure", (assert) => {
-        assert.ok(true);
+        var root = minerva.tests.mock.createTree();
+        var data = mock.data(root);
+        var assets = root.assets;
+
+        data.flag |= UIFlags.MeasureHint;
+        assets.dirtyFlags |= DirtyFlags.Measure;
+        data.measureList.push(root);
+        assets.previousConstraint = new Size(400, 400);
+        assert.ok(tapins.measure(data));
+        assert.strictEqual(assets.dirtyFlags & DirtyFlags.Measure, 0);
+        assert.strictEqual(assets.dirtyFlags & DirtyFlags.Arrange, DirtyFlags.Arrange);
+        assert.strictEqual(assets.uiFlags & UIFlags.ArrangeHint, UIFlags.ArrangeHint);
+        assert.strictEqual(assets.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
+        assert.deepEqual(data.assets.desiredSize, new Size());
     });
 
     QUnit.test("prepareArrange", (assert) => {
