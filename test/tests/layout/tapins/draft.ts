@@ -73,9 +73,27 @@ module minerva.layout.draft.tapins.tests {
     });
 
     QUnit.test("prepareMeasure", (assert) => {
-        var root = minerva.tests.mock.createTree();
+        var items: Updater[] = [];
+        var root = minerva.tests.mock.createTree(items);
+        var data = mock.data(root);
+        var assets = root.assets;
 
-        assert.ok(true);
+        for (var i = 0; i < items.length; i++) {
+            items[i].assets.uiFlags |= UIFlags.MeasureHint;
+            items[i].assets.dirtyFlags |= DirtyFlags.Measure;
+        }
+
+        data.flag = UIFlags.MeasureHint;
+        assets.isContainer = true;
+        data.surfaceSize = new Size(100, 200);
+        assert.ok(tapins.prepareMeasure(data));
+        assert.strictEqual(assets.dirtyFlags & DirtyFlags.Measure, DirtyFlags.Measure);
+        assert.strictEqual(assets.uiFlags & UIFlags.MeasureHint, UIFlags.None);
+        assert.deepEqual(assets.previousConstraint, new Size(100, 200));
+        assert.strictEqual(data.measureList.length, 8);
+        for (var i = 0, list = data.measureList; i < list.length; i++) {
+            assert.strictEqual(list[i].assets.uiFlags & UIFlags.MeasureHint, UIFlags.None);
+        }
     });
 
     QUnit.test("measure", (assert) => {
