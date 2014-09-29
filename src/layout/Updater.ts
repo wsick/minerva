@@ -273,7 +273,7 @@ module minerva.layout {
 
         render (ctx: render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
-            return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
+            return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
         }
 
         ///////

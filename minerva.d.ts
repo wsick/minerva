@@ -823,7 +823,7 @@ declare module minerva.layout.render {
 }
 declare module minerva.layout.render {
     interface IRenderTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect): boolean;
+        (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect, tree: IUpdaterTree): boolean;
     }
     interface IInput extends pipe.IPipeInput {
         totalIsRenderVisible: boolean;

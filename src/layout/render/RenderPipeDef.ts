@@ -1,6 +1,6 @@
 module minerva.layout.render {
     export interface IRenderTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect):boolean;
+        (input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect, tree: layout.IUpdaterTree):boolean;
     }
     export interface IInput extends pipe.IPipeInput {
         totalIsRenderVisible: boolean;

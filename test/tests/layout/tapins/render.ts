@@ -29,6 +29,13 @@ module minerva.layout.render.tapins.tests {
             return <render.IState> {
                 renderRegion: new Rect()
             };
+        },
+        context: function (): MockRenderContext {
+            var canvas = document.createElement('canvas');
+            return new MockRenderContext(canvas.getContext('2d'));
+        },
+        tree: function (): layout.IUpdaterTree {
+            return new layout.UpdaterTree();
         }
     };
 
@@ -94,9 +101,8 @@ module minerva.layout.render.tapins.tests {
     QUnit.test("prepareContext", (assert) => {
         var input = mock.input();
         var state = mock.state();
+        var rctx = mock.context();
 
-        var canvas = document.createElement('canvas');
-        var rctx = new RenderContext(canvas.getContext('2d'));
         assert.equal(rctx.raw.globalAlpha, 1.0);
 
         rctx.scale(2, 4);
@@ -113,10 +119,7 @@ module minerva.layout.render.tapins.tests {
     QUnit.test("applyClip", (assert) => {
         var input = mock.input();
         var state = mock.state();
-
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        var rctx = new RenderContext(ctx);
+        var rctx = mock.context();
 
         var clipDrawn = false;
         input.clip = <render.IGeometry>{
@@ -126,7 +129,7 @@ module minerva.layout.render.tapins.tests {
         };
 
         var clipped = false;
-        ctx.clip = function () {
+        rctx.raw.clip = function () {
             clipped = true;
         };
 
@@ -138,9 +141,7 @@ module minerva.layout.render.tapins.tests {
     QUnit.test("preRender", (assert) => {
         var input = mock.input();
         var state = mock.state();
-
-        var canvas = document.createElement('canvas');
-        var rctx = new MockRenderContext(canvas.getContext('2d'));
+        var rctx = mock.context();
 
         input.effect = <render.IEffect> {
             PreRender: function (ctx: RenderContext) {
@@ -163,15 +164,13 @@ module minerva.layout.render.tapins.tests {
     });
 
     QUnit.test("doRender", (assert) => {
-        ok(true);
+        assert.ok(true);
     });
 
     QUnit.test("postRender", (assert) => {
         var input = mock.input();
         var state = mock.state();
-
-        var canvas = document.createElement('canvas');
-        var rctx = new MockRenderContext(canvas.getContext('2d'));
+        var rctx = mock.context();
 
         input.effect = <render.IEffect> {
             PreRender: function (ctx: RenderContext) {
@@ -192,15 +191,46 @@ module minerva.layout.render.tapins.tests {
     });
 
     QUnit.test("renderChildren", (assert) => {
-        ok(true);
+        var input = mock.input();
+        var state = mock.state();
+        var rctx = mock.context();
+        var tree = mock.tree();
+
+        function createTestChildren () {
+            var items: Updater[] = [];
+            for (var i = 0; i < 5; i++) {
+                var updater = new layout.Updater();
+                (<any>updater).$$$index = i;
+                updater.render = function (ctx: render.RenderContext, region: Rect): boolean {
+                    this.$$$rendered = true;
+                    return true;
+                };
+                items.push(updater);
+            }
+            return items;
+        }
+
+        var items = createTestChildren();
+        tree.walk = function (): IWalker<Updater> {
+            var i = -1;
+            return {
+                current: undefined,
+                step: function (): boolean {
+                    i++;
+                    this.current = items[i];
+                    return this.current !== undefined;
+                }
+            };
+        };
+
+        assert.ok(tapins.renderChildren(input, state, null, rctx, new Rect(), tree));
+        assert.strictEqual(items.filter((upd) => (<any>upd).$$$rendered === true).length, 5);
     });
 
     QUnit.test("restoreContext", (assert) => {
         var input = mock.input();
         var state = mock.state();
-
-        var canvas = document.createElement('canvas');
-        var rctx = new MockRenderContext(canvas.getContext('2d'));
+        var rctx = mock.context();
 
         assert.ok(tapins.restoreContext(input, state, null, rctx, new Rect(), "#1"));
         assert.ok(rctx.restored);

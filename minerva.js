@@ -1660,7 +1660,7 @@ var minerva;
 
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
-                return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region);
+                return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
             };
 
             Updater.prototype.invalidateMeasure = function () {
@@ -3656,7 +3656,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.applyClip = function (input, state, output, ctx, region) {
+                tapins.applyClip = function (input, state, output, ctx, region, tree) {
                     var clip = input.clip;
                     if (clip)
                         ctx.clipGeometry(clip);
@@ -3674,7 +3674,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.doRender = function (input, state, output, ctx, region) {
+                tapins.doRender = function (input, state, output, ctx, region, tree) {
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -3689,7 +3689,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.postRender = function (input, state, output, ctx, region) {
+                tapins.postRender = function (input, state, output, ctx, region, tree) {
                     var effect = input.effect;
                     if (!effect)
                         return true;
@@ -3709,7 +3709,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.preRender = function (input, state, output, ctx, region) {
+                tapins.preRender = function (input, state, output, ctx, region, tree) {
                     var effect = input.effect;
                     if (!effect)
                         return true;
@@ -3729,7 +3729,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.prepareContext = function (input, state, output, ctx, region) {
+                tapins.prepareContext = function (input, state, output, ctx, region, tree) {
                     ctx.save();
                     ctx.pretransformMatrix(input.renderXform);
                     ctx.raw.globalAlpha = input.totalOpacity;
@@ -3747,7 +3747,10 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.renderChildren = function (input, state, output, ctx, region) {
+                tapins.renderChildren = function (input, state, output, ctx, region, tree) {
+                    for (var walker = tree.walk(2 /* ZForward */); walker.step();) {
+                        walker.current.render(ctx, state.renderRegion);
+                    }
                     return true;
                 };
             })(render.tapins || (render.tapins = {}));
@@ -3762,7 +3765,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.restoreContext = function (input, state, output, ctx, region) {
+                tapins.restoreContext = function (input, state, output, ctx, region, tree) {
                     ctx.restore();
                     return true;
                 };
@@ -3778,7 +3781,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.validate = function (input, state, output, ctx, region) {
+                tapins.validate = function (input, state, output, ctx, region, tree) {
                     if (!input.totalIsRenderVisible)
                         return false;
                     if ((input.totalOpacity * 255) < 0.5)
@@ -3797,7 +3800,7 @@ var minerva;
     (function (layout) {
         (function (render) {
             (function (tapins) {
-                tapins.validateRegion = function (input, state, output, ctx, region) {
+                tapins.validateRegion = function (input, state, output, ctx, region, tree) {
                     var r = state.renderRegion;
                     minerva.Rect.copyTo(input.surfaceBoundsWithChildren, r);
                     minerva.Rect.roundOut(r);
