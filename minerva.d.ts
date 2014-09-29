@@ -103,12 +103,12 @@ declare module minerva {
 }
 declare module minerva {
     interface IWalker<T> {
-        step(): boolean;
         current: T;
+        step(): boolean;
     }
     interface IDeepWalker<T> {
-        step(): boolean;
         current: T;
+        step(): boolean;
         skipBranch(): any;
     }
     enum WalkDirection {
@@ -326,8 +326,6 @@ declare module minerva.layout {
         addDownDirty(updater: Updater): any;
     }
     interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
-        isLayoutContainer: boolean;
-        isContainer: boolean;
     }
 }
 declare module minerva.layout {
@@ -340,16 +338,14 @@ declare module minerva.layout {
         private $$processdown;
         private $$processup;
         private $$render;
-        private $$visualParentUpdater;
-        private $$surface;
         private $$inDownDirty;
         private $$inUpDirty;
         public assets: IUpdaterAssets;
+        public tree: IUpdaterTree;
         constructor();
-        public setContainerMode(isLayoutContainer: boolean, isContainer?: boolean): Updater;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
+        public setTree(tree?: IUpdaterTree): Updater;
         public setVisualParent(visualParent: Updater): Updater;
-        public walk(dir?: WalkDirection): IWalker<Updater>;
         public walkDeep(dir?: WalkDirection): IDeepWalker<Updater>;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
@@ -372,10 +368,27 @@ declare module minerva.layout {
         public updateBounds(forceRedraw?: boolean): void;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
-        private static $$getVisualOnwer(updater);
         private static $$addUpDirty(updater);
         private static $$addDownDirty(updater);
         static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags): void;
+    }
+}
+declare module minerva.layout {
+    interface IUpdaterTree {
+        isTop: boolean;
+        surface: ISurface;
+        visualParent: Updater;
+        isContainer: boolean;
+        isLayoutContainer: boolean;
+        walk(direction?: WalkDirection): IWalker<Updater>;
+    }
+    class UpdaterTree implements IUpdaterTree {
+        public isTop: boolean;
+        public surface: any;
+        public visualParent: any;
+        public isContainer: boolean;
+        public isLayoutContainer: boolean;
+        public walk(direction?: WalkDirection): IWalker<Updater>;
     }
 }
 declare module minerva.layout.helpers {
@@ -393,17 +406,17 @@ declare module minerva.layout.helpers {
 }
 declare module minerva.layout.arrange {
     interface IArrangeBinder {
-        bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+        bind(updater: Updater): boolean;
     }
     class ArrangeBinder implements IArrangeBinder {
-        public bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
-        public expandViewport(viewport: Rect, updater: Updater, surface: ISurface): void;
-        public shiftViewport(viewport: Rect, updater: Updater, surface: ISurface): void;
+        public bind(updater: Updater): boolean;
+        public expandViewport(viewport: Rect, assets: IUpdaterAssets, tree: IUpdaterTree): void;
+        public shiftViewport(viewport: Rect, assets: IUpdaterAssets, tree: IUpdaterTree): void;
     }
 }
 declare module minerva.layout.arrange {
     interface IArrangeTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean;
+        (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree, finalRect: Rect): boolean;
     }
     interface IInput extends pipe.IPipeInput, helpers.ISized {
         margin: Thickness;
@@ -417,7 +430,6 @@ declare module minerva.layout.arrange {
         renderSize: Size;
         lastRenderSize: Size;
         layoutClip: Rect;
-        isTopLevel: boolean;
     }
     interface IState extends pipe.IPipeState {
         finalRect: Rect;
@@ -498,6 +510,7 @@ declare module minerva.layout.draft {
     }
     interface IDraftPipeData extends pipe.IPipeData {
         updater: Updater;
+        tree: IUpdaterTree;
         assets: IUpdaterAssets;
         flag: UIFlags;
         measureList: Updater[];
@@ -546,15 +559,15 @@ declare module minerva.layout.draft.tapins {
 }
 declare module minerva.layout.measure {
     interface IMeasureBinder {
-        bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+        bind(updater: Updater): boolean;
     }
     class MeasureBinder implements IMeasureBinder {
-        public bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+        public bind(updater: Updater): boolean;
     }
 }
 declare module minerva.layout.measure {
     interface IMeasureTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, availableSize: Size): boolean;
+        (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree, availableSize: Size): boolean;
     }
     interface IInput extends pipe.IPipeInput, helpers.ISized {
         margin: Thickness;
@@ -909,14 +922,21 @@ declare module minerva.controls.border.arrange {
         totalBorder: Thickness;
         childRect: Rect;
     }
-    function preOverride(input: IInput, state: IState, output: layout.arrange.IOutput, finalRect: Rect): boolean;
-    function doOverride(input: IInput, state: IState, output: layout.arrange.IOutput, finalRect: Rect): boolean;
+    function preOverride(input: IInput, state: IState, output: layout.arrange.IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean;
+    function doOverride(input: IInput, state: IState, output: layout.arrange.IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.border {
-    interface IUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
+    interface IBorderUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
+    }
+    class BorderTree extends layout.UpdaterTree {
+        public isLayoutContainer: boolean;
+        public isContainer: boolean;
+        public child: layout.Updater;
+        public walk(direction?: WalkDirection): IWalker<layout.Updater>;
     }
     class BorderUpdater extends layout.Updater {
-        public assets: IUpdaterAssets;
+        public tree: BorderTree;
+        public assets: IBorderUpdaterAssets;
         constructor();
     }
 }
@@ -928,14 +948,13 @@ declare module minerva.controls.border.measure {
     interface IInput extends layout.measure.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: BorderUpdater;
     }
     interface IState extends layout.measure.IState {
         totalBorder: Thickness;
     }
-    function preOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
-    function doOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
-    function postOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
+    function preOverride(input: IInput, state: IState, output: layout.measure.IOutput, tree: BorderTree, availableSize: Size): boolean;
+    function doOverride(input: IInput, state: IState, output: layout.measure.IOutput, tree: BorderTree, availableSize: Size): boolean;
+    function postOverride(input: IInput, state: IState, output: layout.measure.IOutput, tree: BorderTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.border.render {
     class RenderPipeDef extends layout.render.RenderPipeDef {

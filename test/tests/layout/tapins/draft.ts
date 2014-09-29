@@ -9,6 +9,7 @@ module minerva.layout.draft.tapins.tests {
             return {
                 updater: updater,
                 assets: updater ? updater.assets : null,
+                tree: updater ? updater.tree : null,
                 flag: UIFlags.None,
                 measureList: [],
                 arrangeList: [],
@@ -18,7 +19,8 @@ module minerva.layout.draft.tapins.tests {
             };
         },
         createUpdater: function (): Updater {
-            return new layout.Updater();
+            return new layout.Updater()
+                .setTree();
         }
     };
 
@@ -84,7 +86,7 @@ module minerva.layout.draft.tapins.tests {
         }
 
         data.flag = UIFlags.MeasureHint;
-        assets.isContainer = true;
+        root.tree.isContainer = true;
         data.surfaceSize = new Size(100, 200);
         assert.ok(tapins.prepareMeasure(data));
         assert.strictEqual(assets.dirtyFlags & DirtyFlags.Measure, DirtyFlags.Measure);

@@ -1,17 +1,35 @@
 /// <reference path="../../layout/Updater" />
 
 module minerva.controls.border {
-    export interface IUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
+    export interface IBorderUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
     }
 
+    export class BorderTree extends layout.UpdaterTree {
+        isLayoutContainer = true;
+        isContainer = true;
+        child: layout.Updater = undefined;
+
+        walk (direction?: WalkDirection): IWalker<layout.Updater> {
+            var visited = false;
+            var _this = this;
+            return {
+                current: undefined,
+                step: function (): boolean {
+                    this.current = !visited ? _this.child : undefined;
+                    visited = true;
+                    return this.current !== undefined;
+                }
+            }
+        }
+    }
 
     export class BorderUpdater extends layout.Updater {
-        assets: IUpdaterAssets;
+        tree: BorderTree;
+        assets: IBorderUpdaterAssets;
 
         constructor () {
             super();
-            this.setContainerMode(true)
-                .setProcessDownPipe()
+            this.setProcessDownPipe()
                 .setProcessUpPipe()
                 .setMeasurePipe(singleton(border.measure.MeasurePipeDef))
                 .setArrangePipe(singleton(border.arrange.ArrangePipeDef))
@@ -20,7 +38,6 @@ module minerva.controls.border {
             var assets = this.assets;
             assets.padding = new Thickness();
             assets.borderThickness = new Thickness();
-            assets.childUpdater = null;
         }
     }
 }

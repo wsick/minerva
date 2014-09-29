@@ -68,6 +68,9 @@ module minerva.layout.arrange.tapins.tests {
                 newDownDirty: 0,
                 newUiFlags: 0
             }
+        },
+        tree: function (): layout.IUpdaterTree {
+            return new layout.UpdaterTree();
         }
     };
 
@@ -75,14 +78,15 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         var fr = new Rect(0.25, 0.75, 50.25, 50.50);
-        assert.ok(tapins.applyRounding(input, state, output, fr));
+        assert.ok(tapins.applyRounding(input, state, output, tree, fr));
         assert.notStrictEqual(state.finalRect, fr);
         assert.deepEqual(state.finalRect, new Rect(0, 1, 50, 51));
 
         input.useLayoutRounding = false;
-        assert.ok(tapins.applyRounding(input, state, output, fr));
+        assert.ok(tapins.applyRounding(input, state, output, tree, fr));
         assert.notStrictEqual(state.finalRect, fr);
         assert.deepEqual(state.finalRect, new Rect(0.25, 0.75, 50.25, 50.50));
     });
@@ -91,76 +95,80 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         var fr = new Rect(0, 0, 50, 50);
         Rect.copyTo(fr, state.finalRect);
-        assert.ok(tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(tapins.validateFinalRect(input, state, output, tree, fr));
 
         state.finalRect.width = -1;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
 
         state.finalRect.width = NaN;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
 
         state.finalRect.width = Number.POSITIVE_INFINITY;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
 
         state.finalRect.width = Number.NEGATIVE_INFINITY;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
         state.finalRect.width = 50;
 
         state.finalRect.height = -1;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
 
         state.finalRect.height = NaN;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
 
         state.finalRect.height = Number.POSITIVE_INFINITY;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
 
         state.finalRect.height = Number.NEGATIVE_INFINITY;
-        assert.ok(!tapins.validateFinalRect(input, state, output, fr));
+        assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
     });
 
     QUnit.test("validateVisibility", (assert) => {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         var fr = new Rect(0, 0, 50, 50);
-        assert.ok(tapins.validateVisibility(input, state, output, fr));
+        assert.ok(tapins.validateVisibility(input, state, output, tree, fr));
 
         input.visibility = minerva.Visibility.Collapsed;
-        assert.ok(!tapins.validateVisibility(input, state, output, fr));
+        assert.ok(!tapins.validateVisibility(input, state, output, tree, fr));
     });
 
     QUnit.test("checkNeedArrange", (assert) => {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         var fr = new Rect(0, 0, 50, 50);
         Rect.copyTo(fr, state.finalRect);
         var ls = output.layoutSlot;
         ls.width = 50;
         ls.height = 50;
-        assert.ok(!tapins.checkNeedArrange(input, state, output, fr));
+        assert.ok(!tapins.checkNeedArrange(input, state, output, tree, fr));
 
         input.dirtyFlags |= DirtyFlags.Arrange;
-        assert.ok(tapins.checkNeedArrange(input, state, output, fr));
+        assert.ok(tapins.checkNeedArrange(input, state, output, tree, fr));
         input.dirtyFlags = 0;
 
         ls.width = 100;
         ls.height = 100;
-        assert.ok(tapins.checkNeedArrange(input, state, output, fr));
+        assert.ok(tapins.checkNeedArrange(input, state, output, tree, fr));
     });
 
     QUnit.test("invalidateFuture", (assert) => {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
-        assert.ok(tapins.invalidateFuture(input, state, output, new Rect()));
+        assert.ok(tapins.invalidateFuture(input, state, output, tree, new Rect()));
         assert.strictEqual(output.dirtyFlags, DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Bounds);
         assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
     });
@@ -169,11 +177,12 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         var fr = new Rect(0, 0, 100, 100);
         Rect.copyTo(fr, state.finalRect);
         input.margin.left = input.margin.top = input.margin.right = input.margin.bottom = 5;
-        assert.ok(tapins.calcStretched(input, state, output, fr));
+        assert.ok(tapins.calcStretched(input, state, output, tree, fr));
         assert.notStrictEqual(output.layoutSlot, fr);
         assert.deepEqual(output.layoutSlot, new Rect(0, 0, 100, 100));
         assert.deepEqual(state.stretched, new Size(90, 90));
@@ -183,6 +192,7 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         var fr = new Rect(0, 0, 100, 100);
         Rect.copyTo(fr, state.finalRect);
@@ -192,7 +202,7 @@ module minerva.layout.arrange.tapins.tests {
         input.hiddenDesire.height = 80;
         state.stretched.width = 151;
         state.stretched.height = 70;
-        assert.ok(tapins.prepareOverride(input, state, output, fr));
+        assert.ok(tapins.prepareOverride(input, state, output, tree, fr));
         assert.deepEqual(state.finalSize, new Size(151, 80));
     });
 
@@ -200,21 +210,23 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
-        ok(true);
+        assert.ok(true);
     });
 
     QUnit.test("completeOverride", (assert) => {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         output.dirtyFlags |= DirtyFlags.Arrange;
         output.arrangedSize.width = 100;
         output.arrangedSize.height = 100;
         state.framework.width = 150.6;
         state.framework.height = 95.3;
-        assert.ok(tapins.completeOverride(input, state, output, new Rect()));
+        assert.ok(tapins.completeOverride(input, state, output, tree, new Rect()));
         assert.strictEqual(output.dirtyFlags & DirtyFlags.Arrange, 0);
         assert.deepEqual(output.arrangedSize, new Size(151, 100));
         assert.deepEqual(state.constrained, new Size(151, 100));
@@ -224,8 +236,9 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
-        assert.ok(tapins.calcFlip(input, state, output, new Rect()));
+        assert.ok(tapins.calcFlip(input, state, output, tree, new Rect()));
         assert.strictEqual(state.flipHorizontal, false);
     });
 
@@ -233,12 +246,13 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         state.finalRect = new Rect(100, 33, 323, 900);
         state.constrained = new Size(350, 523);
         input.verticalAlignment = minerva.VerticalAlignment.Center;
         input.horizontalAlignment = minerva.HorizontalAlignment.Center;
-        assert.ok(tapins.calcVisualOffset(input, state, output, new Rect()));
+        assert.ok(tapins.calcVisualOffset(input, state, output, tree, new Rect()));
         assert.deepEqual(state.visualOffset, new Point(87, 222));
     });
 
@@ -246,18 +260,20 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         output.layoutClip = new Rect(0, 0, 0, 0);
-        input.isTopLevel = true;
-        assert.ok(tapins.buildLayoutClip(input, state, output, new Rect()));
+
+        tree.isTop = true;
+        assert.ok(tapins.buildLayoutClip(input, state, output, tree, new Rect()));
         assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
 
-        input.isTopLevel = false;
+        tree.isTop = false;
         state.visualOffset = new Point(5, 15);
         state.finalRect = new Rect(5, 15, 200, 300);
         output.arrangedSize = new Size(100, 100);
         input.layoutClip = new Rect(0, 0, 0, 0);
-        assert.ok(tapins.buildLayoutClip(input, state, output, new Rect()));
+        assert.ok(tapins.buildLayoutClip(input, state, output, tree, new Rect()));
         assert.deepEqual(output.layoutClip, new Rect(0, 0, 200, 300));
         assert.strictEqual(output.dirtyFlags & DirtyFlags.LayoutClip, DirtyFlags.LayoutClip);
     });
@@ -266,14 +282,15 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         state.visualOffset = new Point(150, 200);
-        assert.ok(tapins.buildLayoutXform(input, state, output, new Rect()));
+        assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
         assert.deepEqual(typedToArray(output.layoutXform), [1, 0, 150, 0, 1, 200, 0, 0, 1]);
 
         output.arrangedSize.width = 100;
         state.flipHorizontal = true;
-        assert.ok(tapins.buildLayoutXform(input, state, output, new Rect()));
+        assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
         assert.deepEqual(typedToArray(output.layoutXform), [-1, 0, -250, 0, 1, 200, 0, 0, 1]);
     });
 
@@ -281,11 +298,12 @@ module minerva.layout.arrange.tapins.tests {
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
+        var tree = mock.tree();
 
         input.renderSize = new Size(100, 200);
         output.arrangedSize = new Size(250, 300);
         output.uiFlags = 0;
-        assert.ok(tapins.buildRenderSize(input, state, output, new Rect()));
+        assert.ok(tapins.buildRenderSize(input, state, output, tree, new Rect()));
         assert.deepEqual(output.renderSize, output.arrangedSize);
         assert.notStrictEqual(output.renderSize, output.arrangedSize);
         assert.deepEqual(output.lastRenderSize, input.renderSize);

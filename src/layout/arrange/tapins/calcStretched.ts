@@ -1,5 +1,5 @@
 module minerva.layout.arrange.tapins {
-    export var calcStretched: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var calcStretched: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         var fr = state.finalRect;
         Rect.copyTo(fr, output.layoutSlot);
 

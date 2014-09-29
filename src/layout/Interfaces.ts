@@ -22,7 +22,5 @@ module minerva.layout {
     }
 
     export interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
-        isLayoutContainer: boolean;
-        isContainer: boolean;
     }
 }

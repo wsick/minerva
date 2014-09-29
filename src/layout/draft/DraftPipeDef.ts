@@ -4,6 +4,7 @@ module minerva.layout.draft {
     }
     export interface IDraftPipeData extends pipe.IPipeData {
         updater: Updater;
+        tree: IUpdaterTree;
         assets: IUpdaterAssets;
         flag: UIFlags;
         measureList: Updater[];

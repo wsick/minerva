@@ -67,6 +67,7 @@ module minerva.engine {
                 maxCount: 250,
                 updater: null,
                 assets: null,
+                tree: null,
                 flag: UIFlags.None,
                 measureList: [],
                 arrangeList: [],

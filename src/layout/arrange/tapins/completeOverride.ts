@@ -1,5 +1,5 @@
 module minerva.layout.arrange.tapins {
-    export var completeOverride: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var completeOverride: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         output.dirtyFlags &= ~DirtyFlags.Arrange;
 
         var as = output.arrangedSize;

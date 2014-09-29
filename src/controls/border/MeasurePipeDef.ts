@@ -19,13 +19,12 @@ module minerva.controls.border.measure {
     export interface IInput extends layout.measure.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: BorderUpdater;
     }
     export interface IState extends layout.measure.IState {
         totalBorder: Thickness;
     }
 
-    export function preOverride (input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean {
+    export function preOverride (input: IInput, state: IState, output: layout.measure.IOutput, tree: BorderTree, availableSize: Size): boolean {
         var tb = state.totalBorder;
         Thickness.copyTo(input.padding, tb);
         Thickness.add(tb, input.borderThickness);
@@ -33,17 +32,16 @@ module minerva.controls.border.measure {
         return true;
     }
 
-    export function doOverride (input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean {
-        var childu = input.childUpdater;
+    export function doOverride (input: IInput, state: IState, output: layout.measure.IOutput, tree: BorderTree, availableSize: Size): boolean {
         var ds = output.desiredSize;
-        if (childu) {
-            childu.measure(state.availableSize);
-            Size.copyTo(childu.assets.desiredSize, ds);
+        if (tree.child) {
+            tree.child.measure(state.availableSize);
+            Size.copyTo(tree.child.assets.desiredSize, ds);
         }
         return true;
     }
 
-    export function postOverride (input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean {
+    export function postOverride (input: IInput, state: IState, output: layout.measure.IOutput, tree: BorderTree, availableSize: Size): boolean {
         Thickness.growSize(state.totalBorder, output.desiredSize);
         Size.min(output.desiredSize, state.availableSize);
         return true;

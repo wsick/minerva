@@ -1,6 +1,6 @@
 module minerva.layout.measure {
     export interface IMeasureTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, availableSize: Size):boolean;
+        (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, availableSize: Size):boolean;
     }
     export interface IInput extends pipe.IPipeInput, helpers.ISized {
         margin: Thickness;

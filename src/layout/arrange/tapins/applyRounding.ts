@@ -1,5 +1,5 @@
 module minerva.layout.arrange.tapins {
-    export var applyRounding: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var applyRounding: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         var fr = state.finalRect;
         if (input.useLayoutRounding) {
             fr.x = Math.round(finalRect.x);

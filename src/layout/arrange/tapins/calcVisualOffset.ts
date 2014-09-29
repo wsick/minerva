@@ -1,12 +1,12 @@
 module minerva.layout.arrange.tapins {
-    export var calcVisualOffset: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var calcVisualOffset: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         var vo = state.visualOffset;
         var fr = state.finalRect;
         var constrained = state.constrained;
         vo.x = fr.x;
         vo.y = fr.y;
 
-        if (!input.isTopLevel) {
+        if (!tree.isTop) {
             switch (input.horizontalAlignment) {
                 case HorizontalAlignment.Left:
                     break;

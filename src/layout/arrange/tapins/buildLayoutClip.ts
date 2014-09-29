@@ -2,8 +2,8 @@ module minerva.layout.arrange.tapins {
     var testRect = new Rect();
     var fwClip = new Rect();
     //NOTE: Panels will change this so layout clip doesn't calculate at all
-    export var buildLayoutClip: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
-        if (input.isTopLevel)
+    export var buildLayoutClip: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
+        if (tree.isTop)
             return true;
 
         var layoutClip = output.layoutClip;

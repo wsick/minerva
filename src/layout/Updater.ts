@@ -6,6 +6,15 @@ module minerva.layout {
         }
     };
 
+    function getVisualOwner (updater: Updater): IVisualOwner {
+        var tree = updater.tree;
+        if (tree.visualParent)
+            return tree.visualParent;
+        if (tree.isTop && tree.surface)
+            return tree.surface;
+        return NO_VO;
+    }
+
     export class Updater {
         private $$measure: IMeasurePipe = null;
         private $$measureBinder: measure.IMeasureBinder = null;
@@ -15,9 +24,6 @@ module minerva.layout {
         private $$processdown: IProcessDownPipe = null;
         private $$processup: IProcessUpPipe = null;
         private $$render: IRenderPipe = null;
-
-        private $$visualParentUpdater: Updater = null;
-        private $$surface: ISurface = null;
 
         private $$inDownDirty = false;
         private $$inUpDirty = false;
@@ -42,10 +48,6 @@ module minerva.layout {
             renderTransformOrigin: new Point(),
             projection: null,
             effectPadding: new Thickness(),
-
-            isTopLevel: false,
-            isLayoutContainer: false,
-            isContainer: false,
 
             previousConstraint: new Size(),
             desiredSize: new Size(),
@@ -85,41 +87,38 @@ module minerva.layout {
             forceInvalidate: false
         };
 
+        tree: IUpdaterTree = null;
+
         constructor () {
             this.setMeasureBinder()
                 .setArrangeBinder();
         }
 
-        setContainerMode (isLayoutContainer: boolean, isContainer?: boolean): Updater {
-            var assets = this.assets;
-            if (isLayoutContainer != null)
-                assets.isLayoutContainer = isLayoutContainer;
-            if (isContainer != null)
-                assets.isContainer = isContainer;
-            else
-                assets.isContainer = isLayoutContainer;
-            return this;
-        }
+        /*
+         setContainerMode (isLayoutContainer: boolean, isContainer?: boolean): Updater {
+         var assets = this.assets;
+         if (isLayoutContainer != null)
+         assets.isLayoutContainer = isLayoutContainer;
+         if (isContainer != null)
+         assets.isContainer = isContainer;
+         else
+         assets.isContainer = isLayoutContainer;
+         return this;
+         }
+         */
 
         onSizeChanged (oldSize: Size, newSize: Size) {
             //TODO: Raise SizeChanged
         }
 
-        /////// TREE
-
-        setVisualParent (visualParent: Updater): Updater {
-            this.$$visualParentUpdater = visualParent;
+        setTree (tree?: IUpdaterTree): Updater {
+            this.tree = tree || new layout.UpdaterTree();
             return this;
         }
 
-        walk (dir?: WalkDirection): IWalker<Updater> {
-            //TODO: Implement walk
-            return {
-                current: undefined,
-                step: function (): boolean {
-                    return false;
-                }
-            };
+        setVisualParent (visualParent: Updater): Updater {
+            this.tree.visualParent = visualParent;
+            return this;
         }
 
         walkDeep (dir?: WalkDirection): IDeepWalker<Updater> {
@@ -132,7 +131,7 @@ module minerva.layout {
                 current: undefined,
                 step: function (): boolean {
                     if (last) {
-                        for (var subwalker = last.walk(revdir); subwalker.step();) {
+                        for (var subwalker = last.tree.walk(revdir); subwalker.step();) {
                             walkList.unshift(subwalker.current);
                         }
                     }
@@ -201,13 +200,13 @@ module minerva.layout {
         /////// RUN PIPES
 
         doMeasure () {
-            this.$$measureBinder.bind(this, this.$$surface, this.$$visualParentUpdater);
+            this.$$measureBinder.bind(this);
         }
 
         measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
             var output = pipe.output;
-            var success = pipe.def.run(this.assets, pipe.state, output, availableSize);
+            var success = pipe.def.run(this.assets, pipe.state, output, this.tree, availableSize);
             if (output.newUpDirty)
                 Updater.$$addUpDirty(this);
             if (output.newDownDirty)
@@ -218,13 +217,13 @@ module minerva.layout {
         }
 
         doArrange () {
-            this.$$arrangeBinder.bind(this, this.$$surface, this.$$visualParentUpdater);
+            this.$$arrangeBinder.bind(this);
         }
 
         arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
             var output = pipe.output;
-            var success = pipe.def.run(this.assets, pipe.state, output, finalRect);
+            var success = pipe.def.run(this.assets, pipe.state, output, this.tree, finalRect);
             if (output.newUpDirty)
                 Updater.$$addUpDirty(this);
             if (output.newDownDirty)
@@ -248,13 +247,13 @@ module minerva.layout {
         processDown (): boolean {
             if (!this.$$inDownDirty)
                 return true;
-            if (this.$$visualParentUpdater && this.$$visualParentUpdater.$$inDownDirty) {
+            var vp = this.tree.visualParent;
+            if (vp && vp.$$inDownDirty) {
                 //OPTIMIZATION: uie is overzealous. His parent will invalidate him later
                 return false;
             }
 
             var pipe = this.$$processdown;
-            var vp = this.$$visualParentUpdater;
             var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
             this.$$inDownDirty = false;
             if (pipe.output.newUpDirty)
@@ -267,7 +266,7 @@ module minerva.layout {
                 return true;
 
             var pipe = this.$$processup;
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, Updater.$$getVisualOnwer(this));
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, getVisualOwner(this));
             this.$$inUpDirty = false;
             return success;
         }
@@ -308,7 +307,7 @@ module minerva.layout {
 
         findChildInList (list: Updater[]) {
             for (var i = 0, len = list.length; i < len; i++) {
-                if (list[i].$$visualParentUpdater === this)
+                if (list[i].tree.visualParent === this)
                     return i;
             }
             return -1;
@@ -316,24 +315,18 @@ module minerva.layout {
 
         /////// STATIC HELPERS
 
-        private static $$getVisualOnwer (updater: Updater): IVisualOwner {
-            if (updater.$$visualParentUpdater)
-                return updater.$$visualParentUpdater;
-            if (updater.assets.isTopLevel && updater.$$surface)
-                return updater.$$surface;
-            return NO_VO;
-        }
-
         private static $$addUpDirty (updater: Updater) {
-            if (updater.$$surface && !updater.$$inUpDirty) {
-                updater.$$surface.addUpDirty(updater);
+            var surface = updater.tree.surface;
+            if (surface && !updater.$$inUpDirty) {
+                surface.addUpDirty(updater);
                 updater.$$inUpDirty = true;
             }
         }
 
         private static $$addDownDirty (updater: Updater) {
-            if (updater.$$surface && !updater.$$inDownDirty) {
-                updater.$$surface.addDownDirty(updater);
+            var surface = updater.tree.surface;
+            if (surface && !updater.$$inDownDirty) {
+                surface.addDownDirty(updater);
                 updater.$$inDownDirty = true;
             }
         }
@@ -341,7 +334,7 @@ module minerva.layout {
         static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
             updater.assets.uiFlags |= flags;
             var vpu = updater;
-            while ((vpu = vpu.$$visualParentUpdater) != null && (vpu.assets.uiFlags & flags) === 0) {
+            while ((vpu = vpu.tree.visualParent) != null && (vpu.assets.uiFlags & flags) === 0) {
                 vpu.assets.uiFlags |= flags;
             }
         }

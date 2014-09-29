@@ -1,6 +1,6 @@
 module minerva.layout.arrange {
     export interface IArrangeTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, finalRect: Rect):boolean;
+        (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect):boolean;
     }
     export interface IInput extends pipe.IPipeInput, helpers.ISized {
         margin: Thickness;
@@ -14,7 +14,6 @@ module minerva.layout.arrange {
         renderSize: Size;
         lastRenderSize: Size;
         layoutClip: Rect; //NOTE: empty represents no layout clip
-        isTopLevel: boolean;
     }
     export interface IState extends pipe.IPipeState {
         finalRect: Rect;

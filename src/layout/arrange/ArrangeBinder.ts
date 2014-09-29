@@ -1,36 +1,37 @@
 module minerva.layout.arrange {
     export interface IArrangeBinder {
-        bind (updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+        bind (updater: Updater): boolean;
     }
     export class ArrangeBinder implements IArrangeBinder {
-        bind (updater: Updater, surface: ISurface, visualParent: Updater): boolean {
-            var last = updater.assets.layoutSlot || undefined;
-            if (!visualParent) {
+        bind (updater: Updater): boolean {
+            var assets = updater.assets;
+            var tree = updater.tree;
+            var last = assets.layoutSlot || undefined;
+            if (!tree.visualParent) {
                 last = new Rect();
-                this.expandViewport(last, updater, surface);
-                this.shiftViewport(last, updater, surface);
+                this.expandViewport(last, assets, tree);
+                this.shiftViewport(last, assets, tree);
             }
 
             if (last) {
                 return updater.arrange(last);
-            } else if (visualParent) {
-                visualParent.invalidateArrange();
+            } else if (tree.visualParent) {
+                tree.visualParent.invalidateArrange();
             }
             return false;
         }
 
-        expandViewport (viewport: Rect, updater: Updater, surface: ISurface) {
-            var assets = updater.assets;
-            if (assets.isLayoutContainer) {
+        expandViewport (viewport: Rect, assets: IUpdaterAssets, tree: IUpdaterTree) {
+            if (tree.isLayoutContainer) {
                 Size.copyTo(assets.desiredSize, viewport);
-                if (surface) {
+                if (tree.surface) {
                     var measure = assets.previousConstraint;
                     if (measure) {
                         viewport.width = Math.max(viewport.width, measure.width);
                         viewport.height = Math.max(viewport.height, measure.height);
                     } else {
-                        viewport.width = surface.width;
-                        viewport.height = surface.height;
+                        viewport.width = tree.surface.width;
+                        viewport.height = tree.surface.height;
                     }
                 }
             } else {
@@ -39,7 +40,7 @@ module minerva.layout.arrange {
             }
         }
 
-        shiftViewport (viewport: Rect, updater: Updater, surface: ISurface) {
+        shiftViewport (viewport: Rect, assets: IUpdaterAssets, tree: IUpdaterTree) {
             //TODO: Implement
             //viewport.x = Controls.Canvas.GetLeft(fe);
             //viewport.y = Controls.Canvas.GetTop(fe);

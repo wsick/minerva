@@ -1,5 +1,5 @@
 module minerva.layout.measure.tapins {
-    export var finishDesired: IMeasureTapin = function (input: IInput, state: IState, output: IOutput, availableSize: Size): boolean {
+    export var finishDesired: IMeasureTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, availableSize: Size): boolean {
         var ds = output.desiredSize;
         helpers.coerceSize(ds, input);
         Thickness.growSize(input.margin, ds);

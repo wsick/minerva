@@ -1,14 +1,15 @@
 module minerva.layout.measure {
     export interface IMeasureBinder {
-        bind(updater: Updater, surface: ISurface, visualParent: Updater): boolean;
+        bind(updater: Updater): boolean;
     }
     export class MeasureBinder implements IMeasureBinder {
-        bind (updater: Updater, surface: ISurface, visualParent: Updater): boolean {
+        bind (updater: Updater): boolean {
             var assets = updater.assets;
             var last = assets.previousConstraint;
             var old = new Size();
+            var tree = updater.tree;
 
-            if (!surface && !last && !visualParent && updater.assets.isLayoutContainer)
+            if (!tree.surface && !last && !tree.visualParent && tree.isLayoutContainer)
                 last = new Size(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
 
             var success = false;
@@ -19,8 +20,8 @@ module minerva.layout.measure {
                     return success;
             }
 
-            if (visualParent)
-                visualParent.invalidateMeasure();
+            if (tree.visualParent)
+                tree.visualParent.invalidateMeasure();
 
             assets.dirtyFlags &= ~DirtyFlags.Measure;
             return success;

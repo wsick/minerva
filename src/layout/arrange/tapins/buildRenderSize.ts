@@ -1,5 +1,5 @@
 module minerva.layout.arrange.tapins {
-    export var buildRenderSize: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var buildRenderSize: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         Size.copyTo(output.arrangedSize, output.renderSize);
         if (!Size.isEqual(input.renderSize, output.renderSize)) {
             if (input.lastRenderSize.width <= 0 && input.lastRenderSize.height <= 0) {

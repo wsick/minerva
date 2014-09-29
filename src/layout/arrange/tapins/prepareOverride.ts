@@ -1,5 +1,5 @@
 module minerva.layout.arrange.tapins {
-    export var prepareOverride: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var prepareOverride: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         var framework = state.framework;
         framework.width = 0;
         framework.height = 0;

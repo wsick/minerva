@@ -22,8 +22,9 @@ module minerva.tests.mock {
         return root;
     }
 
-    function createUpdater(): layout.Updater {
+    function createUpdater (): layout.Updater {
         var upd = new layout.Updater()
+            .setTree()
             .setMeasurePipe()
             .setArrangePipe()
             .setSizingPipe()
@@ -35,7 +36,7 @@ module minerva.tests.mock {
 
     function connect (parent: layout.Updater, children: layout.Updater[]) {
         children.forEach(c => c.setVisualParent(parent));
-        parent.walk = (dir?: WalkDirection): IWalker<layout.Updater> => {
+        parent.tree.walk = (dir?: WalkDirection): IWalker<layout.Updater> => {
             var isReverse = dir === WalkDirection.Reverse || dir === WalkDirection.ZReverse;
             var i = isReverse ? children.length : -1;
             return {

@@ -1,12 +1,12 @@
 module minerva {
     export interface IWalker<T> {
-        step(): boolean;
         current: T;
+        step(): boolean;
     }
 
     export interface IDeepWalker<T> {
-        step(): boolean;
         current: T;
+        step(): boolean;
         skipBranch();
     }
 

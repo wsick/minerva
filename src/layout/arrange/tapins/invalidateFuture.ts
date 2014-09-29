@@ -1,5 +1,5 @@
 module minerva.layout.arrange.tapins {
-    export var invalidateFuture: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var invalidateFuture: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         var lc = output.layoutClip;
         lc.x = lc.y = lc.width = lc.height = 0;
         output.dirtyFlags |= DirtyFlags.LocalTransform;

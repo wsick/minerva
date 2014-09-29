@@ -1,5 +1,5 @@
 module minerva.layout.arrange.tapins {
-    export var calcFlip: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, finalRect: Rect): boolean {
+    export var calcFlip: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
         /* TODO: IMPLEMENT
          var flipHoriz = false;
          var flowDirection = fe.FlowDirection;
