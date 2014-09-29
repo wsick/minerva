@@ -916,14 +916,13 @@ declare module minerva.controls.border.arrange {
     interface IInput extends layout.arrange.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: BorderUpdater;
     }
     interface IState extends layout.arrange.IState {
         totalBorder: Thickness;
         childRect: Rect;
     }
-    function preOverride(input: IInput, state: IState, output: layout.arrange.IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean;
-    function doOverride(input: IInput, state: IState, output: layout.arrange.IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean;
+    function preOverride(input: IInput, state: IState, output: layout.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean;
+    function doOverride(input: IInput, state: IState, output: layout.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.border {
     interface IBorderUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {

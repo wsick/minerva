@@ -29,7 +29,8 @@ module minerva.controls.border {
 
         constructor () {
             super();
-            this.setProcessDownPipe()
+            this.setTree(new BorderTree())
+                .setProcessDownPipe()
                 .setProcessUpPipe()
                 .setMeasurePipe(singleton(border.measure.MeasurePipeDef))
                 .setArrangePipe(singleton(border.arrange.ArrangePipeDef))

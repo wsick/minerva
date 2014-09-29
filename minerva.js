@@ -3914,7 +3914,7 @@ var minerva;
                 arrange.ArrangePipeDef = ArrangePipeDef;
 
                 function preOverride(input, state, output, tree, finalRect) {
-                    if (!input.childUpdater)
+                    if (!tree.child)
                         return true;
                     var tb = state.totalBorder;
                     minerva.Thickness.copyTo(input.padding, tb);
@@ -3929,8 +3929,8 @@ var minerva;
                 arrange.preOverride = preOverride;
 
                 function doOverride(input, state, output, tree, finalRect) {
-                    if (input.childUpdater)
-                        input.childUpdater.arrange(state.childRect);
+                    if (tree.child)
+                        tree.child.arrange(state.childRect);
                     return true;
                 }
                 arrange.doOverride = doOverride;
@@ -3973,7 +3973,7 @@ var minerva;
                 __extends(BorderUpdater, _super);
                 function BorderUpdater() {
                     _super.call(this);
-                    this.setProcessDownPipe().setProcessUpPipe().setMeasurePipe(minerva.singleton(border.measure.MeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.ArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));
+                    this.setTree(new BorderTree()).setProcessDownPipe().setProcessUpPipe().setMeasurePipe(minerva.singleton(border.measure.MeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.ArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));
 
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();

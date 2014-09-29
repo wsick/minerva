@@ -17,15 +17,14 @@ module minerva.controls.border.arrange {
     export interface IInput extends layout.arrange.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: BorderUpdater;
     }
     export interface IState extends layout.arrange.IState {
         totalBorder: Thickness;
         childRect: Rect;
     }
 
-    export function preOverride (input: IInput, state: IState, output: layout.arrange.IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
-        if (!input.childUpdater)
+    export function preOverride (input: IInput, state: IState, output: layout.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean {
+        if (!tree.child)
             return true;
         var tb = state.totalBorder;
         Thickness.copyTo(input.padding, tb);
@@ -38,9 +37,9 @@ module minerva.controls.border.arrange {
         return true;
     }
 
-    export function doOverride (input: IInput, state: IState, output: layout.arrange.IOutput, tree: layout.IUpdaterTree, finalRect: Rect): boolean {
-        if (input.childUpdater)
-            input.childUpdater.arrange(state.childRect);
+    export function doOverride (input: IInput, state: IState, output: layout.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean {
+        if (tree.child)
+            tree.child.arrange(state.childRect);
         return true;
     }
 }
