@@ -19,7 +19,7 @@ module minerva.controls.border.measure {
     export interface IInput extends layout.measure.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: Updater;
+        childUpdater: BorderUpdater;
     }
     export interface IState extends layout.measure.IState {
         totalBorder: Thickness;

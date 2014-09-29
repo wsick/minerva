@@ -5,12 +5,14 @@ module minerva.controls.border {
     }
 
 
-    export class Updater extends layout.Updater {
+    export class BorderUpdater extends layout.Updater {
         assets: IUpdaterAssets;
 
         constructor () {
             super();
             this.setContainerMode(true)
+                .setProcessDownPipe()
+                .setProcessUpPipe()
                 .setMeasurePipe(singleton(border.measure.MeasurePipeDef))
                 .setArrangePipe(singleton(border.arrange.ArrangePipeDef))
                 .setRenderPipe(singleton(layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));

@@ -17,7 +17,7 @@ module minerva.controls.border.arrange {
     export interface IInput extends layout.arrange.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: Updater;
+        childUpdater: BorderUpdater;
     }
     export interface IState extends layout.arrange.IState {
         totalBorder: Thickness;

@@ -3934,6 +3934,29 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (border) {
+            var BorderUpdater = (function (_super) {
+                __extends(BorderUpdater, _super);
+                function BorderUpdater() {
+                    _super.call(this);
+                    this.setContainerMode(true).setProcessDownPipe().setProcessUpPipe().setMeasurePipe(minerva.singleton(border.measure.MeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.ArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));
+
+                    var assets = this.assets;
+                    assets.padding = new minerva.Thickness();
+                    assets.borderThickness = new minerva.Thickness();
+                    assets.childUpdater = null;
+                }
+                return BorderUpdater;
+            })(minerva.layout.Updater);
+            border.BorderUpdater = BorderUpdater;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
             (function (measure) {
                 var MeasurePipeDef = (function (_super) {
                     __extends(MeasurePipeDef, _super);
@@ -3978,29 +4001,6 @@ var minerva;
                 measure.postOverride = postOverride;
             })(border.measure || (border.measure = {}));
             var measure = border.measure;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (controls) {
-        (function (border) {
-            var Updater = (function (_super) {
-                __extends(Updater, _super);
-                function Updater() {
-                    _super.call(this);
-                    this.setContainerMode(true).setMeasurePipe(minerva.singleton(border.measure.MeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.ArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));
-
-                    var assets = this.assets;
-                    assets.padding = new minerva.Thickness();
-                    assets.borderThickness = new minerva.Thickness();
-                    assets.childUpdater = null;
-                }
-                return Updater;
-            })(minerva.layout.Updater);
-            border.Updater = Updater;
         })(controls.border || (controls.border = {}));
         var border = controls.border;
     })(minerva.controls || (minerva.controls = {}));

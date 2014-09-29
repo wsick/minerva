@@ -903,7 +903,7 @@ declare module minerva.controls.border.arrange {
     interface IInput extends layout.arrange.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: Updater;
+        childUpdater: BorderUpdater;
     }
     interface IState extends layout.arrange.IState {
         totalBorder: Thickness;
@@ -911,6 +911,14 @@ declare module minerva.controls.border.arrange {
     }
     function preOverride(input: IInput, state: IState, output: layout.arrange.IOutput, finalRect: Rect): boolean;
     function doOverride(input: IInput, state: IState, output: layout.arrange.IOutput, finalRect: Rect): boolean;
+}
+declare module minerva.controls.border {
+    interface IUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
+    }
+    class BorderUpdater extends layout.Updater {
+        public assets: IUpdaterAssets;
+        constructor();
+    }
 }
 declare module minerva.controls.border.measure {
     class MeasurePipeDef extends layout.measure.MeasurePipeDef {
@@ -920,7 +928,7 @@ declare module minerva.controls.border.measure {
     interface IInput extends layout.measure.IInput {
         padding: Thickness;
         borderThickness: Thickness;
-        childUpdater: Updater;
+        childUpdater: BorderUpdater;
     }
     interface IState extends layout.measure.IState {
         totalBorder: Thickness;
@@ -928,14 +936,6 @@ declare module minerva.controls.border.measure {
     function preOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
     function doOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
     function postOverride(input: IInput, state: IState, output: layout.measure.IOutput, availableSize: Size): boolean;
-}
-declare module minerva.controls.border {
-    interface IUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
-    }
-    class Updater extends layout.Updater {
-        public assets: IUpdaterAssets;
-        constructor();
-    }
 }
 declare module minerva.controls.border.render {
     class RenderPipeDef extends layout.render.RenderPipeDef {
