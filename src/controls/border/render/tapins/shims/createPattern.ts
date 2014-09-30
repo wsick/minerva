@@ -1,5 +1,5 @@
 module minerva.controls.border.render.tapins.shim {
-    export function createPattern (input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean {
+    export function createPattern (input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean {
         if (!state.shouldRender || Thickness.isBalanced(input.borderThickness))
             return true;
 
@@ -10,10 +10,10 @@ module minerva.controls.border.render.tapins.shim {
         return true;
     }
 
-    var tempCtx: layout.render.RenderContext;
+    var tempCtx: core.render.RenderContext;
 
     function createBorderPattern (borderBrush: IBrush, extents: Rect, fillExtents: Rect, oa: ICornerRadius, ia: ICornerRadius): CanvasPattern {
-        tempCtx = tempCtx || new layout.render.RenderContext(document.createElement('canvas').getContext('2d'));
+        tempCtx = tempCtx || new core.render.RenderContext(document.createElement('canvas').getContext('2d'));
         var raw = tempCtx.raw;
         Size.copyTo(extents, raw.canvas);
         raw.beginPath();

@@ -10,7 +10,7 @@ module minerva.shapes {
         "bevel",
         "round"
     ];
-    export class Shape implements IShape {
+    export class Shape implements core.IShape {
         stretch = Stretch.None;
         fill: IBrush = null;
         fillRule = FillRule.EvenOdd;
@@ -24,17 +24,16 @@ module minerva.shapes {
         actualWidth: number = NaN;
         actualHeight: number = NaN;
 
-        draw (ctx: layout.render.RenderContext): IShape {
-
+        draw (ctx: core.render.RenderContext): core.IShape {
             return this;
         }
 
-        doFill (ctx: layout.render.RenderContext, region: Rect): IShape {
+        doFill (ctx: core.render.RenderContext, region: Rect): core.IShape {
             ctx.fillEx(this.fill, region, this.fillRule);
             return this;
         }
 
-        doStroke (ctx: layout.render.RenderContext, region: Rect): IShape {
+        doStroke (ctx: core.render.RenderContext, region: Rect): core.IShape {
             if (!this.stroke || !(this.strokeThickness > 0))
                 return this;
             var raw = ctx.raw;

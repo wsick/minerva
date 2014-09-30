@@ -1,5 +1,5 @@
 module minerva.engine {
-    export function draft (layers: layout.Updater[], draftPipe: layout.draft.DraftPipeDef, pass: IPass): boolean {
+    export function draft (layers: core.Updater[], draftPipe: core.draft.DraftPipeDef, pass: IPass): boolean {
         var updated = false;
         for (var i = 0, len = layers.length; i < len; i++) {
             pass.updater = layers[i];

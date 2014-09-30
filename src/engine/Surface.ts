@@ -1,19 +1,19 @@
 module minerva.engine {
-    export interface IPass extends layout.draft.IDraftPipeData {
+    export interface IPass extends core.draft.IDraftPipeData {
         count: number;
         maxCount: number;
     }
 
-    export class Surface implements layout.ISurface {
-        private $$layout = new layout.draft.DraftPipeDef();
+    export class Surface implements core.ISurface {
+        private $$layout = new core.draft.DraftPipeDef();
 
         private $$canvas: HTMLCanvasElement = null;
-        private $$ctx: layout.render.RenderContext = null;
+        private $$ctx: core.render.RenderContext = null;
 
-        private $$layers: layout.Updater[] = [];
+        private $$layers: core.Updater[] = [];
 
-        private $$downDirty: layout.Updater[] = [];
-        private $$upDirty: layout.Updater[] = [];
+        private $$downDirty: core.Updater[] = [];
+        private $$upDirty: core.Updater[] = [];
         private $$dirtyRegion: Rect = null;
 
         get width (): number {
@@ -53,11 +53,11 @@ module minerva.engine {
             ctx.restore();
         }
 
-        addUpDirty (updater: layout.Updater) {
+        addUpDirty (updater: core.Updater) {
             this.$$upDirty.push(updater);
         }
 
-        addDownDirty (updater: layout.Updater) {
+        addDownDirty (updater: core.Updater) {
             this.$$downDirty.push(updater);
         }
 

@@ -1,5 +1,5 @@
 module minerva.controls.border.render.tapins.shim {
-    export function doRender (input: IInput, state: IShimState, output: layout.render.IOutput, ctx: layout.render.RenderContext, region: Rect, tree: layout.IUpdaterTree): boolean {
+    export function doRender (input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean {
         if (!state.shouldRender)
             return true;
         ctx.save();

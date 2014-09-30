@@ -1437,7 +1437,7 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         var NO_VO = {
             updateBounds: function () {
             },
@@ -1524,7 +1524,7 @@ var minerva;
             };
 
             Updater.prototype.setTree = function (tree) {
-                this.tree = tree || new layout.UpdaterTree();
+                this.tree = tree || new core.UpdaterTree();
                 return this;
             };
 
@@ -1558,31 +1558,31 @@ var minerva;
             };
 
             Updater.prototype.setMeasurePipe = function (pipedef) {
-                var def = pipedef || new layout.measure.MeasurePipeDef();
+                var def = pipedef || new core.measure.MeasurePipeDef();
                 this.$$measure = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
             Updater.prototype.setMeasureBinder = function (mb) {
-                this.$$measureBinder = mb || new layout.measure.MeasureBinder();
+                this.$$measureBinder = mb || new core.measure.MeasureBinder();
                 return this;
             };
 
             Updater.prototype.setArrangePipe = function (pipedef) {
-                var def = pipedef || new layout.arrange.ArrangePipeDef();
+                var def = pipedef || new core.arrange.ArrangePipeDef();
                 this.$$arrange = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
             Updater.prototype.setArrangeBinder = function (ab) {
-                this.$$arrangeBinder = ab || new layout.arrange.ArrangeBinder();
+                this.$$arrangeBinder = ab || new core.arrange.ArrangeBinder();
                 return this;
             };
 
             Updater.prototype.setSizingPipe = function (pipedef) {
                 var def = pipedef;
                 if (!def)
-                    def = new layout.sizing.SizingPipeDef();
+                    def = new core.sizing.SizingPipeDef();
                 this.$$sizing = minerva.pipe.createTriPipe(def);
                 return this;
             };
@@ -1590,7 +1590,7 @@ var minerva;
             Updater.prototype.setProcessDownPipe = function (pipedef) {
                 var def = pipedef;
                 if (!def)
-                    def = new layout.processdown.ProcessDownPipeDef();
+                    def = new core.processdown.ProcessDownPipeDef();
                 this.$$processdown = minerva.pipe.createTriPipe(def);
                 return this;
             };
@@ -1598,13 +1598,13 @@ var minerva;
             Updater.prototype.setProcessUpPipe = function (pipedef) {
                 var def = pipedef;
                 if (!def)
-                    def = new layout.processup.ProcessUpPipeDef();
+                    def = new core.processup.ProcessUpPipeDef();
                 this.$$processup = minerva.pipe.createTriPipe(def);
                 return this;
             };
 
             Updater.prototype.setRenderPipe = function (pipedef) {
-                var def = pipedef || new layout.render.RenderPipeDef();
+                var def = pipedef || new core.render.RenderPipeDef();
                 this.$$render = minerva.pipe.createTriPipe(def);
                 return this;
             };
@@ -1745,13 +1745,13 @@ var minerva;
             };
             return Updater;
         })();
-        layout.Updater = Updater;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        core.Updater = Updater;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         var UpdaterTree = (function () {
             function UpdaterTree() {
                 this.isTop = false;
@@ -1770,13 +1770,13 @@ var minerva;
             };
             return UpdaterTree;
         })();
-        layout.UpdaterTree = UpdaterTree;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        core.UpdaterTree = UpdaterTree;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (helpers) {
             function coerceSize(size, assets) {
                 var cw = Math.max(assets.minWidth, size.width);
@@ -1808,14 +1808,14 @@ var minerva;
                     minerva.Rect.transform4(dest, projection);
             }
             helpers.copyGrowTransform4 = copyGrowTransform4;
-        })(layout.helpers || (layout.helpers = {}));
-        var helpers = layout.helpers;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.helpers || (core.helpers = {}));
+        var helpers = core.helpers;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             var ArrangeBinder = (function () {
                 function ArrangeBinder() {
@@ -1862,10 +1862,10 @@ var minerva;
                 return ArrangeBinder;
             })();
             arrange.ArrangeBinder = ArrangeBinder;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -1875,7 +1875,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             var ArrangePipeDef = (function (_super) {
                 __extends(ArrangePipeDef, _super);
@@ -1937,14 +1937,14 @@ var minerva;
                 return ArrangePipeDef;
             })(minerva.pipe.TriPipeDef);
             arrange.ArrangePipeDef = ArrangePipeDef;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.applyRounding = function (input, state, output, tree, finalRect) {
@@ -1961,14 +1961,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 var testRect = new minerva.Rect();
@@ -1996,7 +1996,7 @@ var minerva;
                     if (!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, output.arrangedSize)) {
                         fwClip.width = Number.POSITIVE_INFINITY;
                         fwClip.height = Number.POSITIVE_INFINITY;
-                        layout.helpers.coerceSize(fwClip, input);
+                        core.helpers.coerceSize(fwClip, input);
                         minerva.Rect.intersection(layoutClip, fwClip);
                     } else {
                         layoutClip.x = layoutClip.y = layoutClip.width = layoutClip.height = 0;
@@ -2010,14 +2010,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.buildLayoutXform = function (input, state, output, tree, finalRect) {
@@ -2031,14 +2031,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.buildRenderSize = function (input, state, output, tree, finalRect) {
@@ -2053,14 +2053,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.calcFlip = function (input, state, output, tree, finalRect) {
@@ -2069,14 +2069,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.calcStretched = function (input, state, output, tree, finalRect) {
@@ -2088,20 +2088,20 @@ var minerva;
                     var stretched = state.stretched;
                     stretched.width = fr.width;
                     stretched.height = fr.height;
-                    layout.helpers.coerceSize(stretched, input);
+                    core.helpers.coerceSize(stretched, input);
 
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.calcVisualOffset = function (input, state, output, tree, finalRect) {
@@ -2150,14 +2150,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.checkNeedArrange = function (input, state, output, tree, finalRect) {
@@ -2167,14 +2167,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, tree, finalRect) {
@@ -2194,21 +2194,21 @@ var minerva;
 
                     var constrained = state.constrained;
                     minerva.Size.copyTo(as, constrained);
-                    layout.helpers.coerceSize(constrained, input);
+                    core.helpers.coerceSize(constrained, input);
                     constrained.width = Math.min(constrained.width, as.width);
                     constrained.height = Math.min(constrained.height, as.height);
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, finalRect) {
@@ -2218,14 +2218,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, tree, finalRect) {
@@ -2238,21 +2238,21 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.prepareOverride = function (input, state, output, tree, finalRect) {
                     var framework = state.framework;
                     framework.width = 0;
                     framework.height = 0;
-                    layout.helpers.coerceSize(framework, input);
+                    core.helpers.coerceSize(framework, input);
 
                     if (input.horizontalAlignment === 3 /* Stretch */)
                         framework.width = Math.max(framework.width, state.stretched.width);
@@ -2269,14 +2269,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.validateFinalRect = function (input, state, output, tree, finalRect) {
@@ -2289,14 +2289,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (arrange) {
             (function (tapins) {
                 tapins.validateVisibility = function (input, state, output, tree, finalRect) {
@@ -2308,14 +2308,14 @@ var minerva;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
             var tapins = arrange.tapins;
-        })(layout.arrange || (layout.arrange = {}));
-        var arrange = layout.arrange;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.arrange || (core.arrange = {}));
+        var arrange = core.arrange;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             var DraftPipeDef = (function (_super) {
                 __extends(DraftPipeDef, _super);
@@ -2331,14 +2331,14 @@ var minerva;
                 return DraftPipeDef;
             })(minerva.pipe.PipeDef);
             draft.DraftPipeDef = DraftPipeDef;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.arrange = function (data) {
@@ -2357,14 +2357,14 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.determinePhase = function (data) {
@@ -2387,36 +2387,36 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.flushPrevious = function (data) {
                     var updater;
                     while ((updater = data.arrangeList.shift()) != null) {
-                        layout.Updater.$$propagateUiFlagsUp(updater, 4096 /* ArrangeHint */);
+                        core.Updater.$$propagateUiFlagsUp(updater, 4096 /* ArrangeHint */);
                     }
                     while ((updater = data.sizingList.shift()) != null) {
-                        layout.Updater.$$propagateUiFlagsUp(updater, 8192 /* SizeHint */);
+                        core.Updater.$$propagateUiFlagsUp(updater, 8192 /* SizeHint */);
                     }
                     return true;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.measure = function (data) {
@@ -2435,14 +2435,14 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.notifyResize = function (data) {
@@ -2460,14 +2460,14 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.prepareArrange = function (data) {
@@ -2494,14 +2494,14 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.prepareMeasure = function (data) {
@@ -2534,14 +2534,14 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.prepareSizing = function (data) {
@@ -2568,14 +2568,14 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (draft) {
             (function (tapins) {
                 tapins.sizing = function (data) {
@@ -2605,14 +2605,14 @@ var minerva;
                 };
             })(draft.tapins || (draft.tapins = {}));
             var tapins = draft.tapins;
-        })(layout.draft || (layout.draft = {}));
-        var draft = layout.draft;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.draft || (core.draft = {}));
+        var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             var MeasureBinder = (function () {
                 function MeasureBinder() {
@@ -2643,14 +2643,14 @@ var minerva;
                 return MeasureBinder;
             })();
             measure.MeasureBinder = MeasureBinder;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             var MeasurePipeDef = (function (_super) {
                 __extends(MeasurePipeDef, _super);
@@ -2698,14 +2698,14 @@ var minerva;
                 return MeasurePipeDef;
             })(minerva.pipe.TriPipeDef);
             measure.MeasurePipeDef = MeasurePipeDef;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.applyTemplate = function (input, state, output, tree, availableSize) {
@@ -2713,14 +2713,14 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.checkNeedMeasure = function (input, state, output, tree, availableSize) {
@@ -2735,14 +2735,14 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, tree, availableSize) {
@@ -2752,14 +2752,14 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, availableSize) {
@@ -2769,19 +2769,19 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.finishDesired = function (input, state, output, tree, availableSize) {
                     var ds = output.desiredSize;
-                    layout.helpers.coerceSize(ds, input);
+                    core.helpers.coerceSize(ds, input);
                     minerva.Thickness.growSize(input.margin, ds);
                     ds.width = Math.min(ds.width, availableSize.width);
                     ds.height = Math.min(ds.height, availableSize.height);
@@ -2793,14 +2793,14 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, tree, availableSize) {
@@ -2811,32 +2811,32 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.prepareOverride = function (input, state, output, tree, availableSize) {
                     minerva.Size.copyTo(availableSize, state.availableSize);
                     minerva.Thickness.shrinkSize(input.margin, state.availableSize);
-                    layout.helpers.coerceSize(state.availableSize, input);
+                    core.helpers.coerceSize(state.availableSize, input);
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.validate = function (input, state, output, tree, availableSize) {
@@ -2848,14 +2848,14 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (measure) {
             (function (tapins) {
                 tapins.validateVisibility = function (input, state, output, tree, availableSize) {
@@ -2867,14 +2867,14 @@ var minerva;
                 };
             })(measure.tapins || (measure.tapins = {}));
             var tapins = measure.tapins;
-        })(layout.measure || (layout.measure = {}));
-        var measure = layout.measure;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.measure || (core.measure = {}));
+        var measure = core.measure;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             var ProcessDownPipeDef = (function (_super) {
                 __extends(ProcessDownPipeDef, _super);
@@ -2941,14 +2941,14 @@ var minerva;
                 return ProcessDownPipeDef;
             })(minerva.pipe.TriPipeDef);
             processdown.ProcessDownPipeDef = ProcessDownPipeDef;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.calcAbsoluteProjection = function (input, state, output, vpinput) {
@@ -2966,14 +2966,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.calcAbsoluteXform = function (input, state, output, vpinput) {
@@ -2991,14 +2991,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.calcLocalProjection = function (input, state, output, vpinput) {
@@ -3019,14 +3019,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.calcRenderXform = function (input, state, output, vpinput) {
@@ -3043,14 +3043,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.calcXformOrigin = function (input, state, output, vpinput) {
@@ -3067,14 +3067,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.processHitTestVisibility = function (input, state, output, vpinput) {
@@ -3091,14 +3091,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.processLayoutClip = function (input, state, output, vpinput) {
@@ -3123,14 +3123,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.processLocalProjection = function (input, state, output, vpinput) {
@@ -3144,14 +3144,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.processLocalXform = function (input, state, output, vpinput) {
@@ -3172,14 +3172,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.processRenderVisibility = function (input, state, output, vpinput) {
@@ -3203,14 +3203,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.processXform = function (input, state, output, vpinput) {
@@ -3227,14 +3227,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.processZIndices = function (input, state, output, vpinput) {
@@ -3242,14 +3242,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processdown) {
             (function (tapins) {
                 tapins.propagateDirtyToChildren = function (input, state, output, vpinput) {
@@ -3257,14 +3257,14 @@ var minerva;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
             var tapins = processdown.tapins;
-        })(layout.processdown || (layout.processdown = {}));
-        var processdown = layout.processdown;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processdown || (core.processdown = {}));
+        var processdown = core.processdown;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processup) {
             var ProcessUpPipeDef = (function (_super) {
                 __extends(ProcessUpPipeDef, _super);
@@ -3315,14 +3315,14 @@ var minerva;
                 return ProcessUpPipeDef;
             })(minerva.pipe.TriPipeDef);
             processup.ProcessUpPipeDef = ProcessUpPipeDef;
-        })(layout.processup || (layout.processup = {}));
-        var processup = layout.processup;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processup || (core.processup = {}));
+        var processup = core.processup;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processup) {
             (function (tapins) {
                 tapins.calcActualSize = function (input, state, output, vo) {
@@ -3332,7 +3332,7 @@ var minerva;
                     var as = state.actualSize;
                     as.width = input.actualWidth;
                     as.height = input.actualHeight;
-                    layout.helpers.coerceSize(as, input);
+                    core.helpers.coerceSize(as, input);
                     if (isNaN(as.width))
                         as.width = 0;
                     if (isNaN(as.height))
@@ -3342,14 +3342,14 @@ var minerva;
                 };
             })(processup.tapins || (processup.tapins = {}));
             var tapins = processup.tapins;
-        })(layout.processup || (layout.processup = {}));
-        var processup = layout.processup;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processup || (core.processup = {}));
+        var processup = core.processup;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processup) {
             (function (tapins) {
                 tapins.calcExtents = function (input, state, output, vo) {
@@ -3368,35 +3368,35 @@ var minerva;
                 };
             })(processup.tapins || (processup.tapins = {}));
             var tapins = processup.tapins;
-        })(layout.processup || (layout.processup = {}));
-        var processup = layout.processup;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processup || (core.processup = {}));
+        var processup = core.processup;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processup) {
             (function (tapins) {
                 tapins.calcPaintBounds = function (input, state, output, vo) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
-                    layout.helpers.copyGrowTransform4(output.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
-                    layout.helpers.copyGrowTransform4(output.surfaceBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.absoluteProjection);
+                    core.helpers.copyGrowTransform4(output.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
+                    core.helpers.copyGrowTransform4(output.surfaceBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.absoluteProjection);
 
                     return true;
                 };
             })(processup.tapins || (processup.tapins = {}));
             var tapins = processup.tapins;
-        })(layout.processup || (layout.processup = {}));
-        var processup = layout.processup;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processup || (core.processup = {}));
+        var processup = core.processup;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processup) {
             (function (tapins) {
                 tapins.processBounds = function (input, state, output, vo) {
@@ -3415,14 +3415,14 @@ var minerva;
                 };
             })(processup.tapins || (processup.tapins = {}));
             var tapins = processup.tapins;
-        })(layout.processup || (layout.processup = {}));
-        var processup = layout.processup;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processup || (core.processup = {}));
+        var processup = core.processup;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processup) {
             (function (tapins) {
                 tapins.processInvalidate = function (input, state, output, vo) {
@@ -3435,14 +3435,14 @@ var minerva;
                 };
             })(processup.tapins || (processup.tapins = {}));
             var tapins = processup.tapins;
-        })(layout.processup || (layout.processup = {}));
-        var processup = layout.processup;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processup || (core.processup = {}));
+        var processup = core.processup;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (processup) {
             (function (tapins) {
                 tapins.processNewBounds = function (input, state, output, vo) {
@@ -3455,14 +3455,14 @@ var minerva;
                 };
             })(processup.tapins || (processup.tapins = {}));
             var tapins = processup.tapins;
-        })(layout.processup || (layout.processup = {}));
-        var processup = layout.processup;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.processup || (core.processup = {}));
+        var processup = core.processup;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             var ARC_TO_BEZIER = 0.55228475;
             var RenderContext = (function () {
@@ -3611,14 +3611,14 @@ var minerva;
                     return parseFloat(RegExp.$1);
                 return -1;
             }
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             var RenderPipeDef = (function (_super) {
                 __extends(RenderPipeDef, _super);
@@ -3638,14 +3638,14 @@ var minerva;
                 return RenderPipeDef;
             })(minerva.pipe.TriPipeDef);
             render.RenderPipeDef = RenderPipeDef;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.applyClip = function (input, state, output, ctx, region, tree) {
@@ -3656,14 +3656,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.doRender = function (input, state, output, ctx, region, tree) {
@@ -3671,14 +3671,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.postRender = function (input, state, output, ctx, region, tree) {
@@ -3691,14 +3691,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.preRender = function (input, state, output, ctx, region, tree) {
@@ -3711,14 +3711,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.prepareContext = function (input, state, output, ctx, region, tree) {
@@ -3729,14 +3729,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.renderChildren = function (input, state, output, ctx, region, tree) {
@@ -3747,14 +3747,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.restoreContext = function (input, state, output, ctx, region, tree) {
@@ -3763,14 +3763,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.validate = function (input, state, output, ctx, region, tree) {
@@ -3782,14 +3782,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (render) {
             (function (tapins) {
                 tapins.validateRegion = function (input, state, output, ctx, region, tree) {
@@ -3801,14 +3801,14 @@ var minerva;
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
-        })(layout.render || (layout.render = {}));
-        var render = layout.render;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (sizing) {
             var SizingPipeDef = (function (_super) {
                 __extends(SizingPipeDef, _super);
@@ -3839,14 +3839,14 @@ var minerva;
                 return SizingPipeDef;
             })(minerva.pipe.TriPipeDef);
             sizing.SizingPipeDef = SizingPipeDef;
-        })(layout.sizing || (layout.sizing = {}));
-        var sizing = layout.sizing;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.sizing || (core.sizing = {}));
+        var sizing = core.sizing;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (sizing) {
             (function (tapins) {
                 tapins.calcUseRender = function (input, state, output, tree) {
@@ -3855,14 +3855,14 @@ var minerva;
                 };
             })(sizing.tapins || (sizing.tapins = {}));
             var tapins = sizing.tapins;
-        })(layout.sizing || (layout.sizing = {}));
-        var sizing = layout.sizing;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.sizing || (core.sizing = {}));
+        var sizing = core.sizing;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (layout) {
+    (function (core) {
         (function (sizing) {
             (function (tapins) {
                 tapins.computeActual = function (input, state, output, tree) {
@@ -3877,36 +3877,82 @@ var minerva;
                         return true;
                     }
 
-                    layout.helpers.coerceSize(as, input);
+                    core.helpers.coerceSize(as, input);
                     return true;
                 };
             })(sizing.tapins || (sizing.tapins = {}));
             var tapins = sizing.tapins;
-        })(layout.sizing || (layout.sizing = {}));
-        var sizing = layout.sizing;
-    })(minerva.layout || (minerva.layout = {}));
-    var layout = minerva.layout;
+        })(core.sizing || (core.sizing = {}));
+        var sizing = core.sizing;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            var BorderTree = (function (_super) {
+                __extends(BorderTree, _super);
+                function BorderTree() {
+                    _super.apply(this, arguments);
+                    this.isLayoutContainer = true;
+                    this.isContainer = true;
+                    this.child = undefined;
+                }
+                BorderTree.prototype.walk = function (direction) {
+                    var visited = false;
+                    var _this = this;
+                    return {
+                        current: undefined,
+                        step: function () {
+                            this.current = !visited ? _this.child : undefined;
+                            visited = true;
+                            return this.current !== undefined;
+                        }
+                    };
+                };
+                return BorderTree;
+            })(minerva.core.UpdaterTree);
+            border.BorderTree = BorderTree;
+
+            var BorderUpdater = (function (_super) {
+                __extends(BorderUpdater, _super);
+                function BorderUpdater() {
+                    _super.call(this);
+                    this.setTree(new BorderTree()).setProcessDownPipe().setProcessUpPipe().setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+
+                    var assets = this.assets;
+                    assets.padding = new minerva.Thickness();
+                    assets.borderThickness = new minerva.Thickness();
+                }
+                return BorderUpdater;
+            })(minerva.core.Updater);
+            border.BorderUpdater = BorderUpdater;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (controls) {
         (function (border) {
             (function (arrange) {
-                var ArrangePipeDef = (function (_super) {
-                    __extends(ArrangePipeDef, _super);
-                    function ArrangePipeDef() {
+                var BorderArrangePipeDef = (function (_super) {
+                    __extends(BorderArrangePipeDef, _super);
+                    function BorderArrangePipeDef() {
                         _super.call(this);
                         this.addTapinBefore('doOverride', 'preOverride', preOverride).replaceTapin('doOverride', doOverride);
                     }
-                    ArrangePipeDef.prototype.createState = function () {
+                    BorderArrangePipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
                         state.totalBorder = new minerva.Thickness();
                         state.childRect = new minerva.Rect();
                         return state;
                     };
-                    return ArrangePipeDef;
-                })(minerva.layout.arrange.ArrangePipeDef);
-                arrange.ArrangePipeDef = ArrangePipeDef;
+                    return BorderArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.BorderArrangePipeDef = BorderArrangePipeDef;
 
                 function preOverride(input, state, output, tree, finalRect) {
                     if (!tree.child)
@@ -3940,67 +3986,21 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (border) {
-            var BorderTree = (function (_super) {
-                __extends(BorderTree, _super);
-                function BorderTree() {
-                    _super.apply(this, arguments);
-                    this.isLayoutContainer = true;
-                    this.isContainer = true;
-                    this.child = undefined;
-                }
-                BorderTree.prototype.walk = function (direction) {
-                    var visited = false;
-                    var _this = this;
-                    return {
-                        current: undefined,
-                        step: function () {
-                            this.current = !visited ? _this.child : undefined;
-                            visited = true;
-                            return this.current !== undefined;
-                        }
-                    };
-                };
-                return BorderTree;
-            })(minerva.layout.UpdaterTree);
-            border.BorderTree = BorderTree;
-
-            var BorderUpdater = (function (_super) {
-                __extends(BorderUpdater, _super);
-                function BorderUpdater() {
-                    _super.call(this);
-                    this.setTree(new BorderTree()).setProcessDownPipe().setProcessUpPipe().setMeasurePipe(minerva.singleton(border.measure.MeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.ArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));
-
-                    var assets = this.assets;
-                    assets.padding = new minerva.Thickness();
-                    assets.borderThickness = new minerva.Thickness();
-                }
-                return BorderUpdater;
-            })(minerva.layout.Updater);
-            border.BorderUpdater = BorderUpdater;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (controls) {
-        (function (border) {
             (function (measure) {
-                var MeasurePipeDef = (function (_super) {
-                    __extends(MeasurePipeDef, _super);
-                    function MeasurePipeDef() {
+                var BorderMeasurePipeDef = (function (_super) {
+                    __extends(BorderMeasurePipeDef, _super);
+                    function BorderMeasurePipeDef() {
                         _super.call(this);
                         this.addTapinBefore('doOverride', 'preOverride', preOverride).replaceTapin('doOverride', doOverride).addTapinAfter('doOverride', 'postOverride', postOverride);
                     }
-                    MeasurePipeDef.prototype.createState = function () {
+                    BorderMeasurePipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
                         state.totalBorder = new minerva.Thickness();
                         return state;
                     };
-                    return MeasurePipeDef;
-                })(minerva.layout.measure.MeasurePipeDef);
-                measure.MeasurePipeDef = MeasurePipeDef;
+                    return BorderMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.BorderMeasurePipeDef = BorderMeasurePipeDef;
 
                 function preOverride(input, state, output, tree, availableSize) {
                     var tb = state.totalBorder;
@@ -4039,22 +4039,22 @@ var minerva;
     (function (controls) {
         (function (border) {
             (function (render) {
-                var RenderPipeDef = (function (_super) {
-                    __extends(RenderPipeDef, _super);
-                    function RenderPipeDef() {
+                var BorderRenderPipeDef = (function (_super) {
+                    __extends(BorderRenderPipeDef, _super);
+                    function BorderRenderPipeDef() {
                         _super.call(this);
                         this.addTapinBefore('doRender', 'calcShouldRender', render.tapins.calcShouldRender).addTapinBefore('doRender', 'calcInnerOuter', render.tapins.calcInnerOuter).replaceTapin('doRender', render.tapins.doRender);
                     }
-                    RenderPipeDef.prototype.createState = function () {
+                    BorderRenderPipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
                         state.fillExtents = new minerva.Rect();
                         state.innerCornerRadius = new minerva.CornerRadius();
                         state.outerCornerRadius = new minerva.CornerRadius();
                         return state;
                     };
-                    return RenderPipeDef;
-                })(minerva.layout.render.RenderPipeDef);
-                render.RenderPipeDef = RenderPipeDef;
+                    return BorderRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.BorderRenderPipeDef = BorderRenderPipeDef;
             })(border.render || (border.render = {}));
             var render = border.render;
         })(controls.border || (controls.border = {}));
@@ -4067,13 +4067,13 @@ var minerva;
     (function (controls) {
         (function (border) {
             (function (render) {
-                var ShimRenderPipeDef = (function (_super) {
-                    __extends(ShimRenderPipeDef, _super);
-                    function ShimRenderPipeDef() {
+                var ShimBorderRenderPipeDef = (function (_super) {
+                    __extends(ShimBorderRenderPipeDef, _super);
+                    function ShimBorderRenderPipeDef() {
                         _super.call(this);
                         this.addTapinBefore('doRender', 'calcBalanced', render.tapins.shim.calcBalanced).addTapinBefore('doRender', 'invalidatePattern', render.tapins.shim.invalidatePattern).addTapinBefore('doRender', 'createPattern', render.tapins.shim.createPattern).replaceTapin('doRender', render.tapins.shim.doRender);
                     }
-                    ShimRenderPipeDef.prototype.createState = function () {
+                    ShimBorderRenderPipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
                         state.middleCornerRadius = new minerva.CornerRadius();
                         state.strokeExtents = new minerva.Rect();
@@ -4081,9 +4081,9 @@ var minerva;
                         state.oldMetrics = null;
                         return state;
                     };
-                    return ShimRenderPipeDef;
-                })(render.RenderPipeDef);
-                render.ShimRenderPipeDef = ShimRenderPipeDef;
+                    return ShimBorderRenderPipeDef;
+                })(render.BorderRenderPipeDef);
+                render.ShimBorderRenderPipeDef = ShimBorderRenderPipeDef;
             })(border.render || (border.render = {}));
             var render = border.render;
         })(controls.border || (controls.border = {}));
@@ -4255,7 +4255,7 @@ var minerva;
                         var tempCtx;
 
                         function createBorderPattern(borderBrush, extents, fillExtents, oa, ia) {
-                            tempCtx = tempCtx || new minerva.layout.render.RenderContext(document.createElement('canvas').getContext('2d'));
+                            tempCtx = tempCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
                             var raw = tempCtx.raw;
                             minerva.Size.copyTo(extents, raw.canvas);
                             raw.beginPath();
@@ -4383,7 +4383,7 @@ var minerva;
     (function (engine) {
         var Surface = (function () {
             function Surface() {
-                this.$$layout = new minerva.layout.draft.DraftPipeDef();
+                this.$$layout = new minerva.core.draft.DraftPipeDef();
                 this.$$canvas = null;
                 this.$$ctx = null;
                 this.$$layers = [];
@@ -4632,7 +4632,7 @@ var minerva;
                     return new shapes.Shape();
                 };
                 return ShapeUpdater;
-            })(minerva.layout.Updater);
+            })(minerva.core.Updater);
             shape.ShapeUpdater = ShapeUpdater;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
@@ -4650,7 +4650,7 @@ var minerva;
                         _super.call(this);
                     }
                     return ShapeArrangePipeDef;
-                })(minerva.layout.arrange.ArrangePipeDef);
+                })(minerva.core.arrange.ArrangePipeDef);
                 arrange.ShapeArrangePipeDef = ShapeArrangePipeDef;
             })(shape.arrange || (shape.arrange = {}));
             var arrange = shape.arrange;
@@ -4670,7 +4670,7 @@ var minerva;
                         _super.call(this);
                     }
                     return ShapeMeasurePipeDef;
-                })(minerva.layout.measure.MeasurePipeDef);
+                })(minerva.core.measure.MeasurePipeDef);
                 measure.ShapeMeasurePipeDef = ShapeMeasurePipeDef;
             })(shape.measure || (shape.measure = {}));
             var measure = shape.measure;
@@ -4696,7 +4696,7 @@ var minerva;
                         return state;
                     };
                     return ShapeRenderPipeDef;
-                })(minerva.layout.render.RenderPipeDef);
+                })(minerva.core.render.RenderPipeDef);
                 render.ShapeRenderPipeDef = ShapeRenderPipeDef;
             })(shape.render || (shape.render = {}));
             var render = shape.render;
@@ -4812,7 +4812,7 @@ var minerva;
                         return state;
                     };
                     return ShapeSizingPipeDef;
-                })(minerva.layout.sizing.SizingPipeDef);
+                })(minerva.core.sizing.SizingPipeDef);
                 sizing.ShapeSizingPipeDef = ShapeSizingPipeDef;
             })(shape.sizing || (shape.sizing = {}));
             var sizing = shape.sizing;

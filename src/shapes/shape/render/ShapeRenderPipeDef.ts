@@ -1,17 +1,17 @@
 module minerva.shapes.shape.render {
-    export interface IInput extends layout.render.IInput {
-        shape: IShape;
+    export interface IInput extends core.render.IInput {
+        shape: core.IShape;
         extents: Rect;
         shapeFlags: ShapeFlags;
         stretchXform: number[];
     }
-    export interface IState extends layout.render.IState {
+    export interface IState extends core.render.IState {
         shouldDraw: boolean;
     }
-    export interface IOutput extends layout.render.IOutput {
+    export interface IOutput extends core.render.IOutput {
     }
 
-    export class ShapeRenderPipeDef extends layout.render.RenderPipeDef {
+    export class ShapeRenderPipeDef extends core.render.RenderPipeDef {
         constructor () {
             super();
             this.addTapinBefore('doRender', 'calcShouldDraw', tapins.calcShouldDraw)

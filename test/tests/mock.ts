@@ -1,5 +1,5 @@
 module minerva.tests.mock {
-    export function createTree (outItems?: layout.Updater[]) {
+    export function createTree (outItems?: core.Updater[]) {
         var root = createUpdater();
 
         var child1 = createUpdater();
@@ -22,8 +22,8 @@ module minerva.tests.mock {
         return root;
     }
 
-    function createUpdater (): layout.Updater {
-        var upd = new layout.Updater()
+    function createUpdater (): core.Updater {
+        var upd = new core.Updater()
             .setTree()
             .setMeasurePipe()
             .setArrangePipe()
@@ -34,9 +34,9 @@ module minerva.tests.mock {
         return upd;
     }
 
-    function connect (parent: layout.Updater, children: layout.Updater[]) {
+    function connect (parent: core.Updater, children: core.Updater[]) {
         children.forEach(c => c.setVisualParent(parent));
-        parent.tree.walk = (dir?: WalkDirection): IWalker<layout.Updater> => {
+        parent.tree.walk = (dir?: WalkDirection): IWalker<core.Updater> => {
             var isReverse = dir === WalkDirection.Reverse || dir === WalkDirection.ZReverse;
             var i = isReverse ? children.length : -1;
             return {
@@ -54,7 +54,7 @@ module minerva.tests.mock {
     QUnit.module("mock");
 
     QUnit.test("walkDeep", (assert) => {
-        var expected: layout.Updater[] = [];
+        var expected: core.Updater[] = [];
         var root = createTree(expected);
         var i = 0;
         for (var walker = root.walkDeep(); walker.step(); i++) {
@@ -64,7 +64,7 @@ module minerva.tests.mock {
     });
 
     QUnit.test("walkDeep reverse", (assert) => {
-        var expected: layout.Updater[] = [];
+        var expected: core.Updater[] = [];
         var root = createTree(expected);
         expected = [expected[0], expected[5], expected[6], expected[7], expected[1], expected[4], expected[3], expected[2]];
         var i = 0;
@@ -75,7 +75,7 @@ module minerva.tests.mock {
     });
 
     QUnit.test("walkDeep skipBranch", (assert) => {
-        var expected: layout.Updater[] = [];
+        var expected: core.Updater[] = [];
         var root = createTree(expected);
         expected[1].assets.visibility = Visibility.Collapsed;
         var i = 0;

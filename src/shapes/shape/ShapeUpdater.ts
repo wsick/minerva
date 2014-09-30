@@ -1,10 +1,10 @@
-/// <reference path="../../layout/Updater" />
+/// <reference path="../../core/Updater" />
 
 module minerva.shapes.shape {
-    export interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput, sizing.IInput {
+    export interface IShapeUpdaterAssets extends core.IUpdaterAssets, render.IInput, sizing.IInput {
     }
 
-    export class ShapeUpdater extends layout.Updater {
+    export class ShapeUpdater extends core.Updater {
         assets: IShapeUpdaterAssets;
 
         constructor () {

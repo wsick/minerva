@@ -1,5 +1,5 @@
 module minerva.engine {
-    export function process (down: layout.Updater[], up: layout.Updater[]): boolean {
+    export function process (down: core.Updater[], up: core.Updater[]): boolean {
         var updated = down.length > 0 || up.length > 0;
         processDown(down);
         processUp(up);
@@ -7,7 +7,7 @@ module minerva.engine {
     }
 
     //Down --> RenderVisibility, HitTestVisibility, Transformation, Clip, ChildrenZIndices
-    function processDown (list: layout.Updater[]) {
+    function processDown (list: core.Updater[]) {
         for (var updater = list[0]; updater != null;) {
             if (updater.processDown()) {
                 list.shift();
@@ -21,7 +21,7 @@ module minerva.engine {
     }
 
     //Up --> Bounds, Invalidation
-    function processUp (list: layout.Updater[]) {
+    function processUp (list: core.Updater[]) {
         for (var updater = list[0]; updater != null;) {
             var childIndex = updater.findChildInList(list);
             if (childIndex > -1) {

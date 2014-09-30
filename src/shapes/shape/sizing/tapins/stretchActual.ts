@@ -1,5 +1,5 @@
 module minerva.shapes.shape.sizing.tapins {
-    export function stretchActual (input: IInput, state: IState, output: layout.sizing.IOutput, tree: layout.IUpdaterTree): boolean {
+    export function stretchActual (input: IInput, state: IState, output: core.sizing.IOutput, tree: core.IUpdaterTree): boolean {
         if (!state.shouldStretch)
             return true;
 

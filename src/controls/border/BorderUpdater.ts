@@ -1,15 +1,16 @@
-/// <reference path="../../layout/Updater" />
+/// <reference path="../../core/UpdaterTree" />
+/// <reference path="../../core/Updater" />
 
 module minerva.controls.border {
-    export interface IBorderUpdaterAssets extends layout.IUpdaterAssets, measure.IInput, arrange.IInput {
+    export interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
     }
 
-    export class BorderTree extends layout.UpdaterTree {
+    export class BorderTree extends core.UpdaterTree {
         isLayoutContainer = true;
         isContainer = true;
-        child: layout.Updater = undefined;
+        child: core.Updater = undefined;
 
-        walk (direction?: WalkDirection): IWalker<layout.Updater> {
+        walk(direction?: WalkDirection): IWalker<core.Updater> {
             var visited = false;
             var _this = this;
             return {
@@ -23,18 +24,18 @@ module minerva.controls.border {
         }
     }
 
-    export class BorderUpdater extends layout.Updater {
+    export class BorderUpdater extends core.Updater {
         tree: BorderTree;
         assets: IBorderUpdaterAssets;
 
-        constructor () {
+        constructor() {
             super();
             this.setTree(new BorderTree())
                 .setProcessDownPipe()
                 .setProcessUpPipe()
-                .setMeasurePipe(singleton(border.measure.MeasurePipeDef))
-                .setArrangePipe(singleton(border.arrange.ArrangePipeDef))
-                .setRenderPipe(singleton(layout.render.RenderContext.hasFillRule ? border.render.RenderPipeDef : border.render.ShimRenderPipeDef));
+                .setMeasurePipe(singleton(border.measure.BorderMeasurePipeDef))
+                .setArrangePipe(singleton(border.arrange.BorderArrangePipeDef))
+                .setRenderPipe(singleton(core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
 
             var assets = this.assets;
             assets.padding = new Thickness();

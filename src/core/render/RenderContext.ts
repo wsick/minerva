@@ -1,0 +1,159 @@
+module minerva.core.render {
+    var ARC_TO_BEZIER = 0.55228475;
+    export class RenderContext {
+        private $$transforms = [];
+        currentTransform = mat3.identity();
+        raw: CanvasRenderingContext2D;
+        hasFillRule: boolean;
+
+        constructor (ctx: CanvasRenderingContext2D) {
+            Object.defineProperty(this, 'raw', { value: ctx, writable: false });
+            Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
+            Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false });
+        }
+
+        static get hasFillRule (): boolean {
+            if (navigator.appName === "Microsoft Internet Explorer") {
+                var version = getIEVersion();
+                return version < 0 || version > 10;
+            }
+            return true;
+        }
+
+        save () {
+            this.$$transforms.push(mat3.clone(this.currentTransform));
+            this.raw.save();
+        }
+
+        restore () {
+            var old = this.$$transforms.pop();
+            if (old)
+                mat3.set(old, this.currentTransform);
+            this.raw.restore();
+        }
+
+        setTransform (m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
+            mat3.set([m11, m12, dx, m21, m22, dy, 0, 0, 1], this.currentTransform);
+            this.raw.setTransform(m11, m12, m21, m22, dx, dy);
+        }
+
+        resetTransform () {
+            mat3.identity(this.currentTransform);
+            var raw = <any>this.raw;
+            if (raw.resetTransform)
+                raw.resetTransform();
+        }
+
+        transform (m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
+            var ct = this.currentTransform;
+            mat3.multiply(ct, mat3.create([m11, m12, dx, m21, m22, dy, 0, 0, 1]), ct);
+            this.raw.transform(m11, m12, m21, m22, dx, dy);
+        }
+
+        scale (x: number, y: number) {
+            mat3.scale(this.currentTransform, x, y);
+            this.raw.scale(x, y);
+        }
+
+        rotate (angle: number) {
+            var ct = this.currentTransform;
+            var r = mat3.createRotate(angle);
+            mat3.multiply(ct, r, ct);
+            this.raw.rotate(angle);
+        }
+
+        translate (x: number, y: number) {
+            mat3.translate(this.currentTransform, x, y);
+            this.raw.translate(x, y);
+        }
+
+        transformMatrix (mat: number[]) {
+            var ct = this.currentTransform;
+            mat3.multiply(ct, mat, ct); //ct = matrix * ct
+            this.raw.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
+        }
+
+        pretransformMatrix (mat: number[]) {
+            var ct = this.currentTransform;
+            mat3.multiply(mat, ct, ct); //ct = ct * matrix
+            this.raw.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
+        }
+
+        clipGeometry (geom: IGeometry) {
+            geom.Draw(this);
+            this.raw.clip();
+        }
+
+        clipRect (rect: Rect) {
+            var raw = this.raw;
+            raw.beginPath();
+            raw.rect(rect.x, rect.y, rect.width, rect.height);
+            raw.clip();
+        }
+
+        fillEx (brush: IBrush, region: Rect, fillRule?: FillRule) {
+            var raw = this.raw;
+            brush.setupBrush(raw, region);
+            raw.fillStyle = brush.toHtml5Object();
+            if (!fillRule)
+                return raw.fill();
+            var fr = fillRule === FillRule.EvenOdd ? "evenodd" : "nonzero";
+            (<any>raw).fillRule = raw.msFillRule = fr;
+            raw.fill(fr);
+        }
+
+        drawRectEx (extents: Rect, cr?: ICornerRadius) {
+            var raw = this.raw;
+            if (!cr || CornerRadius.isEmpty(cr)) {
+                raw.rect(extents.x, extents.y, extents.width, extents.height);
+                return;
+            }
+
+            var top_adj = Math.max(cr.topLeft + cr.topRight - extents.width, 0) / 2;
+            var bottom_adj = Math.max(cr.bottomLeft + cr.bottomRight - extents.width, 0) / 2;
+            var left_adj = Math.max(cr.topLeft + cr.bottomLeft - extents.height, 0) / 2;
+            var right_adj = Math.max(cr.topRight + cr.bottomRight - extents.height, 0) / 2;
+
+            var tlt = cr.topLeft - top_adj;
+            raw.moveTo(extents.x + tlt, extents.y);
+
+            var trt = cr.topRight - top_adj;
+            var trr = cr.topRight - right_adj;
+            raw.lineTo(extents.x + extents.width - trt, extents.y);
+            raw.bezierCurveTo(
+                    extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y,
+                    extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER,
+                    extents.x + extents.width, extents.y + trr);
+
+            var brr = cr.bottomRight - right_adj;
+            var brb = cr.bottomRight - bottom_adj;
+            raw.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
+            raw.bezierCurveTo(
+                    extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER,
+                    extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height,
+                    extents.x + extents.width - brb, extents.y + extents.height);
+
+            var blb = cr.bottomLeft - bottom_adj;
+            var bll = cr.bottomLeft - left_adj;
+            raw.lineTo(extents.x + blb, extents.y + extents.height);
+            raw.bezierCurveTo(
+                    extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height,
+                extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER,
+                extents.x, extents.y + extents.height - bll);
+
+            var tll = cr.topLeft - left_adj;
+            raw.lineTo(extents.x, extents.y + tll);
+            raw.bezierCurveTo(
+                extents.x, extents.y + tll - tll * ARC_TO_BEZIER,
+                    extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y,
+                    extents.x + tlt, extents.y);
+        }
+    }
+
+    function getIEVersion (): number {
+        var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+        if (re.exec(navigator.userAgent) != null)
+            return parseFloat(RegExp.$1);
+        return -1;
+    }
+}
