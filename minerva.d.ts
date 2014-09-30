@@ -35,6 +35,23 @@ declare module minerva {
     }
 }
 declare module minerva {
+    enum PenLineJoin {
+        Miter = 0,
+        Bevel = 1,
+        Round = 2,
+    }
+    enum PenLineCap {
+        Flat = 0,
+        Square = 1,
+        Round = 2,
+        Triangle = 3,
+    }
+    enum FillRule {
+        EvenOdd = 0,
+        NonZero = 1,
+    }
+}
+declare module minerva {
     enum DirtyFlags {
         Transform,
         LocalTransform,
@@ -67,12 +84,24 @@ declare module minerva {
         SizeHint = 8192,
         Hints,
     }
+    enum ShapeFlags {
+        None = 0,
+        Empty = 1,
+        Normal = 2,
+        Degenerate = 4,
+        Radii = 8,
+    }
 }
 declare module minerva {
     interface IBrush {
         isTransparent(): boolean;
         setupBrush(ctx: CanvasRenderingContext2D, region: Rect): any;
         toHtml5Object(): any;
+    }
+}
+declare module minerva {
+    interface IPath {
+        draw(ctx: layout.render.RenderContext): any;
     }
 }
 declare module minerva {
@@ -88,17 +117,6 @@ declare module minerva {
         startCap: PenLineCap;
         endCap: PenLineCap;
         miterLimit: number;
-    }
-    enum PenLineJoin {
-        Miter = 0,
-        Bevel = 1,
-        Round = 2,
-    }
-    enum PenLineCap {
-        Flat = 0,
-        Square = 1,
-        Round = 2,
-        Triangle = 3,
     }
 }
 declare module minerva {
@@ -815,7 +833,7 @@ declare module minerva.layout.render {
         public pretransformMatrix(mat: number[]): void;
         public clipGeometry(geom: IGeometry): void;
         public clipRect(rect: Rect): void;
-        public fillEx(brush: IBrush, region: Rect, fillRule?: string): void;
+        public fillEx(brush: IBrush, region: Rect, fillRule?: FillRule): void;
         public drawRectEx(extents: Rect, cr?: ICornerRadius): void;
         public setupStroke(pars: IStrokeParameters): boolean;
         public strokeEx(brush: IBrush, pars: IStrokeParameters, region: Rect): void;
@@ -1036,28 +1054,56 @@ declare module minerva.engine {
 declare module minerva.engine {
     function process(down: layout.Updater[], up: layout.Updater[]): boolean;
 }
-declare module minerva.shapes.shape {
+declare module minerva.shapes.shape.arrange {
     class ShapeArrangePipeDef extends layout.arrange.ArrangePipeDef {
         constructor();
     }
 }
-declare module minerva.shapes.shape {
+declare module minerva.shapes.shape.measure {
     class ShapeMeasurePipeDef extends layout.measure.MeasurePipeDef {
         constructor();
     }
 }
-declare module minerva.shapes.shape {
+declare module minerva.shapes.shape.render {
+    interface IInput extends layout.render.IInput {
+        extents: Rect;
+        shapeFlags: ShapeFlags;
+        stretchXform: number[];
+        fill: IBrush;
+        fillRule: FillRule;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+        path: IPath;
+    }
+    interface IState extends layout.render.IState {
+        shouldDraw: boolean;
+        strokePars: IStrokeParameters;
+    }
+    interface IOutput extends layout.render.IOutput {
+        path: IPath;
+    }
     class ShapeRenderPipeDef extends layout.render.RenderPipeDef {
         constructor();
+        public createState(): IState;
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): void;
+        public flush(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): void;
     }
 }
-declare module minerva.shapes.shape {
+declare module minerva.shapes.shape.sizing {
     class ShapeSizingPipeDef extends layout.sizing.SizingPipeDef {
         constructor();
     }
 }
 declare module minerva.shapes.shape {
+    interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput {
+    }
     class ShapeUpdater extends layout.Updater {
+        public assets: IShapeUpdaterAssets;
         constructor();
     }
 }

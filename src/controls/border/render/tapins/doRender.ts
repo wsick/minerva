@@ -12,7 +12,7 @@ module minerva.controls.border.render.tapins {
             raw.beginPath();
             ctx.drawRectEx(extents, state.outerCornerRadius);
             ctx.drawRectEx(fillExtents, state.innerCornerRadius);
-            ctx.fillEx(borderBrush, extents, "evenodd");
+            ctx.fillEx(borderBrush, extents, FillRule.EvenOdd);
         }
         var backgroundBrush = input.backgroundBrush;
         if (backgroundBrush && !Rect.isEmpty(fillExtents)) {

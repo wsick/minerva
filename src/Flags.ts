@@ -36,4 +36,11 @@ module minerva {
         SizeHint = 0x2000,
         Hints = MeasureHint | ArrangeHint | SizeHint
     }
+    export enum ShapeFlags {
+        None = 0,
+        Empty = 1,
+        Normal = 2,
+        Degenerate = 4,
+        Radii = 8,
+    }
 }

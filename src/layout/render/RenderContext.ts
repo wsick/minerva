@@ -102,14 +102,15 @@ module minerva.layout.render {
             raw.clip();
         }
 
-        fillEx (brush: IBrush, region: Rect, fillRule?: string) {
+        fillEx (brush: IBrush, region: Rect, fillRule?: FillRule) {
             var raw = this.raw;
             brush.setupBrush(raw, region);
             raw.fillStyle = brush.toHtml5Object();
             if (!fillRule)
                 return raw.fill();
-            (<any>raw).fillRule = raw.msFillRule = fillRule;
-            raw.fill(fillRule);
+            var fr = fillRule === FillRule.EvenOdd ? "evenodd" : "nonzero";
+            (<any>raw).fillRule = raw.msFillRule = fr;
+            raw.fill(fr);
         }
 
         drawRectEx (extents: Rect, cr?: ICornerRadius) {
@@ -160,7 +161,8 @@ module minerva.layout.render {
         }
 
         setupStroke (pars: IStrokeParameters): boolean {
-            if (!pars) return false;
+            if (!pars || !(pars.thickness > 0))
+                return false;
             var raw = this.raw;
             raw.lineWidth = pars.thickness;
             raw.lineCap = caps[pars.startCap || pars.endCap || 0] || caps[0];

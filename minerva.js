@@ -52,6 +52,29 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (PenLineJoin) {
+        PenLineJoin[PenLineJoin["Miter"] = 0] = "Miter";
+        PenLineJoin[PenLineJoin["Bevel"] = 1] = "Bevel";
+        PenLineJoin[PenLineJoin["Round"] = 2] = "Round";
+    })(minerva.PenLineJoin || (minerva.PenLineJoin = {}));
+    var PenLineJoin = minerva.PenLineJoin;
+
+    (function (PenLineCap) {
+        PenLineCap[PenLineCap["Flat"] = 0] = "Flat";
+        PenLineCap[PenLineCap["Square"] = 1] = "Square";
+        PenLineCap[PenLineCap["Round"] = 2] = "Round";
+        PenLineCap[PenLineCap["Triangle"] = 3] = "Triangle";
+    })(minerva.PenLineCap || (minerva.PenLineCap = {}));
+    var PenLineCap = minerva.PenLineCap;
+
+    (function (FillRule) {
+        FillRule[FillRule["EvenOdd"] = 0] = "EvenOdd";
+        FillRule[FillRule["NonZero"] = 1] = "NonZero";
+    })(minerva.FillRule || (minerva.FillRule = {}));
+    var FillRule = minerva.FillRule;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (DirtyFlags) {
         DirtyFlags[DirtyFlags["Transform"] = 1 << 0] = "Transform";
         DirtyFlags[DirtyFlags["LocalTransform"] = 1 << 1] = "LocalTransform";
@@ -90,25 +113,14 @@ var minerva;
         UIFlags[UIFlags["Hints"] = UIFlags.MeasureHint | UIFlags.ArrangeHint | UIFlags.SizeHint] = "Hints";
     })(minerva.UIFlags || (minerva.UIFlags = {}));
     var UIFlags = minerva.UIFlags;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    
-
-    (function (PenLineJoin) {
-        PenLineJoin[PenLineJoin["Miter"] = 0] = "Miter";
-        PenLineJoin[PenLineJoin["Bevel"] = 1] = "Bevel";
-        PenLineJoin[PenLineJoin["Round"] = 2] = "Round";
-    })(minerva.PenLineJoin || (minerva.PenLineJoin = {}));
-    var PenLineJoin = minerva.PenLineJoin;
-
-    (function (PenLineCap) {
-        PenLineCap[PenLineCap["Flat"] = 0] = "Flat";
-        PenLineCap[PenLineCap["Square"] = 1] = "Square";
-        PenLineCap[PenLineCap["Round"] = 2] = "Round";
-        PenLineCap[PenLineCap["Triangle"] = 3] = "Triangle";
-    })(minerva.PenLineCap || (minerva.PenLineCap = {}));
-    var PenLineCap = minerva.PenLineCap;
+    (function (ShapeFlags) {
+        ShapeFlags[ShapeFlags["None"] = 0] = "None";
+        ShapeFlags[ShapeFlags["Empty"] = 1] = "Empty";
+        ShapeFlags[ShapeFlags["Normal"] = 2] = "Normal";
+        ShapeFlags[ShapeFlags["Degenerate"] = 4] = "Degenerate";
+        ShapeFlags[ShapeFlags["Radii"] = 8] = "Radii";
+    })(minerva.ShapeFlags || (minerva.ShapeFlags = {}));
+    var ShapeFlags = minerva.ShapeFlags;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -3551,8 +3563,9 @@ var minerva;
                     raw.fillStyle = brush.toHtml5Object();
                     if (!fillRule)
                         return raw.fill();
-                    raw.fillRule = raw.msFillRule = fillRule;
-                    raw.fill(fillRule);
+                    var fr = fillRule === 0 /* EvenOdd */ ? "evenodd" : "nonzero";
+                    raw.fillRule = raw.msFillRule = fr;
+                    raw.fill(fr);
                 };
 
                 RenderContext.prototype.drawRectEx = function (extents, cr) {
@@ -3591,7 +3604,7 @@ var minerva;
                 };
 
                 RenderContext.prototype.setupStroke = function (pars) {
-                    if (!pars)
+                    if (!pars || !(pars.thickness > 0))
                         return false;
                     var raw = this.raw;
                     raw.lineWidth = pars.thickness;
@@ -4181,7 +4194,7 @@ var minerva;
                             raw.beginPath();
                             ctx.drawRectEx(extents, state.outerCornerRadius);
                             ctx.drawRectEx(fillExtents, state.innerCornerRadius);
-                            ctx.fillEx(borderBrush, extents, "evenodd");
+                            ctx.fillEx(borderBrush, extents, 0 /* EvenOdd */);
                         }
                         var backgroundBrush = input.backgroundBrush;
                         if (backgroundBrush && !minerva.Rect.isEmpty(fillExtents)) {
@@ -4544,14 +4557,17 @@ var minerva;
 (function (minerva) {
     (function (shapes) {
         (function (shape) {
-            var ShapeArrangePipeDef = (function (_super) {
-                __extends(ShapeArrangePipeDef, _super);
-                function ShapeArrangePipeDef() {
-                    _super.call(this);
-                }
-                return ShapeArrangePipeDef;
-            })(minerva.layout.arrange.ArrangePipeDef);
-            shape.ShapeArrangePipeDef = ShapeArrangePipeDef;
+            (function (arrange) {
+                var ShapeArrangePipeDef = (function (_super) {
+                    __extends(ShapeArrangePipeDef, _super);
+                    function ShapeArrangePipeDef() {
+                        _super.call(this);
+                    }
+                    return ShapeArrangePipeDef;
+                })(minerva.layout.arrange.ArrangePipeDef);
+                arrange.ShapeArrangePipeDef = ShapeArrangePipeDef;
+            })(shape.arrange || (shape.arrange = {}));
+            var arrange = shape.arrange;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
@@ -4561,14 +4577,17 @@ var minerva;
 (function (minerva) {
     (function (shapes) {
         (function (shape) {
-            var ShapeMeasurePipeDef = (function (_super) {
-                __extends(ShapeMeasurePipeDef, _super);
-                function ShapeMeasurePipeDef() {
-                    _super.call(this);
-                }
-                return ShapeMeasurePipeDef;
-            })(minerva.layout.measure.MeasurePipeDef);
-            shape.ShapeMeasurePipeDef = ShapeMeasurePipeDef;
+            (function (measure) {
+                var ShapeMeasurePipeDef = (function (_super) {
+                    __extends(ShapeMeasurePipeDef, _super);
+                    function ShapeMeasurePipeDef() {
+                        _super.call(this);
+                    }
+                    return ShapeMeasurePipeDef;
+                })(minerva.layout.measure.MeasurePipeDef);
+                measure.ShapeMeasurePipeDef = ShapeMeasurePipeDef;
+            })(shape.measure || (shape.measure = {}));
+            var measure = shape.measure;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
@@ -4578,14 +4597,95 @@ var minerva;
 (function (minerva) {
     (function (shapes) {
         (function (shape) {
-            var ShapeRenderPipeDef = (function (_super) {
-                __extends(ShapeRenderPipeDef, _super);
-                function ShapeRenderPipeDef() {
-                    _super.call(this);
+            (function (render) {
+                var ShapeRenderPipeDef = (function (_super) {
+                    __extends(ShapeRenderPipeDef, _super);
+                    function ShapeRenderPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doRender', 'calcShouldDraw', calcShouldDraw).addTapinBefore('doRender', 'buildPath', buildPath).addTapinBefore('doRender', 'buildStroke', buildStroke).addTapinBefore('doRender', 'prepareDraw', prepareDraw).replaceTapin('doRender', draw).addTapinAfter('doRender', 'finishDraw', finishDraw);
+                    }
+                    ShapeRenderPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.shouldDraw = false;
+                        state.strokePars = {
+                            thickness: 0,
+                            startCap: 0 /* Flat */,
+                            endCap: 0 /* Flat */,
+                            join: 0 /* Miter */,
+                            miterLimit: 10
+                        };
+                        return state;
+                    };
+
+                    ShapeRenderPipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.path = null;
+                        return output;
+                    };
+
+                    ShapeRenderPipeDef.prototype.prepare = function (input, state, output, ctx, region) {
+                        output.path = input.path;
+                    };
+
+                    ShapeRenderPipeDef.prototype.flush = function (input, state, output, ctx, region) {
+                        input.path = output.path;
+                    };
+                    return ShapeRenderPipeDef;
+                })(minerva.layout.render.RenderPipeDef);
+                render.ShapeRenderPipeDef = ShapeRenderPipeDef;
+
+                function calcShouldDraw(input, state, output, ctx, region) {
+                    state.shouldDraw = false;
+                    if ((input.shapeFlags & 1 /* Empty */) === 0)
+                        return true;
+                    if (!input.fill && !input.stroke)
+                        return true;
+                    state.shouldDraw = true;
+                    return true;
                 }
-                return ShapeRenderPipeDef;
-            })(minerva.layout.render.RenderPipeDef);
-            shape.ShapeRenderPipeDef = ShapeRenderPipeDef;
+
+                function buildPath(input, state, output, ctx, region) {
+                    if (!state.shouldDraw)
+                        return true;
+                    return true;
+                }
+
+                function buildStroke(input, state, output, ctx, region) {
+                    if (!state.shouldDraw)
+                        return true;
+                    var sp = state.strokePars;
+                    sp.thickness = !input.stroke ? 0.0 : input.strokeThickness;
+                    sp.startCap = input.strokeStartLineCap;
+                    sp.endCap = input.strokeEndLineCap;
+                    sp.join = input.strokeLineJoin;
+                    sp.miterLimit = input.strokeMiterLimit;
+                    return true;
+                }
+
+                function prepareDraw(input, state, output, ctx, region) {
+                    if (!state.shouldDraw)
+                        return true;
+                    ctx.save();
+                    ctx.pretransformMatrix(input.stretchXform);
+                }
+
+                function draw(input, state, output, ctx, region) {
+                    if (!state.shouldDraw)
+                        return true;
+                    if (output.path)
+                        output.path.draw(ctx);
+                    if (input.fill)
+                        ctx.fillEx(input.fill, input.extents, input.fillRule);
+                    ctx.strokeEx(input.stroke, state.strokePars, input.extents);
+                }
+
+                function finishDraw(input, state, output, ctx, region) {
+                    if (!state.shouldDraw)
+                        return true;
+                    ctx.restore();
+                }
+            })(shape.render || (shape.render = {}));
+            var render = shape.render;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
@@ -4595,14 +4695,17 @@ var minerva;
 (function (minerva) {
     (function (shapes) {
         (function (shape) {
-            var ShapeSizingPipeDef = (function (_super) {
-                __extends(ShapeSizingPipeDef, _super);
-                function ShapeSizingPipeDef() {
-                    _super.call(this);
-                }
-                return ShapeSizingPipeDef;
-            })(minerva.layout.sizing.SizingPipeDef);
-            shape.ShapeSizingPipeDef = ShapeSizingPipeDef;
+            (function (sizing) {
+                var ShapeSizingPipeDef = (function (_super) {
+                    __extends(ShapeSizingPipeDef, _super);
+                    function ShapeSizingPipeDef() {
+                        _super.call(this);
+                    }
+                    return ShapeSizingPipeDef;
+                })(minerva.layout.sizing.SizingPipeDef);
+                sizing.ShapeSizingPipeDef = ShapeSizingPipeDef;
+            })(shape.sizing || (shape.sizing = {}));
+            var sizing = shape.sizing;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
@@ -4616,7 +4719,7 @@ var minerva;
                 __extends(ShapeUpdater, _super);
                 function ShapeUpdater() {
                     _super.call(this);
-                    this.setMeasurePipe(minerva.singleton(shape.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.ShapeSizingPipeDef));
+                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef));
                 }
                 return ShapeUpdater;
             })(minerva.layout.Updater);
