@@ -50,6 +50,12 @@ declare module minerva {
         EvenOdd = 0,
         NonZero = 1,
     }
+    enum Stretch {
+        None = 0,
+        Fill = 1,
+        Uniform = 2,
+        UniformToFill = 3,
+    }
 }
 declare module minerva {
     enum DirtyFlags {
@@ -898,7 +904,7 @@ declare module minerva.layout.render.tapins {
 }
 declare module minerva.layout.sizing {
     interface ISizingTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput): boolean;
+        (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): boolean;
     }
     interface IInput extends pipe.IPipeInput, helpers.ISized {
         visibility: Visibility;
@@ -916,8 +922,8 @@ declare module minerva.layout.sizing {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput): void;
-        public flush(input: IInput, state: IState, output: IOutput): void;
+        public prepare(input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): void;
+        public flush(input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): void;
     }
 }
 declare module minerva.layout.sizing.tapins {
@@ -1095,12 +1101,26 @@ declare module minerva.shapes.shape.render {
     }
 }
 declare module minerva.shapes.shape.sizing {
+    interface IInput extends layout.sizing.IInput {
+        naturalBounds: Rect;
+        stretch: Stretch;
+    }
+    interface IState extends layout.sizing.IState {
+        shouldStretch: boolean;
+    }
+    interface IOutput extends layout.sizing.IOutput {
+        naturalBounds: Rect;
+    }
     class ShapeSizingPipeDef extends layout.sizing.SizingPipeDef {
         constructor();
+        public createState(): IState;
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree): void;
+        public flush(input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree): void;
     }
 }
 declare module minerva.shapes.shape {
-    interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput {
+    interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput, sizing.IInput {
     }
     class ShapeUpdater extends layout.Updater {
         public assets: IShapeUpdaterAssets;

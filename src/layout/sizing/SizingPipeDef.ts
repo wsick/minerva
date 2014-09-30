@@ -1,6 +1,6 @@
 module minerva.layout.sizing {
     export interface ISizingTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput):boolean;
+        (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree):boolean;
     }
     export interface IInput extends pipe.IPipeInput, helpers.ISized {
         visibility: Visibility;
@@ -34,10 +34,10 @@ module minerva.layout.sizing {
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput) {
+        prepare (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree) {
         }
 
-        flush (input: IInput, state: IState, output: IOutput) {
+        flush (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree) {
             var as = output.actualSize;
             input.actualWidth = as.width;
             input.actualHeight = as.height;

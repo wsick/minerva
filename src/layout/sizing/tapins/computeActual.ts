@@ -1,5 +1,5 @@
 module minerva.layout.sizing.tapins {
-    export var computeActual: ISizingTapin = function (input: IInput, state: IState, output: IOutput): boolean {
+    export var computeActual: ISizingTapin = function (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): boolean {
         var as = output.actualSize;
         as.width = as.height = 0;
         if (input.visibility !== Visibility.Visible) {

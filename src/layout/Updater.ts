@@ -170,7 +170,9 @@ module minerva.layout {
         }
 
         setSizingPipe (pipedef?: sizing.SizingPipeDef): Updater {
-            var def = pipedef || new sizing.SizingPipeDef();
+            var def: pipe.TriPipeDef<sizing.ISizingTapin, sizing.IInput, sizing.IState, sizing.IOutput> = pipedef;
+            if (!def)
+                def = new sizing.SizingPipeDef();
             this.$$sizing = <ISizingPipe>pipe.createTriPipe(def);
             return this;
         }
@@ -238,7 +240,7 @@ module minerva.layout {
             var assets = this.assets;
             if (assets.lastRenderSize)
                 Size.copyTo(assets.lastRenderSize, oldSize);
-            var success = pipe.def.run(assets, pipe.state, pipe.output);
+            var success = pipe.def.run(assets, pipe.state, pipe.output, this.tree);
             Size.copyTo(pipe.output.actualSize, newSize);
             assets.lastRenderSize = undefined;
             return success;
