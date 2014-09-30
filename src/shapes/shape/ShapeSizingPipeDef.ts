@@ -7,7 +7,6 @@ module minerva.shapes.shape.sizing {
         shouldStretch: boolean;
     }
     export interface IOutput extends layout.sizing.IOutput {
-        naturalBounds: Rect;
     }
 
     export class ShapeSizingPipeDef extends layout.sizing.SizingPipeDef {
@@ -22,23 +21,9 @@ module minerva.shapes.shape.sizing {
             state.shouldStretch = false;
             return state;
         }
-
-        createOutput (): IOutput {
-            var output = <IOutput>super.createOutput();
-            output.naturalBounds = new Rect();
-            return output;
-        }
-
-        prepare (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree) {
-            Rect.copyTo(input.naturalBounds, output.naturalBounds);
-        }
-
-        flush (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree) {
-            Rect.copyTo(output.naturalBounds, input.naturalBounds);
-        }
     }
 
-    function calcShouldStretch (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree): boolean {
+    function calcShouldStretch (input: IInput, state: IState, output: layout.sizing.IOutput, tree: layout.IUpdaterTree): boolean {
         state.shouldStretch = false;
 
         // If visual parent is canvas and no previousConstraint and no layoutSlot
@@ -47,7 +32,7 @@ module minerva.shapes.shape.sizing {
         if (!tree.surface)
             return true;
 
-        var nb = output.naturalBounds;
+        var nb = input.naturalBounds;
         if (nb.width <= 0 && nb.height <= 0)
             return true;
 
@@ -60,11 +45,11 @@ module minerva.shapes.shape.sizing {
         return true;
     }
 
-    function stretchActual (input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree): boolean {
+    function stretchActual (input: IInput, state: IState, output: layout.sizing.IOutput, tree: layout.IUpdaterTree): boolean {
         if (!state.shouldStretch)
             return true;
 
-        var nb = output.naturalBounds;
+        var nb = input.naturalBounds;
         var as = output.actualSize;
         if (!isFinite(as.width))
             as.width = nb.width;

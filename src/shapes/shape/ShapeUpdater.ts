@@ -13,6 +13,7 @@ module minerva.shapes.shape {
                 .setArrangePipe(singleton(arrange.ShapeArrangePipeDef))
                 .setRenderPipe(singleton(render.ShapeRenderPipeDef))
                 .setSizingPipe(singleton(sizing.ShapeSizingPipeDef));
+            //TODO: Process Up Pipe (compute extents)
 
             var assets = this.assets;
 

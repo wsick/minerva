@@ -1109,14 +1109,10 @@ declare module minerva.shapes.shape.sizing {
         shouldStretch: boolean;
     }
     interface IOutput extends layout.sizing.IOutput {
-        naturalBounds: Rect;
     }
     class ShapeSizingPipeDef extends layout.sizing.SizingPipeDef {
         constructor();
         public createState(): IState;
-        public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree): void;
-        public flush(input: IInput, state: IState, output: IOutput, tree: layout.IUpdaterTree): void;
     }
 }
 declare module minerva.shapes.shape {
