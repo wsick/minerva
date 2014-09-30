@@ -1070,6 +1070,14 @@ declare module minerva.shapes.shape.measure {
         constructor();
     }
 }
+declare module minerva.shapes.shape {
+    interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput, sizing.IInput {
+    }
+    class ShapeUpdater extends layout.Updater {
+        public assets: IShapeUpdaterAssets;
+        constructor();
+    }
+}
 declare module minerva.shapes.shape.render {
     interface IInput extends layout.render.IInput {
         extents: Rect;
@@ -1090,15 +1098,26 @@ declare module minerva.shapes.shape.render {
         strokePars: IStrokeParameters;
     }
     interface IOutput extends layout.render.IOutput {
-        path: IPath;
     }
     class ShapeRenderPipeDef extends layout.render.RenderPipeDef {
         constructor();
         public createState(): IState;
-        public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): void;
-        public flush(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): void;
     }
+}
+declare module minerva.shapes.shape.render.tapins {
+    function buildStroke(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.shapes.shape.render.tapins {
+    function calcShouldDraw(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.shapes.shape.render.tapins {
+    function draw(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.shapes.shape.render.tapins {
+    function finishDraw(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.shapes.shape.render.tapins {
+    function prepareDraw(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.sizing {
     interface IInput extends layout.sizing.IInput {
@@ -1115,11 +1134,9 @@ declare module minerva.shapes.shape.sizing {
         public createState(): IState;
     }
 }
-declare module minerva.shapes.shape {
-    interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput, sizing.IInput {
-    }
-    class ShapeUpdater extends layout.Updater {
-        public assets: IShapeUpdaterAssets;
-        constructor();
-    }
+declare module minerva.shapes.shape.sizing.tapins {
+    function calcShouldStretch(input: IInput, state: IState, output: layout.sizing.IOutput, tree: layout.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.shape.sizing.tapins {
+    function stretchActual(input: IInput, state: IState, output: layout.sizing.IOutput, tree: layout.IUpdaterTree): boolean;
 }
