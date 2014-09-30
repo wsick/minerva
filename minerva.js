@@ -3465,17 +3465,6 @@ var minerva;
     (function (layout) {
         (function (render) {
             var ARC_TO_BEZIER = 0.55228475;
-            var caps = [
-                "butt",
-                "square",
-                "round",
-                "butt"
-            ];
-            var joins = [
-                "miter",
-                "bevel",
-                "round"
-            ];
             var RenderContext = (function () {
                 function RenderContext(ctx) {
                     this.$$transforms = [];
@@ -3611,26 +3600,6 @@ var minerva;
                     var tll = cr.topLeft - left_adj;
                     raw.lineTo(extents.x, extents.y + tll);
                     raw.bezierCurveTo(extents.x, extents.y + tll - tll * ARC_TO_BEZIER, extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y, extents.x + tlt, extents.y);
-                };
-
-                RenderContext.prototype.setupStroke = function (pars) {
-                    if (!pars || !(pars.thickness > 0))
-                        return false;
-                    var raw = this.raw;
-                    raw.lineWidth = pars.thickness;
-                    raw.lineCap = caps[pars.startCap || pars.endCap || 0] || caps[0];
-                    raw.lineJoin = joins[pars.join || 0] || joins[0];
-                    raw.miterLimit = pars.miterLimit;
-                    return true;
-                };
-
-                RenderContext.prototype.strokeEx = function (brush, pars, region) {
-                    if (!region || !this.setupStroke(pars))
-                        return;
-                    var raw = this.raw;
-                    brush.setupBrush(raw, region);
-                    raw.strokeStyle = brush.toHtml5Object();
-                    raw.stroke();
                 };
                 return RenderContext;
             })();
@@ -4325,7 +4294,14 @@ var minerva;
                             if (minerva.Thickness.isBalanced(input.borderThickness)) {
                                 raw.beginPath();
                                 ctx.drawRectEx(state.strokeExtents, state.middleCornerRadius);
-                                ctx.strokeEx(input.borderBrush, { thickness: input.borderThickness.left, endCap: 0, startCap: 0, miterLimit: 0, join: 0 }, state.strokeExtents);
+
+                                raw.lineWidth = input.borderThickness.left;
+                                raw.lineCap = "butt";
+                                raw.lineJoin = "miter";
+                                raw.miterLimit = 0;
+                                input.borderBrush.setupBrush(raw, state.strokeExtents);
+                                raw.strokeStyle = input.borderBrush.toHtml5Object();
+                                raw.stroke();
                             } else {
                                 raw.beginPath();
                                 raw.fillStyle = state.pattern;
@@ -4566,6 +4542,106 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (shapes) {
+        var caps = [
+            "butt",
+            "square",
+            "round",
+            "butt"
+        ];
+        var joins = [
+            "miter",
+            "bevel",
+            "round"
+        ];
+        var Shape = (function () {
+            function Shape() {
+                this.stretch = 0 /* None */;
+                this.fill = null;
+                this.fillRule = 0 /* EvenOdd */;
+                this.stroke = null;
+                this.strokeThickness = 0;
+                this.strokeStartLineCap = 0 /* Flat */;
+                this.strokeEndLineCap = 0 /* Flat */;
+                this.strokeLineJoin = 0 /* Miter */;
+                this.strokeMiterLimit = 10;
+                this.actualWidth = NaN;
+                this.actualHeight = NaN;
+            }
+            Shape.prototype.draw = function (ctx) {
+                return this;
+            };
+
+            Shape.prototype.doFill = function (ctx, region) {
+                ctx.fillEx(this.fill, region, this.fillRule);
+                return this;
+            };
+
+            Shape.prototype.doStroke = function (ctx, region) {
+                if (!this.stroke || !(this.strokeThickness > 0))
+                    return this;
+                var raw = ctx.raw;
+                raw.lineWidth = this.strokeThickness;
+                raw.lineCap = caps[this.strokeStartLineCap || this.strokeEndLineCap || 0] || caps[0];
+                raw.lineJoin = joins[this.strokeLineJoin || 0] || joins[0];
+                raw.miterLimit = this.strokeMiterLimit;
+
+                this.stroke.setupBrush(raw, region);
+                raw.strokeStyle = this.stroke.toHtml5Object();
+                raw.stroke();
+            };
+            return Shape;
+        })();
+        shapes.Shape = Shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (rectangle) {
+            var RectangleShape = (function (_super) {
+                __extends(RectangleShape, _super);
+                function RectangleShape() {
+                    _super.apply(this, arguments);
+                }
+                return RectangleShape;
+            })(shapes.Shape);
+            rectangle.RectangleShape = RectangleShape;
+        })(shapes.rectangle || (shapes.rectangle = {}));
+        var rectangle = shapes.rectangle;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            var ShapeUpdater = (function (_super) {
+                __extends(ShapeUpdater, _super);
+                function ShapeUpdater() {
+                    _super.call(this);
+                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef));
+
+                    var assets = this.assets;
+                    assets.shape = this.createShape();
+                    assets.naturalBounds = new minerva.Rect();
+                    assets.shapeFlags = 0 /* None */;
+                    assets.stretchXform = mat3.identity();
+                }
+                ShapeUpdater.prototype.createShape = function () {
+                    return new shapes.Shape();
+                };
+                return ShapeUpdater;
+            })(minerva.layout.Updater);
+            shape.ShapeUpdater = ShapeUpdater;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
         (function (shape) {
             (function (arrange) {
                 var ShapeArrangePipeDef = (function (_super) {
@@ -4607,59 +4683,16 @@ var minerva;
 (function (minerva) {
     (function (shapes) {
         (function (shape) {
-            var ShapeUpdater = (function (_super) {
-                __extends(ShapeUpdater, _super);
-                function ShapeUpdater() {
-                    _super.call(this);
-                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef));
-
-                    var assets = this.assets;
-
-                    assets.naturalBounds = new minerva.Rect();
-                    assets.shapeFlags = 0 /* None */;
-                    assets.stretchXform = mat3.identity();
-
-                    assets.path = null;
-
-                    assets.stretch = 0 /* None */;
-                    assets.fill = null;
-                    assets.fillRule = 0 /* EvenOdd */;
-                    assets.stroke = null;
-                    assets.strokeThickness = 0;
-                    assets.strokeStartLineCap = 0 /* Flat */;
-                    assets.strokeEndLineCap = 0 /* Flat */;
-                    assets.strokeLineJoin = 0 /* Miter */;
-                    assets.strokeMiterLimit = 10;
-                }
-                return ShapeUpdater;
-            })(minerva.layout.Updater);
-            shape.ShapeUpdater = ShapeUpdater;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
             (function (render) {
                 var ShapeRenderPipeDef = (function (_super) {
                     __extends(ShapeRenderPipeDef, _super);
                     function ShapeRenderPipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'buildStroke', render.tapins.buildStroke).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.draw).addTapinAfter('doRender', 'finishDraw', render.tapins.finishDraw);
+                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.draw).addTapinAfter('doRender', 'finishDraw', render.tapins.finishDraw);
                     }
                     ShapeRenderPipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
                         state.shouldDraw = false;
-                        state.strokePars = {
-                            thickness: 0,
-                            startCap: 0 /* Flat */,
-                            endCap: 0 /* Flat */,
-                            join: 0 /* Miter */,
-                            miterLimit: 10
-                        };
                         return state;
                     };
                     return ShapeRenderPipeDef;
@@ -4678,38 +4711,11 @@ var minerva;
         (function (shape) {
             (function (render) {
                 (function (tapins) {
-                    function buildStroke(input, state, output, ctx, region) {
-                        if (!state.shouldDraw)
-                            return true;
-                        var sp = state.strokePars;
-                        sp.thickness = !input.stroke ? 0.0 : input.strokeThickness;
-                        sp.startCap = input.strokeStartLineCap;
-                        sp.endCap = input.strokeEndLineCap;
-                        sp.join = input.strokeLineJoin;
-                        sp.miterLimit = input.strokeMiterLimit;
-                        return true;
-                    }
-                    tapins.buildStroke = buildStroke;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
-            (function (render) {
-                (function (tapins) {
                     function calcShouldDraw(input, state, output, ctx, region) {
                         state.shouldDraw = false;
                         if ((input.shapeFlags & 1 /* Empty */) === 0)
                             return true;
-                        if (!input.fill && !input.stroke)
+                        if (!input.shape.fill && !input.shape.stroke)
                             return true;
                         state.shouldDraw = true;
                         return true;
@@ -4733,11 +4739,8 @@ var minerva;
                     function draw(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-                        if (input.path)
-                            input.path.draw(ctx);
-                        if (input.fill)
-                            ctx.fillEx(input.fill, input.extents, input.fillRule);
-                        ctx.strokeEx(input.stroke, state.strokePars, input.extents);
+                        input.shape.draw(ctx).doFill(ctx, input.extents).doStroke(ctx, input.extents);
+                        return true;
                     }
                     tapins.draw = draw;
                 })(render.tapins || (render.tapins = {}));

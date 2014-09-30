@@ -8,7 +8,14 @@ module minerva.controls.border.render.tapins.shim {
         if (Thickness.isBalanced(input.borderThickness)) {
             raw.beginPath();
             ctx.drawRectEx(state.strokeExtents, state.middleCornerRadius);
-            ctx.strokeEx(input.borderBrush, { thickness: input.borderThickness.left, endCap: 0, startCap: 0, miterLimit: 0, join: 0 }, state.strokeExtents);
+
+            raw.lineWidth = input.borderThickness.left;
+            raw.lineCap = "butt";
+            raw.lineJoin = "miter";
+            raw.miterLimit = 0;
+            input.borderBrush.setupBrush(raw, state.strokeExtents);
+            raw.strokeStyle = input.borderBrush.toHtml5Object();
+            raw.stroke();
         } else {
             raw.beginPath();
             raw.fillStyle = state.pattern;

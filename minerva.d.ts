@@ -106,23 +106,27 @@ declare module minerva {
     }
 }
 declare module minerva {
-    interface IPath {
-        draw(ctx: layout.render.RenderContext): any;
-    }
-}
-declare module minerva {
     interface IProjection {
         getDistanceFromXYPlane(objectWidth: number, objectHeight: number): number;
         getTransform(): number[];
     }
 }
 declare module minerva {
-    interface IStrokeParameters {
-        thickness: number;
-        join: PenLineJoin;
-        startCap: PenLineCap;
-        endCap: PenLineCap;
-        miterLimit: number;
+    interface IShape {
+        stretch: Stretch;
+        fill: IBrush;
+        fillRule: FillRule;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+        actualWidth: number;
+        actualHeight: number;
+        draw(ctx: layout.render.RenderContext): IShape;
+        doFill(ctx: layout.render.RenderContext, region: Rect): IShape;
+        doStroke(ctx: layout.render.RenderContext, region: Rect): IShape;
     }
 }
 declare module minerva {
@@ -841,8 +845,6 @@ declare module minerva.layout.render {
         public clipRect(rect: Rect): void;
         public fillEx(brush: IBrush, region: Rect, fillRule?: FillRule): void;
         public drawRectEx(extents: Rect, cr?: ICornerRadius): void;
-        public setupStroke(pars: IStrokeParameters): boolean;
-        public strokeEx(brush: IBrush, pars: IStrokeParameters, region: Rect): void;
     }
 }
 declare module minerva.layout.render {
@@ -1060,6 +1062,39 @@ declare module minerva.engine {
 declare module minerva.engine {
     function process(down: layout.Updater[], up: layout.Updater[]): boolean;
 }
+declare module minerva.shapes {
+    class Shape implements IShape {
+        public stretch: Stretch;
+        public fill: IBrush;
+        public fillRule: FillRule;
+        public stroke: IBrush;
+        public strokeThickness: number;
+        public strokeStartLineCap: PenLineCap;
+        public strokeEndLineCap: PenLineCap;
+        public strokeLineJoin: PenLineJoin;
+        public strokeMiterLimit: number;
+        public actualWidth: number;
+        public actualHeight: number;
+        public draw(ctx: layout.render.RenderContext): IShape;
+        public doFill(ctx: layout.render.RenderContext, region: Rect): IShape;
+        public doStroke(ctx: layout.render.RenderContext, region: Rect): IShape;
+    }
+}
+declare module minerva.shapes.rectangle {
+    class RectangleShape extends Shape {
+        public radiusX: number;
+        public radiusY: number;
+    }
+}
+declare module minerva.shapes.shape {
+    interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput, sizing.IInput {
+    }
+    class ShapeUpdater extends layout.Updater {
+        public assets: IShapeUpdaterAssets;
+        constructor();
+        public createShape(): Shape;
+    }
+}
 declare module minerva.shapes.shape.arrange {
     class ShapeArrangePipeDef extends layout.arrange.ArrangePipeDef {
         constructor();
@@ -1070,32 +1105,15 @@ declare module minerva.shapes.shape.measure {
         constructor();
     }
 }
-declare module minerva.shapes.shape {
-    interface IShapeUpdaterAssets extends layout.IUpdaterAssets, render.IInput, sizing.IInput {
-    }
-    class ShapeUpdater extends layout.Updater {
-        public assets: IShapeUpdaterAssets;
-        constructor();
-    }
-}
 declare module minerva.shapes.shape.render {
     interface IInput extends layout.render.IInput {
+        shape: IShape;
         extents: Rect;
         shapeFlags: ShapeFlags;
         stretchXform: number[];
-        fill: IBrush;
-        fillRule: FillRule;
-        stroke: IBrush;
-        strokeThickness: number;
-        strokeStartLineCap: PenLineCap;
-        strokeEndLineCap: PenLineCap;
-        strokeLineJoin: PenLineJoin;
-        strokeMiterLimit: number;
-        path: IPath;
     }
     interface IState extends layout.render.IState {
         shouldDraw: boolean;
-        strokePars: IStrokeParameters;
     }
     interface IOutput extends layout.render.IOutput {
     }
@@ -1103,9 +1121,6 @@ declare module minerva.shapes.shape.render {
         constructor();
         public createState(): IState;
     }
-}
-declare module minerva.shapes.shape.render.tapins {
-    function buildStroke(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.render.tapins {
     function calcShouldDraw(input: IInput, state: IState, output: IOutput, ctx: layout.render.RenderContext, region: Rect): boolean;

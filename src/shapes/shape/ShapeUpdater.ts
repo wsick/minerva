@@ -16,22 +16,14 @@ module minerva.shapes.shape {
             //TODO: Process Up Pipe (compute extents)
 
             var assets = this.assets;
-
+            assets.shape = this.createShape();
             assets.naturalBounds = new Rect();
             assets.shapeFlags = ShapeFlags.None;
             assets.stretchXform = mat3.identity();
+        }
 
-            assets.path = null;
-
-            assets.stretch = Stretch.None;
-            assets.fill = null;
-            assets.fillRule = FillRule.EvenOdd;
-            assets.stroke = null;
-            assets.strokeThickness = 0;
-            assets.strokeStartLineCap = PenLineCap.Flat;
-            assets.strokeEndLineCap = PenLineCap.Flat;
-            assets.strokeLineJoin = PenLineJoin.Miter;
-            assets.strokeMiterLimit = 10;
+        createShape (): Shape {
+            return new Shape();
         }
     }
 }
