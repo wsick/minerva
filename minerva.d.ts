@@ -1036,3 +1036,28 @@ declare module minerva.engine {
 declare module minerva.engine {
     function process(down: layout.Updater[], up: layout.Updater[]): boolean;
 }
+declare module minerva.shapes.shape {
+    class ShapeArrangePipeDef extends layout.arrange.ArrangePipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.shape {
+    class ShapeMeasurePipeDef extends layout.measure.MeasurePipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.shape {
+    class ShapeRenderPipeDef extends layout.render.RenderPipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.shape {
+    class ShapeSizingPipeDef extends layout.sizing.SizingPipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.shape {
+    class ShapeUpdater extends layout.Updater {
+        constructor();
+    }
+}

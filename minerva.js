@@ -4540,4 +4540,90 @@ var minerva;
     })(minerva.engine || (minerva.engine = {}));
     var engine = minerva.engine;
 })(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            var ShapeArrangePipeDef = (function (_super) {
+                __extends(ShapeArrangePipeDef, _super);
+                function ShapeArrangePipeDef() {
+                    _super.call(this);
+                }
+                return ShapeArrangePipeDef;
+            })(minerva.layout.arrange.ArrangePipeDef);
+            shape.ShapeArrangePipeDef = ShapeArrangePipeDef;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            var ShapeMeasurePipeDef = (function (_super) {
+                __extends(ShapeMeasurePipeDef, _super);
+                function ShapeMeasurePipeDef() {
+                    _super.call(this);
+                }
+                return ShapeMeasurePipeDef;
+            })(minerva.layout.measure.MeasurePipeDef);
+            shape.ShapeMeasurePipeDef = ShapeMeasurePipeDef;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            var ShapeRenderPipeDef = (function (_super) {
+                __extends(ShapeRenderPipeDef, _super);
+                function ShapeRenderPipeDef() {
+                    _super.call(this);
+                }
+                return ShapeRenderPipeDef;
+            })(minerva.layout.render.RenderPipeDef);
+            shape.ShapeRenderPipeDef = ShapeRenderPipeDef;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            var ShapeSizingPipeDef = (function (_super) {
+                __extends(ShapeSizingPipeDef, _super);
+                function ShapeSizingPipeDef() {
+                    _super.call(this);
+                }
+                return ShapeSizingPipeDef;
+            })(minerva.layout.sizing.SizingPipeDef);
+            shape.ShapeSizingPipeDef = ShapeSizingPipeDef;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            var ShapeUpdater = (function (_super) {
+                __extends(ShapeUpdater, _super);
+                function ShapeUpdater() {
+                    _super.call(this);
+                    this.setMeasurePipe(minerva.singleton(shape.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.ShapeSizingPipeDef));
+                }
+                return ShapeUpdater;
+            })(minerva.layout.Updater);
+            shape.ShapeUpdater = ShapeUpdater;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
 //# sourceMappingURL=minerva.js.map
