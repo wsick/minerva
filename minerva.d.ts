@@ -1033,6 +1033,30 @@ declare module minerva.controls.border.render.tapins.shim {
 declare module minerva.controls.border.render.tapins.shim {
     function invalidatePattern(input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
+declare module minerva.controls.panel {
+    class PanelUpdater extends core.Updater {
+        constructor();
+    }
+}
+declare module minerva.controls.panel.arrange {
+    interface IState extends core.arrange.IState {
+        childRect: Rect;
+    }
+    class PanelArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.panel.measure {
+    class PanelMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.panel.processdown {
+    class PanelProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
+        constructor();
+    }
+}
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {
         count: number;

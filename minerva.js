@@ -4380,6 +4380,121 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            var PanelUpdater = (function (_super) {
+                __extends(PanelUpdater, _super);
+                function PanelUpdater() {
+                    _super.call(this);
+                    this.setTree().setProcessDownPipe(minerva.singleton(panel.processdown.PanelProcessDownPipeDef)).setProcessUpPipe().setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef));
+                }
+                return PanelUpdater;
+            })(minerva.core.Updater);
+            panel.PanelUpdater = PanelUpdater;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (arrange) {
+                var PanelArrangePipeDef = (function (_super) {
+                    __extends(PanelArrangePipeDef, _super);
+                    function PanelArrangePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', doOverride);
+                    }
+                    PanelArrangePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.childRect = new minerva.Rect();
+                        return state;
+                    };
+                    return PanelArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.PanelArrangePipeDef = PanelArrangePipeDef;
+
+                function doOverride(input, state, output, tree, finalRect) {
+                    var cr = state.childRect;
+                    cr.x = cr.y = 0;
+                    minerva.Size.copyTo(state.finalSize, cr);
+                    minerva.Size.copyTo(state.finalSize, output.arrangedSize);
+
+                    for (var walker = tree.walk(); walker.step();) {
+                        walker.current.arrange(cr);
+                    }
+
+                    return true;
+                }
+            })(panel.arrange || (panel.arrange = {}));
+            var arrange = panel.arrange;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (measure) {
+                var PanelMeasurePipeDef = (function (_super) {
+                    __extends(PanelMeasurePipeDef, _super);
+                    function PanelMeasurePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', doOverride);
+                    }
+                    return PanelMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.PanelMeasurePipeDef = PanelMeasurePipeDef;
+
+                function doOverride(input, state, output, tree, availableSize) {
+                    var desired = output.desiredSize;
+                    desired.width = desired.height = 0;
+                    for (var walker = tree.walk(); walker.step();) {
+                        walker.current.measure(state.availableSize);
+                        var childds = walker.current.assets.desiredSize;
+                        desired.width = Math.max(desired.width, childds.width);
+                        desired.height = Math.max(desired.height, childds.height);
+                    }
+                    return true;
+                }
+            })(panel.measure || (panel.measure = {}));
+            var measure = panel.measure;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (processdown) {
+                var PanelProcessDownPipeDef = (function (_super) {
+                    __extends(PanelProcessDownPipeDef, _super);
+                    function PanelProcessDownPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('processZIndices', processZIndices);
+                    }
+                    return PanelProcessDownPipeDef;
+                })(minerva.core.processdown.ProcessDownPipeDef);
+                processdown.PanelProcessDownPipeDef = PanelProcessDownPipeDef;
+
+                function processZIndices(input, state, output, vpinput) {
+                    return true;
+                }
+            })(panel.processdown || (panel.processdown = {}));
+            var processdown = panel.processdown;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (engine) {
         var Surface = (function () {
             function Surface() {
