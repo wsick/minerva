@@ -1,4 +1,9 @@
 module minerva {
+    export enum Orientation {
+        Horizontal = 0,
+        Vertical = 1,
+    }
+
     export enum PenLineJoin {
         Miter = 0,
         Bevel = 1,

@@ -35,6 +35,10 @@ declare module minerva {
     }
 }
 declare module minerva {
+    enum Orientation {
+        Horizontal = 0,
+        Vertical = 1,
+    }
     enum PenLineJoin {
         Miter = 0,
         Bevel = 1,
@@ -371,6 +375,7 @@ declare module minerva.core {
         public assets: IUpdaterAssets;
         public tree: IUpdaterTree;
         constructor();
+        public init(): void;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setTree(tree?: IUpdaterTree): Updater;
         public setVisualParent(visualParent: Updater): Updater;
@@ -946,7 +951,7 @@ declare module minerva.controls.border {
     class BorderUpdater extends core.Updater {
         public tree: BorderTree;
         public assets: IBorderUpdaterAssets;
-        constructor();
+        public init(): void;
     }
 }
 declare module minerva.controls.border.arrange {
@@ -1035,7 +1040,7 @@ declare module minerva.controls.border.render.tapins.shim {
 }
 declare module minerva.controls.panel {
     class PanelUpdater extends core.Updater {
-        constructor();
+        public init(): void;
     }
 }
 declare module minerva.controls.panel.arrange {
@@ -1056,6 +1061,56 @@ declare module minerva.controls.panel.processdown {
     class PanelProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
         constructor();
     }
+}
+declare module minerva.controls.stackpanel {
+    interface IStackPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    }
+    class StackPanelUpdater extends panel.PanelUpdater {
+        public assets: IStackPanelUpdaterAssets;
+        public init(): void;
+    }
+}
+declare module minerva.controls.stackpanel.arrange {
+    interface IInput extends core.arrange.IInput {
+        orientation: Orientation;
+    }
+    interface IState extends panel.arrange.IState {
+        childRect: Rect;
+    }
+    class StackPanelArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.stackpanel.arrange.tapins {
+    function doHorizontal(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.stackpanel.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.stackpanel.arrange.tapins {
+    function doVertical(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.stackpanel.measure {
+    interface IInput extends core.measure.IInput {
+        orientation: Orientation;
+    }
+    interface IState extends core.measure.IState {
+        childAvailable: Size;
+    }
+    class StackPanelMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.stackpanel.measure.tapins {
+    function doHorizontal(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.stackpanel.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.stackpanel.measure.tapins {
+    function doVertical(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {

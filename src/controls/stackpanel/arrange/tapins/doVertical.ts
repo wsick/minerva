@@ -1,0 +1,30 @@
+module minerva.controls.stackpanel.arrange.tapins {
+    export function doVertical(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean {
+        if (input.orientation !== Orientation.Vertical)
+            return true;
+
+        var arranged = output.arrangedSize;
+        arranged.height = 0;
+        var childRect = state.childRect;
+
+        var child: core.Updater;
+        var childDesired: Size;
+        for (var walker = tree.walk(); walker.step();) {
+            child = walker.current;
+            childDesired = child.assets.desiredSize;
+            Size.copyTo(childDesired, childRect);
+            childRect.y = arranged.height;
+
+            if (Rect.isEmpty(childRect))
+                childRect.x = childRect.y = childRect.width = childRect.height = 0;
+            child.arrange(childRect);
+
+            arranged.width = Math.max(arranged.width, childDesired.width);
+            arranged.height += childDesired.height;
+        }
+
+        arranged.height = Math.max(arranged.height, state.finalSize.height);
+
+        return true;
+    }
+}

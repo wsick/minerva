@@ -28,18 +28,15 @@ module minerva.controls.border {
         tree: BorderTree;
         assets: IBorderUpdaterAssets;
 
-        constructor() {
-            super();
-            this.setTree(new BorderTree())
-                .setProcessDownPipe()
-                .setProcessUpPipe()
-                .setMeasurePipe(singleton(border.measure.BorderMeasurePipeDef))
-                .setArrangePipe(singleton(border.arrange.BorderArrangePipeDef))
-                .setRenderPipe(singleton(core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
-
+        init() {
             var assets = this.assets;
             assets.padding = new Thickness();
             assets.borderThickness = new Thickness();
+            this.setTree(new BorderTree())
+                .setMeasurePipe(singleton(border.measure.BorderMeasurePipeDef))
+                .setArrangePipe(singleton(border.arrange.BorderArrangePipeDef))
+                .setRenderPipe(singleton(core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+            super.init();
         }
     }
 }
