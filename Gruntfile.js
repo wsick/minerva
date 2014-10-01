@@ -3,6 +3,7 @@ var version = require('./build/version'),
 
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
@@ -36,6 +37,10 @@ module.exports = function (grunt) {
                     sourceMap: true
                 }
             }
+        },
+        clean: {
+            build: ["<%= meta.name %>.*"],
+            test: ["test/.build", "test/lib/<%= meta.name %>"]
         },
         copy: {
             pretest: {
