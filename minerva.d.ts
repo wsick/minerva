@@ -1039,7 +1039,10 @@ declare module minerva.controls.border.render.tapins.shim {
     function invalidatePattern(input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel {
+    interface IPanelUpdaterAssets extends core.IUpdaterAssets, render.IInput {
+    }
     class PanelUpdater extends core.Updater {
+        public assets: IPanelUpdaterAssets;
         public init(): void;
     }
 }
@@ -1062,8 +1065,17 @@ declare module minerva.controls.panel.processdown {
         constructor();
     }
 }
+declare module minerva.controls.panel.render {
+    interface IInput extends core.render.IInput, core.helpers.ISized {
+        background: IBrush;
+        compositeLayoutClip: Rect;
+    }
+    class PanelRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+    }
+}
 declare module minerva.controls.stackpanel {
-    interface IStackPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    interface IStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {
     }
     class StackPanelUpdater extends panel.PanelUpdater {
         public assets: IStackPanelUpdaterAssets;

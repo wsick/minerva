@@ -4412,7 +4412,8 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 PanelUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef));
+                    this.assets.background = null;
+                    this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessDownPipe(minerva.singleton(panel.processdown.PanelProcessDownPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
                     _super.prototype.init.call(this);
                 };
                 return PanelUpdater;
@@ -4515,6 +4516,54 @@ var minerva;
                 }
             })(panel.processdown || (panel.processdown = {}));
             var processdown = panel.processdown;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (render) {
+                var PanelRenderPipeDef = (function (_super) {
+                    __extends(PanelRenderPipeDef, _super);
+                    function PanelRenderPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doRender', doRender);
+                    }
+                    return PanelRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.PanelRenderPipeDef = PanelRenderPipeDef;
+
+                function doRender(input, state, output, ctx, region, tree) {
+                    var background = input.background;
+                    if (!background || background.isTransparent())
+                        return true;
+                    var renderRegion = state.renderRegion;
+                    if (minerva.Rect.isEmpty(renderRegion))
+                        return true;
+
+                    ctx.save();
+
+                    var composite = input.compositeLayoutClip;
+                    if (composite && !minerva.Rect.isEmpty(composite)) {
+                        var raw = ctx.raw;
+                        raw.beginPath();
+                        raw.rect(composite.x, composite.y, composite.width, composite.height);
+                        raw.clip();
+                    }
+
+                    raw.beginPath();
+                    raw.rect(renderRegion.x, renderRegion.y, renderRegion.width, renderRegion.height);
+                    ctx.fillEx(background, renderRegion);
+
+                    ctx.restore();
+
+                    return true;
+                }
+            })(panel.render || (panel.render = {}));
+            var render = panel.render;
         })(controls.panel || (controls.panel = {}));
         var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));
