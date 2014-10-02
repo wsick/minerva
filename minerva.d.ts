@@ -372,6 +372,7 @@ declare module minerva.core {
         private $$render;
         private $$inDownDirty;
         private $$inUpDirty;
+        private $$attached;
         public assets: IUpdaterAssets;
         public tree: IUpdaterTree;
         constructor();
@@ -380,6 +381,8 @@ declare module minerva.core {
         public setTree(tree?: IUpdaterTree): Updater;
         public setVisualParent(visualParent: Updater): Updater;
         public walkDeep(dir?: WalkDirection): IDeepWalker<Updater>;
+        public getAttachedValue(name: string): any;
+        public setAttachedValue(name: string, value?: any): void;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
         public setArrangePipe(pipedef?: arrange.ArrangePipeDef): Updater;
@@ -662,7 +665,7 @@ declare module minerva.core.measure.tapins {
 }
 declare module minerva.core.processdown {
     interface IProcessDownTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean;
+        (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: IUpdaterTree): boolean;
     }
     interface IInput extends pipe.IPipeInput {
         visibility: Visibility;
@@ -713,8 +716,8 @@ declare module minerva.core.processdown {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput): void;
-        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput): void;
+        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: IUpdaterTree): void;
+        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: IUpdaterTree): void;
     }
 }
 declare module minerva.core.processdown.tapins {
@@ -1128,14 +1131,22 @@ declare module minerva.controls.canvas.processup.tapins {
 }
 declare module minerva.controls.panel.processdown {
     interface IInput extends core.processdown.IInput {
+        zSorted: core.Updater[];
     }
     interface IState extends core.processdown.IState {
     }
     interface IOutput extends core.processdown.IOutput {
+        zSorted: core.Updater[];
     }
     class PanelProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
         constructor();
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
+        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
     }
+}
+declare module minerva.controls.panel.processdown.tapins {
+    function processZIndices(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel.render {
     interface IInput extends core.render.IInput, core.helpers.ISized {

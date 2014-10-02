@@ -1472,6 +1472,7 @@ var minerva;
                 this.$$render = null;
                 this.$$inDownDirty = false;
                 this.$$inUpDirty = false;
+                this.$$attached = {};
                 this.assets = {
                     width: NaN,
                     height: NaN,
@@ -1577,6 +1578,14 @@ var minerva;
                         last = undefined;
                     }
                 };
+            };
+
+            Updater.prototype.getAttachedValue = function (name) {
+                return this.$$attached[name];
+            };
+
+            Updater.prototype.setAttachedValue = function (name, value) {
+                this.$$attached[name] = value;
             };
 
             Updater.prototype.setMeasurePipe = function (pipedef) {
@@ -1685,7 +1694,7 @@ var minerva;
                 }
 
                 var pipe = this.$$processdown;
-                var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null, this.tree);
                 this.$$inDownDirty = false;
                 if (pipe.output.newUpDirty)
                     Updater.$$addUpDirty(this);
@@ -2929,7 +2938,7 @@ var minerva;
                     };
                 };
 
-                ProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput) {
+                ProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & (minerva.DirtyFlags.LocalProjection | minerva.DirtyFlags.LocalTransform)) > 0) {
                         input.dirtyFlags |= minerva.DirtyFlags.Transform;
                     }
@@ -2946,7 +2955,7 @@ var minerva;
                     output.totalHasRenderProjection = input.totalHasRenderProjection;
                 };
 
-                ProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput) {
+                ProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
                     output.newUpDirty = (output.dirtyFlags & ~input.dirtyFlags) & minerva.DirtyFlags.UpDirtyState;
                     input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.DownDirtyState;
                     input.totalIsRenderVisible = output.totalIsRenderVisible;
@@ -2973,7 +2982,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.calcAbsoluteProjection = function (input, state, output, vpinput) {
+                tapins.calcAbsoluteProjection = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
@@ -2998,7 +3007,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.calcAbsoluteXform = function (input, state, output, vpinput) {
+                tapins.calcAbsoluteXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
@@ -3023,7 +3032,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.calcLocalProjection = function (input, state, output, vpinput) {
+                tapins.calcLocalProjection = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
@@ -3051,7 +3060,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.calcRenderXform = function (input, state, output, vpinput) {
+                tapins.calcRenderXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
@@ -3075,7 +3084,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.calcXformOrigin = function (input, state, output, vpinput) {
+                tapins.calcXformOrigin = function (input, state, output, vpinput, tree) {
                     var xo = state.xformOrigin;
                     var userxo = input.renderTransformOrigin;
                     if (!userxo) {
@@ -3099,7 +3108,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processHitTestVisibility = function (input, state, output, vpinput) {
+                tapins.processHitTestVisibility = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.HitTestVisibility) === 0)
                         return true;
 
@@ -3123,7 +3132,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processLayoutClip = function (input, state, output, vpinput) {
+                tapins.processLayoutClip = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                         return true;
 
@@ -3155,7 +3164,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processLocalProjection = function (input, state, output, vpinput) {
+                tapins.processLocalProjection = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.LocalProjection) === 0)
                         return true;
 
@@ -3176,7 +3185,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processLocalXform = function (input, state, output, vpinput) {
+                tapins.processLocalXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
                         return true;
 
@@ -3204,7 +3213,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processRenderVisibility = function (input, state, output, vpinput) {
+                tapins.processRenderVisibility = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.RenderVisibility) === 0)
                         return true;
 
@@ -3235,7 +3244,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processXform = function (input, state, output, vpinput) {
+                tapins.processXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
@@ -3259,7 +3268,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processZIndices = function (input, state, output, vpinput) {
+                tapins.processZIndices = function (input, state, output, vpinput, tree) {
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
@@ -3274,7 +3283,7 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.propagateDirtyToChildren = function (input, state, output, vpinput) {
+                tapins.propagateDirtyToChildren = function (input, state, output, vpinput, tree) {
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
@@ -4419,7 +4428,10 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 PanelUpdater.prototype.init = function () {
-                    this.assets.background = null;
+                    var assets = this.assets;
+                    assets.background = null;
+                    assets.zSorted = [];
+
                     this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessDownPipe(minerva.singleton(panel.processdown.PanelProcessDownPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
                     _super.prototype.init.call(this);
                 };
@@ -4681,15 +4693,67 @@ var minerva;
                     __extends(PanelProcessDownPipeDef, _super);
                     function PanelProcessDownPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('processZIndices', processZIndices);
+                        this.replaceTapin('processZIndices', processdown.tapins.processZIndices);
                     }
+                    PanelProcessDownPipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.zSorted = [];
+                        return output;
+                    };
+
+                    PanelProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
+                        _super.prototype.prepare.call(this, input, state, output, vpinput, tree);
+                        if ((input.dirtyFlags & minerva.DirtyFlags.ChildrenZIndices) > 0) {
+                            output.zSorted = [];
+                        }
+                    };
+
+                    PanelProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
+                        _super.prototype.flush.call(this, input, state, output, vpinput, tree);
+                        input.zSorted = output.zSorted;
+                    };
                     return PanelProcessDownPipeDef;
                 })(minerva.core.processdown.ProcessDownPipeDef);
                 processdown.PanelProcessDownPipeDef = PanelProcessDownPipeDef;
+            })(panel.processdown || (panel.processdown = {}));
+            var processdown = panel.processdown;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (processdown) {
+                (function (tapins) {
+                    function processZIndices(input, state, output, vpinput, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.ChildrenZIndices) === 0)
+                            return true;
+                        var zs = output.zSorted;
+                        for (var walker = tree.walk(); walker.step();) {
+                            zs.push(walker.current);
+                        }
+                        zs.sort(zIndexComparer);
+                        return true;
+                    }
+                    tapins.processZIndices = processZIndices;
 
-                function processZIndices(input, state, output, vpinput) {
-                    return true;
-                }
+                    function zIndexComparer(upd1, upd2) {
+                        var zi1 = upd1.getAttachedValue("Panel.ZIndex");
+                        var zi2 = upd2.getAttachedValue("Panel.ZIndex");
+                        if (zi1 === zi2) {
+                            var z1 = upd1.getAttachedValue("Panel.Z");
+                            var z2 = upd2.getAttachedValue("Panel.Z");
+                            if (isNaN(z1) || isNaN(z2))
+                                return 0;
+                            return z1 > z2 ? 1 : (z1 < z2 ? -1 : 0);
+                        }
+                        return zi1 - zi2;
+                    }
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
             })(panel.processdown || (panel.processdown = {}));
             var processdown = panel.processdown;
         })(controls.panel || (controls.panel = {}));

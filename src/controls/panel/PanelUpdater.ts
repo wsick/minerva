@@ -6,7 +6,10 @@ module minerva.controls.panel {
         assets: IPanelUpdaterAssets;
 
         init () {
-            this.assets.background = null;
+            var assets = this.assets;
+            assets.background = null;
+            assets.zSorted = [];
+
             this.setMeasurePipe(singleton(panel.measure.PanelMeasurePipeDef))
                 .setArrangePipe(singleton(panel.arrange.PanelArrangePipeDef))
                 .setProcessDownPipe(singleton(panel.processdown.PanelProcessDownPipeDef))
