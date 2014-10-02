@@ -5,8 +5,9 @@ module minerva.controls.canvas.arrange.tapins {
         for (var walker = tree.walk(); walker.step();) {
             child = walker.current;
             Size.copyTo(child.assets.desiredSize, cr);
-            //TODO: Set cr.x
-            //TODO: Set cr.y
+            //NOTE: Coercing undefined, null, NaN, and 0 to 0
+            cr.x = child.getAttachedValue("Canvas.Left") || 0;
+            cr.y = child.getAttachedValue("Canvas.Top") || 0;
             child.arrange(cr);
         }
         return true;

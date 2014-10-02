@@ -1858,7 +1858,7 @@ var minerva;
                     if (!tree.visualParent) {
                         last = new minerva.Rect();
                         this.expandViewport(last, assets, tree);
-                        this.shiftViewport(last, assets, tree);
+                        this.shiftViewport(last, updater);
                     }
 
                     if (last) {
@@ -1888,7 +1888,9 @@ var minerva;
                     }
                 };
 
-                ArrangeBinder.prototype.shiftViewport = function (viewport, assets, tree) {
+                ArrangeBinder.prototype.shiftViewport = function (viewport, updater) {
+                    viewport.x = updater.getAttachedValue("Canvas.Left") || 0;
+                    viewport.y = updater.getAttachedValue("Canvas.Top") || 0;
                 };
                 return ArrangeBinder;
             })();
@@ -4537,6 +4539,8 @@ var minerva;
                             child = walker.current;
                             minerva.Size.copyTo(child.assets.desiredSize, cr);
 
+                            cr.x = child.getAttachedValue("Canvas.Left") || 0;
+                            cr.y = child.getAttachedValue("Canvas.Top") || 0;
                             child.arrange(cr);
                         }
                         return true;

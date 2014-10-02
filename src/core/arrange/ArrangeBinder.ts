@@ -10,7 +10,7 @@ module minerva.core.arrange {
             if (!tree.visualParent) {
                 last = new Rect();
                 this.expandViewport(last, assets, tree);
-                this.shiftViewport(last, assets, tree);
+                this.shiftViewport(last, updater);
             }
 
             if (last) {
@@ -40,10 +40,10 @@ module minerva.core.arrange {
             }
         }
 
-        shiftViewport (viewport: Rect, assets: IUpdaterAssets, tree: IUpdaterTree) {
-            //TODO: Implement
-            //viewport.x = Controls.Canvas.GetLeft(fe);
-            //viewport.y = Controls.Canvas.GetTop(fe);
+        shiftViewport (viewport: Rect, updater: Updater) {
+            //NOTE: Coercing undefined, null, NaN, and 0 to 0
+            viewport.x = updater.getAttachedValue("Canvas.Left") || 0;
+            viewport.y = updater.getAttachedValue("Canvas.Top") || 0;
         }
     }
 }

@@ -447,7 +447,7 @@ declare module minerva.core.arrange {
     class ArrangeBinder implements IArrangeBinder {
         public bind(updater: Updater): boolean;
         public expandViewport(viewport: Rect, assets: IUpdaterAssets, tree: IUpdaterTree): void;
-        public shiftViewport(viewport: Rect, assets: IUpdaterAssets, tree: IUpdaterTree): void;
+        public shiftViewport(viewport: Rect, updater: Updater): void;
     }
 }
 declare module minerva.core.arrange {
