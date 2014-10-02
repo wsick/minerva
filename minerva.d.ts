@@ -1048,7 +1048,7 @@ declare module minerva.controls.border.render.tapins.shim {
     function invalidatePattern(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel {
-    interface IPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
+    interface IPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, processup.IInput, render.IInput {
     }
     class PanelUpdater extends core.Updater {
         public assets: IPanelUpdaterAssets;
@@ -1147,6 +1147,21 @@ declare module minerva.controls.panel.processdown {
 }
 declare module minerva.controls.panel.processdown.tapins {
     function processZIndices(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.panel.processup {
+    interface IInput extends core.processup.IInput {
+        background: IBrush;
+    }
+    interface IState extends core.processup.IState {
+    }
+    interface IOutput extends core.processup.IOutput {
+    }
+    class PanelProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.panel.processup.tapins {
+    function preCalcExtents(input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel.render {
     interface IInput extends core.render.IInput, core.helpers.ISized {

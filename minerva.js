@@ -4432,7 +4432,7 @@ var minerva;
                     assets.background = null;
                     assets.zSorted = [];
 
-                    this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessDownPipe(minerva.singleton(panel.processdown.PanelProcessDownPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessDownPipe(minerva.singleton(panel.processdown.PanelProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
                     _super.prototype.init.call(this);
                 };
                 return PanelUpdater;
@@ -4756,6 +4756,52 @@ var minerva;
                 var tapins = processdown.tapins;
             })(panel.processdown || (panel.processdown = {}));
             var processdown = panel.processdown;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (processup) {
+                var PanelProcessUpPipeDef = (function (_super) {
+                    __extends(PanelProcessUpPipeDef, _super);
+                    function PanelProcessUpPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('calcExtents', 'preCalcExtents', processup.tapins.preCalcExtents);
+                    }
+                    return PanelProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.PanelProcessUpPipeDef = PanelProcessUpPipeDef;
+            })(panel.processup || (panel.processup = {}));
+            var processup = panel.processup;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (processup) {
+                (function (tapins) {
+                    function preCalcExtents(input, state, output, vo, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+                        if (!input.background) {
+                            var as = state.actualSize;
+                            as.width = as.height = 0;
+                        }
+                        return true;
+                    }
+                    tapins.preCalcExtents = preCalcExtents;
+                })(processup.tapins || (processup.tapins = {}));
+                var tapins = processup.tapins;
+            })(panel.processup || (panel.processup = {}));
+            var processup = panel.processup;
         })(controls.panel || (controls.panel = {}));
         var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));
