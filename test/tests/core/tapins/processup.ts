@@ -59,10 +59,10 @@ module minerva.core.processup.tapins.tests {
             return {
                 boundsUpdated: false,
                 dirty: new Rect(),
-                updateBounds() {
+                updateBounds () {
                     this.boundsUpdated = true;
                 },
-                invalidate(region: Rect) {
+                invalidate (region: Rect) {
                     Rect.union(this.dirty, region);
                 }
             };
@@ -70,12 +70,14 @@ module minerva.core.processup.tapins.tests {
     };
 
     QUnit.test("calcActualSize", (assert) => {
-        var input = mock.input();
+        var updater = minerva.tests.mock.createTree();
+        var input = updater.assets;
         var state = mock.state();
         var output = mock.output();
+        var tree = updater.tree;
 
         var vo = null;
-        assert.ok(tapins.calcActualSize(input, state, output, vo));
+        assert.ok(tapins.calcActualSize(input, state, output, vo, tree));
         assert.deepEqual(state.actualSize, new Size());
 
         input.dirtyFlags |= DirtyFlags.Bounds;
@@ -83,86 +85,98 @@ module minerva.core.processup.tapins.tests {
         input.actualHeight = 200;
         input.minWidth = 175;
         input.maxHeight = 175;
-        assert.ok(tapins.calcActualSize(input, state, output, vo));
+        assert.ok(tapins.calcActualSize(input, state, output, vo, tree));
         assert.deepEqual(state.actualSize, new Size(175, 175));
     });
 
     QUnit.test("calcExtents", (assert) => {
-        var input = mock.input();
+        var allItems: core.Updater[] = [];
+        var updater = minerva.tests.mock.createTree(allItems);
+        var input = updater.assets;
         var state = mock.state();
         var output = mock.output();
+        var tree = updater.tree;
 
         var vo = null;
-        assert.ok(tapins.calcExtents(input, state, output, vo));
+        assert.ok(tapins.calcExtents(input, state, output, vo, tree));
         assert.deepEqual(output.extents, new Rect());
         assert.deepEqual(output.extentsWithChildren, new Rect());
 
         input.dirtyFlags |= DirtyFlags.Bounds;
         state.actualSize = new Size(150, 300);
-        assert.ok(tapins.calcExtents(input, state, output, vo));
+        assert.ok(tapins.calcExtents(input, state, output, vo, tree));
         assert.deepEqual(output.extents, new Rect(0, 0, 150, 300));
         assert.deepEqual(output.extentsWithChildren, new Rect(0, 0, 150, 300));
 
-        //TODO: Test extents, extentsWithChildren when implementing visual children
+        allItems[1].assets.globalBoundsWithChildren = new Rect(100, 100, 900, 800);
+        assert.ok(tapins.calcExtents(input, state, output, vo, tree));
+        assert.deepEqual(output.extents, new Rect(0, 0, 150, 300));
+        assert.deepEqual(output.extentsWithChildren, new Rect(0, 0, 1000, 900));
     });
 
     QUnit.test("calcPaintBounds", (assert) => {
-        var input = mock.input();
+        var updater = minerva.tests.mock.createTree();
+        var input = updater.assets;
         var state = mock.state();
         var output = mock.output();
+        var tree = updater.tree;
 
         var vo = null;
         input.extentsWithChildren = new Rect(0, 0, 150, 300);
-        assert.ok(tapins.calcPaintBounds(input, state, output, vo));
+        assert.ok(tapins.calcPaintBounds(input, state, output, vo, tree));
         assert.deepEqual(output.globalBoundsWithChildren, new Rect());
         assert.deepEqual(output.surfaceBoundsWithChildren, new Rect());
 
         input.dirtyFlags |= DirtyFlags.Bounds;
         input.effectPadding = new Thickness(5, 10, 5, 10);
         mat4.createScale(2, 4, 6, input.absoluteProjection);
-        assert.ok(tapins.calcPaintBounds(input, state, output, vo));
+        assert.ok(tapins.calcPaintBounds(input, state, output, vo, tree));
         assert.deepEqual(output.globalBoundsWithChildren, new Rect(-5, -10, 160, 320));
         assert.deepEqual(output.surfaceBoundsWithChildren, new Rect(-10, -40, 320, 1280));
     });
 
     QUnit.test("processBounds", (assert) => {
-        var input = mock.input();
+        var updater = minerva.tests.mock.createTree();
+        var input = updater.assets;
         var state = mock.state();
         var output = mock.output();
+        var tree = updater.tree;
         var vo = mock.visualOwner();
 
         input.dirtyFlags |= DirtyFlags.Bounds;
         output.extentsWithChildren = new Rect(0, 0, 100, 100);
-        assert.ok(tapins.processBounds(input, state, output, vo));
+        assert.ok(tapins.processBounds(input, state, output, vo, tree));
         assert.ok(!vo.boundsUpdated);
         assert.deepEqual(vo.dirty, new Rect(0, 0, 0, 0));
         assert.ok(state.hasNewBounds);
 
         input.forceInvalidate = true;
-        assert.ok(tapins.processBounds(input, state, output, vo));
+        assert.ok(tapins.processBounds(input, state, output, vo, tree));
         assert.ok(state.hasNewBounds);
         assert.ok(!output.forceInvalidate);
 
         vo = mock.visualOwner();
         output.globalBoundsWithChildren = new Rect(0, 0, 100, 100);
         input.surfaceBoundsWithChildren = new Rect(10, 10, 50, 50);
-        assert.ok(tapins.processBounds(input, state, output, vo));
+        assert.ok(tapins.processBounds(input, state, output, vo, tree));
         assert.ok(vo.boundsUpdated);
         assert.deepEqual(vo.dirty, new Rect(10, 10, 50, 50));
         assert.ok(state.hasNewBounds);
     });
 
     QUnit.test("processNewBounds", (assert) => {
-        var input = mock.input();
+        var updater = minerva.tests.mock.createTree();
+        var input = updater.assets;
         var state = mock.state();
         var output = mock.output();
+        var tree = updater.tree;
         var vo = mock.visualOwner();
 
         input.dirtyFlags |= DirtyFlags.NewBounds;
         state.hasNewBounds = false;
         output.surfaceBoundsWithChildren = new Rect(0, 0, 50, 50);
         output.dirtyRegion = new Rect(25, 25, 50, 50);
-        assert.ok(tapins.processNewBounds(input, state, output, vo));
+        assert.ok(tapins.processNewBounds(input, state, output, vo, tree));
         assert.strictEqual(output.dirtyFlags, DirtyFlags.Invalidate);
         assert.ok(state.hasInvalidate);
         assert.deepEqual(output.dirtyRegion, new Rect(0, 0, 75, 75));
@@ -171,22 +185,24 @@ module minerva.core.processup.tapins.tests {
         state.hasNewBounds = true;
         output.surfaceBoundsWithChildren = new Rect(0, 0, 50, 50);
         output.dirtyRegion = new Rect(25, 25, 50, 50);
-        assert.ok(tapins.processNewBounds(input, state, output, vo));
+        assert.ok(tapins.processNewBounds(input, state, output, vo, tree));
         assert.strictEqual(output.dirtyFlags, DirtyFlags.Invalidate);
         assert.ok(state.hasInvalidate);
         assert.deepEqual(output.dirtyRegion, new Rect(0, 0, 75, 75));
     });
 
     QUnit.test("processInvalidate", (assert) => {
-        var input = mock.input();
+        var updater = minerva.tests.mock.createTree();
+        var input = updater.assets;
         var state = mock.state();
         var output = mock.output();
+        var tree = updater.tree;
         var vo = mock.visualOwner();
 
         state.hasInvalidate = true;
         vo.dirty = new Rect(0, 0, 25, 25);
         output.dirtyRegion = new Rect(50, 50, 100, 100);
-        assert.ok(tapins.processInvalidate(input, state, output, vo));
+        assert.ok(tapins.processInvalidate(input, state, output, vo, tree));
         assert.deepEqual(output.dirtyRegion, new Rect(0, 0, 0, 0));
         assert.deepEqual(vo.dirty, new Rect(0, 0, 150, 150));
     });

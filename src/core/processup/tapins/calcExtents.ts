@@ -11,9 +11,11 @@ module minerva.core.processup.tapins {
         e.width = ewc.width = as.width;
         e.height = ewc.height = as.height;
 
+        var assets: IUpdaterAssets;
         for (var walker = tree.walk(); walker.step();) {
-            if (walker.current.assets.totalIsRenderVisible)
-                Rect.union(ewc, walker.current.assets.globalBoundsWithChildren);
+            assets = walker.current.assets;
+            if (assets.totalIsRenderVisible)
+                Rect.union(ewc, assets.globalBoundsWithChildren);
         }
 
         return true;

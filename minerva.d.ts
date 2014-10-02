@@ -758,7 +758,7 @@ declare module minerva.core.processdown.tapins {
 }
 declare module minerva.core.processup {
     interface IProcessUpTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): boolean;
+        (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: IUpdaterTree): boolean;
     }
     interface IInput extends pipe.IPipeInput {
         width: number;
@@ -806,8 +806,8 @@ declare module minerva.core.processup {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): void;
-        public flush(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): void;
+        public prepare(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: IUpdaterTree): void;
+        public flush(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: IUpdaterTree): void;
     }
 }
 declare module minerva.core.processup.tapins {
@@ -940,7 +940,7 @@ declare module minerva.core.sizing.tapins {
     var computeActual: ISizingTapin;
 }
 declare module minerva.controls.border {
-    interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
     class BorderTree extends core.UpdaterTree {
         public isLayoutContainer: boolean;
@@ -955,10 +955,6 @@ declare module minerva.controls.border {
     }
 }
 declare module minerva.controls.border.arrange {
-    class BorderArrangePipeDef extends core.arrange.ArrangePipeDef {
-        constructor();
-        public createState(): IState;
-    }
     interface IInput extends core.arrange.IInput {
         padding: Thickness;
         borderThickness: Thickness;
@@ -967,14 +963,16 @@ declare module minerva.controls.border.arrange {
         totalBorder: Thickness;
         childRect: Rect;
     }
-    function preOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean;
-    function doOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean;
-}
-declare module minerva.controls.border.measure {
-    class BorderMeasurePipeDef extends core.measure.MeasurePipeDef {
+    interface IOutput extends core.arrange.IOutput {
+    }
+    class BorderArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
         public createState(): IState;
     }
+    function preOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean;
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.border.measure {
     interface IInput extends core.measure.IInput {
         padding: Thickness;
         borderThickness: Thickness;
@@ -982,15 +980,17 @@ declare module minerva.controls.border.measure {
     interface IState extends core.measure.IState {
         totalBorder: Thickness;
     }
-    function preOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: BorderTree, availableSize: Size): boolean;
-    function doOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: BorderTree, availableSize: Size): boolean;
-    function postOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: BorderTree, availableSize: Size): boolean;
-}
-declare module minerva.controls.border.render {
-    class BorderRenderPipeDef extends core.render.RenderPipeDef {
+    interface IOutput extends core.measure.IOutput {
+    }
+    class BorderMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();
         public createState(): IState;
     }
+    function preOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean;
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean;
+    function postOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.border.render {
     interface IInput extends core.render.IInput {
         extents: Rect;
         backgroundBrush: IBrush;
@@ -1004,63 +1004,135 @@ declare module minerva.controls.border.render {
         innerCornerRadius: CornerRadius;
         outerCornerRadius: CornerRadius;
     }
+    interface IOutput extends core.render.IOutput {
+    }
+    class BorderRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+        public createState(): IState;
+    }
 }
 declare module minerva.controls.border.render {
-    class ShimBorderRenderPipeDef extends BorderRenderPipeDef {
-        constructor();
-        public createState(): IShimState;
-    }
     interface IShimState extends IState {
         middleCornerRadius: CornerRadius;
         strokeExtents: Rect;
         pattern: CanvasPattern;
         oldMetrics: any;
     }
+    class ShimBorderRenderPipeDef extends BorderRenderPipeDef {
+        constructor();
+        public createState(): IShimState;
+    }
 }
 declare module minerva.controls.border.render.tapins {
-    function calcInnerOuter(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    function calcInnerOuter(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins {
-    function calcShouldRender(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    function calcShouldRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins {
-    function doRender(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    function doRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function calcBalanced(input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    function calcBalanced(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function createPattern(input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    function createPattern(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function doRender(input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    function doRender(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
-    function invalidatePattern(input: IInput, state: IShimState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    function invalidatePattern(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel {
-    interface IPanelUpdaterAssets extends core.IUpdaterAssets, render.IInput {
+    interface IPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
     }
     class PanelUpdater extends core.Updater {
         public assets: IPanelUpdaterAssets;
         public init(): void;
     }
 }
+declare module minerva.controls.canvas {
+    interface ICanvasUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput {
+    }
+    class CanvasUpdater extends panel.PanelUpdater {
+        public assets: ICanvasUpdaterAssets;
+        public init(): void;
+    }
+}
 declare module minerva.controls.panel.arrange {
+    interface IInput extends core.arrange.IInput {
+    }
     interface IState extends core.arrange.IState {
         childRect: Rect;
+    }
+    interface IOutput extends core.arrange.IOutput {
     }
     class PanelArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
         public createState(): IState;
     }
 }
+declare module minerva.controls.canvas.arrange {
+    interface IInput extends panel.arrange.IInput {
+    }
+    interface IState extends panel.arrange.IState {
+    }
+    interface IOutput extends panel.arrange.IOutput {
+    }
+    class CanvasArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.canvas.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
 declare module minerva.controls.panel.measure {
+    interface IInput extends core.measure.IInput {
+    }
+    interface IState extends core.measure.IState {
+    }
+    interface IOutput extends core.measure.IOutput {
+    }
     class PanelMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();
     }
 }
+declare module minerva.controls.canvas.measure {
+    interface IInput extends panel.measure.IInput {
+    }
+    interface IState extends panel.measure.IState {
+    }
+    interface IOutput extends panel.measure.IOutput {
+    }
+    class CanvasMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.canvas.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.canvas.processup {
+    interface IInput extends core.processup.IInput {
+    }
+    interface IState extends core.processup.IState {
+    }
+    interface IOutput extends core.processup.IOutput {
+    }
+    class CanvasProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.canvas.processup.tapins {
+    var calcPaintBounds: (input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree) => boolean;
+}
 declare module minerva.controls.panel.processdown {
+    interface IInput extends core.processdown.IInput {
+    }
+    interface IState extends core.processdown.IState {
+    }
+    interface IOutput extends core.processdown.IOutput {
+    }
     class PanelProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
         constructor();
     }
@@ -1083,11 +1155,13 @@ declare module minerva.controls.stackpanel {
     }
 }
 declare module minerva.controls.stackpanel.arrange {
-    interface IInput extends core.arrange.IInput {
+    interface IInput extends panel.arrange.IInput {
         orientation: Orientation;
     }
     interface IState extends panel.arrange.IState {
         childRect: Rect;
+    }
+    interface IOutput extends panel.arrange.IOutput {
     }
     class StackPanelArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
         constructor();
@@ -1095,20 +1169,22 @@ declare module minerva.controls.stackpanel.arrange {
     }
 }
 declare module minerva.controls.stackpanel.arrange.tapins {
-    function doHorizontal(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+    function doHorizontal(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.stackpanel.arrange.tapins {
-    function doOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.stackpanel.arrange.tapins {
-    function doVertical(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+    function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.stackpanel.measure {
-    interface IInput extends core.measure.IInput {
+    interface IInput extends panel.measure.IInput {
         orientation: Orientation;
     }
-    interface IState extends core.measure.IState {
+    interface IState extends panel.measure.IState {
         childAvailable: Size;
+    }
+    interface IOutput extends panel.measure.IOutput {
     }
     class StackPanelMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
         constructor();
@@ -1116,13 +1192,13 @@ declare module minerva.controls.stackpanel.measure {
     }
 }
 declare module minerva.controls.stackpanel.measure.tapins {
-    function doHorizontal(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+    function doHorizontal(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.stackpanel.measure.tapins {
-    function doOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.stackpanel.measure.tapins {
-    function doVertical(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+    function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {
