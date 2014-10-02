@@ -6,7 +6,7 @@ module minerva.core {
         }
     };
 
-    function getVisualOwner(updater: Updater): IVisualOwner {
+    function getVisualOwner (updater: Updater): IVisualOwner {
         var tree = updater.tree;
         if (tree.visualParent)
             return tree.visualParent;
@@ -89,13 +89,13 @@ module minerva.core {
 
         tree: IUpdaterTree = null;
 
-        constructor() {
+        constructor () {
             this.setMeasureBinder()
                 .setArrangeBinder()
                 .init();
         }
 
-        init() {
+        init () {
             this.setTree(this.tree);
             if (!this.$$measure)
                 this.setMeasurePipe();
@@ -124,21 +124,21 @@ module minerva.core {
          }
          */
 
-        onSizeChanged(oldSize: Size, newSize: Size) {
+        onSizeChanged (oldSize: Size, newSize: Size) {
             //TODO: Raise SizeChanged
         }
 
-        setTree(tree?: IUpdaterTree): Updater {
+        setTree (tree?: IUpdaterTree): Updater {
             this.tree = tree || new UpdaterTree();
             return this;
         }
 
-        setVisualParent(visualParent: Updater): Updater {
+        setVisualParent (visualParent: Updater): Updater {
             this.tree.visualParent = visualParent;
             return this;
         }
 
-        walkDeep(dir?: WalkDirection): IDeepWalker<Updater> {
+        walkDeep (dir?: WalkDirection): IDeepWalker<Updater> {
             var last: Updater = undefined;
             var walkList: Updater[] = [this];
             dir = dir || WalkDirection.Forward;
@@ -164,29 +164,29 @@ module minerva.core {
 
         /////// PREPARE PIPES
 
-        setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater {
+        setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
             var def = pipedef || new measure.MeasurePipeDef();
             this.$$measure = <IMeasurePipe>pipe.createTriPipe(def);
             return this;
         }
 
-        setMeasureBinder(mb?: measure.IMeasureBinder): Updater {
+        setMeasureBinder (mb?: measure.IMeasureBinder): Updater {
             this.$$measureBinder = mb || new measure.MeasureBinder();
             return this;
         }
 
-        setArrangePipe(pipedef?: arrange.ArrangePipeDef): Updater {
+        setArrangePipe (pipedef?: arrange.ArrangePipeDef): Updater {
             var def = pipedef || new arrange.ArrangePipeDef();
             this.$$arrange = <IArrangePipe>pipe.createTriPipe(def);
             return this;
         }
 
-        setArrangeBinder(ab?: arrange.IArrangeBinder): Updater {
+        setArrangeBinder (ab?: arrange.IArrangeBinder): Updater {
             this.$$arrangeBinder = ab || new arrange.ArrangeBinder();
             return this;
         }
 
-        setSizingPipe(pipedef?: sizing.SizingPipeDef): Updater {
+        setSizingPipe (pipedef?: sizing.SizingPipeDef): Updater {
             var def: pipe.TriPipeDef<sizing.ISizingTapin, sizing.IInput, sizing.IState, sizing.IOutput> = pipedef;
             if (!def)
                 def = new sizing.SizingPipeDef();
@@ -194,7 +194,7 @@ module minerva.core {
             return this;
         }
 
-        setProcessDownPipe(pipedef?: processdown.ProcessDownPipeDef): Updater {
+        setProcessDownPipe (pipedef?: processdown.ProcessDownPipeDef): Updater {
             var def: pipe.TriPipeDef<processdown.IProcessDownTapin, processdown.IInput, processdown.IState, processdown.IOutput> = pipedef;
             if (!def)
                 def = new processdown.ProcessDownPipeDef();
@@ -202,7 +202,7 @@ module minerva.core {
             return this;
         }
 
-        setProcessUpPipe(pipedef?: processup.ProcessUpPipeDef): Updater {
+        setProcessUpPipe (pipedef?: processup.ProcessUpPipeDef): Updater {
             var def: pipe.TriPipeDef<processup.IProcessUpTapin, processup.IInput, processup.IState, processup.IOutput> = pipedef;
             if (!def)
                 def = new processup.ProcessUpPipeDef();
@@ -210,7 +210,7 @@ module minerva.core {
             return this;
         }
 
-        setRenderPipe(pipedef?: render.RenderPipeDef): Updater {
+        setRenderPipe (pipedef?: render.RenderPipeDef): Updater {
             var def = pipedef || new render.RenderPipeDef();
             this.$$render = <IRenderPipe>pipe.createTriPipe(def);
             return this;
@@ -218,11 +218,11 @@ module minerva.core {
 
         /////// RUN PIPES
 
-        doMeasure() {
+        doMeasure () {
             this.$$measureBinder.bind(this);
         }
 
-        measure(availableSize: Size): boolean {
+        measure (availableSize: Size): boolean {
             var pipe = this.$$measure;
             var output = pipe.output;
             var success = pipe.def.run(this.assets, pipe.state, output, this.tree, availableSize);
@@ -235,11 +235,11 @@ module minerva.core {
             return success;
         }
 
-        doArrange() {
+        doArrange () {
             this.$$arrangeBinder.bind(this);
         }
 
-        arrange(finalRect: Rect): boolean {
+        arrange (finalRect: Rect): boolean {
             var pipe = this.$$arrange;
             var output = pipe.output;
             var success = pipe.def.run(this.assets, pipe.state, output, this.tree, finalRect);
@@ -252,7 +252,7 @@ module minerva.core {
             return success;
         }
 
-        sizing(oldSize: Size, newSize: Size): boolean {
+        sizing (oldSize: Size, newSize: Size): boolean {
             var pipe = this.$$sizing;
             var assets = this.assets;
             if (assets.lastRenderSize)
@@ -263,7 +263,7 @@ module minerva.core {
             return success;
         }
 
-        processDown(): boolean {
+        processDown (): boolean {
             if (!this.$$inDownDirty)
                 return true;
             var vp = this.tree.visualParent;
@@ -280,34 +280,34 @@ module minerva.core {
             return success;
         }
 
-        processUp(): boolean {
+        processUp (): boolean {
             if (!this.$$inUpDirty)
                 return true;
 
             var pipe = this.$$processup;
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, getVisualOwner(this));
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, getVisualOwner(this), this.tree);
             this.$$inUpDirty = false;
             return success;
         }
 
-        render(ctx: render.RenderContext, region: Rect): boolean {
+        render (ctx: render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
         }
 
         ///////
 
-        invalidateMeasure() {
+        invalidateMeasure () {
             this.assets.dirtyFlags |= DirtyFlags.Measure;
             Updater.$$propagateUiFlagsUp(this, UIFlags.MeasureHint);
         }
 
-        invalidateArrange() {
+        invalidateArrange () {
             this.assets.dirtyFlags |= DirtyFlags.Arrange;
             Updater.$$propagateUiFlagsUp(this, UIFlags.ArrangeHint);
         }
 
-        updateBounds(forceRedraw?: boolean) {
+        updateBounds (forceRedraw?: boolean) {
             var assets = this.assets;
             assets.dirtyFlags |= DirtyFlags.Bounds;
             Updater.$$addUpDirty(this);
@@ -315,7 +315,7 @@ module minerva.core {
                 assets.forceInvalidate = true;
         }
 
-        invalidate(region: Rect) {
+        invalidate (region: Rect) {
             var assets = this.assets;
             if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
                 return;
@@ -324,7 +324,7 @@ module minerva.core {
             Rect.union(assets.dirtyRegion, region);
         }
 
-        findChildInList(list: Updater[]) {
+        findChildInList (list: Updater[]) {
             for (var i = 0, len = list.length; i < len; i++) {
                 if (list[i].tree.visualParent === this)
                     return i;
@@ -334,7 +334,7 @@ module minerva.core {
 
         /////// STATIC HELPERS
 
-        private static $$addUpDirty(updater: Updater) {
+        private static $$addUpDirty (updater: Updater) {
             var surface = updater.tree.surface;
             if (surface && !updater.$$inUpDirty) {
                 surface.addUpDirty(updater);
@@ -342,7 +342,7 @@ module minerva.core {
             }
         }
 
-        private static $$addDownDirty(updater: Updater) {
+        private static $$addDownDirty (updater: Updater) {
             var surface = updater.tree.surface;
             if (surface && !updater.$$inDownDirty) {
                 surface.addDownDirty(updater);
@@ -350,7 +350,7 @@ module minerva.core {
             }
         }
 
-        static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags) {
+        static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
             updater.assets.uiFlags |= flags;
             var vpu = updater;
             while ((vpu = vpu.tree.visualParent) != null && (vpu.assets.uiFlags & flags) === 0) {

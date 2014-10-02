@@ -1,5 +1,5 @@
 module minerva.core.processup.tapins {
-    export var calcExtents: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): boolean {
+    export var calcExtents: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 
@@ -11,16 +11,10 @@ module minerva.core.processup.tapins {
         e.width = ewc.width = as.width;
         e.height = ewc.height = as.height;
 
-        /*
-         var node = this.Node;
-         var enumerator = node.GetVisualTreeEnumerator();
-         while (enumerator.moveNext()) {
-         var item = <UINode>enumerator.current;
-         var itemlu = item.LayoutUpdater;
-         if (itemlu.TotalIsRenderVisible)
-         rect.union(ewc, itemlu.GlobalBoundsWithChildren);
-         }
-         */
+        for (var walker = tree.walk(); walker.step();) {
+            if (walker.current.assets.totalIsRenderVisible)
+                Rect.union(ewc, walker.current.assets.globalBoundsWithChildren);
+        }
 
         return true;
     };

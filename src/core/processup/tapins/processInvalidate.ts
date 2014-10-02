@@ -1,5 +1,5 @@
 module minerva.core.processup.tapins {
-    export var processInvalidate: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner): boolean {
+    export var processInvalidate: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.Invalidate) === 0 && !state.hasInvalidate)
             return true;
         var dirty = output.dirtyRegion;

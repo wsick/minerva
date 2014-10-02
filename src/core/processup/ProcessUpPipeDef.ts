@@ -1,6 +1,6 @@
 module minerva.core.processup {
     export interface IProcessUpTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner):boolean;
+        (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: core.IUpdaterTree):boolean;
     }
     export interface IInput extends pipe.IPipeInput {
         width: number;
@@ -77,7 +77,7 @@ module minerva.core.processup {
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner) {
+        prepare (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: core.IUpdaterTree) {
             output.dirtyFlags = input.dirtyFlags;
             Rect.copyTo(input.extents, output.extents);
             Rect.copyTo(input.extentsWithChildren, output.extentsWithChildren);
@@ -87,7 +87,7 @@ module minerva.core.processup {
             output.forceInvalidate = input.forceInvalidate;
         }
 
-        flush (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner) {
+        flush (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: core.IUpdaterTree) {
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.UpDirtyState;
             Rect.copyTo(output.extents, input.extents);
             Rect.copyTo(output.extentsWithChildren, input.extentsWithChildren);
