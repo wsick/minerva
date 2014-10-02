@@ -1,5 +1,5 @@
 module minerva.controls.border.render.tapins {
-    export function calcInnerOuter (input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean {
+    export function calcInnerOuter (input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean {
         if (!state.shouldRender)
             return true;
 

@@ -1,12 +1,19 @@
 module minerva.controls.panel.processdown {
+    export interface IInput extends core.processdown.IInput {
+    }
+    export interface IState extends core.processdown.IState {
+    }
+    export interface IOutput extends core.processdown.IOutput {
+    }
+
     export class PanelProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
-        constructor() {
+        constructor () {
             super();
             this.replaceTapin('processZIndices', processZIndices);
         }
     }
 
-    function processZIndices(input: core.processdown.IInput, state: core.processdown.IState, output: core.processdown.IOutput, vpinput: core.processdown.IInput): boolean {
+    function processZIndices (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean {
         //TODO: Implement z sorting
         return true;
     }

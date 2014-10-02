@@ -2,7 +2,7 @@
 /// <reference path="../../core/Updater" />
 
 module minerva.controls.border {
-    export interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    export interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
 
     export class BorderTree extends core.UpdaterTree {
@@ -10,7 +10,7 @@ module minerva.controls.border {
         isContainer = true;
         child: core.Updater = undefined;
 
-        walk(direction?: WalkDirection): IWalker<core.Updater> {
+        walk (direction?: WalkDirection): IWalker<core.Updater> {
             var visited = false;
             var _this = this;
             return {
@@ -28,7 +28,7 @@ module minerva.controls.border {
         tree: BorderTree;
         assets: IBorderUpdaterAssets;
 
-        init() {
+        init () {
             var assets = this.assets;
             assets.padding = new Thickness();
             assets.borderThickness = new Thickness();

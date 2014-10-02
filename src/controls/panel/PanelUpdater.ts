@@ -1,5 +1,5 @@
 module minerva.controls.panel {
-    export interface IPanelUpdaterAssets extends core.IUpdaterAssets, render.IInput {
+    export interface IPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
     }
 
     export class PanelUpdater extends core.Updater {

@@ -1,4 +1,11 @@
 module minerva.controls.border.render {
+    export interface IShimState extends IState {
+        middleCornerRadius: CornerRadius;
+        strokeExtents: Rect;
+        pattern: CanvasPattern;
+        oldMetrics: any;
+    }
+
     export class ShimBorderRenderPipeDef extends BorderRenderPipeDef {
         constructor () {
             super();
@@ -16,12 +23,5 @@ module minerva.controls.border.render {
             state.oldMetrics = null;
             return state;
         }
-    }
-
-    export interface IShimState extends IState {
-        middleCornerRadius: CornerRadius;
-        strokeExtents: Rect;
-        pattern: CanvasPattern;
-        oldMetrics: any;
     }
 }

@@ -1,4 +1,15 @@
 module minerva.controls.border.arrange {
+    export interface IInput extends core.arrange.IInput {
+        padding: Thickness;
+        borderThickness: Thickness;
+    }
+    export interface IState extends core.arrange.IState {
+        totalBorder: Thickness;
+        childRect: Rect;
+    }
+    export interface IOutput extends core.arrange.IOutput {
+    }
+
     export class BorderArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor () {
             super();
@@ -14,16 +25,7 @@ module minerva.controls.border.arrange {
         }
     }
 
-    export interface IInput extends core.arrange.IInput {
-        padding: Thickness;
-        borderThickness: Thickness;
-    }
-    export interface IState extends core.arrange.IState {
-        totalBorder: Thickness;
-        childRect: Rect;
-    }
-
-    export function preOverride (input: IInput, state: IState, output: core.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean {
+    export function preOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean {
         if (!tree.child)
             return true;
         var tb = state.totalBorder;
@@ -37,7 +39,7 @@ module minerva.controls.border.arrange {
         return true;
     }
 
-    export function doOverride (input: IInput, state: IState, output: core.arrange.IOutput, tree: BorderTree, finalRect: Rect): boolean {
+    export function doOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean {
         if (tree.child)
             tree.child.arrange(state.childRect);
         return true;
