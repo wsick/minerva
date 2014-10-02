@@ -1,5 +1,5 @@
 module minerva.core.processdown.tapins {
-    export var processXform: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean {
+    export var processXform: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.Transform) === 0)
             return true;
 

@@ -1,5 +1,5 @@
 module minerva.core.processdown.tapins {
-    export var calcXformOrigin: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean {
+    export var calcXformOrigin: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean {
         var xo = state.xformOrigin;
         var userxo = input.renderTransformOrigin;
         if (!userxo) {

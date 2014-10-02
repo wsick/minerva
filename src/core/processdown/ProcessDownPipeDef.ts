@@ -1,6 +1,6 @@
 module minerva.core.processdown {
     export interface IProcessDownTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, vpinput: IInput):boolean;
+        (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree):boolean;
     }
     export interface IInput extends pipe.IPipeInput {
         visibility: Visibility;
@@ -90,7 +90,7 @@ module minerva.core.processdown {
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput, vpinput: IInput) {
+        prepare (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree) {
             if ((input.dirtyFlags & (DirtyFlags.LocalProjection | DirtyFlags.LocalTransform)) > 0) {
                 input.dirtyFlags |= DirtyFlags.Transform;
             }
@@ -107,7 +107,7 @@ module minerva.core.processdown {
             output.totalHasRenderProjection = input.totalHasRenderProjection;
         }
 
-        flush (input: IInput, state: IState, output: IOutput, vpinput: IInput) {
+        flush (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree) {
             output.newUpDirty = (output.dirtyFlags & ~input.dirtyFlags) & DirtyFlags.UpDirtyState;
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.DownDirtyState;
             input.totalIsRenderVisible = output.totalIsRenderVisible;

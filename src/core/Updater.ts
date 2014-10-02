@@ -28,6 +28,8 @@ module minerva.core {
         private $$inDownDirty = false;
         private $$inUpDirty = false;
 
+        private $$attached = {};
+
         assets: IUpdaterAssets = {
             width: NaN,
             height: NaN,
@@ -162,6 +164,14 @@ module minerva.core {
             };
         }
 
+        getAttachedValue (name: string): any {
+            return this.$$attached[name];
+        }
+
+        setAttachedValue (name: string, value?: any) {
+            this.$$attached[name] = value;
+        }
+
         /////// PREPARE PIPES
 
         setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
@@ -273,7 +283,7 @@ module minerva.core {
             }
 
             var pipe = this.$$processdown;
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null);
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null, this.tree);
             this.$$inDownDirty = false;
             if (pipe.output.newUpDirty)
                 Updater.$$addUpDirty(this);

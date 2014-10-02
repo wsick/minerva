@@ -1,6 +1,6 @@
 module minerva.core.processdown.tapins {
     //NOTE: Canvas+UserControl doesn't do this
-    export var processLayoutClip: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput): boolean {
+    export var processLayoutClip: IProcessDownTapin = function (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.LayoutClip) === 0)
             return true;
 
