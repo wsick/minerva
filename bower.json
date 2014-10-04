@@ -1,0 +1,26 @@
+{
+  "name": "minerva",
+  "main": "minerva.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/BSick7/minerva",
+  "authors": [
+    "BSick7 <brad.sickles@gmail.com>"
+  ],
+  "description": "Microservices Pipeline Presentation framework",
+  "keywords": [
+    "minerva",
+    "fayde",
+    "xaml",
+    "microservices",
+    "pipeline"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src",
+    "test",
+    "tests"
+  ]
+}
