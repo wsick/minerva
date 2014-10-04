@@ -1,7 +1,7 @@
 {
   "name": "minerva",
   "version": "0.1.0",
-  "description": "Microservice oriented layout engine",
+  "description": "Microservices Pipeline Presentation framework",
   "main": "Gruntfile.js",
   "directories": {
     "doc": "docs",
