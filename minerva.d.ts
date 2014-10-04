@@ -1242,7 +1242,7 @@ declare module minerva.engine {
         private $$dirtyRegion;
         public width : number;
         public height : number;
-        public attachLayer(layer: core.Updater): void;
+        public attachLayer(layer: core.Updater, root?: boolean): void;
         public detachLayer(layer: core.Updater): void;
         public updateBounds(): void;
         public invalidate(region?: Rect): void;

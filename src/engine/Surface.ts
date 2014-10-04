@@ -24,8 +24,11 @@ module minerva.engine {
             return this.$$canvas.offsetHeight;
         }
 
-        attachLayer (layer: core.Updater) {
-            this.$$layers.push(layer);
+        attachLayer (layer: core.Updater, root?: boolean) {
+            if (root === true)
+                this.$$layers.unshift(layer);
+            else
+                this.$$layers.push(layer);
             layer.tree.isTop = true;
             layer.tree.surface = this;
             layer.fullInvalidate();

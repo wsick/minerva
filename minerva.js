@@ -5184,8 +5184,11 @@ var minerva;
                 configurable: true
             });
 
-            Surface.prototype.attachLayer = function (layer) {
-                this.$$layers.push(layer);
+            Surface.prototype.attachLayer = function (layer, root) {
+                if (root === true)
+                    this.$$layers.unshift(layer);
+                else
+                    this.$$layers.push(layer);
                 layer.tree.isTop = true;
                 layer.tree.surface = this;
                 layer.fullInvalidate();
