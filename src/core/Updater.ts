@@ -53,7 +53,7 @@ module minerva.core {
 
             previousConstraint: new Size(),
             desiredSize: new Size(),
-            hiddenDesire: new Size(),
+            hiddenDesire: new Size(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY),
 
             renderSize: new Size(),
             lastRenderSize: new Size(),

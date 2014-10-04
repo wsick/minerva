@@ -1495,7 +1495,7 @@ var minerva;
                     effectPadding: new minerva.Thickness(),
                     previousConstraint: new minerva.Size(),
                     desiredSize: new minerva.Size(),
-                    hiddenDesire: new minerva.Size(),
+                    hiddenDesire: new minerva.Size(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY),
                     renderSize: new minerva.Size(),
                     lastRenderSize: new minerva.Size(),
                     layoutSlot: new minerva.Rect(),
