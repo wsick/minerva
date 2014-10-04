@@ -402,17 +402,17 @@ declare module minerva.core {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: render.RenderContext, region: Rect): boolean;
-        public invalidateMeasure(): void;
-        public invalidateArrange(): void;
-        public updateBounds(forceRedraw?: boolean): void;
-        public fullInvalidate(invTransforms?: boolean): void;
+        public invalidateMeasure(): Updater;
+        public invalidateArrange(): Updater;
+        public updateBounds(forceRedraw?: boolean): Updater;
+        public fullInvalidate(invTransforms?: boolean): Updater;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
         static $$addUpDirty(updater: Updater): void;
         static $$addDownDirty(updater: Updater): void;
         static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags): void;
         static getVisualOwner(updater: Updater): IVisualOwner;
-        static transformToVisual(fromUpdater: Updater, toUpdater: Updater): number[];
+        static transformToVisual(fromUpdater: Updater, toUpdater?: Updater): number[];
     }
 }
 declare module minerva.core {
@@ -447,6 +447,10 @@ declare module minerva.core.helpers {
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
 }
 declare module minerva.core.reactTo {
+    module helpers {
+        function invalidateParent(updater: Updater): void;
+        function sizeChanged(updater: Updater): void;
+    }
     function isHitTestVisible(updater: Updater, oldValue: boolean, newValue: boolean): void;
     function useLayoutRounding(updater: Updater, oldValue: boolean, newValue: boolean): void;
     function opacity(updater: Updater, oldValue: number, newValue: number): void;
@@ -456,9 +460,7 @@ declare module minerva.core.reactTo {
     function projection(updater: Updater, oldValue: IProjection, newValue: IProjection): void;
     function renderTransform(updater: Updater, oldValue: Point, newValue: Point): void;
     function renderTransformOrigin(updater: Updater, oldValue: Point, newValue: Point): void;
-    module helpers {
-        function invalidateParent(updater: Updater): void;
-    }
+    var width: any, height: any, minWidth: any, minHeight: any, maxWidth: any, maxHeight: any;
 }
 declare module minerva.core {
     interface ISyncer<T> {

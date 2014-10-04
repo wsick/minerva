@@ -347,25 +347,28 @@ module minerva.core {
 
         ///////
 
-        invalidateMeasure () {
+        invalidateMeasure (): Updater {
             this.assets.dirtyFlags |= DirtyFlags.Measure;
             Updater.$$propagateUiFlagsUp(this, UIFlags.MeasureHint);
+            return this;
         }
 
-        invalidateArrange () {
+        invalidateArrange (): Updater {
             this.assets.dirtyFlags |= DirtyFlags.Arrange;
             Updater.$$propagateUiFlagsUp(this, UIFlags.ArrangeHint);
+            return this;
         }
 
-        updateBounds (forceRedraw?: boolean) {
+        updateBounds (forceRedraw?: boolean): Updater {
             var assets = this.assets;
             assets.dirtyFlags |= DirtyFlags.Bounds;
             Updater.$$addUpDirty(this);
             if (forceRedraw === true)
                 assets.forceInvalidate = true;
+            return this;
         }
 
-        fullInvalidate (invTransforms?: boolean) {
+        fullInvalidate (invTransforms?: boolean): Updater {
             var assets = this.assets;
             this.invalidate(assets.surfaceBoundsWithChildren);
             if (invTransforms) {
@@ -373,6 +376,7 @@ module minerva.core {
                 Updater.$$addDownDirty(this);
             }
             this.updateBounds(true);
+            return this;
         }
 
         invalidate (region: Rect) {

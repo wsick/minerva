@@ -1756,11 +1756,13 @@ var minerva;
             Updater.prototype.invalidateMeasure = function () {
                 this.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
                 Updater.$$propagateUiFlagsUp(this, 2048 /* MeasureHint */);
+                return this;
             };
 
             Updater.prototype.invalidateArrange = function () {
                 this.assets.dirtyFlags |= minerva.DirtyFlags.Arrange;
                 Updater.$$propagateUiFlagsUp(this, 4096 /* ArrangeHint */);
+                return this;
             };
 
             Updater.prototype.updateBounds = function (forceRedraw) {
@@ -1769,6 +1771,7 @@ var minerva;
                 Updater.$$addUpDirty(this);
                 if (forceRedraw === true)
                     assets.forceInvalidate = true;
+                return this;
             };
 
             Updater.prototype.fullInvalidate = function (invTransforms) {
@@ -1779,6 +1782,7 @@ var minerva;
                     Updater.$$addDownDirty(this);
                 }
                 this.updateBounds(true);
+                return this;
             };
 
             Updater.prototype.invalidate = function (region) {
@@ -1832,6 +1836,9 @@ var minerva;
             };
 
             Updater.transformToVisual = function (fromUpdater, toUpdater) {
+                if (!fromUpdater.tree.surface || (toUpdater && !toUpdater.tree.surface))
+                    return null;
+
                 var result = mat4.create();
 
                 if (toUpdater) {
@@ -1918,6 +1925,23 @@ var minerva;
 (function (minerva) {
     (function (core) {
         (function (reactTo) {
+            (function (helpers) {
+                function invalidateParent(updater) {
+                    core.Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
+                }
+                helpers.invalidateParent = invalidateParent;
+
+                function sizeChanged(updater) {
+                    var vp = updater.tree.visualParent;
+                    if (vp)
+                        vp.invalidateMeasure();
+                    var origin = updater.assets.renderTransformOrigin;
+                    updater.fullInvalidate(origin.x !== 0.0 || origin.y !== 0).invalidateMeasure().invalidateArrange();
+                }
+                helpers.sizeChanged = sizeChanged;
+            })(reactTo.helpers || (reactTo.helpers = {}));
+            var helpers = reactTo.helpers;
+
             function isHitTestVisible(updater, oldValue, newValue) {
                 updater.assets.dirtyFlags |= minerva.DirtyFlags.HitTestVisibility;
                 core.Updater.$$addDownDirty(updater);
@@ -1990,13 +2014,8 @@ var minerva;
             }
             reactTo.renderTransformOrigin = renderTransformOrigin;
 
-            (function (helpers) {
-                function invalidateParent(updater) {
-                    core.Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
-                }
-                helpers.invalidateParent = invalidateParent;
-            })(reactTo.helpers || (reactTo.helpers = {}));
-            var helpers = reactTo.helpers;
+            reactTo.width, reactTo.height, reactTo.minWidth, reactTo.minHeight, reactTo.maxWidth, reactTo.maxHeight;
+            reactTo.width = reactTo.height = reactTo.minWidth = reactTo.minHeight = reactTo.maxWidth = reactTo.maxHeight = helpers.sizeChanged;
         })(core.reactTo || (core.reactTo = {}));
         var reactTo = core.reactTo;
     })(minerva.core || (minerva.core = {}));

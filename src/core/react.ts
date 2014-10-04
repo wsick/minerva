@@ -1,4 +1,23 @@
 module minerva.core.reactTo {
+
+    export module helpers {
+        export function invalidateParent (updater: Updater) {
+            Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
+        }
+
+        export function sizeChanged (updater: Updater) {
+            var vp = updater.tree.visualParent;
+            if (vp)
+                vp.invalidateMeasure();
+            var origin = updater.assets.renderTransformOrigin;
+            updater.fullInvalidate(origin.x !== 0.0 || origin.y !== 0)
+                .invalidateMeasure()
+                .invalidateArrange();
+        }
+    }
+
+    /// UI ELEMENT
+
     export function isHitTestVisible (updater: Updater, oldValue: boolean, newValue: boolean) {
         updater.assets.dirtyFlags |= DirtyFlags.HitTestVisibility;
         Updater.$$addDownDirty(updater);
@@ -70,9 +89,7 @@ module minerva.core.reactTo {
         Updater.$$addDownDirty(updater);
     }
 
-    export module helpers {
-        export function invalidateParent (updater: Updater) {
-            Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
-        }
-    }
+    /// FRAMEWORK ELEMENT
+    export var width, height, minWidth, minHeight, maxWidth, maxHeight;
+    width = height = minWidth = minHeight = maxWidth = maxHeight = helpers.sizeChanged;
 }
