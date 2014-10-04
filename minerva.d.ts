@@ -379,10 +379,13 @@ declare module minerva.core {
         public init(): void;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setTree(tree?: IUpdaterTree): Updater;
-        public setVisualParent(visualParent: Updater): Updater;
-        public walkDeep(dir?: WalkDirection): IDeepWalker<Updater>;
         public getAttachedValue(name: string): any;
         public setAttachedValue(name: string, value?: any): void;
+        public onDetached(): void;
+        public onAttached(): void;
+        public setVisualParent(visualParent: Updater): Updater;
+        public setSurface(surface: ISurface): Updater;
+        public walkDeep(dir?: WalkDirection): IDeepWalker<Updater>;
         public setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         public setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
         public setArrangePipe(pipedef?: arrange.ArrangePipeDef): Updater;
@@ -405,9 +408,10 @@ declare module minerva.core {
         public fullInvalidate(invTransforms?: boolean): void;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
-        private static $$addUpDirty(updater);
-        private static $$addDownDirty(updater);
+        static $$addUpDirty(updater: Updater): void;
+        static $$addDownDirty(updater: Updater): void;
         static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags): void;
+        static getVisualOwner(updater: Updater): IVisualOwner;
     }
 }
 declare module minerva.core {
@@ -440,6 +444,26 @@ declare module minerva.core.helpers {
     }
     function coerceSize(size: ISize, assets: ISized): void;
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
+}
+declare module minerva.core.reactTo {
+    function isHitTestVisible(updater: Updater, oldValue: boolean, newValue: boolean): void;
+    function useLayoutRounding(updater: Updater, oldValue: boolean, newValue: boolean): void;
+    function opacity(updater: Updater, oldValue: number, newValue: number): void;
+    function visibility(updater: Updater, oldValue: Visibility, newValue: Visibility): void;
+    function effect(updater: Updater, oldValue: render.IEffect, newValue: render.IEffect): void;
+    function clip(updater: Updater, oldValue: render.IGeometry, newValue: render.IGeometry): void;
+    function projection(updater: Updater, oldValue: IProjection, newValue: IProjection): void;
+    function renderTransform(updater: Updater, oldValue: Point, newValue: Point): void;
+    function renderTransformOrigin(updater: Updater, oldValue: Point, newValue: Point): void;
+    module helpers {
+        function invalidateParent(updater: Updater): void;
+    }
+}
+declare module minerva.core {
+    interface ISyncer<T> {
+        (src: T, dest: T): any;
+    }
+    function sync<T>(updater: Updater, name: string, newValue: any, syncer?: ISyncer<T>): void;
 }
 declare module minerva.core.arrange {
     interface IArrangeBinder {
@@ -873,17 +897,20 @@ declare module minerva.core.render {
     }
     interface IOutput extends pipe.IPipeOutput {
     }
-    interface IEffect {
-        PreRender(ctx: RenderContext): any;
-        PostRender(ctx: RenderContext): any;
-    }
-    interface IGeometry {
-        Draw(ctx: RenderContext): any;
-    }
     class RenderPipeDef extends pipe.TriPipeDef<IRenderTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
+    }
+}
+declare module minerva.core.render {
+    interface IEffect {
+        PreRender(ctx: RenderContext): any;
+        PostRender(ctx: RenderContext): any;
+        GetPadding(thickness: Thickness): boolean;
+    }
+    interface IGeometry {
+        Draw(ctx: RenderContext): any;
     }
 }
 declare module minerva.core.render.tapins {

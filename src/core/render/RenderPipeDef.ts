@@ -17,14 +17,6 @@ module minerva.core.render {
 
     }
 
-    export interface IEffect {
-        PreRender(ctx: RenderContext);
-        PostRender(ctx: RenderContext);
-    }
-    export interface IGeometry {
-        Draw(ctx: RenderContext);
-    }
-
     export class RenderPipeDef extends pipe.TriPipeDef<IRenderTapin, IInput, IState, IOutput> {
         constructor () {
             super();

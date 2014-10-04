@@ -1451,15 +1451,6 @@ var minerva;
             }
         };
 
-        function getVisualOwner(updater) {
-            var tree = updater.tree;
-            if (tree.visualParent)
-                return tree.visualParent;
-            if (tree.isTop && tree.surface)
-                return tree.surface;
-            return NO_VO;
-        }
-
         var Updater = (function () {
             function Updater() {
                 this.$$measure = null;
@@ -1551,8 +1542,58 @@ var minerva;
                 return this;
             };
 
+            Updater.prototype.getAttachedValue = function (name) {
+                return this.$$attached[name];
+            };
+
+            Updater.prototype.setAttachedValue = function (name, value) {
+                this.$$attached[name] = value;
+            };
+
+            Updater.prototype.onDetached = function () {
+                core.reactTo.helpers.invalidateParent(this);
+                this.invalidateMeasure();
+
+                this.assets.layoutSlot = new minerva.Rect();
+                this.assets.layoutClip = undefined;
+            };
+
+            Updater.prototype.onAttached = function () {
+                this.updateBounds(true);
+                this.invalidateMeasure();
+
+                var assets = this.assets;
+
+                assets.dirtyFlags |= (minerva.DirtyFlags.RenderVisibility | minerva.DirtyFlags.HitTestVisibility | minerva.DirtyFlags.LocalTransform | minerva.DirtyFlags.LocalProjection);
+                Updater.$$addDownDirty(this);
+                this.invalidate(assets.surfaceBoundsWithChildren);
+                assets.layoutClip = undefined;
+
+                this.invalidateMeasure();
+                this.invalidateArrange();
+                if ((assets.uiFlags & 8192 /* SizeHint */) > 0 || assets.lastRenderSize !== undefined)
+                    Updater.$$propagateUiFlagsUp(this, 8192 /* SizeHint */);
+            };
+
             Updater.prototype.setVisualParent = function (visualParent) {
+                if (!visualParent && this.tree.visualParent)
+                    this.onDetached();
                 this.tree.visualParent = visualParent;
+                this.setSurface(visualParent ? visualParent.tree.surface : undefined);
+                if (visualParent)
+                    this.onAttached();
+                return this;
+            };
+
+            Updater.prototype.setSurface = function (surface) {
+                var cur;
+                for (var walker = this.walkDeep(); walker.step();) {
+                    cur = walker.current;
+                    if (cur.tree.surface === surface)
+                        walker.skipBranch();
+                    else
+                        cur.tree.surface = surface;
+                }
                 return this;
             };
 
@@ -1578,14 +1619,6 @@ var minerva;
                         last = undefined;
                     }
                 };
-            };
-
-            Updater.prototype.getAttachedValue = function (name) {
-                return this.$$attached[name];
-            };
-
-            Updater.prototype.setAttachedValue = function (name, value) {
-                this.$$attached[name] = value;
             };
 
             Updater.prototype.setMeasurePipe = function (pipedef) {
@@ -1686,6 +1719,8 @@ var minerva;
             };
 
             Updater.prototype.processDown = function () {
+                if (!this.tree.surface)
+                    this.$$inDownDirty = false;
                 if (!this.$$inDownDirty)
                     return true;
                 var vp = this.tree.visualParent;
@@ -1702,11 +1737,13 @@ var minerva;
             };
 
             Updater.prototype.processUp = function () {
+                if (!this.tree.surface)
+                    this.$$inUpDirty = false;
                 if (!this.$$inUpDirty)
                     return true;
 
                 var pipe = this.$$processup;
-                var success = pipe.def.run(this.assets, pipe.state, pipe.output, getVisualOwner(this), this.tree);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, Updater.getVisualOwner(this), this.tree);
                 this.$$inUpDirty = false;
                 return success;
             };
@@ -1784,6 +1821,15 @@ var minerva;
                     vpu.assets.uiFlags |= flags;
                 }
             };
+
+            Updater.getVisualOwner = function (updater) {
+                var tree = updater.tree;
+                if (tree.visualParent)
+                    return tree.visualParent;
+                if (tree.isTop && tree.surface)
+                    return tree.surface;
+                return NO_VO;
+            };
             return Updater;
         })();
         core.Updater = Updater;
@@ -1851,6 +1897,107 @@ var minerva;
             helpers.copyGrowTransform4 = copyGrowTransform4;
         })(core.helpers || (core.helpers = {}));
         var helpers = core.helpers;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (reactTo) {
+            function isHitTestVisible(updater, oldValue, newValue) {
+                updater.assets.dirtyFlags |= minerva.DirtyFlags.HitTestVisibility;
+                core.Updater.$$addDownDirty(updater);
+            }
+            reactTo.isHitTestVisible = isHitTestVisible;
+
+            function useLayoutRounding(updater, oldValue, newValue) {
+                updater.invalidateMeasure();
+                updater.invalidateArrange();
+            }
+            reactTo.useLayoutRounding = useLayoutRounding;
+
+            function opacity(updater, oldValue, newValue) {
+                updater.assets.dirtyFlags |= minerva.DirtyFlags.RenderVisibility;
+                core.Updater.$$addDownDirty(updater);
+                helpers.invalidateParent(updater);
+            }
+            reactTo.opacity = opacity;
+
+            function visibility(updater, oldValue, newValue) {
+                updater.assets.dirtyFlags |= minerva.DirtyFlags.RenderVisibility;
+                core.Updater.$$addDownDirty(updater);
+                helpers.invalidateParent(updater);
+
+                updater.invalidateMeasure();
+                var vp = updater.tree.visualParent;
+                if (vp)
+                    vp.invalidateMeasure();
+            }
+            reactTo.visibility = visibility;
+
+            function effect(updater, oldValue, newValue) {
+                helpers.invalidateParent(updater);
+                var changed = (newValue) ? newValue.GetPadding(updater.assets.effectPadding) : false;
+                if (changed)
+                    updater.updateBounds();
+
+                if (oldValue !== newValue && updater.tree.surface) {
+                    updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+                    core.Updater.$$addDownDirty(updater);
+                }
+            }
+            reactTo.effect = effect;
+
+            function clip(updater, oldValue, newValue) {
+                var assets = updater.assets;
+
+                helpers.invalidateParent(updater);
+                updater.updateBounds(true);
+                assets.dirtyFlags |= minerva.DirtyFlags.LocalClip;
+                core.Updater.$$addDownDirty(updater);
+            }
+            reactTo.clip = clip;
+
+            function projection(updater, oldValue, newValue) {
+                updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalProjection;
+                core.Updater.$$addDownDirty(updater);
+            }
+            reactTo.projection = projection;
+
+            function renderTransform(updater, oldValue, newValue) {
+                updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+                core.Updater.$$addDownDirty(updater);
+            }
+            reactTo.renderTransform = renderTransform;
+
+            function renderTransformOrigin(updater, oldValue, newValue) {
+                updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+                core.Updater.$$addDownDirty(updater);
+            }
+            reactTo.renderTransformOrigin = renderTransformOrigin;
+
+            (function (helpers) {
+                function invalidateParent(updater) {
+                    core.Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
+                }
+                helpers.invalidateParent = invalidateParent;
+            })(reactTo.helpers || (reactTo.helpers = {}));
+            var helpers = reactTo.helpers;
+        })(core.reactTo || (core.reactTo = {}));
+        var reactTo = core.reactTo;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        function sync(updater, name, newValue, syncer) {
+            if (syncer)
+                syncer(newValue, updater.assets[name]);
+            else
+                updater.assets[name] = newValue;
+        }
+        core.sync = sync;
     })(minerva.core || (minerva.core = {}));
     var core = minerva.core;
 })(minerva || (minerva = {}));

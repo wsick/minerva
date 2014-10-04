@@ -6,15 +6,6 @@ module minerva.core {
         }
     };
 
-    function getVisualOwner (updater: Updater): IVisualOwner {
-        var tree = updater.tree;
-        if (tree.visualParent)
-            return tree.visualParent;
-        if (tree.isTop && tree.surface)
-            return tree.surface;
-        return NO_VO;
-    }
-
     export class Updater {
         private $$measure: IMeasurePipe = null;
         private $$measureBinder: measure.IMeasureBinder = null;
@@ -135,8 +126,61 @@ module minerva.core {
             return this;
         }
 
+        getAttachedValue (name: string): any {
+            return this.$$attached[name];
+        }
+
+        setAttachedValue (name: string, value?: any) {
+            this.$$attached[name] = value;
+        }
+
+        /////// TREE
+
+        onDetached () {
+            reactTo.helpers.invalidateParent(this);
+            this.invalidateMeasure();
+
+            this.assets.layoutSlot = new Rect();
+            this.assets.layoutClip = undefined;
+        }
+
+        onAttached () {
+            this.updateBounds(true);
+            this.invalidateMeasure();
+            //previousConstraint = undefined; ///OLD
+
+            var assets = this.assets;
+
+            assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
+            Updater.$$addDownDirty(this);
+            this.invalidate(assets.surfaceBoundsWithChildren);
+            assets.layoutClip = undefined;
+            //TODO: clear assets.renderSize
+            this.invalidateMeasure();
+            this.invalidateArrange();
+            if ((assets.uiFlags & UIFlags.SizeHint) > 0 || assets.lastRenderSize !== undefined)
+                Updater.$$propagateUiFlagsUp(this, UIFlags.SizeHint);
+        }
+
         setVisualParent (visualParent: Updater): Updater {
+            if (!visualParent && this.tree.visualParent)
+                this.onDetached();
             this.tree.visualParent = visualParent;
+            this.setSurface(visualParent ? visualParent.tree.surface : undefined);
+            if (visualParent)
+                this.onAttached();
+            return this;
+        }
+
+        setSurface (surface: ISurface): Updater {
+            var cur: core.Updater;
+            for (var walker = this.walkDeep(); walker.step();) {
+                cur = walker.current;
+                if (cur.tree.surface === surface)
+                    walker.skipBranch();
+                else
+                    cur.tree.surface = surface;
+            }
             return this;
         }
 
@@ -162,14 +206,6 @@ module minerva.core {
                     last = undefined;
                 }
             };
-        }
-
-        getAttachedValue (name: string): any {
-            return this.$$attached[name];
-        }
-
-        setAttachedValue (name: string, value?: any) {
-            this.$$attached[name] = value;
         }
 
         /////// PREPARE PIPES
@@ -274,6 +310,8 @@ module minerva.core {
         }
 
         processDown (): boolean {
+            if (!this.tree.surface)
+                this.$$inDownDirty = false;
             if (!this.$$inDownDirty)
                 return true;
             var vp = this.tree.visualParent;
@@ -291,11 +329,13 @@ module minerva.core {
         }
 
         processUp (): boolean {
+            if (!this.tree.surface)
+                this.$$inUpDirty = false;
             if (!this.$$inUpDirty)
                 return true;
 
             var pipe = this.$$processup;
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, getVisualOwner(this), this.tree);
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, Updater.getVisualOwner(this), this.tree);
             this.$$inUpDirty = false;
             return success;
         }
@@ -354,7 +394,7 @@ module minerva.core {
 
         /////// STATIC HELPERS
 
-        private static $$addUpDirty (updater: Updater) {
+        static $$addUpDirty (updater: Updater) {
             var surface = updater.tree.surface;
             if (surface && !updater.$$inUpDirty) {
                 surface.addUpDirty(updater);
@@ -362,7 +402,7 @@ module minerva.core {
             }
         }
 
-        private static $$addDownDirty (updater: Updater) {
+        static $$addDownDirty (updater: Updater) {
             var surface = updater.tree.surface;
             if (surface && !updater.$$inDownDirty) {
                 surface.addDownDirty(updater);
@@ -376,6 +416,15 @@ module minerva.core {
             while ((vpu = vpu.tree.visualParent) != null && (vpu.assets.uiFlags & flags) === 0) {
                 vpu.assets.uiFlags |= flags;
             }
+        }
+
+        static getVisualOwner (updater: Updater): IVisualOwner {
+            var tree = updater.tree;
+            if (tree.visualParent)
+                return tree.visualParent;
+            if (tree.isTop && tree.surface)
+                return tree.surface;
+            return NO_VO;
         }
     }
 }
