@@ -5184,6 +5184,11 @@ var minerva;
                 configurable: true
             });
 
+            Surface.prototype.init = function (canvas) {
+                this.$$canvas = canvas;
+                this.$$ctx = new minerva.core.render.RenderContext(canvas.getContext('2d'));
+            };
+
             Surface.prototype.attachLayer = function (layer, root) {
                 if (root === true)
                     this.$$layers.unshift(layer);
@@ -5266,6 +5271,16 @@ var minerva;
                 }
 
                 return updated;
+            };
+
+            Surface.prototype.resize = function (width, height) {
+                for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
+                    layers[i].invalidateMeasure();
+                }
+            };
+
+            Surface.prototype.hitTestPoint = function (pos) {
+                return [];
             };
             return Surface;
         })();

@@ -26,7 +26,7 @@ module minerva.engine {
 
         init (canvas: HTMLCanvasElement) {
             this.$$canvas = canvas;
-            this.$$ctx = canvas.getContext('2d');
+            this.$$ctx = new core.render.RenderContext(canvas.getContext('2d'));
         }
 
         attachLayer (layer: core.Updater, root?: boolean) {

@@ -1242,6 +1242,7 @@ declare module minerva.engine {
         private $$dirtyRegion;
         public width : number;
         public height : number;
+        public init(canvas: HTMLCanvasElement): void;
         public attachLayer(layer: core.Updater, root?: boolean): void;
         public detachLayer(layer: core.Updater): void;
         public updateBounds(): void;
@@ -1250,6 +1251,8 @@ declare module minerva.engine {
         public addUpDirty(updater: core.Updater): void;
         public addDownDirty(updater: core.Updater): void;
         public updateLayout(): boolean;
+        public resize(width: number, height: number): void;
+        public hitTestPoint(pos: Point): core.Updater[];
     }
 }
 declare module minerva.engine {
