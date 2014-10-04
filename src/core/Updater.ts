@@ -426,5 +426,24 @@ module minerva.core {
                 return tree.surface;
             return NO_VO;
         }
+
+        static transformToVisual (fromUpdater: Updater, toUpdater: Updater): number[] {
+            //1. invert transform from input element to top level
+            //2. transform back down to this element
+            var result = mat4.create();
+            // A = From, B = To, M = what we want
+            // A = M * B
+            // => M = inv (B) * A
+            if (toUpdater) {
+                var inverse = mat4.create();
+                mat4.inverse(toUpdater.assets.absoluteProjection, inverse);
+                mat4.multiply(fromUpdater.assets.absoluteProjection, inverse, result); //result = inverse * abs
+            } else {
+                mat4.set(fromUpdater.assets.absoluteProjection, result); //result = absolute
+            }
+
+            //TODO: Looks suspicious, will always create affine matrix (most likely won't work if user specifies a projection)
+            return mat4.toAffineMat3(result) || result;
+        }
     }
 }

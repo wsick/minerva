@@ -1830,6 +1830,20 @@ var minerva;
                     return tree.surface;
                 return NO_VO;
             };
+
+            Updater.transformToVisual = function (fromUpdater, toUpdater) {
+                var result = mat4.create();
+
+                if (toUpdater) {
+                    var inverse = mat4.create();
+                    mat4.inverse(toUpdater.assets.absoluteProjection, inverse);
+                    mat4.multiply(fromUpdater.assets.absoluteProjection, inverse, result);
+                } else {
+                    mat4.set(fromUpdater.assets.absoluteProjection, result);
+                }
+
+                return mat4.toAffineMat3(result) || result;
+            };
             return Updater;
         })();
         core.Updater = Updater;
