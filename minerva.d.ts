@@ -468,6 +468,7 @@ declare module minerva.core.reactTo {
     var maxWidth: typeof helpers.sizeChanged;
     var maxHeight: typeof helpers.sizeChanged;
     var margin: typeof helpers.sizeChanged;
+    var flowDirection: typeof helpers.sizeChanged;
     var horizontalAlignment: typeof helpers.alignmentChanged;
     var verticalAlignment: typeof helpers.alignmentChanged;
 }

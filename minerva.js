@@ -2027,6 +2027,7 @@ var minerva;
             reactTo.maxWidth = helpers.sizeChanged;
             reactTo.maxHeight = helpers.sizeChanged;
             reactTo.margin = helpers.sizeChanged;
+            reactTo.flowDirection = helpers.sizeChanged;
 
             reactTo.horizontalAlignment = helpers.alignmentChanged;
             reactTo.verticalAlignment = helpers.alignmentChanged;
