@@ -24,6 +24,11 @@ module minerva.engine {
             return this.$$canvas.offsetHeight;
         }
 
+        init (canvas: HTMLCanvasElement) {
+            this.$$canvas = canvas;
+            this.$$ctx = canvas.getContext('2d');
+        }
+
         attachLayer (layer: core.Updater, root?: boolean) {
             if (root === true)
                 this.$$layers.unshift(layer);
@@ -107,6 +112,16 @@ module minerva.engine {
             }
 
             return updated;
+        }
+
+        resize (width: number, height: number) {
+            for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
+                layers[i].invalidateMeasure();
+            }
+        }
+
+        hitTestPoint (pos: Point): core.Updater[] {
+            return [];
         }
     }
 }
