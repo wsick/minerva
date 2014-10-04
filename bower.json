@@ -8,7 +8,6 @@
   ],
   "description": "Microservices Pipeline Presentation framework",
   "keywords": [
-    "build",
     "minerva",
     "fayde",
     "xaml",
@@ -18,6 +17,7 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "build",
     "node_modules",
     "bower_components",
     "src",
