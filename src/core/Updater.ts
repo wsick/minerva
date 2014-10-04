@@ -325,6 +325,16 @@ module minerva.core {
                 assets.forceInvalidate = true;
         }
 
+        fullInvalidate (invTransforms?: boolean) {
+            var assets = this.assets;
+            this.invalidate(assets.surfaceBoundsWithChildren);
+            if (invTransforms) {
+                assets.dirtyFlags |= (DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
+                Updater.$$addDownDirty(this);
+            }
+            this.updateBounds(true);
+        }
+
         invalidate (region: Rect) {
             var assets = this.assets;
             if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)

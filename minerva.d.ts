@@ -402,6 +402,7 @@ declare module minerva.core {
         public invalidateMeasure(): void;
         public invalidateArrange(): void;
         public updateBounds(forceRedraw?: boolean): void;
+        public fullInvalidate(invTransforms?: boolean): void;
         public invalidate(region: Rect): void;
         public findChildInList(list: Updater[]): number;
         private static $$addUpDirty(updater);
@@ -1241,6 +1242,8 @@ declare module minerva.engine {
         private $$dirtyRegion;
         public width : number;
         public height : number;
+        public attachLayer(layer: core.Updater): void;
+        public detachLayer(layer: core.Updater): void;
         public updateBounds(): void;
         public invalidate(region?: Rect): void;
         public render(): void;

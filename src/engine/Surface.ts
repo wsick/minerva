@@ -24,6 +24,23 @@ module minerva.engine {
             return this.$$canvas.offsetHeight;
         }
 
+        attachLayer (layer: core.Updater) {
+            this.$$layers.push(layer);
+            layer.tree.isTop = true;
+            layer.tree.surface = this;
+            layer.fullInvalidate();
+            layer.invalidateMeasure();
+        }
+
+        detachLayer (layer: core.Updater) {
+            layer.tree.isTop = false;
+            layer.tree.surface = null;
+            var index = this.$$layers.indexOf(layer);
+            if (index > -1)
+                this.$$layers.splice(index, 1);
+            this.invalidate(layer.assets.surfaceBoundsWithChildren);
+        }
+
         updateBounds () {
 
         }

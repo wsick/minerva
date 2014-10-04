@@ -1734,6 +1734,16 @@ var minerva;
                     assets.forceInvalidate = true;
             };
 
+            Updater.prototype.fullInvalidate = function (invTransforms) {
+                var assets = this.assets;
+                this.invalidate(assets.surfaceBoundsWithChildren);
+                if (invTransforms) {
+                    assets.dirtyFlags |= (minerva.DirtyFlags.LocalTransform | minerva.DirtyFlags.LocalProjection);
+                    Updater.$$addDownDirty(this);
+                }
+                this.updateBounds(true);
+            };
+
             Updater.prototype.invalidate = function (region) {
                 var assets = this.assets;
                 if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
@@ -5173,6 +5183,23 @@ var minerva;
                 enumerable: true,
                 configurable: true
             });
+
+            Surface.prototype.attachLayer = function (layer) {
+                this.$$layers.push(layer);
+                layer.tree.isTop = true;
+                layer.tree.surface = this;
+                layer.fullInvalidate();
+                layer.invalidateMeasure();
+            };
+
+            Surface.prototype.detachLayer = function (layer) {
+                layer.tree.isTop = false;
+                layer.tree.surface = null;
+                var index = this.$$layers.indexOf(layer);
+                if (index > -1)
+                    this.$$layers.splice(index, 1);
+                this.invalidate(layer.assets.surfaceBoundsWithChildren);
+            };
 
             Surface.prototype.updateBounds = function () {
             };
