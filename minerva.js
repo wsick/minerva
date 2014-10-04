@@ -1939,6 +1939,12 @@ var minerva;
                     updater.fullInvalidate(origin.x !== 0.0 || origin.y !== 0).invalidateMeasure().invalidateArrange();
                 }
                 helpers.sizeChanged = sizeChanged;
+
+                function alignmentChanged(updater) {
+                    updater.invalidateArrange();
+                    updater.fullInvalidate(true);
+                }
+                helpers.alignmentChanged = alignmentChanged;
             })(reactTo.helpers || (reactTo.helpers = {}));
             var helpers = reactTo.helpers;
 
@@ -2014,8 +2020,16 @@ var minerva;
             }
             reactTo.renderTransformOrigin = renderTransformOrigin;
 
-            reactTo.width, reactTo.height, reactTo.minWidth, reactTo.minHeight, reactTo.maxWidth, reactTo.maxHeight;
-            reactTo.width = reactTo.height = reactTo.minWidth = reactTo.minHeight = reactTo.maxWidth = reactTo.maxHeight = helpers.sizeChanged;
+            reactTo.width = helpers.sizeChanged;
+            reactTo.height = helpers.sizeChanged;
+            reactTo.minWidth = helpers.sizeChanged;
+            reactTo.minHeight = helpers.sizeChanged;
+            reactTo.maxWidth = helpers.sizeChanged;
+            reactTo.maxHeight = helpers.sizeChanged;
+            reactTo.margin = helpers.sizeChanged;
+
+            reactTo.horizontalAlignment = helpers.alignmentChanged;
+            reactTo.verticalAlignment = helpers.alignmentChanged;
         })(core.reactTo || (core.reactTo = {}));
         var reactTo = core.reactTo;
     })(minerva.core || (minerva.core = {}));

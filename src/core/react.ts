@@ -14,6 +14,11 @@ module minerva.core.reactTo {
                 .invalidateMeasure()
                 .invalidateArrange();
         }
+
+        export function alignmentChanged (updater: Updater) {
+            updater.invalidateArrange();
+            updater.fullInvalidate(true);
+        }
     }
 
     /// UI ELEMENT
@@ -90,6 +95,14 @@ module minerva.core.reactTo {
     }
 
     /// FRAMEWORK ELEMENT
-    export var width, height, minWidth, minHeight, maxWidth, maxHeight;
-    width = height = minWidth = minHeight = maxWidth = maxHeight = helpers.sizeChanged;
+    export var width = helpers.sizeChanged;
+    export var height = helpers.sizeChanged;
+    export var minWidth = helpers.sizeChanged;
+    export var minHeight = helpers.sizeChanged;
+    export var maxWidth = helpers.sizeChanged;
+    export var maxHeight = helpers.sizeChanged;
+    export var margin = helpers.sizeChanged;
+
+    export var horizontalAlignment = helpers.alignmentChanged;
+    export var verticalAlignment = helpers.alignmentChanged;
 }

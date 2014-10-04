@@ -450,6 +450,7 @@ declare module minerva.core.reactTo {
     module helpers {
         function invalidateParent(updater: Updater): void;
         function sizeChanged(updater: Updater): void;
+        function alignmentChanged(updater: Updater): void;
     }
     function isHitTestVisible(updater: Updater, oldValue: boolean, newValue: boolean): void;
     function useLayoutRounding(updater: Updater, oldValue: boolean, newValue: boolean): void;
@@ -460,7 +461,15 @@ declare module minerva.core.reactTo {
     function projection(updater: Updater, oldValue: IProjection, newValue: IProjection): void;
     function renderTransform(updater: Updater, oldValue: Point, newValue: Point): void;
     function renderTransformOrigin(updater: Updater, oldValue: Point, newValue: Point): void;
-    var width: any, height: any, minWidth: any, minHeight: any, maxWidth: any, maxHeight: any;
+    var width: typeof helpers.sizeChanged;
+    var height: typeof helpers.sizeChanged;
+    var minWidth: typeof helpers.sizeChanged;
+    var minHeight: typeof helpers.sizeChanged;
+    var maxWidth: typeof helpers.sizeChanged;
+    var maxHeight: typeof helpers.sizeChanged;
+    var margin: typeof helpers.sizeChanged;
+    var horizontalAlignment: typeof helpers.alignmentChanged;
+    var verticalAlignment: typeof helpers.alignmentChanged;
 }
 declare module minerva.core {
     interface ISyncer<T> {
