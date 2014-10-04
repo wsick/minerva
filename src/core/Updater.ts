@@ -427,7 +427,10 @@ module minerva.core {
             return NO_VO;
         }
 
-        static transformToVisual (fromUpdater: Updater, toUpdater: Updater): number[] {
+        static transformToVisual (fromUpdater: Updater, toUpdater?: Updater): number[] {
+            if (!fromUpdater.tree.surface || (toUpdater && !toUpdater.tree.surface))
+                return null;
+
             //1. invert transform from input element to top level
             //2. transform back down to this element
             var result = mat4.create();
