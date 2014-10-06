@@ -13,7 +13,7 @@ module minerva {
             this.y = y == null ? 0 : y;
         }
 
-        copyTo (src: Point, dest: Point) {
+        static copyTo (src: Point, dest: Point) {
             dest.x = src.x;
             dest.y = src.y;
         }
