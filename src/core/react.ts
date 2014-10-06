@@ -84,7 +84,7 @@ module minerva.core.reactTo {
         Updater.$$addDownDirty(updater);
     }
 
-    export function renderTransform (updater: Updater, oldValue: Point, newValue: Point) {
+    export function renderTransform (updater: Updater, oldValue: any, newValue: any) {
         updater.assets.dirtyFlags |= DirtyFlags.LocalTransform;
         Updater.$$addDownDirty(updater);
     }

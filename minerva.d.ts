@@ -473,7 +473,7 @@ declare module minerva.core.reactTo {
     function effect(updater: Updater, oldValue: IEffect, newValue: IEffect): void;
     function clip(updater: Updater, oldValue: IGeometry, newValue: IGeometry): void;
     function projection(updater: Updater, oldValue: IProjection, newValue: IProjection): void;
-    function renderTransform(updater: Updater, oldValue: Point, newValue: Point): void;
+    function renderTransform(updater: Updater, oldValue: any, newValue: any): void;
     function renderTransformOrigin(updater: Updater, oldValue: Point, newValue: Point): void;
     var width: typeof helpers.sizeChanged;
     var height: typeof helpers.sizeChanged;
