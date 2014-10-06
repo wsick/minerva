@@ -379,12 +379,14 @@ module minerva.core {
             return this;
         }
 
-        invalidate (region: Rect) {
+        invalidate (region?: Rect) {
             var assets = this.assets;
             if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
                 return;
             assets.dirtyFlags |= DirtyFlags.Invalidate;
             Updater.$$addUpDirty(this);
+            if (!region)
+                region = assets.surfaceBoundsWithChildren;
             Rect.union(assets.dirtyRegion, region);
         }
 

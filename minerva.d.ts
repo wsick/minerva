@@ -406,7 +406,7 @@ declare module minerva.core {
         public invalidateArrange(): Updater;
         public updateBounds(forceRedraw?: boolean): Updater;
         public fullInvalidate(invTransforms?: boolean): Updater;
-        public invalidate(region: Rect): void;
+        public invalidate(region?: Rect): void;
         public findChildInList(list: Updater[]): number;
         static $$addUpDirty(updater: Updater): void;
         static $$addDownDirty(updater: Updater): void;

@@ -1791,6 +1791,8 @@ var minerva;
                     return;
                 assets.dirtyFlags |= minerva.DirtyFlags.Invalidate;
                 Updater.$$addUpDirty(this);
+                if (!region)
+                    region = assets.surfaceBoundsWithChildren;
                 minerva.Rect.union(assets.dirtyRegion, region);
             };
 
