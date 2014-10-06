@@ -159,7 +159,7 @@ var minerva;
             this.x = x == null ? 0 : x;
             this.y = y == null ? 0 : y;
         }
-        Point.prototype.copyTo = function (src, dest) {
+        Point.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
         };

@@ -145,7 +145,7 @@ declare module minerva {
         public x: number;
         public y: number;
         constructor(x?: number, y?: number);
-        public copyTo(src: Point, dest: Point): void;
+        static copyTo(src: Point, dest: Point): void;
     }
 }
 declare module vec2 {
