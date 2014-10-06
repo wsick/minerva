@@ -60,6 +60,10 @@ declare module minerva {
         Uniform = 2,
         UniformToFill = 3,
     }
+    enum FlowDirection {
+        LeftToRight = 0,
+        RightToLeft = 1,
+    }
 }
 declare module minerva {
     enum DirtyFlags {

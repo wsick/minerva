@@ -86,6 +86,12 @@ var minerva;
         Stretch[Stretch["UniformToFill"] = 3] = "UniformToFill";
     })(minerva.Stretch || (minerva.Stretch = {}));
     var Stretch = minerva.Stretch;
+
+    (function (FlowDirection) {
+        FlowDirection[FlowDirection["LeftToRight"] = 0] = "LeftToRight";
+        FlowDirection[FlowDirection["RightToLeft"] = 1] = "RightToLeft";
+    })(minerva.FlowDirection || (minerva.FlowDirection = {}));
+    var FlowDirection = minerva.FlowDirection;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {

@@ -28,4 +28,9 @@ module minerva {
         Uniform = 2,
         UniformToFill = 3,
     }
+
+    export enum FlowDirection {
+        LeftToRight = 0,
+        RightToLeft = 1,
+    }
 }
