@@ -12,5 +12,10 @@ module minerva {
             this.x = x == null ? 0 : x;
             this.y = y == null ? 0 : y;
         }
+
+        copyTo (src: Point, dest: Point) {
+            dest.x = src.x;
+            dest.y = src.y;
+        }
     }
 }
