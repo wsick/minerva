@@ -50,7 +50,7 @@ module minerva.core.reactTo {
             vp.invalidateMeasure(); //TODO: Can we get rid of this?
     }
 
-    export function effect (updater: Updater, oldValue: render.IEffect, newValue: render.IEffect) {
+    export function effect (updater: Updater, oldValue: IEffect, newValue: IEffect) {
         helpers.invalidateParent(updater);
         var changed = (newValue) ? newValue.GetPadding(updater.assets.effectPadding) : false;
         if (changed)
@@ -63,7 +63,7 @@ module minerva.core.reactTo {
         }
     }
 
-    export function clip (updater: Updater, oldValue: render.IGeometry, newValue: render.IGeometry) {
+    export function clip (updater: Updater, oldValue: IGeometry, newValue: IGeometry) {
         var assets = updater.assets;
         /*
          TODO: Should we reincorporate ClipBounds?

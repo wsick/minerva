@@ -248,6 +248,16 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IEffect {
+        PreRender(ctx: core.render.RenderContext): any;
+        PostRender(ctx: core.render.RenderContext): any;
+        GetPadding(thickness: Thickness): boolean;
+    }
+    interface IGeometry {
+        Draw(ctx: core.render.RenderContext): any;
+    }
+}
+declare module minerva {
     function singleton(type: Function): any;
 }
 declare module minerva.pipe {
@@ -456,8 +466,8 @@ declare module minerva.core.reactTo {
     function useLayoutRounding(updater: Updater, oldValue: boolean, newValue: boolean): void;
     function opacity(updater: Updater, oldValue: number, newValue: number): void;
     function visibility(updater: Updater, oldValue: Visibility, newValue: Visibility): void;
-    function effect(updater: Updater, oldValue: render.IEffect, newValue: render.IEffect): void;
-    function clip(updater: Updater, oldValue: render.IGeometry, newValue: render.IGeometry): void;
+    function effect(updater: Updater, oldValue: IEffect, newValue: IEffect): void;
+    function clip(updater: Updater, oldValue: IGeometry, newValue: IGeometry): void;
     function projection(updater: Updater, oldValue: IProjection, newValue: IProjection): void;
     function renderTransform(updater: Updater, oldValue: Point, newValue: Point): void;
     function renderTransformOrigin(updater: Updater, oldValue: Point, newValue: Point): void;
@@ -914,16 +924,6 @@ declare module minerva.core.render {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-    }
-}
-declare module minerva.core.render {
-    interface IEffect {
-        PreRender(ctx: RenderContext): any;
-        PostRender(ctx: RenderContext): any;
-        GetPadding(thickness: Thickness): boolean;
-    }
-    interface IGeometry {
-        Draw(ctx: RenderContext): any;
     }
 }
 declare module minerva.core.render.tapins {

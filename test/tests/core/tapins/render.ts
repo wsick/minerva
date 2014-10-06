@@ -122,7 +122,7 @@ module minerva.core.render.tapins.tests {
         var rctx = mock.context();
 
         var clipDrawn = false;
-        input.clip = <render.IGeometry>{
+        input.clip = <IGeometry>{
             Draw: function (ctx: RenderContext) {
                 clipDrawn = true;
             }
@@ -143,7 +143,7 @@ module minerva.core.render.tapins.tests {
         var state = mock.state();
         var rctx = mock.context();
 
-        input.effect = <render.IEffect> {
+        input.effect = <IEffect> {
             PreRender: function (ctx: RenderContext) {
                 ctx.raw.globalAlpha = 0.5;
             },
@@ -172,7 +172,7 @@ module minerva.core.render.tapins.tests {
         var state = mock.state();
         var rctx = mock.context();
 
-        input.effect = <render.IEffect> {
+        input.effect = <IEffect> {
             PreRender: function (ctx: RenderContext) {
             },
             PostRender: function (ctx: RenderContext) {
