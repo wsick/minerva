@@ -57,4 +57,62 @@ module minerva.controls.image.render.tapins {
 
         return true;
     }
+
+    /*
+    function computeMatrix (width: number, height: number, sw: number, sh: number, stretch: Media.Stretch, alignX: Media.AlignmentX, alignY: Media.AlignmentY): number[] {
+        var sx = width / sw;
+        var sy = height / sh;
+        if (width === 0)
+            sx = 1.0;
+        if (height === 0)
+            sy = 1.0;
+
+        if (stretch === Media.Stretch.Fill) {
+            return mat3.createScale(sx, sy);
+        }
+
+        var scale = 1.0;
+        var dx = 0.0;
+        var dy = 0.0;
+        switch (stretch) {
+            case Media.Stretch.Uniform:
+                scale = sx < sy ? sx : sy;
+                break;
+            case Media.Stretch.UniformToFill:
+                scale = sx < sy ? sy : sx;
+                break;
+            case Media.Stretch.None:
+                break;
+        }
+
+        switch (alignX) {
+            case Media.AlignmentX.Left:
+                dx = 0.0;
+                break;
+            case Media.AlignmentX.Center:
+                dx = (width - (scale * sw)) / 2;
+                break;
+            case Media.AlignmentX.Right:
+            default:
+                dx = width - (scale * sw);
+                break;
+        }
+
+        switch (alignY) {
+            case Media.AlignmentY.Top:
+                dy = 0.0;
+                break;
+            case Media.AlignmentY.Center:
+                dy = (height - (scale * sh)) / 2;
+                break;
+            case Media.AlignmentY.Bottom:
+            default:
+                dy = height - (scale * sh);
+                break;
+        }
+        var m = mat3.createScale(scale, scale);
+        mat3.translate(m, dx, dy);
+        return m;
+    }
+    */
 }
