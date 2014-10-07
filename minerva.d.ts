@@ -193,6 +193,11 @@ declare module mat4 {
     function scale(mat: number[], x: number, y: number, z: number): number[];
 }
 declare module minerva {
+    enum RectOverlap {
+        Out = 0,
+        In = 1,
+        Part = 2,
+    }
     class Rect implements IPoint, ISize {
         public x: number;
         public y: number;
@@ -210,6 +215,7 @@ declare module minerva {
         static transform4(dest: Rect, projection: number[]): void;
         static extendTo(dest: Rect, x: number, y: number): void;
         static shrink(dest: Rect, left: number, top: number, right: number, bottom: number): void;
+        static rectIn(rect1: Rect, rect2: Rect): RectOverlap;
     }
 }
 declare module minerva {
@@ -1201,6 +1207,96 @@ declare module minerva.controls.control {
     class ControlUpdaterTree extends core.UpdaterTree {
         constructor();
     }
+}
+declare module minerva.controls.image {
+    interface IImageSource {
+        image: HTMLImageElement;
+        pixelWidth: number;
+        pixelHeight: number;
+        lock(): any;
+        unlock(): any;
+    }
+}
+declare module minerva.controls.image {
+    interface IImageUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
+    }
+    class ImageUpdater extends core.Updater {
+        public assets: IImageUpdaterAssets;
+        public init(): void;
+    }
+}
+declare module minerva.controls.image.arrange {
+    interface IInput extends core.arrange.IInput {
+        source: IImageSource;
+        stretch: Stretch;
+    }
+    interface IState extends core.arrange.IState {
+        imageBounds: Rect;
+        stretchX: number;
+        stretchY: number;
+    }
+    class ImageArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.image.arrange.tapins {
+    function calcImageBounds(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.image.arrange.tapins {
+    function calcStretch(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.image.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.image.measure {
+    interface IInput extends core.measure.IInput {
+        source: IImageSource;
+        stretch: Stretch;
+    }
+    interface IState extends core.measure.IState {
+        imageBounds: Rect;
+        stretchX: number;
+        stretchY: number;
+    }
+    class ImageMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.image.measure.tapins {
+    function calcImageBounds(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.image.measure.tapins {
+    function calcStretch(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.image.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.image.render {
+    interface IImageRenderMetrics {
+        matrix: number[];
+        overlap: RectOverlap;
+    }
+}
+declare module minerva.controls.image.render {
+    interface IInput extends core.render.IInput {
+        source: IImageSource;
+        renderSize: Size;
+    }
+    interface IState extends core.render.IState {
+        metrics: IImageRenderMetrics;
+    }
+    class ImageRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.image.render.tapins {
+    function calcMetrics(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.image.render.tapins {
+    function doRender(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel {
     class PanelUpdaterTree extends core.UpdaterTree {

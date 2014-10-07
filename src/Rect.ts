@@ -1,4 +1,10 @@
 module minerva {
+    export enum RectOverlap {
+        Out,
+        In,
+        Part,
+    }
+
     export class Rect implements IPoint, ISize {
         x: number;
         y: number;
@@ -181,7 +187,7 @@ module minerva {
             dest.height = rh;
         }
 
-        static shrink(dest: Rect, left: number, top: number, right: number, bottom: number) {
+        static shrink (dest: Rect, left: number, top: number, right: number, bottom: number) {
             dest.x += left;
             dest.y += top;
             dest.width -= left + right;
@@ -190,6 +196,18 @@ module minerva {
                 dest.width = 0;
             if (dest.height < 0)
                 dest.height = 0;
+        }
+
+        static rectIn (rect1: Rect, rect2: Rect) {
+            //TODO: Implement without creating Rect
+            var copy = new Rect();
+            Rect.copyTo(rect1, copy);
+            Rect.intersection(copy, rect2);
+            if (Rect.isEmpty(copy))
+                return RectOverlap.Out;
+            if (Rect.isEqual(copy, rect2))
+                return RectOverlap.In;
+            return RectOverlap.Part;
         }
     }
 }

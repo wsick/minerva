@@ -890,6 +890,13 @@ var mat4;
 })(mat4 || (mat4 = {}));
 var minerva;
 (function (minerva) {
+    (function (RectOverlap) {
+        RectOverlap[RectOverlap["Out"] = 0] = "Out";
+        RectOverlap[RectOverlap["In"] = 1] = "In";
+        RectOverlap[RectOverlap["Part"] = 2] = "Part";
+    })(minerva.RectOverlap || (minerva.RectOverlap = {}));
+    var RectOverlap = minerva.RectOverlap;
+
     var Rect = (function () {
         function Rect(x, y, width, height) {
             this.x = x == null ? 0 : x;
@@ -1072,6 +1079,17 @@ var minerva;
                 dest.width = 0;
             if (dest.height < 0)
                 dest.height = 0;
+        };
+
+        Rect.rectIn = function (rect1, rect2) {
+            var copy = new Rect();
+            Rect.copyTo(rect1, copy);
+            Rect.intersection(copy, rect2);
+            if (Rect.isEmpty(copy))
+                return 0 /* Out */;
+            if (Rect.isEqual(copy, rect2))
+                return 1 /* In */;
+            return 2 /* Part */;
         };
         return Rect;
     })();
@@ -5020,6 +5038,391 @@ var minerva;
             control.ControlUpdaterTree = ControlUpdaterTree;
         })(controls.control || (controls.control = {}));
         var control = controls.control;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            var ImageUpdater = (function (_super) {
+                __extends(ImageUpdater, _super);
+                function ImageUpdater() {
+                    _super.apply(this, arguments);
+                }
+                ImageUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef));
+
+                    var assets = this.assets;
+                    assets.source = null;
+                    assets.stretch = 2 /* Uniform */;
+
+                    _super.prototype.init.call(this);
+                };
+                return ImageUpdater;
+            })(minerva.core.Updater);
+            image.ImageUpdater = ImageUpdater;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (arrange) {
+                var ImageArrangePipeDef = (function (_super) {
+                    __extends(ImageArrangePipeDef, _super);
+                    function ImageArrangePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'calcImageBounds', arrange.tapins.calcImageBounds).addTapinBefore('doOverride', 'calcStretch', arrange.tapins.calcStretch).replaceTapin('doOverride', arrange.tapins.doOverride);
+                    }
+                    ImageArrangePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.imageBounds = new minerva.Rect();
+                        state.stretchX = 0;
+                        state.stretchY = 0;
+                        return state;
+                    };
+                    return ImageArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.ImageArrangePipeDef = ImageArrangePipeDef;
+            })(image.arrange || (image.arrange = {}));
+            var arrange = image.arrange;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (arrange) {
+                (function (tapins) {
+                    function calcImageBounds(input, state, output, tree, finalRect) {
+                        var ib = state.imageBounds;
+                        ib.x = ib.y = ib.width = ib.height = 0;
+
+                        if (input.source) {
+                            ib.width = input.source.pixelWidth;
+                            ib.height = input.source.pixelHeight;
+                        }
+
+                        var fs = state.finalSize;
+                        if (ib.width === 0)
+                            ib.width = fs.width;
+                        if (ib.height === 0)
+                            ib.height = fs.height;
+
+                        return true;
+                    }
+                    tapins.calcImageBounds = calcImageBounds;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(image.arrange || (image.arrange = {}));
+            var arrange = image.arrange;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (arrange) {
+                (function (tapins) {
+                    function calcStretch(input, state, output, tree, finalRect) {
+                        var ib = state.imageBounds;
+
+                        var sx = 1.0;
+                        var sy = 1.0;
+
+                        var fs = state.finalSize;
+                        if (ib.width !== fs.width)
+                            sx = fs.width / ib.width;
+                        if (ib.height !== fs.height)
+                            sy = fs.height / ib.height;
+
+                        switch (input.stretch) {
+                            case 2 /* Uniform */:
+                                sx = sy = Math.min(sx, sy);
+                                break;
+                            case 3 /* UniformToFill */:
+                                sx = sy = Math.max(sx, sy);
+                                break;
+                            case 0 /* None */:
+                                sx = sy = 1.0;
+                                break;
+                            case 1 /* Fill */:
+                            default:
+                                break;
+                        }
+
+                        state.stretchX = sx;
+                        state.stretchY = sy;
+
+                        return true;
+                    }
+                    tapins.calcStretch = calcStretch;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(image.arrange || (image.arrange = {}));
+            var arrange = image.arrange;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (arrange) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        var as = output.arrangedSize;
+                        as.width = state.imageBounds.width * state.stretchX;
+                        as.height = state.imageBounds.height * state.stretchY;
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(image.arrange || (image.arrange = {}));
+            var arrange = image.arrange;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (measure) {
+                var ImageMeasurePipeDef = (function (_super) {
+                    __extends(ImageMeasurePipeDef, _super);
+                    function ImageMeasurePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'calcImageBounds', measure.tapins.calcImageBounds).addTapinBefore('doOverride', 'calcStretch', measure.tapins.calcStretch).replaceTapin('doOverride', measure.tapins.doOverride);
+                    }
+                    ImageMeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.imageBounds = new minerva.Rect();
+                        state.stretchX = 0;
+                        state.stretchY = 0;
+                        return state;
+                    };
+                    return ImageMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.ImageMeasurePipeDef = ImageMeasurePipeDef;
+            })(image.measure || (image.measure = {}));
+            var measure = image.measure;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (measure) {
+                (function (tapins) {
+                    function calcImageBounds(input, state, output, tree, availableSize) {
+                        var ib = state.imageBounds;
+                        ib.x = ib.y = ib.width = ib.height = 0;
+                        if (!input.source)
+                            return true;
+                        ib.width = input.source.pixelWidth;
+                        ib.height = input.source.pixelHeight;
+                        return true;
+                    }
+                    tapins.calcImageBounds = calcImageBounds;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(image.measure || (image.measure = {}));
+            var measure = image.measure;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (measure) {
+                (function (tapins) {
+                    function calcStretch(input, state, output, tree, availableSize) {
+                        var as = state.availableSize;
+                        var dw = as.width;
+                        var dh = as.height;
+                        var ib = state.imageBounds;
+
+                        if (!isFinite(dw))
+                            dw = ib.width;
+                        if (!isFinite(dh))
+                            dh = ib.height;
+
+                        var sx = 0.0;
+                        var sy = 0.0;
+                        if (ib.width > 0)
+                            sx = dw / ib.width;
+                        if (ib.height > 0)
+                            sy = dh / ib.height;
+
+                        if (!isFinite(as.width))
+                            sx = sy;
+                        if (!isFinite(as.height))
+                            sy = sx;
+
+                        switch (input.stretch) {
+                            default:
+                            case 2 /* Uniform */:
+                                sx = sy = Math.min(sx, sy);
+                                break;
+                            case 3 /* UniformToFill */:
+                                sx = sy = Math.max(sx, sy);
+                                break;
+                            case 1 /* Fill */:
+                                if (!isFinite(as.width))
+                                    sx = sy;
+                                if (!isFinite(as.height))
+                                    sy = sx;
+                                break;
+                            case 0 /* None */:
+                                sx = sy = 1.0;
+                                break;
+                        }
+
+                        state.stretchX = sx;
+                        state.stretchY = sy;
+                        return true;
+                    }
+                    tapins.calcStretch = calcStretch;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(image.measure || (image.measure = {}));
+            var measure = image.measure;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (measure) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+                        ds.width = state.imageBounds.width * state.stretchX;
+                        ds.height = state.imageBounds.height * state.stretchY;
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(image.measure || (image.measure = {}));
+            var measure = image.measure;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (render) {
+                var ImageRenderPipeDef = (function (_super) {
+                    __extends(ImageRenderPipeDef, _super);
+                    function ImageRenderPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doRender', 'calcMetrics', render.tapins.calcMetrics).replaceTapin('doRender', render.tapins.doRender);
+                    }
+                    ImageRenderPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.metrics = {
+                            matrix: mat3.identity(),
+                            overlap: 1 /* In */
+                        };
+                        return state;
+                    };
+                    return ImageRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.ImageRenderPipeDef = ImageRenderPipeDef;
+            })(image.render || (image.render = {}));
+            var render = image.render;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (render) {
+                (function (tapins) {
+                    function calcMetrics(input, state, output, ctx, region, tree) {
+                        var source = input.source;
+                        if (!input.source)
+                            return true;
+
+                        source.lock();
+
+                        return true;
+                    }
+                    tapins.calcMetrics = calcMetrics;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(image.render || (image.render = {}));
+            var render = image.render;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (render) {
+                (function (tapins) {
+                    function doRender(input, state, output, ctx, region, tree) {
+                        var source = input.source;
+                        if (!source)
+                            return true;
+
+                        if (source.pixelWidth === 0 || source.pixelHeight === 0) {
+                            source.unlock();
+                            return true;
+                        }
+
+                        var metrics = state.metrics;
+                        ctx.save();
+
+                        ctx.pretransformMatrix(metrics.matrix);
+                        ctx.raw.drawImage(source.image, 0, 0);
+                        ctx.restore();
+
+                        source.unlock();
+
+                        return true;
+                    }
+                    tapins.doRender = doRender;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(image.render || (image.render = {}));
+            var render = image.render;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
     })(minerva.controls || (minerva.controls = {}));
     var controls = minerva.controls;
 })(minerva || (minerva = {}));
