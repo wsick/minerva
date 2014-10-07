@@ -5051,7 +5051,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 ImageUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setProcessUpPipe(minerva.singleton(image.processup.ImageProcessUpPipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef));
 
                     var assets = this.assets;
                     assets.source = null;
@@ -5330,6 +5330,62 @@ var minerva;
                 var tapins = measure.tapins;
             })(image.measure || (image.measure = {}));
             var measure = image.measure;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (processup) {
+                var ImageProcessUpPipeDef = (function (_super) {
+                    __extends(ImageProcessUpPipeDef, _super);
+                    function ImageProcessUpPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('calcActualSize', processup.tapins.calcActualSize);
+                    }
+                    ImageProcessUpPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        return state;
+                    };
+                    return ImageProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.ImageProcessUpPipeDef = ImageProcessUpPipeDef;
+            })(image.processup || (image.processup = {}));
+            var processup = image.processup;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (processup) {
+                (function (tapins) {
+                    function calcActualSize(input, state, output, vo, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+
+                        var as = state.actualSize;
+                        as.width = input.actualWidth;
+                        as.height = input.actualHeight;
+                        minerva.core.helpers.coerceSize(as, input);
+                        if (isNaN(as.width))
+                            as.width = 0;
+                        if (isNaN(as.height))
+                            as.height = 0;
+
+                        return true;
+                    }
+                    tapins.calcActualSize = calcActualSize;
+                })(processup.tapins || (processup.tapins = {}));
+                var tapins = processup.tapins;
+            })(image.processup || (image.processup = {}));
+            var processup = image.processup;
         })(controls.image || (controls.image = {}));
         var image = controls.image;
     })(minerva.controls || (minerva.controls = {}));
