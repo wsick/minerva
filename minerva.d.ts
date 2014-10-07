@@ -1192,6 +1192,16 @@ declare module minerva.controls.contentpresenter {
         public templateOwner: core.Updater;
     }
 }
+declare module minerva.controls.control {
+    class ControlUpdater extends core.Updater {
+        public init(): void;
+    }
+}
+declare module minerva.controls.control {
+    class ControlUpdaterTree extends core.UpdaterTree {
+        constructor();
+    }
+}
 declare module minerva.controls.panel {
     class PanelUpdaterTree extends core.UpdaterTree {
         public children: core.Updater[];
@@ -1400,6 +1410,17 @@ declare module minerva.controls.stackpanel.measure.tapins {
 }
 declare module minerva.controls.stackpanel.measure.tapins {
     function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.usercontrol {
+    class UserControlUpdater extends control.ControlUpdater {
+        public tree: UserControlUpdaterTree;
+        public init(): void;
+    }
+}
+declare module minerva.controls.usercontrol {
+    class UserControlUpdaterTree extends control.ControlUpdaterTree {
+        public content: core.Updater;
+    }
 }
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {

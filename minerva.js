@@ -4983,6 +4983,47 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (controls) {
+        (function (control) {
+            var ControlUpdater = (function (_super) {
+                __extends(ControlUpdater, _super);
+                function ControlUpdater() {
+                    _super.apply(this, arguments);
+                }
+                ControlUpdater.prototype.init = function () {
+                    this.setTree(new control.ControlUpdaterTree());
+
+                    _super.prototype.init.call(this);
+                };
+                return ControlUpdater;
+            })(minerva.core.Updater);
+            control.ControlUpdater = ControlUpdater;
+        })(controls.control || (controls.control = {}));
+        var control = controls.control;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (control) {
+            var ControlUpdaterTree = (function (_super) {
+                __extends(ControlUpdaterTree, _super);
+                function ControlUpdaterTree() {
+                    _super.call(this);
+                    this.isContainer = true;
+                    this.isLayoutContainer = true;
+                }
+                return ControlUpdaterTree;
+            })(minerva.core.UpdaterTree);
+            control.ControlUpdaterTree = ControlUpdaterTree;
+        })(controls.control || (controls.control = {}));
+        var control = controls.control;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
         (function (panel) {
             var PanelUpdaterTree = (function (_super) {
                 __extends(PanelUpdaterTree, _super);
@@ -6030,6 +6071,45 @@ var minerva;
             var measure = stackpanel.measure;
         })(controls.stackpanel || (controls.stackpanel = {}));
         var stackpanel = controls.stackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            var UserControlUpdater = (function (_super) {
+                __extends(UserControlUpdater, _super);
+                function UserControlUpdater() {
+                    _super.apply(this, arguments);
+                }
+                UserControlUpdater.prototype.init = function () {
+                    this.setTree(new usercontrol.UserControlUpdaterTree()).setMeasurePipe().setArrangePipe();
+                    _super.prototype.init.call(this);
+                };
+                return UserControlUpdater;
+            })(controls.control.ControlUpdater);
+            usercontrol.UserControlUpdater = UserControlUpdater;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            var UserControlUpdaterTree = (function (_super) {
+                __extends(UserControlUpdaterTree, _super);
+                function UserControlUpdaterTree() {
+                    _super.apply(this, arguments);
+                    this.content = null;
+                }
+                return UserControlUpdaterTree;
+            })(controls.control.ControlUpdaterTree);
+            usercontrol.UserControlUpdaterTree = UserControlUpdaterTree;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
     })(minerva.controls || (minerva.controls = {}));
     var controls = minerva.controls;
 })(minerva || (minerva = {}));
