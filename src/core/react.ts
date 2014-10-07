@@ -1,5 +1,4 @@
 module minerva.core.reactTo {
-
     export module helpers {
         export function invalidateParent(updater: Updater) {
             Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
@@ -106,10 +105,4 @@ module minerva.core.reactTo {
 
     export var horizontalAlignment = helpers.alignmentChanged;
     export var verticalAlignment = helpers.alignmentChanged;
-
-    /// PANEL
-
-    export function zIndex(updater: controls.panel.PanelUpdater, oldValue: number, newValue: number) {
-        updater.tree.zSorted = null;
-    }
 }

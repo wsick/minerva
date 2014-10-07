@@ -6,7 +6,7 @@ module minerva.controls.panel {
         assets: IPanelUpdaterAssets;
         tree: PanelUpdaterTree;
 
-        init() {
+        init () {
             var assets = this.assets;
             assets.background = null;
 
@@ -18,9 +18,17 @@ module minerva.controls.panel {
             super.init();
         }
 
-        setChildren(children: core.Updater[]): PanelUpdater {
+        setChildren (children: core.Updater[]): PanelUpdater {
             this.tree.children = children;
             return this;
+        }
+    }
+
+    export module reactTo {
+        export function zIndex (updater: core.Updater, oldValue: number, newValue: number) {
+            var vp = <PanelUpdater>updater.tree.visualParent;
+            if (vp)
+                vp.tree.zSorted = null;
         }
     }
 }
