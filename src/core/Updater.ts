@@ -67,10 +67,10 @@ module minerva.core {
             globalBoundsWithChildren: new Rect(),
 
             layoutXform: mat3.identity(),
-            carrierXform: mat3.identity(),
+            carrierXform: null,
             renderXform: mat3.identity(),
             absoluteXform: mat3.identity(),
-            carrierProjection: mat4.identity(),
+            carrierProjection: null,
             localProjection: mat4.identity(),
             absoluteProjection: mat4.identity(),
 
