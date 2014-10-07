@@ -393,7 +393,6 @@ declare module minerva.core {
         public init(): void;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setTree(tree?: IUpdaterTree): Updater;
-        public setSubtree(subtree: Updater): void;
         public getAttachedValue(name: string): any;
         public setAttachedValue(name: string, value?: any): void;
         public onDetached(): void;
@@ -437,8 +436,9 @@ declare module minerva.core {
         visualParent: Updater;
         isContainer: boolean;
         isLayoutContainer: boolean;
-        subtree: Updater;
         walk(direction?: WalkDirection): IWalker<Updater>;
+        onChildAttached(child: Updater): any;
+        onChildDetached(child: Updater): any;
     }
     class UpdaterTree implements IUpdaterTree {
         public isTop: boolean;
@@ -448,6 +448,8 @@ declare module minerva.core {
         public isLayoutContainer: boolean;
         public subtree: any;
         public walk(direction?: WalkDirection): IWalker<Updater>;
+        public onChildAttached(child: Updater): void;
+        public onChildDetached(child: Updater): void;
     }
 }
 declare module minerva.core.helpers {
@@ -488,13 +490,7 @@ declare module minerva.core.reactTo {
     var flowDirection: typeof helpers.sizeChanged;
     var horizontalAlignment: typeof helpers.alignmentChanged;
     var verticalAlignment: typeof helpers.alignmentChanged;
-    function zIndex(updater: Updater, oldValue: number, newValue: number): void;
-}
-declare module minerva.core {
-    interface ISyncer<T> {
-        (src: T, dest: T): any;
-    }
-    function sync<T>(updater: Updater, name: string, newValue: any, syncer?: ISyncer<T>): void;
+    function zIndex(updater: controls.panel.PanelUpdater, oldValue: number, newValue: number): void;
 }
 declare module minerva.core.arrange {
     interface IArrangeBinder {
@@ -1104,7 +1100,6 @@ declare module minerva.controls.panel {
         public tree: PanelUpdaterTree;
         public init(): void;
         public setChildren(children: core.Updater[]): PanelUpdater;
-        public invalidateZIndices(): void;
     }
 }
 declare module minerva.controls.canvas {
@@ -1187,6 +1182,8 @@ declare module minerva.controls.panel {
         public zSorted: core.Updater[];
         public walk(direction?: WalkDirection): IWalker<core.Updater>;
         public zSort(): void;
+        public onChildAttached(child: core.Updater): void;
+        public onChildDetached(child: core.Updater): void;
     }
 }
 declare module minerva.controls.panel.processup {

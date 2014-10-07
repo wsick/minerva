@@ -122,12 +122,8 @@ module minerva.core {
         }
 
         setTree (tree?: IUpdaterTree): Updater {
-            this.tree = tree || new UpdaterTree();
+            this.tree = tree || <IUpdaterTree>new UpdaterTree();
             return this;
-        }
-
-        setSubtree(subtree: Updater) {
-            this.tree.subtree = subtree;
         }
 
         getAttachedValue (name: string): any {
@@ -167,12 +163,16 @@ module minerva.core {
         }
 
         setVisualParent (visualParent: Updater): Updater {
-            if (!visualParent && this.tree.visualParent)
+            if (!visualParent && this.tree.visualParent) {
                 this.onDetached();
+                this.tree.visualParent.tree.onChildDetached(this);
+            }
             this.tree.visualParent = visualParent;
             this.setSurface(visualParent ? visualParent.tree.surface : undefined);
-            if (visualParent)
+            if (visualParent) {
+                visualParent.tree.onChildAttached(this);
                 this.onAttached();
+            }
             return this;
         }
 

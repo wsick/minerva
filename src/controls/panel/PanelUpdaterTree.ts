@@ -21,6 +21,14 @@ module minerva.controls.panel {
             }
             this.zSorted.sort(zIndexComparer);
         }
+
+        onChildAttached(child: core.Updater) {
+            this.zSorted = null;
+        }
+
+        onChildDetached(child: core.Updater) {
+            this.zSorted = null;
+        }
     }
 
     function walkArray<T extends core.Updater>(arr: T[], reverse: boolean): IWalker<core.Updater> {

@@ -1551,10 +1551,6 @@ var minerva;
                 return this;
             };
 
-            Updater.prototype.setSubtree = function (subtree) {
-                this.tree.subtree = subtree;
-            };
-
             Updater.prototype.getAttachedValue = function (name) {
                 return this.$$attached[name];
             };
@@ -1589,12 +1585,16 @@ var minerva;
             };
 
             Updater.prototype.setVisualParent = function (visualParent) {
-                if (!visualParent && this.tree.visualParent)
+                if (!visualParent && this.tree.visualParent) {
                     this.onDetached();
+                    this.tree.visualParent.tree.onChildDetached(this);
+                }
                 this.tree.visualParent = visualParent;
                 this.setSurface(visualParent ? visualParent.tree.surface : undefined);
-                if (visualParent)
+                if (visualParent) {
+                    visualParent.tree.onChildAttached(this);
                     this.onAttached();
+                }
                 return this;
             };
 
@@ -1898,6 +1898,14 @@ var minerva;
                     }
                 };
             };
+
+            UpdaterTree.prototype.onChildAttached = function (child) {
+                this.subtree = null;
+            };
+
+            UpdaterTree.prototype.onChildDetached = function (child) {
+                this.subtree = null;
+            };
             return UpdaterTree;
         })();
         core.UpdaterTree = UpdaterTree;
@@ -2055,24 +2063,11 @@ var minerva;
             reactTo.verticalAlignment = helpers.alignmentChanged;
 
             function zIndex(updater, oldValue, newValue) {
-                updater.invalidateZIndices();
+                updater.tree.zSorted = null;
             }
             reactTo.zIndex = zIndex;
         })(core.reactTo || (core.reactTo = {}));
         var reactTo = core.reactTo;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (core) {
-        function sync(updater, name, newValue, syncer) {
-            if (syncer)
-                syncer(newValue, updater.assets[name]);
-            else
-                updater.assets[name] = newValue;
-        }
-        core.sync = sync;
     })(minerva.core || (minerva.core = {}));
     var core = minerva.core;
 })(minerva || (minerva = {}));
@@ -4671,12 +4666,7 @@ var minerva;
 
                 PanelUpdater.prototype.setChildren = function (children) {
                     this.tree.children = children;
-                    this.tree.zSorted = null;
                     return this;
-                };
-
-                PanelUpdater.prototype.invalidateZIndices = function () {
-                    this.tree.zSorted = null;
                 };
                 return PanelUpdater;
             })(minerva.core.Updater);
@@ -4957,6 +4947,14 @@ var minerva;
                         zs.push(walker.current);
                     }
                     this.zSorted.sort(zIndexComparer);
+                };
+
+                PanelUpdaterTree.prototype.onChildAttached = function (child) {
+                    this.zSorted = null;
+                };
+
+                PanelUpdaterTree.prototype.onChildDetached = function (child) {
+                    this.zSorted = null;
                 };
                 return PanelUpdaterTree;
             })(minerva.core.UpdaterTree);

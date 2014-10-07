@@ -20,12 +20,7 @@ module minerva.controls.panel {
 
         setChildren(children: core.Updater[]): PanelUpdater {
             this.tree.children = children;
-            this.tree.zSorted = null;
             return this;
-        }
-
-        invalidateZIndices() {
-            this.tree.zSorted = null;
         }
     }
 }

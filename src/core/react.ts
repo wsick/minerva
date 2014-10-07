@@ -109,7 +109,7 @@ module minerva.core.reactTo {
 
     /// PANEL
 
-    export function zIndex(updater: Updater, oldValue: number, newValue: number) {
-        (<controls.panel.PanelUpdater>updater).invalidateZIndices();
+    export function zIndex(updater: controls.panel.PanelUpdater, oldValue: number, newValue: number) {
+        updater.tree.zSorted = null;
     }
 }
