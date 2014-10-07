@@ -990,16 +990,18 @@ declare module minerva.core.sizing.tapins {
 declare module minerva.controls.border {
     interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
+    class BorderUpdater extends core.Updater {
+        public tree: BorderTree;
+        public assets: IBorderUpdaterAssets;
+        public init(): void;
+    }
+}
+declare module minerva.controls.border {
     class BorderTree extends core.UpdaterTree {
         public isLayoutContainer: boolean;
         public isContainer: boolean;
         public child: core.Updater;
         public walk(direction?: WalkDirection): IWalker<core.Updater>;
-    }
-    class BorderUpdater extends core.Updater {
-        public tree: BorderTree;
-        public assets: IBorderUpdaterAssets;
-        public init(): void;
     }
 }
 declare module minerva.controls.border.arrange {
@@ -1207,6 +1209,37 @@ declare module minerva.controls.panel.render {
         compositeLayoutClip: Rect;
     }
     class PanelRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.popup {
+    class PopupUpdater extends core.Updater {
+        public init(): void;
+    }
+}
+declare module minerva.controls.popup {
+    class PopupUpdaterTree extends core.UpdaterTree {
+        public child: core.Updater;
+        public walk(direction?: WalkDirection): IWalker<core.Updater>;
+    }
+}
+declare module minerva.controls.popup.processdown {
+    interface IInput extends core.processdown.IInput {
+        horizontalOffset: number;
+        verticalOffset: number;
+    }
+    class PopupProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.popup.processdown.tapins {
+    var postProcessXform: (input: IInput, state: core.processdown.IState, output: core.processdown.IOutput, vpinput: core.processdown.IInput, tree: PopupUpdaterTree) => boolean;
+}
+declare module minerva.controls.popup.processdown.tapins {
+    var preProcessXform: (input: IInput, state: core.processdown.IState, output: core.processdown.IOutput, vpinput: core.processdown.IInput, tree: PopupUpdaterTree) => boolean;
+}
+declare module minerva.controls.popup.processup {
+    class PopupProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
         constructor();
     }
 }

@@ -1513,10 +1513,10 @@ var minerva;
                     surfaceBoundsWithChildren: new minerva.Rect(),
                     globalBoundsWithChildren: new minerva.Rect(),
                     layoutXform: mat3.identity(),
-                    carrierXform: mat3.identity(),
+                    carrierXform: null,
                     renderXform: mat3.identity(),
                     absoluteXform: mat3.identity(),
-                    carrierProjection: mat4.identity(),
+                    carrierProjection: null,
                     localProjection: mat4.identity(),
                     absoluteProjection: mat4.identity(),
                     dirtyRegion: new minerva.Rect(),
@@ -4158,6 +4158,30 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (border) {
+            var BorderUpdater = (function (_super) {
+                __extends(BorderUpdater, _super);
+                function BorderUpdater() {
+                    _super.apply(this, arguments);
+                }
+                BorderUpdater.prototype.init = function () {
+                    var assets = this.assets;
+                    assets.padding = new minerva.Thickness();
+                    assets.borderThickness = new minerva.Thickness();
+                    this.setTree(new border.BorderTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+                    _super.prototype.init.call(this);
+                };
+                return BorderUpdater;
+            })(minerva.core.Updater);
+            border.BorderUpdater = BorderUpdater;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
             var BorderTree = (function (_super) {
                 __extends(BorderTree, _super);
                 function BorderTree() {
@@ -4181,22 +4205,6 @@ var minerva;
                 return BorderTree;
             })(minerva.core.UpdaterTree);
             border.BorderTree = BorderTree;
-
-            var BorderUpdater = (function (_super) {
-                __extends(BorderUpdater, _super);
-                function BorderUpdater() {
-                    _super.apply(this, arguments);
-                }
-                BorderUpdater.prototype.init = function () {
-                    var assets = this.assets;
-                    assets.padding = new minerva.Thickness();
-                    assets.borderThickness = new minerva.Thickness();
-                    this.setTree(new BorderTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
-                    _super.prototype.init.call(this);
-                };
-                return BorderUpdater;
-            })(minerva.core.Updater);
-            border.BorderUpdater = BorderUpdater;
         })(controls.border || (controls.border = {}));
         var border = controls.border;
     })(minerva.controls || (minerva.controls = {}));
@@ -5091,6 +5099,172 @@ var minerva;
             var render = panel.render;
         })(controls.panel || (controls.panel = {}));
         var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (popup) {
+            var PopupUpdater = (function (_super) {
+                __extends(PopupUpdater, _super);
+                function PopupUpdater() {
+                    _super.apply(this, arguments);
+                }
+                PopupUpdater.prototype.init = function () {
+                    this.setProcessDownPipe(minerva.singleton(popup.processdown.PopupProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(popup.processup.PopupProcessUpPipeDef));
+                    _super.prototype.init.call(this);
+                };
+                return PopupUpdater;
+            })(minerva.core.Updater);
+            popup.PopupUpdater = PopupUpdater;
+        })(controls.popup || (controls.popup = {}));
+        var popup = controls.popup;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (popup) {
+            var PopupUpdaterTree = (function (_super) {
+                __extends(PopupUpdaterTree, _super);
+                function PopupUpdaterTree() {
+                    _super.apply(this, arguments);
+                    this.child = undefined;
+                }
+                PopupUpdaterTree.prototype.walk = function (direction) {
+                    var visited = false;
+                    var _this = this;
+                    return {
+                        current: undefined,
+                        step: function () {
+                            this.current = !visited ? _this.child : undefined;
+                            visited = true;
+                            return this.current !== undefined;
+                        }
+                    };
+                };
+                return PopupUpdaterTree;
+            })(minerva.core.UpdaterTree);
+            popup.PopupUpdaterTree = PopupUpdaterTree;
+        })(controls.popup || (controls.popup = {}));
+        var popup = controls.popup;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (popup) {
+            (function (processdown) {
+                var PopupProcessDownPipeDef = (function (_super) {
+                    __extends(PopupProcessDownPipeDef, _super);
+                    function PopupProcessDownPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('processXform', 'preProcessXform', processdown.tapins.preProcessXform).addTapinAfter('processXform', 'postProcessXform', processdown.tapins.postProcessXform);
+                    }
+                    return PopupProcessDownPipeDef;
+                })(minerva.core.processdown.ProcessDownPipeDef);
+                processdown.PopupProcessDownPipeDef = PopupProcessDownPipeDef;
+            })(popup.processdown || (popup.processdown = {}));
+            var processdown = popup.processdown;
+        })(controls.popup || (controls.popup = {}));
+        var popup = controls.popup;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (popup) {
+            (function (processdown) {
+                (function (tapins) {
+                    tapins.postProcessXform = function (input, state, output, vpinput, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
+                            return true;
+
+                        var child = tree.child;
+                        if (!child)
+                            return true;
+
+                        if (output.totalHasRenderProjection) {
+                            child.assets.carrierXform = null;
+                            child.assets.dirtyFlags |= minerva.DirtyFlags.LocalProjection;
+
+                            var carrier = child.assets.carrierProjection;
+                            if (!carrier)
+                                carrier = child.assets.carrierProjection || mat4.create();
+                            mat4.set(output.absoluteProjection, carrier);
+                            var transl = mat4.createTranslate(input.horizontalOffset, input.verticalOffset, 0.0);
+                            mat4.multiply(transl, carrier, carrier);
+                        } else {
+                            child.assets.carrierProjection = null;
+                            child.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+
+                            var carrier = child.assets.carrierXform;
+                            if (!carrier)
+                                carrier = child.assets.carrierXform || mat3.create();
+                            mat3.set(output.absoluteXform, carrier);
+                            mat3.translate(carrier, input.horizontalOffset, input.verticalOffset);
+                        }
+                        minerva.core.Updater.$$addDownDirty(child);
+
+                        return true;
+                    };
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(popup.processdown || (popup.processdown = {}));
+            var processdown = popup.processdown;
+        })(controls.popup || (controls.popup = {}));
+        var popup = controls.popup;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (popup) {
+            (function (processdown) {
+                (function (tapins) {
+                    tapins.preProcessXform = function (input, state, output, vpinput, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
+                            return true;
+
+                        var child = tree.child;
+                        if (child) {
+                            child.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+                            minerva.core.Updater.$$addDownDirty(child);
+                        }
+                        return true;
+                    };
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(popup.processdown || (popup.processdown = {}));
+            var processdown = popup.processdown;
+        })(controls.popup || (controls.popup = {}));
+        var popup = controls.popup;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (popup) {
+            (function (processup) {
+                var PopupProcessUpPipeDef = (function (_super) {
+                    __extends(PopupProcessUpPipeDef, _super);
+                    function PopupProcessUpPipeDef() {
+                        _super.call(this);
+                        this.removeTapin('calcActualSize').removeTapin('calcExtents').removeTapin('calcPaintBounds');
+                    }
+                    return PopupProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.PopupProcessUpPipeDef = PopupProcessUpPipeDef;
+            })(popup.processup || (popup.processup = {}));
+            var processup = popup.processup;
+        })(controls.popup || (controls.popup = {}));
+        var popup = controls.popup;
     })(minerva.controls || (minerva.controls = {}));
     var controls = minerva.controls;
 })(minerva || (minerva = {}));
