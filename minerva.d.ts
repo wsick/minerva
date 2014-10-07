@@ -1186,6 +1186,12 @@ declare module minerva.controls.canvas.processup {
 declare module minerva.controls.canvas.processup.tapins {
     var calcPaintBounds: (input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree) => boolean;
 }
+declare module minerva.controls.contentpresenter {
+    class ContentPresenterUpdaterTree extends core.UpdaterTree {
+        public content: core.Updater;
+        public templateOwner: core.Updater;
+    }
+}
 declare module minerva.controls.panel {
     class PanelUpdaterTree extends core.UpdaterTree {
         public children: core.Updater[];
@@ -1265,6 +1271,81 @@ declare module minerva.controls.popup.processup {
     class PopupProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
         constructor();
     }
+}
+declare module minerva.controls.scrollcontentpresenter {
+    interface IScrollData {
+        canHorizontallyScroll: boolean;
+        canVerticallyScroll: boolean;
+        offsetX: number;
+        offsetY: number;
+        cachedOffsetX: number;
+        cachedOffsetY: number;
+        viewportWidth: number;
+        viewportHeight: number;
+        extentWidth: number;
+        extentHeight: number;
+        maxDesiredWidth: number;
+        maxDesiredHeight: number;
+    }
+}
+declare module minerva.controls.scrollcontentpresenter {
+    interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    }
+    class ScrollContentPresenterUpdaterTree extends contentpresenter.ContentPresenterUpdaterTree {
+    }
+    class ScrollContentPresenterUpdater extends core.Updater {
+        public assets: IScrollContentPresenterUpdaterAssets;
+        public tree: contentpresenter.ContentPresenterUpdaterTree;
+        public init(): void;
+    }
+}
+declare module minerva.controls.scrollcontentpresenter.arrange {
+    interface IInput extends core.arrange.IInput {
+        scrollData: IScrollData;
+        desiredSize: Size;
+    }
+    interface IState extends core.arrange.IState {
+        childRect: Rect;
+    }
+    class ScrollContentPresenterArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
+    var doOverride: (input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, finalRect: Rect) => boolean;
+}
+declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
+    function updateClip(input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
+    function updateExtents(input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.scrollcontentpresenter {
+    module helpers {
+        function clampOffsets(sd: IScrollData): boolean;
+    }
+}
+declare module minerva.controls.scrollcontentpresenter.measure {
+    interface IInput extends core.measure.IInput {
+        scrollData: IScrollData;
+    }
+    interface IState extends core.measure.IState {
+        idealSize: Size;
+    }
+    class ScrollContentPresenterMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.scrollcontentpresenter.measure.tapins {
+    var doOverride: (input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size) => boolean;
+}
+declare module minerva.controls.scrollcontentpresenter.measure.tapins {
+    function finishDoOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.scrollcontentpresenter.measure.tapins {
+    function updateExtents(input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.stackpanel {
     interface IStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {

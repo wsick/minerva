@@ -4964,6 +4964,25 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (controls) {
+        (function (contentpresenter) {
+            var ContentPresenterUpdaterTree = (function (_super) {
+                __extends(ContentPresenterUpdaterTree, _super);
+                function ContentPresenterUpdaterTree() {
+                    _super.apply(this, arguments);
+                    this.content = null;
+                    this.templateOwner = null;
+                }
+                return ContentPresenterUpdaterTree;
+            })(minerva.core.UpdaterTree);
+            contentpresenter.ContentPresenterUpdaterTree = ContentPresenterUpdaterTree;
+        })(controls.contentpresenter || (controls.contentpresenter = {}));
+        var contentpresenter = controls.contentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
         (function (panel) {
             var PanelUpdaterTree = (function (_super) {
                 __extends(PanelUpdaterTree, _super);
@@ -5395,6 +5414,336 @@ var minerva;
             var processup = popup.processup;
         })(controls.popup || (controls.popup = {}));
         var popup = controls.popup;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            var ScrollContentPresenterUpdaterTree = (function (_super) {
+                __extends(ScrollContentPresenterUpdaterTree, _super);
+                function ScrollContentPresenterUpdaterTree() {
+                    _super.apply(this, arguments);
+                }
+                return ScrollContentPresenterUpdaterTree;
+            })(controls.contentpresenter.ContentPresenterUpdaterTree);
+            scrollcontentpresenter.ScrollContentPresenterUpdaterTree = ScrollContentPresenterUpdaterTree;
+
+            var ScrollContentPresenterUpdater = (function (_super) {
+                __extends(ScrollContentPresenterUpdater, _super);
+                function ScrollContentPresenterUpdater() {
+                    _super.apply(this, arguments);
+                }
+                ScrollContentPresenterUpdater.prototype.init = function () {
+                    this.setTree(new ScrollContentPresenterUpdaterTree()).setMeasurePipe(minerva.singleton(scrollcontentpresenter.measure.ScrollContentPresenterMeasurePipeDef)).setArrangePipe(minerva.singleton(scrollcontentpresenter.arrange.ScrollContentPresenterArrangePipeDef));
+
+                    var assets = this.assets;
+                    assets.scrollData = {
+                        canHorizontallyScroll: false,
+                        canVerticallyScroll: false,
+                        offsetX: 0,
+                        offsetY: 0,
+                        cachedOffsetX: 0,
+                        cachedOffsetY: 0,
+                        viewportWidth: 0,
+                        viewportHeight: 0,
+                        extentWidth: 0,
+                        extentHeight: 0,
+                        maxDesiredWidth: 0,
+                        maxDesiredHeight: 0
+                    };
+
+                    _super.prototype.init.call(this);
+                };
+                return ScrollContentPresenterUpdater;
+            })(minerva.core.Updater);
+            scrollcontentpresenter.ScrollContentPresenterUpdater = ScrollContentPresenterUpdater;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (arrange) {
+                var ScrollContentPresenterArrangePipeDef = (function (_super) {
+                    __extends(ScrollContentPresenterArrangePipeDef, _super);
+                    function ScrollContentPresenterArrangePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', arrange.tapins.doOverride).addTapinAfter('doOverride', 'updateClip', arrange.tapins.updateClip).addTapinAfter('updateClip', 'updateExtents', arrange.tapins.updateExtents);
+                    }
+                    ScrollContentPresenterArrangePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.childRect = new minerva.Rect();
+                        return state;
+                    };
+                    return ScrollContentPresenterArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.ScrollContentPresenterArrangePipeDef = ScrollContentPresenterArrangePipeDef;
+            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+            var arrange = scrollcontentpresenter.arrange;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (arrange) {
+                (function (tapins) {
+                    tapins.doOverride = function (input, state, output, tree, finalRect) {
+                        var as = output.arrangedSize;
+                        if (!tree.content || !tree.templateOwner) {
+                            as.width = as.height = 0;
+                            return true;
+                        }
+
+                        if (scrollcontentpresenter.helpers.clampOffsets(input.scrollData)) {
+                        }
+
+                        var sd = input.scrollData;
+                        var desired = input.desiredSize;
+
+                        var cr = state.childRect;
+                        cr.x = -sd.offsetX;
+                        cr.y = -sd.offsetY;
+                        cr.width = Math.max(state.finalSize.width, desired.width);
+                        cr.height = Math.max(state.finalSize.height, desired.height);
+
+                        tree.content.arrange(cr);
+
+                        return true;
+                    };
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+            var arrange = scrollcontentpresenter.arrange;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (arrange) {
+                (function (tapins) {
+                    function updateClip(input, state, output, tree, availableSize) {
+                        return true;
+                    }
+                    tapins.updateClip = updateClip;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+            var arrange = scrollcontentpresenter.arrange;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (arrange) {
+                (function (tapins) {
+                    function updateExtents(input, state, output, tree, availableSize) {
+                        var sd = input.scrollData;
+                        var viewport = state.finalSize;
+
+                        var changed = sd.viewportWidth !== viewport.width || sd.viewportHeight !== viewport.height;
+                        sd.viewportWidth = viewport.width;
+                        sd.viewportHeight = viewport.height;
+
+                        if (scrollcontentpresenter.helpers.clampOffsets(sd) || changed) {
+                        }
+
+                        return true;
+                    }
+                    tapins.updateExtents = updateExtents;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+            var arrange = scrollcontentpresenter.arrange;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (helpers) {
+                function clampOffsets(sd) {
+                    var changed = false;
+
+                    var clampX = clampHorizontal(sd, sd.cachedOffsetX);
+                    if (!areClose(clampX, sd.offsetX)) {
+                        sd.offsetX = clampX;
+                        changed = true;
+                    }
+
+                    var clampY = clampVertical(sd, sd.cachedOffsetY);
+                    if (!areClose(clampY, sd.offsetY)) {
+                        sd.offsetY = clampY;
+                        changed = true;
+                    }
+
+                    return changed;
+                }
+                helpers.clampOffsets = clampOffsets;
+
+                function clampHorizontal(sd, x) {
+                    if (!sd.canHorizontallyScroll)
+                        return 0;
+                    return Math.max(0, Math.min(x, sd.extentWidth - sd.viewportWidth));
+                }
+
+                function clampVertical(sd, y) {
+                    if (!sd.canVerticallyScroll)
+                        return 0;
+                    return Math.max(0, Math.min(y, sd.extentHeight - sd.viewportHeight));
+                }
+
+                var epsilon = 1.192093E-07;
+                var adjustment = 10;
+
+                function areClose(val1, val2) {
+                    if (val1 === val2)
+                        return true;
+                    var softdiff = (Math.abs(val1) + Math.abs(val2) + adjustment) * epsilon;
+                    var diff = val1 - val2;
+                    return -softdiff < diff && diff < softdiff;
+                }
+            })(scrollcontentpresenter.helpers || (scrollcontentpresenter.helpers = {}));
+            var helpers = scrollcontentpresenter.helpers;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (measure) {
+                var ScrollContentPresenterMeasurePipeDef = (function (_super) {
+                    __extends(ScrollContentPresenterMeasurePipeDef, _super);
+                    function ScrollContentPresenterMeasurePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'updateExtents', measure.tapins.updateExtents).addTapinAfter('updateExtents', 'finishDoOverride', measure.tapins.finishDoOverride);
+                    }
+                    ScrollContentPresenterMeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.idealSize = new minerva.Size();
+                        return state;
+                    };
+                    return ScrollContentPresenterMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.ScrollContentPresenterMeasurePipeDef = ScrollContentPresenterMeasurePipeDef;
+            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+            var measure = scrollcontentpresenter.measure;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (measure) {
+                (function (tapins) {
+                    tapins.doOverride = function (input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+                        ds.width = ds.height = 0;
+
+                        if (!tree.content || !tree.templateOwner)
+                            return true;
+
+                        var sd = input.scrollData;
+                        var ideal = state.idealSize;
+                        ideal.width = ideal.height = Number.POSITIVE_INFINITY;
+                        if (!sd.canHorizontallyScroll)
+                            ideal.width = availableSize.width;
+                        if (!sd.canVerticallyScroll)
+                            ideal.height = availableSize.height;
+
+                        tree.content.measure(ideal);
+
+                        return true;
+                    };
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+            var measure = scrollcontentpresenter.measure;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (measure) {
+                (function (tapins) {
+                    function finishDoOverride(input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+                        var sd = input.scrollData;
+
+                        minerva.Size.copyTo(state.availableSize, ds);
+                        ds.width = Math.min(ds.width, sd.extentWidth);
+                        ds.height = Math.min(ds.height, sd.extentHeight);
+
+                        return true;
+                    }
+                    tapins.finishDoOverride = finishDoOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+            var measure = scrollcontentpresenter.measure;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (measure) {
+                (function (tapins) {
+                    function updateExtents(input, state, output, tree, availableSize) {
+                        var sd = input.scrollData;
+                        var viewport = state.availableSize;
+                        var extent = tree.content.assets.desiredSize;
+
+                        var changed = sd.viewportWidth !== viewport.width || sd.viewportHeight !== viewport.height || sd.extentWidth !== extent.width || sd.extentHeight !== extent.height;
+                        sd.viewportWidth = viewport.width;
+                        sd.viewportHeight = viewport.height;
+                        sd.extentWidth = extent.width;
+                        sd.extentHeight = extent.height;
+
+                        if (scrollcontentpresenter.helpers.clampOffsets(sd) || changed) {
+                        }
+
+                        return true;
+                    }
+                    tapins.updateExtents = updateExtents;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+            var measure = scrollcontentpresenter.measure;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
     })(minerva.controls || (minerva.controls = {}));
     var controls = minerva.controls;
 })(minerva || (minerva = {}));
