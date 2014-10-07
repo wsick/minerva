@@ -393,6 +393,7 @@ declare module minerva.core {
         public init(): void;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setTree(tree?: IUpdaterTree): Updater;
+        public setSubtree(subtree: Updater): void;
         public getAttachedValue(name: string): any;
         public setAttachedValue(name: string, value?: any): void;
         public onDetached(): void;
@@ -436,6 +437,7 @@ declare module minerva.core {
         visualParent: Updater;
         isContainer: boolean;
         isLayoutContainer: boolean;
+        subtree: Updater;
         walk(direction?: WalkDirection): IWalker<Updater>;
     }
     class UpdaterTree implements IUpdaterTree {
@@ -444,6 +446,7 @@ declare module minerva.core {
         public visualParent: any;
         public isContainer: boolean;
         public isLayoutContainer: boolean;
+        public subtree: any;
         public walk(direction?: WalkDirection): IWalker<Updater>;
     }
 }

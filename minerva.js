@@ -1551,6 +1551,10 @@ var minerva;
                 return this;
             };
 
+            Updater.prototype.setSubtree = function (subtree) {
+                this.tree.subtree = subtree;
+            };
+
             Updater.prototype.getAttachedValue = function (name) {
                 return this.$$attached[name];
             };
@@ -1878,12 +1882,19 @@ var minerva;
                 this.visualParent = null;
                 this.isContainer = false;
                 this.isLayoutContainer = false;
+                this.subtree = null;
             }
             UpdaterTree.prototype.walk = function (direction) {
+                var visited = false;
+                var _this = this;
                 return {
                     current: undefined,
                     step: function () {
-                        return false;
+                        if (visited)
+                            return false;
+                        visited = true;
+                        this.current = _this.subtree;
+                        return this.current != null;
                     }
                 };
             };

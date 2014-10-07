@@ -126,6 +126,10 @@ module minerva.core {
             return this;
         }
 
+        setSubtree(subtree: Updater) {
+            this.tree.subtree = subtree;
+        }
+
         getAttachedValue (name: string): any {
             return this.$$attached[name];
         }

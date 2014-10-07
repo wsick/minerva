@@ -5,6 +5,7 @@ module minerva.core {
         visualParent: Updater;
         isContainer: boolean;
         isLayoutContainer: boolean;
+        subtree: Updater;
         walk(direction?: WalkDirection): IWalker<Updater>;
     }
     export class UpdaterTree implements IUpdaterTree {
@@ -13,12 +14,19 @@ module minerva.core {
         visualParent = null;
         isContainer = false;
         isLayoutContainer = false;
+        subtree = null;
 
         walk (direction?: WalkDirection): IWalker<Updater> {
+            var visited = false;
+            var _this = this;
             return {
                 current: undefined,
                 step: function (): boolean {
-                    return false;
+                    if (visited)
+                        return false;
+                    visited = true;
+                    this.current = _this.subtree;
+                    return this.current != null;
                 }
             };
         }
