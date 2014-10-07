@@ -106,14 +106,13 @@ var minerva;
         DirtyFlags[DirtyFlags["HitTestVisibility"] = 1 << 7] = "HitTestVisibility";
         DirtyFlags[DirtyFlags["Measure"] = 1 << 8] = "Measure";
         DirtyFlags[DirtyFlags["Arrange"] = 1 << 9] = "Arrange";
-        DirtyFlags[DirtyFlags["ChildrenZIndices"] = 1 << 10] = "ChildrenZIndices";
         DirtyFlags[DirtyFlags["Bounds"] = 1 << 20] = "Bounds";
         DirtyFlags[DirtyFlags["NewBounds"] = 1 << 21] = "NewBounds";
         DirtyFlags[DirtyFlags["Invalidate"] = 1 << 22] = "Invalidate";
         DirtyFlags[DirtyFlags["InUpDirtyList"] = 1 << 30] = "InUpDirtyList";
         DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
 
-        DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ChildrenZIndices] = "DownDirtyState";
+        DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility] = "DownDirtyState";
         DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.NewBounds | DirtyFlags.Invalidate] = "UpDirtyState";
 
         DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
@@ -4649,9 +4648,8 @@ var minerva;
                 PanelUpdater.prototype.init = function () {
                     var assets = this.assets;
                     assets.background = null;
-                    assets.zSorted = [];
 
-                    this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessDownPipe(minerva.singleton(panel.processdown.PanelProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
                     _super.prototype.init.call(this);
                 };
                 return PanelUpdater;
@@ -4902,83 +4900,6 @@ var minerva;
             var processup = canvas.processup;
         })(controls.canvas || (controls.canvas = {}));
         var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (controls) {
-        (function (panel) {
-            (function (processdown) {
-                var PanelProcessDownPipeDef = (function (_super) {
-                    __extends(PanelProcessDownPipeDef, _super);
-                    function PanelProcessDownPipeDef() {
-                        _super.call(this);
-                        this.replaceTapin('processZIndices', processdown.tapins.processZIndices);
-                    }
-                    PanelProcessDownPipeDef.prototype.createOutput = function () {
-                        var output = _super.prototype.createOutput.call(this);
-                        output.zSorted = [];
-                        return output;
-                    };
-
-                    PanelProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
-                        _super.prototype.prepare.call(this, input, state, output, vpinput, tree);
-                        if ((input.dirtyFlags & minerva.DirtyFlags.ChildrenZIndices) > 0) {
-                            output.zSorted = [];
-                        }
-                    };
-
-                    PanelProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
-                        _super.prototype.flush.call(this, input, state, output, vpinput, tree);
-                        input.zSorted = output.zSorted;
-                    };
-                    return PanelProcessDownPipeDef;
-                })(minerva.core.processdown.ProcessDownPipeDef);
-                processdown.PanelProcessDownPipeDef = PanelProcessDownPipeDef;
-            })(panel.processdown || (panel.processdown = {}));
-            var processdown = panel.processdown;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (controls) {
-        (function (panel) {
-            (function (processdown) {
-                (function (tapins) {
-                    function processZIndices(input, state, output, vpinput, tree) {
-                        if ((input.dirtyFlags & minerva.DirtyFlags.ChildrenZIndices) === 0)
-                            return true;
-                        var zs = output.zSorted;
-                        for (var walker = tree.walk(); walker.step();) {
-                            zs.push(walker.current);
-                        }
-                        zs.sort(zIndexComparer);
-                        return true;
-                    }
-                    tapins.processZIndices = processZIndices;
-
-                    function zIndexComparer(upd1, upd2) {
-                        var zi1 = upd1.getAttachedValue("Panel.ZIndex");
-                        var zi2 = upd2.getAttachedValue("Panel.ZIndex");
-                        if (zi1 === zi2) {
-                            var z1 = upd1.getAttachedValue("Panel.Z");
-                            var z2 = upd2.getAttachedValue("Panel.Z");
-                            if (isNaN(z1) || isNaN(z2))
-                                return 0;
-                            return z1 > z2 ? 1 : (z1 < z2 ? -1 : 0);
-                        }
-                        return zi1 - zi2;
-                    }
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(panel.processdown || (panel.processdown = {}));
-            var processdown = panel.processdown;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));
     var controls = minerva.controls;
 })(minerva || (minerva = {}));

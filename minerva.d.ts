@@ -77,7 +77,6 @@ declare module minerva {
         HitTestVisibility,
         Measure,
         Arrange,
-        ChildrenZIndices,
         Bounds,
         NewBounds,
         Invalidate,
@@ -1094,7 +1093,7 @@ declare module minerva.controls.border.render.tapins.shim {
     function invalidatePattern(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel {
-    interface IPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, processup.IInput, render.IInput {
+    interface IPanelUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processup.IInput, render.IInput {
     }
     class PanelUpdater extends core.Updater {
         public assets: IPanelUpdaterAssets;
@@ -1174,25 +1173,6 @@ declare module minerva.controls.canvas.processup {
 }
 declare module minerva.controls.canvas.processup.tapins {
     var calcPaintBounds: (input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree) => boolean;
-}
-declare module minerva.controls.panel.processdown {
-    interface IInput extends core.processdown.IInput {
-        zSorted: core.Updater[];
-    }
-    interface IState extends core.processdown.IState {
-    }
-    interface IOutput extends core.processdown.IOutput {
-        zSorted: core.Updater[];
-    }
-    class PanelProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
-        constructor();
-        public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
-        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
-    }
-}
-declare module minerva.controls.panel.processdown.tapins {
-    function processZIndices(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel.processup {
     interface IInput extends core.processup.IInput {

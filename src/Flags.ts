@@ -10,7 +10,6 @@ module minerva {
         HitTestVisibility = 1 << 7,
         Measure = 1 << 8,
         Arrange = 1 << 9,
-        ChildrenZIndices = 1 << 10,
         Bounds = 1 << 20,
         NewBounds = 1 << 21,
         Invalidate = 1 << 22,
@@ -18,7 +17,7 @@ module minerva {
         InDownDirtyList = 1 << 31,
 
         DownDirtyState = Transform | LocalTransform | LocalProjection
-            | Clip | LocalClip | LayoutClip | RenderVisibility | HitTestVisibility | ChildrenZIndices,
+            | Clip | LocalClip | LayoutClip | RenderVisibility | HitTestVisibility,
         UpDirtyState = Bounds | NewBounds | Invalidate,
 
         PropagateDown = RenderVisibility | HitTestVisibility | Transform | LayoutClip
