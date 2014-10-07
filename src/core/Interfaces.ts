@@ -19,6 +19,8 @@ module minerva.core {
         height: number;
         addUpDirty (updater: Updater);
         addDownDirty (updater: Updater);
+        attachLayer (layer: core.Updater, root?: boolean);
+        detachLayer (layer: core.Updater);
     }
 
     export interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
