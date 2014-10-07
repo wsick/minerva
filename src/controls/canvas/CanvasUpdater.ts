@@ -14,4 +14,32 @@ module minerva.controls.canvas {
             super.init();
         }
     }
+    export module reactTo {
+        function topLeft (updater: core.Updater) {
+            var vp = updater.tree.visualParent;
+            if (updater instanceof CanvasUpdater && !vp) {
+                updater.assets.dirtyFlags |= DirtyFlags.LocalTransform;
+                minerva.core.Updater.$$addDownDirty(updater);
+                updater.invalidateArrange();
+            }
+
+            if (!(vp instanceof CanvasUpdater))
+                return;
+
+            var ls = updater.assets.layoutSlot;
+            minerva.Size.copyTo(updater.assets.desiredSize, ls);
+            ls.x = updater.getAttachedValue("Canvas.Left");
+            ls.y = updater.getAttachedValue("Canvas.Top");
+            if (updater.assets.useLayoutRounding) {
+                ls.x = Math.round(ls.x);
+                ls.y = Math.round(ls.y);
+                ls.width = Math.round(ls.width);
+                ls.height = Math.round(ls.height);
+            }
+            updater.invalidateArrange();
+        }
+
+        export var left = <Function>topLeft;
+        export var top = <Function>topLeft;
+    }
 }

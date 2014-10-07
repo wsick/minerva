@@ -2061,11 +2061,6 @@ var minerva;
 
             reactTo.horizontalAlignment = helpers.alignmentChanged;
             reactTo.verticalAlignment = helpers.alignmentChanged;
-
-            function zIndex(updater, oldValue, newValue) {
-                updater.tree.zSorted = null;
-            }
-            reactTo.zIndex = zIndex;
         })(core.reactTo || (core.reactTo = {}));
         var reactTo = core.reactTo;
     })(minerva.core || (minerva.core = {}));
@@ -4679,6 +4674,16 @@ var minerva;
                 return PanelUpdater;
             })(minerva.core.Updater);
             panel.PanelUpdater = PanelUpdater;
+
+            (function (reactTo) {
+                function zIndex(updater, oldValue, newValue) {
+                    var vp = updater.tree.visualParent;
+                    if (vp)
+                        vp.tree.zSorted = null;
+                }
+                reactTo.zIndex = zIndex;
+            })(panel.reactTo || (panel.reactTo = {}));
+            var reactTo = panel.reactTo;
         })(controls.panel || (controls.panel = {}));
         var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));
@@ -4700,6 +4705,35 @@ var minerva;
                 return CanvasUpdater;
             })(controls.panel.PanelUpdater);
             canvas.CanvasUpdater = CanvasUpdater;
+            (function (reactTo) {
+                function topLeft(updater) {
+                    var vp = updater.tree.visualParent;
+                    if (updater instanceof CanvasUpdater && !vp) {
+                        updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+                        minerva.core.Updater.$$addDownDirty(updater);
+                        updater.invalidateArrange();
+                    }
+
+                    if (!(vp instanceof CanvasUpdater))
+                        return;
+
+                    var ls = updater.assets.layoutSlot;
+                    minerva.Size.copyTo(updater.assets.desiredSize, ls);
+                    ls.x = updater.getAttachedValue("Canvas.Left");
+                    ls.y = updater.getAttachedValue("Canvas.Top");
+                    if (updater.assets.useLayoutRounding) {
+                        ls.x = Math.round(ls.x);
+                        ls.y = Math.round(ls.y);
+                        ls.width = Math.round(ls.width);
+                        ls.height = Math.round(ls.height);
+                    }
+                    updater.invalidateArrange();
+                }
+
+                reactTo.left = topLeft;
+                reactTo.top = topLeft;
+            })(canvas.reactTo || (canvas.reactTo = {}));
+            var reactTo = canvas.reactTo;
         })(controls.canvas || (controls.canvas = {}));
         var canvas = controls.canvas;
     })(minerva.controls || (minerva.controls = {}));
@@ -5112,12 +5146,107 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 PopupUpdater.prototype.init = function () {
-                    this.setProcessDownPipe(minerva.singleton(popup.processdown.PopupProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(popup.processup.PopupProcessUpPipeDef));
+                    this.setTree(new popup.PopupUpdaterTree()).setProcessDownPipe(minerva.singleton(popup.processdown.PopupProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(popup.processup.PopupProcessUpPipeDef));
+
+                    var assets = this.assets;
+                    assets.horizontalOffset = 0;
+                    assets.verticalOffset = 0;
+                    assets.isVisible = false;
+                    assets.isOpen = false;
+
                     _super.prototype.init.call(this);
+                };
+
+                PopupUpdater.prototype.setChild = function (child) {
+                    var old = this.tree.child;
+                    if (old) {
+                        this.hide();
+                        old.assets.carrierProjection = null;
+                        old.assets.carrierXform = null;
+                    }
+
+                    this.tree.child = child;
+                    if (child) {
+                        child.assets.carrierXform = mat3.identity();
+                        if (this.assets.isOpen)
+                            this.show();
+                    }
+                };
+
+                PopupUpdater.prototype.hide = function () {
+                    var vchild = this.tree.visualChild;
+                    if (!this.assets.isVisible || !vchild)
+                        return false;
+                    this.assets.isVisible = false;
+
+                    var surface = this.tree.surface;
+                    if (!surface)
+                        return false;
+                    surface.detachLayer(vchild);
+                    return true;
+                };
+
+                PopupUpdater.prototype.show = function () {
+                    var vchild = this.tree.visualChild;
+                    if (this.assets.isVisible || !vchild)
+                        return false;
+                    this.assets.isVisible = true;
+
+                    var surface = this.tree.surface;
+                    if (!surface)
+                        return false;
+                    surface.attachLayer(vchild);
+                    return true;
                 };
                 return PopupUpdater;
             })(minerva.core.Updater);
             popup.PopupUpdater = PopupUpdater;
+
+            (function (reactTo) {
+                function isOpen(updater, oldValue, newValue) {
+                    (newValue === true) ? updater.show() : updater.hide();
+                }
+                reactTo.isOpen = isOpen;
+
+                function horizontalOffset(updater, oldValue, newValue) {
+                    var tree = updater.tree;
+                    var child = tree.child;
+                    if (!child)
+                        return;
+                    var tweenX = newValue - updater.assets.horizontalOffset;
+                    if (tweenX === 0)
+                        return;
+                    tweenOffset(child, tweenX, 0);
+                    if (tree.visualChild)
+                        tree.visualChild.invalidateMeasure();
+                }
+                reactTo.horizontalOffset = horizontalOffset;
+
+                function verticalOffset(updater, oldValue, newValue) {
+                    var tree = updater.tree;
+                    var child = tree.child;
+                    if (!child)
+                        return;
+                    var tweenY = newValue - updater.assets.verticalOffset;
+                    if (tweenY === 0)
+                        return;
+                    tweenOffset(child, 0, tweenY);
+                    if (tree.visualChild)
+                        tree.visualChild.invalidateMeasure();
+                }
+                reactTo.verticalOffset = verticalOffset;
+
+                function tweenOffset(child, tweenX, tweenY) {
+                    var proj = child.assets.carrierProjection;
+                    if (proj) {
+                        var transl = mat4.createTranslate(tweenX, tweenY, 0.0);
+                        mat4.multiply(transl, proj, proj);
+                    } else if (child.assets.carrierXform) {
+                        mat3.translate(child.assets.carrierXform, tweenX, tweenY);
+                    }
+                }
+            })(popup.reactTo || (popup.reactTo = {}));
+            var reactTo = popup.reactTo;
         })(controls.popup || (controls.popup = {}));
         var popup = controls.popup;
     })(minerva.controls || (minerva.controls = {}));
@@ -5132,6 +5261,7 @@ var minerva;
                 function PopupUpdaterTree() {
                     _super.apply(this, arguments);
                     this.child = undefined;
+                    this.visualChild = undefined;
                 }
                 PopupUpdaterTree.prototype.walk = function (direction) {
                     var visited = false;

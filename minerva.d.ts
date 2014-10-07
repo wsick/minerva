@@ -370,6 +370,8 @@ declare module minerva.core {
         height: number;
         addUpDirty(updater: Updater): any;
         addDownDirty(updater: Updater): any;
+        attachLayer(layer: Updater, root?: boolean): any;
+        detachLayer(layer: Updater): any;
     }
     interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
     }
@@ -490,7 +492,6 @@ declare module minerva.core.reactTo {
     var flowDirection: typeof helpers.sizeChanged;
     var horizontalAlignment: typeof helpers.alignmentChanged;
     var verticalAlignment: typeof helpers.alignmentChanged;
-    function zIndex(updater: controls.panel.PanelUpdater, oldValue: number, newValue: number): void;
 }
 declare module minerva.core.arrange {
     interface IArrangeBinder {
@@ -1103,6 +1104,9 @@ declare module minerva.controls.panel {
         public init(): void;
         public setChildren(children: core.Updater[]): PanelUpdater;
     }
+    module reactTo {
+        function zIndex(updater: core.Updater, oldValue: number, newValue: number): void;
+    }
 }
 declare module minerva.controls.canvas {
     interface ICanvasUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput {
@@ -1110,6 +1114,10 @@ declare module minerva.controls.canvas {
     class CanvasUpdater extends panel.PanelUpdater {
         public assets: ICanvasUpdaterAssets;
         public init(): void;
+    }
+    module reactTo {
+        var left: Function;
+        var top: Function;
     }
 }
 declare module minerva.controls.panel.arrange {
@@ -1213,13 +1221,28 @@ declare module minerva.controls.panel.render {
     }
 }
 declare module minerva.controls.popup {
+    interface IPopupUpdaterAssets extends core.IUpdaterAssets, processdown.IInput {
+        isVisible: boolean;
+        isOpen: boolean;
+    }
     class PopupUpdater extends core.Updater {
+        public assets: IPopupUpdaterAssets;
+        public tree: PopupUpdaterTree;
         public init(): void;
+        public setChild(child: core.Updater): void;
+        public hide(): boolean;
+        public show(): boolean;
+    }
+    module reactTo {
+        function isOpen(updater: PopupUpdater, oldValue: boolean, newValue: boolean): void;
+        function horizontalOffset(updater: PopupUpdater, oldValue: number, newValue: number): void;
+        function verticalOffset(updater: PopupUpdater, oldValue: number, newValue: number): void;
     }
 }
 declare module minerva.controls.popup {
     class PopupUpdaterTree extends core.UpdaterTree {
         public child: core.Updater;
+        public visualChild: core.Updater;
         public walk(direction?: WalkDirection): IWalker<core.Updater>;
     }
 }
