@@ -2042,6 +2042,11 @@ var minerva;
 
             reactTo.horizontalAlignment = helpers.alignmentChanged;
             reactTo.verticalAlignment = helpers.alignmentChanged;
+
+            function zIndex(updater, oldValue, newValue) {
+                updater.invalidateZIndices();
+            }
+            reactTo.zIndex = zIndex;
         })(core.reactTo || (core.reactTo = {}));
         var reactTo = core.reactTo;
     })(minerva.core || (minerva.core = {}));
@@ -4649,8 +4654,18 @@ var minerva;
                     var assets = this.assets;
                     assets.background = null;
 
-                    this.setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
+                    this.setTree(new panel.PanelUpdaterTree()).setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
                     _super.prototype.init.call(this);
+                };
+
+                PanelUpdater.prototype.setChildren = function (children) {
+                    this.tree.children = children;
+                    this.tree.zSorted = null;
+                    return this;
+                };
+
+                PanelUpdater.prototype.invalidateZIndices = function () {
+                    this.tree.zSorted = null;
                 };
                 return PanelUpdater;
             })(minerva.core.Updater);
@@ -4900,6 +4915,79 @@ var minerva;
             var processup = canvas.processup;
         })(controls.canvas || (controls.canvas = {}));
         var canvas = controls.canvas;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            var PanelUpdaterTree = (function (_super) {
+                __extends(PanelUpdaterTree, _super);
+                function PanelUpdaterTree() {
+                    _super.apply(this, arguments);
+                    this.children = null;
+                    this.zSorted = null;
+                }
+                PanelUpdaterTree.prototype.walk = function (direction) {
+                    if (direction === 2 /* ZForward */ || direction === 3 /* ZReverse */) {
+                        this.zSort();
+                        return walkArray(this.zSorted, direction === 3 /* ZReverse */);
+                    }
+                    return walkArray(this.children, direction === 1 /* Reverse */);
+                };
+
+                PanelUpdaterTree.prototype.zSort = function () {
+                    var zs = this.zSorted;
+                    if (zs)
+                        return;
+                    this.zSorted = [];
+                    for (var walker = this.walk(); walker.step();) {
+                        zs.push(walker.current);
+                    }
+                    this.zSorted.sort(zIndexComparer);
+                };
+                return PanelUpdaterTree;
+            })(minerva.core.UpdaterTree);
+            panel.PanelUpdaterTree = PanelUpdaterTree;
+
+            function walkArray(arr, reverse) {
+                var len = arr.length;
+                var e = { step: undefined, current: undefined };
+                var index;
+                if (reverse) {
+                    index = len;
+                    e.step = function () {
+                        index--;
+                        if (index < 0) {
+                            e.current = undefined;
+                            return false;
+                        }
+                        e.current = arr[index];
+                        return true;
+                    };
+                } else {
+                    index = -1;
+                    e.step = function () {
+                        index++;
+                        if (index >= len) {
+                            e.current = undefined;
+                            return false;
+                        }
+                        e.current = arr[index];
+                        return true;
+                    };
+                }
+                return e;
+            }
+
+            function zIndexComparer(upd1, upd2) {
+                var zi1 = upd1.getAttachedValue("Panel.ZIndex");
+                var zi2 = upd2.getAttachedValue("Panel.ZIndex");
+                return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
+            }
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));
     var controls = minerva.controls;
 })(minerva || (minerva = {}));

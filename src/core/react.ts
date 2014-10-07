@@ -1,11 +1,11 @@
 module minerva.core.reactTo {
 
     export module helpers {
-        export function invalidateParent (updater: Updater) {
+        export function invalidateParent(updater: Updater) {
             Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
         }
 
-        export function sizeChanged (updater: Updater) {
+        export function sizeChanged(updater: Updater) {
             var vp = updater.tree.visualParent;
             if (vp)
                 vp.invalidateMeasure();
@@ -15,7 +15,7 @@ module minerva.core.reactTo {
                 .invalidateArrange();
         }
 
-        export function alignmentChanged (updater: Updater) {
+        export function alignmentChanged(updater: Updater) {
             updater.invalidateArrange();
             updater.fullInvalidate(true);
         }
@@ -23,23 +23,23 @@ module minerva.core.reactTo {
 
     /// UI ELEMENT
 
-    export function isHitTestVisible (updater: Updater, oldValue: boolean, newValue: boolean) {
+    export function isHitTestVisible(updater: Updater, oldValue: boolean, newValue: boolean) {
         updater.assets.dirtyFlags |= DirtyFlags.HitTestVisibility;
         Updater.$$addDownDirty(updater);
     }
 
-    export function useLayoutRounding (updater: Updater, oldValue: boolean, newValue: boolean) {
+    export function useLayoutRounding(updater: Updater, oldValue: boolean, newValue: boolean) {
         updater.invalidateMeasure();
         updater.invalidateArrange();
     }
 
-    export function opacity (updater: Updater, oldValue: number, newValue: number) {
+    export function opacity(updater: Updater, oldValue: number, newValue: number) {
         updater.assets.dirtyFlags |= DirtyFlags.RenderVisibility;
         Updater.$$addDownDirty(updater);
         helpers.invalidateParent(updater);
     }
 
-    export function visibility (updater: Updater, oldValue: Visibility, newValue: Visibility) {
+    export function visibility(updater: Updater, oldValue: Visibility, newValue: Visibility) {
         updater.assets.dirtyFlags |= DirtyFlags.RenderVisibility;
         Updater.$$addDownDirty(updater);
         helpers.invalidateParent(updater);
@@ -50,7 +50,7 @@ module minerva.core.reactTo {
             vp.invalidateMeasure(); //TODO: Can we get rid of this?
     }
 
-    export function effect (updater: Updater, oldValue: IEffect, newValue: IEffect) {
+    export function effect(updater: Updater, oldValue: IEffect, newValue: IEffect) {
         helpers.invalidateParent(updater);
         var changed = (newValue) ? newValue.GetPadding(updater.assets.effectPadding) : false;
         if (changed)
@@ -63,7 +63,7 @@ module minerva.core.reactTo {
         }
     }
 
-    export function clip (updater: Updater, oldValue: IGeometry, newValue: IGeometry) {
+    export function clip(updater: Updater, oldValue: IGeometry, newValue: IGeometry) {
         var assets = updater.assets;
         /*
          TODO: Should we reincorporate ClipBounds?
@@ -79,17 +79,17 @@ module minerva.core.reactTo {
         Updater.$$addDownDirty(updater);
     }
 
-    export function projection (updater: Updater, oldValue: IProjection, newValue: IProjection) {
+    export function projection(updater: Updater, oldValue: IProjection, newValue: IProjection) {
         updater.assets.dirtyFlags |= DirtyFlags.LocalProjection;
         Updater.$$addDownDirty(updater);
     }
 
-    export function renderTransform (updater: Updater, oldValue: any, newValue: any) {
+    export function renderTransform(updater: Updater, oldValue: any, newValue: any) {
         updater.assets.dirtyFlags |= DirtyFlags.LocalTransform;
         Updater.$$addDownDirty(updater);
     }
 
-    export function renderTransformOrigin (updater: Updater, oldValue: Point, newValue: Point) {
+    export function renderTransformOrigin(updater: Updater, oldValue: Point, newValue: Point) {
         updater.assets.dirtyFlags |= DirtyFlags.LocalTransform;
         Updater.$$addDownDirty(updater);
     }
@@ -106,4 +106,10 @@ module minerva.core.reactTo {
 
     export var horizontalAlignment = helpers.alignmentChanged;
     export var verticalAlignment = helpers.alignmentChanged;
+
+    /// PANEL
+
+    export function zIndex(updater: Updater, oldValue: number, newValue: number) {
+        (<controls.panel.PanelUpdater>updater).invalidateZIndices();
+    }
 }

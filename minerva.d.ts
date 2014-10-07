@@ -485,6 +485,7 @@ declare module minerva.core.reactTo {
     var flowDirection: typeof helpers.sizeChanged;
     var horizontalAlignment: typeof helpers.alignmentChanged;
     var verticalAlignment: typeof helpers.alignmentChanged;
+    function zIndex(updater: Updater, oldValue: number, newValue: number): void;
 }
 declare module minerva.core {
     interface ISyncer<T> {
@@ -1097,7 +1098,10 @@ declare module minerva.controls.panel {
     }
     class PanelUpdater extends core.Updater {
         public assets: IPanelUpdaterAssets;
+        public tree: PanelUpdaterTree;
         public init(): void;
+        public setChildren(children: core.Updater[]): PanelUpdater;
+        public invalidateZIndices(): void;
     }
 }
 declare module minerva.controls.canvas {
@@ -1173,6 +1177,14 @@ declare module minerva.controls.canvas.processup {
 }
 declare module minerva.controls.canvas.processup.tapins {
     var calcPaintBounds: (input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree) => boolean;
+}
+declare module minerva.controls.panel {
+    class PanelUpdaterTree extends core.UpdaterTree {
+        public children: core.Updater[];
+        public zSorted: core.Updater[];
+        public walk(direction?: WalkDirection): IWalker<core.Updater>;
+        public zSort(): void;
+    }
 }
 declare module minerva.controls.panel.processup {
     interface IInput extends core.processup.IInput {

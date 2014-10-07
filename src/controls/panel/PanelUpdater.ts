@@ -4,16 +4,28 @@ module minerva.controls.panel {
 
     export class PanelUpdater extends core.Updater {
         assets: IPanelUpdaterAssets;
+        tree: PanelUpdaterTree;
 
-        init () {
+        init() {
             var assets = this.assets;
             assets.background = null;
 
-            this.setMeasurePipe(singleton(panel.measure.PanelMeasurePipeDef))
+            this.setTree(new PanelUpdaterTree())
+                .setMeasurePipe(singleton(panel.measure.PanelMeasurePipeDef))
                 .setArrangePipe(singleton(panel.arrange.PanelArrangePipeDef))
                 .setProcessUpPipe(singleton(panel.processup.PanelProcessUpPipeDef))
                 .setRenderPipe(singleton(panel.render.PanelRenderPipeDef));
             super.init();
+        }
+
+        setChildren(children: core.Updater[]): PanelUpdater {
+            this.tree.children = children;
+            this.tree.zSorted = null;
+            return this;
+        }
+
+        invalidateZIndices() {
+            this.tree.zSorted = null;
         }
     }
 }
