@@ -18,6 +18,14 @@ module minerva {
             this.height = height == null ? 0 : height;
         }
 
+        static getBottom (rect: Rect): number {
+            return rect.y + rect.height;
+        }
+
+        static getRight (rect: Rect): number {
+            return rect.x + rect.width;
+        }
+
         static isEqual (rect1: Rect, rect2: Rect): boolean {
             return rect1.x === rect2.x
                 && rect1.y === rect2.y

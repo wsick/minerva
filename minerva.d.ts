@@ -204,6 +204,8 @@ declare module minerva {
         public width: number;
         public height: number;
         constructor(x?: number, y?: number, width?: number, height?: number);
+        static getBottom(rect: Rect): number;
+        static getRight(rect: Rect): number;
         static isEqual(rect1: Rect, rect2: Rect): boolean;
         static isEmpty(src: Rect): boolean;
         static copyTo(src: Rect, dest: Rect): void;
