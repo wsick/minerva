@@ -4,7 +4,7 @@ module minerva.controls.border {
     export class BorderTree extends core.UpdaterTree {
         isLayoutContainer = true;
         isContainer = true;
-        child: core.Updater = undefined;
+        child: core.Updater = undefined; //TODO: Can we use subtree instead?
 
         walk (direction?: WalkDirection): IWalker<core.Updater> {
             var visited = false;

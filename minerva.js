@@ -1900,7 +1900,7 @@ var minerva;
             };
 
             UpdaterTree.prototype.onChildAttached = function (child) {
-                this.subtree = null;
+                this.subtree = child;
             };
 
             UpdaterTree.prototype.onChildDetached = function (child) {
@@ -4159,10 +4159,12 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 BorderUpdater.prototype.init = function () {
+                    this.setTree(new border.BorderTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();
                     assets.borderThickness = new minerva.Thickness();
-                    this.setTree(new border.BorderTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+
                     _super.prototype.init.call(this);
                 };
                 return BorderUpdater;
@@ -6084,7 +6086,12 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 UserControlUpdater.prototype.init = function () {
-                    this.setTree(new usercontrol.UserControlUpdaterTree()).setMeasurePipe().setArrangePipe();
+                    this.setMeasurePipe(minerva.singleton(usercontrol.measure.UserControlMeasurePipeDef)).setArrangePipe(minerva.singleton(usercontrol.arrange.UserControlArrangePipeDef));
+
+                    var assets = this.assets;
+                    assets.padding = new minerva.Thickness();
+                    assets.borderThickness = new minerva.Thickness();
+
                     _super.prototype.init.call(this);
                 };
                 return UserControlUpdater;
@@ -6099,15 +6106,169 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (usercontrol) {
-            var UserControlUpdaterTree = (function (_super) {
-                __extends(UserControlUpdaterTree, _super);
-                function UserControlUpdaterTree() {
-                    _super.apply(this, arguments);
-                    this.content = null;
-                }
-                return UserControlUpdaterTree;
-            })(controls.control.ControlUpdaterTree);
-            usercontrol.UserControlUpdaterTree = UserControlUpdaterTree;
+            (function (arrange) {
+                var UserControlArrangePipeDef = (function (_super) {
+                    __extends(UserControlArrangePipeDef, _super);
+                    function UserControlArrangePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'preOverride', arrange.tapins.preOverride).replaceTapin('doOverride', arrange.tapins.doOverride);
+                    }
+                    UserControlArrangePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.totalBorder = new minerva.Thickness();
+                        state.childRect = new minerva.Rect();
+                        return state;
+                    };
+                    return UserControlArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.UserControlArrangePipeDef = UserControlArrangePipeDef;
+            })(usercontrol.arrange || (usercontrol.arrange = {}));
+            var arrange = usercontrol.arrange;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            (function (arrange) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        if (tree.subtree)
+                            tree.subtree.arrange(state.childRect);
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(usercontrol.arrange || (usercontrol.arrange = {}));
+            var arrange = usercontrol.arrange;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            (function (arrange) {
+                (function (tapins) {
+                    function preOverride(input, state, output, tree, availableSize) {
+                        if (!tree.subtree)
+                            return true;
+                        var tb = state.totalBorder;
+                        minerva.Thickness.copyTo(input.padding, tb);
+                        minerva.Thickness.add(tb, input.borderThickness);
+
+                        var cr = state.childRect;
+                        cr.x = cr.y = 0;
+                        minerva.Size.copyTo(state.finalSize, cr);
+                        minerva.Thickness.shrinkSize(tb, cr);
+                        return true;
+                    }
+                    tapins.preOverride = preOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(usercontrol.arrange || (usercontrol.arrange = {}));
+            var arrange = usercontrol.arrange;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            (function (measure) {
+                var UserControlMeasurePipeDef = (function (_super) {
+                    __extends(UserControlMeasurePipeDef, _super);
+                    function UserControlMeasurePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'preOverride', measure.tapins.preOverride).replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'postOverride', measure.tapins.postOverride);
+                    }
+                    UserControlMeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.totalBorder = new minerva.Thickness();
+                        return state;
+                    };
+                    return UserControlMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.UserControlMeasurePipeDef = UserControlMeasurePipeDef;
+            })(usercontrol.measure || (usercontrol.measure = {}));
+            var measure = usercontrol.measure;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            (function (measure) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+                        var subtree = tree.subtree;
+                        if (subtree) {
+                            subtree.measure(state.availableSize);
+                            minerva.Size.copyTo(subtree.assets.desiredSize, ds);
+                        }
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(usercontrol.measure || (usercontrol.measure = {}));
+            var measure = usercontrol.measure;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            (function (measure) {
+                (function (tapins) {
+                    function postOverride(input, state, output, tree, availableSize) {
+                        minerva.Thickness.growSize(state.totalBorder, output.desiredSize);
+                        minerva.Size.min(output.desiredSize, state.availableSize);
+                        return true;
+                    }
+                    tapins.postOverride = postOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(usercontrol.measure || (usercontrol.measure = {}));
+            var measure = usercontrol.measure;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            (function (measure) {
+                (function (tapins) {
+                    function preOverride(input, state, output, tree, availableSize) {
+                        var tb = state.totalBorder;
+                        minerva.Thickness.copyTo(input.padding, tb);
+                        minerva.Thickness.add(tb, input.borderThickness);
+                        minerva.Thickness.shrinkSize(tb, state.availableSize);
+                        return true;
+                    }
+                    tapins.preOverride = preOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(usercontrol.measure || (usercontrol.measure = {}));
+            var measure = usercontrol.measure;
         })(controls.usercontrol || (controls.usercontrol = {}));
         var usercontrol = controls.usercontrol;
     })(minerva.controls || (minerva.controls = {}));

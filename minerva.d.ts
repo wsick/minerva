@@ -1412,15 +1412,54 @@ declare module minerva.controls.stackpanel.measure.tapins {
     function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.usercontrol {
+    interface IUserControlUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    }
     class UserControlUpdater extends control.ControlUpdater {
-        public tree: UserControlUpdaterTree;
+        public assets: IUserControlUpdaterAssets;
         public init(): void;
     }
 }
-declare module minerva.controls.usercontrol {
-    class UserControlUpdaterTree extends control.ControlUpdaterTree {
-        public content: core.Updater;
+declare module minerva.controls.usercontrol.arrange {
+    interface IInput extends core.arrange.IInput {
+        padding: Thickness;
+        borderThickness: Thickness;
     }
+    interface IState extends core.arrange.IState {
+        totalBorder: Thickness;
+        childRect: Rect;
+    }
+    class UserControlArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.usercontrol.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: control.ControlUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.usercontrol.arrange.tapins {
+    function preOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.usercontrol.measure {
+    interface IInput extends core.measure.IInput {
+        padding: Thickness;
+        borderThickness: Thickness;
+    }
+    interface IState extends core.measure.IState {
+        totalBorder: Thickness;
+    }
+    class UserControlMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.usercontrol.measure.tapins {
+    function doOverride(input: core.measure.IInput, state: core.measure.IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.usercontrol.measure.tapins {
+    function postOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.usercontrol.measure.tapins {
+    function preOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {

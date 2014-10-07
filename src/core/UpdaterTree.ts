@@ -33,7 +33,7 @@ module minerva.core {
         }
 
         onChildAttached(child: core.Updater) {
-            this.subtree = null;
+            this.subtree = child;
         }
 
         onChildDetached(child: core.Updater) {
