@@ -1,6 +1,7 @@
 module minerva {
     export interface IProjection {
-        getDistanceFromXYPlane(objectWidth: number, objectHeight: number): number;
+        setObjectSize (objectWidth: number, objectHeight: number);
+        getDistanceFromXYPlane(): number;
         getTransform(): number[];
     }
 }

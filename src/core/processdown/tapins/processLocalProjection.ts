@@ -4,7 +4,11 @@ module minerva.core.processdown.tapins {
             return true;
 
         var projection = input.projection;
-        output.z = projection ? projection.getDistanceFromXYPlane(input.actualWidth, input.actualHeight) : NaN;
+        output.z = NaN;
+        if (projection) {
+            projection.setObjectSize(input.actualWidth, input.actualHeight);
+            output.z = projection.getDistanceFromXYPlane();
+        }
 
         return true;
     };

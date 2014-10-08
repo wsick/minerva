@@ -169,7 +169,9 @@ module minerva.core.processdown.tapins.tests {
         assert.ok(isNaN(output.z));
 
         input.projection = {
-            getDistanceFromXYPlane (objectWidth: number, objectHeight: number) {
+            setObjectSize (objectWidth: number, objectHeight: number) {
+            },
+            getDistanceFromXYPlane (): number {
                 return 10;
             },
             getTransform (): number[] {
@@ -217,7 +219,9 @@ module minerva.core.processdown.tapins.tests {
 
         vpinput.totalHasRenderProjection = false;
         input.projection = {
-            getDistanceFromXYPlane (objectWidth: number, objectHeight: number) {
+            setObjectSize (objectWidth: number, objectHeight: number) {
+            },
+            getDistanceFromXYPlane (): number {
                 return 10;
             },
             getTransform (): number[] {

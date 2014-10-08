@@ -114,7 +114,8 @@ declare module minerva {
 }
 declare module minerva {
     interface IProjection {
-        getDistanceFromXYPlane(objectWidth: number, objectHeight: number): number;
+        setObjectSize(objectWidth: number, objectHeight: number): any;
+        getDistanceFromXYPlane(): number;
         getTransform(): number[];
     }
 }
