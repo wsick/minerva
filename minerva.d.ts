@@ -217,6 +217,7 @@ declare module minerva {
         private static clipmask(clip);
         static transform4(dest: Rect, projection: number[]): void;
         static extendTo(dest: Rect, x: number, y: number): void;
+        static grow(dest: Rect, left: number, top: number, right: number, bottom: number): Rect;
         static shrink(dest: Rect, left: number, top: number, right: number, bottom: number): void;
         static rectIn(rect1: Rect, rect2: Rect): RectOverlap;
     }

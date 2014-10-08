@@ -195,6 +195,18 @@ module minerva {
             dest.height = rh;
         }
 
+        static grow (dest: Rect, left: number, top: number, right: number, bottom: number) {
+            dest.x -= left;
+            dest.y -= top;
+            dest.width += left + right;
+            dest.height += top + bottom;
+            if (dest.width < 0)
+                dest.width = 0;
+            if (dest.height < 0)
+                dest.height = 0;
+            return dest;
+        }
+
         static shrink (dest: Rect, left: number, top: number, right: number, bottom: number) {
             dest.x += left;
             dest.y += top;

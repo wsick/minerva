@@ -1082,6 +1082,18 @@ var minerva;
             dest.height = rh;
         };
 
+        Rect.grow = function (dest, left, top, right, bottom) {
+            dest.x -= left;
+            dest.y -= top;
+            dest.width += left + right;
+            dest.height += top + bottom;
+            if (dest.width < 0)
+                dest.width = 0;
+            if (dest.height < 0)
+                dest.height = 0;
+            return dest;
+        };
+
         Rect.shrink = function (dest, left, top, right, bottom) {
             dest.x += left;
             dest.y += top;
