@@ -6806,6 +6806,19 @@ var minerva;
                 this.invalidate(layer.assets.surfaceBoundsWithChildren);
             };
 
+            Surface.prototype.walkLayers = function () {
+                var layers = this.$$layers;
+                var i = -1;
+                return {
+                    current: undefined,
+                    step: function () {
+                        i++;
+                        this.current = layers[i];
+                        return this.current !== undefined;
+                    }
+                };
+            };
+
             Surface.prototype.updateBounds = function () {
             };
 
