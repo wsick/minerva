@@ -7130,6 +7130,21 @@ var minerva;
                 ShapeUpdater.prototype.createShape = function () {
                     return new shapes.Shape();
                 };
+
+                ShapeUpdater.prototype.invalidateStretch = function () {
+                    var e = this.assets.extents;
+                    e.x = e.y = e.width = e.height = 0;
+                    var ewc = this.assets.extentsWithChildren;
+                    ewc.x = ewc.y = ewc.width = ewc.height = 0;
+                    mat3.identity(this.assets.stretchXform);
+                };
+
+                ShapeUpdater.prototype.invalidateNaturalBounds = function () {
+                    var nb = this.assets.naturalBounds;
+                    nb.x = nb.y = nb.width = nb.height = 0;
+                    this.invalidateStretch();
+                    this.invalidate();
+                };
                 return ShapeUpdater;
             })(minerva.core.Updater);
             shape.ShapeUpdater = ShapeUpdater;

@@ -25,5 +25,22 @@ module minerva.shapes.shape {
         createShape (): Shape {
             return new Shape();
         }
+
+        invalidateStretch () {
+            var e = this.assets.extents;
+            e.x = e.y = e.width = e.height = 0;
+            var ewc = this.assets.extentsWithChildren;
+            ewc.x = ewc.y = ewc.width = ewc.height = 0;
+            mat3.identity(this.assets.stretchXform);
+            //TODO: Implement for PathUpdater
+            //this.InvalidatePathCache();
+        }
+
+        invalidateNaturalBounds () {
+            var nb = this.assets.naturalBounds;
+            nb.x = nb.y = nb.width = nb.height = 0;
+            this.invalidateStretch();
+            this.invalidate();
+        }
     }
 }

@@ -1643,6 +1643,8 @@ declare module minerva.shapes.shape {
         public assets: IShapeUpdaterAssets;
         constructor();
         public createShape(): Shape;
+        public invalidateStretch(): void;
+        public invalidateNaturalBounds(): void;
     }
 }
 declare module minerva.shapes.shape.arrange {
