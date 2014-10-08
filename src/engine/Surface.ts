@@ -49,17 +49,29 @@ module minerva.engine {
             this.invalidate(layer.assets.surfaceBoundsWithChildren);
         }
 
-        walkLayers (): IWalker<core.Updater> {
+        walkLayers (reverse?: boolean): IWalker<core.Updater> {
             var layers = this.$$layers;
             var i = -1;
-            return {
-                current: undefined,
-                step: function(): boolean {
-                    i++;
-                    this.current = layers[i];
-                    return this.current !== undefined;
-                }
-            };
+            if (reverse === true) {
+                i = layers.length;
+                return {
+                    current: undefined,
+                    step: function(): boolean {
+                        i--;
+                        this.current = layers[i];
+                        return this.current !== undefined;
+                    }
+                };
+            } else {
+                return {
+                    current: undefined,
+                    step: function(): boolean {
+                        i++;
+                        this.current = layers[i];
+                        return this.current !== undefined;
+                    }
+                };
+            }
         }
 
         updateBounds () {

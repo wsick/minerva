@@ -1591,7 +1591,7 @@ declare module minerva.engine {
         public init(canvas: HTMLCanvasElement): void;
         public attachLayer(layer: core.Updater, root?: boolean): void;
         public detachLayer(layer: core.Updater): void;
-        public walkLayers(): IWalker<core.Updater>;
+        public walkLayers(reverse?: boolean): IWalker<core.Updater>;
         public updateBounds(): void;
         public invalidate(region?: Rect): void;
         public render(): void;
