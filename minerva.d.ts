@@ -438,6 +438,7 @@ declare module minerva.core {
         static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags): void;
         static getVisualOwner(updater: Updater): IVisualOwner;
         static transformToVisual(fromUpdater: Updater, toUpdater?: Updater): number[];
+        static transformPoint(updater: Updater, p: Point): void;
     }
 }
 declare module minerva.core {
