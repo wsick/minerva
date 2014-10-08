@@ -1635,8 +1635,10 @@ var minerva;
                 core.reactTo.helpers.invalidateParent(this);
                 this.invalidateMeasure();
 
-                this.assets.layoutSlot = new minerva.Rect();
-                this.assets.layoutClip = undefined;
+                var ls = this.assets.layoutSlot;
+                ls.x = ls.y = ls.width = ls.height = 0;
+                var lc = this.assets.layoutClip;
+                lc.x = lc.y = lc.width = lc.height = 0;
             };
 
             Updater.prototype.onAttached = function () {
@@ -1648,7 +1650,8 @@ var minerva;
                 assets.dirtyFlags |= (minerva.DirtyFlags.RenderVisibility | minerva.DirtyFlags.HitTestVisibility | minerva.DirtyFlags.LocalTransform | minerva.DirtyFlags.LocalProjection);
                 Updater.$$addDownDirty(this);
                 this.invalidate(assets.surfaceBoundsWithChildren);
-                assets.layoutClip = undefined;
+                var lc = assets.layoutClip;
+                lc.x = lc.y = lc.width = lc.height = 0;
 
                 this.invalidateMeasure();
                 this.invalidateArrange();

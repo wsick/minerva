@@ -140,8 +140,10 @@ module minerva.core {
             reactTo.helpers.invalidateParent(this);
             this.invalidateMeasure();
 
-            this.assets.layoutSlot = new Rect();
-            this.assets.layoutClip = undefined;
+            var ls = this.assets.layoutSlot;
+            ls.x = ls.y = ls.width = ls.height = 0;
+            var lc = this.assets.layoutClip;
+            lc.x = lc.y = lc.width = lc.height = 0;
         }
 
         onAttached () {
@@ -154,7 +156,8 @@ module minerva.core {
             assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
             Updater.$$addDownDirty(this);
             this.invalidate(assets.surfaceBoundsWithChildren);
-            assets.layoutClip = undefined;
+            var lc = assets.layoutClip;
+            lc.x = lc.y = lc.width = lc.height = 0;
             //TODO: clear assets.renderSize
             this.invalidateMeasure();
             this.invalidateArrange();
