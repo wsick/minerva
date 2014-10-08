@@ -1572,7 +1572,7 @@ var minerva;
                     lastRenderSize: new minerva.Size(),
                     layoutSlot: new minerva.Rect(),
                     layoutClip: new minerva.Rect(),
-                    compositeLayoutClip: null,
+                    compositeLayoutClip: new minerva.Rect(),
                     actualWidth: 0,
                     actualHeight: 0,
                     z: NaN,
@@ -3245,7 +3245,7 @@ var minerva;
                         totalOpacity: 1.0,
                         totalIsHitTestVisible: false,
                         z: NaN,
-                        compositeLayoutClip: null,
+                        compositeLayoutClip: new minerva.Rect(),
                         renderXform: mat3.identity(),
                         absoluteXform: mat3.identity(),
                         localProjection: mat4.identity(),
@@ -3455,18 +3455,15 @@ var minerva;
                         return true;
 
                     var lc = input.layoutClip;
-                    var vpc = vpinput ? vpinput.compositeLayoutClip : null;
-                    if (!lc) {
-                        if (!vpc) {
-                            output.compositeLayoutClip = null;
-                        } else {
-                            output.compositeLayoutClip = new minerva.Rect(vpc.x, vpc.y, vpc.width, vpc.height);
-                        }
-                    } else {
-                        output.compositeLayoutClip = new minerva.Rect(lc.x, lc.y, lc.width, lc.height);
-                        if (vpc)
-                            minerva.Rect.intersection(output.compositeLayoutClip, vpc);
+                    var clc = output.compositeLayoutClip;
+                    if (!vpinput || minerva.Rect.isEmpty(vpinput.compositeLayoutClip)) {
+                        minerva.Rect.copyTo(lc, clc);
+                        return true;
                     }
+
+                    minerva.Rect.copyTo(vpinput.compositeLayoutClip, clc);
+                    if (!minerva.Rect.isEmpty(lc))
+                        minerva.Rect.intersection(clc, lc);
 
                     return true;
                 };

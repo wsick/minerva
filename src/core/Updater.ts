@@ -50,7 +50,7 @@ module minerva.core {
             lastRenderSize: new Size(),
             layoutSlot: new Rect(),
             layoutClip: new Rect(),
-            compositeLayoutClip: null,
+            compositeLayoutClip: new Rect(),
 
             actualWidth: 0,
             actualHeight: 0,

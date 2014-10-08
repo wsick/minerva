@@ -53,7 +53,7 @@ module minerva.core.processdown.tapins.tests {
                 totalOpacity: 1.0,
                 totalIsHitTestVisible: true,
                 z: NaN,
-                compositeLayoutClip: null,
+                compositeLayoutClip: new Rect(),
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
                 localProjection: mat4.identity(),
@@ -295,12 +295,12 @@ module minerva.core.processdown.tapins.tests {
         var vpinput = mock.input();
 
         assert.ok(tapins.processLayoutClip(input, state, output, null));
-        assert.equal(output.compositeLayoutClip, null);
+        assert.deepEqual(output.compositeLayoutClip, new Rect());
 
         input.dirtyFlags |= DirtyFlags.LayoutClip;
-        input.layoutClip = null;
+        input.layoutClip = new Rect();
         assert.ok(tapins.processLayoutClip(input, state, output, null));
-        assert.equal(output.compositeLayoutClip, null);
+        assert.deepEqual(output.compositeLayoutClip, new Rect());
 
         input.layoutClip = new Rect(10, 20, 90, 80);
         assert.ok(tapins.processLayoutClip(input, state, output, null));
@@ -310,7 +310,7 @@ module minerva.core.processdown.tapins.tests {
         assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
         assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 70));
 
-        input.layoutClip = null;
+        input.layoutClip = new Rect();
         assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
         assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 100));
     });

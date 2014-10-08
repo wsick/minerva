@@ -5,18 +5,15 @@ module minerva.core.processdown.tapins {
             return true;
 
         var lc = input.layoutClip;
-        var vpc = vpinput ? vpinput.compositeLayoutClip : null;
-        if (!lc) {
-            if (!vpc) {
-                output.compositeLayoutClip = null;
-            } else {
-                output.compositeLayoutClip = new Rect(vpc.x, vpc.y, vpc.width, vpc.height);
-            }
-        } else {
-            output.compositeLayoutClip = new Rect(lc.x, lc.y, lc.width, lc.height);
-            if (vpc)
-                Rect.intersection(output.compositeLayoutClip, vpc);
+        var clc = output.compositeLayoutClip;
+        if (!vpinput || Rect.isEmpty(vpinput.compositeLayoutClip)) {
+            Rect.copyTo(lc, clc);
+            return true;
         }
+
+        Rect.copyTo(vpinput.compositeLayoutClip, clc);
+        if (!Rect.isEmpty(lc))
+            Rect.intersection(clc, lc);
 
         return true;
     };
