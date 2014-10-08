@@ -4734,7 +4734,17 @@ var minerva;
             })(controls.panel.PanelUpdater);
             canvas.CanvasUpdater = CanvasUpdater;
             (function (reactTo) {
-                function topLeft(updater) {
+                function left(updater, oldValue, newValue) {
+                    invalidateTopLeft(updater);
+                }
+                reactTo.left = left;
+
+                function top(updater, oldValue, newValue) {
+                    invalidateTopLeft(updater);
+                }
+                reactTo.top = top;
+
+                function invalidateTopLeft(updater) {
                     var vp = updater.tree.visualParent;
                     if (updater instanceof CanvasUpdater && !vp) {
                         updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
@@ -4757,9 +4767,6 @@ var minerva;
                     }
                     updater.invalidateArrange();
                 }
-
-                reactTo.left = topLeft;
-                reactTo.top = topLeft;
             })(canvas.reactTo || (canvas.reactTo = {}));
             var reactTo = canvas.reactTo;
         })(controls.canvas || (controls.canvas = {}));

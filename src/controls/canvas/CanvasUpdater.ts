@@ -7,7 +7,7 @@ module minerva.controls.canvas {
     export class CanvasUpdater extends panel.PanelUpdater {
         assets: ICanvasUpdaterAssets;
 
-        init () {
+        init() {
             this.setMeasurePipe(singleton(measure.CanvasMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.CanvasArrangePipeDef))
                 .setProcessUpPipe(singleton(processup.CanvasProcessUpPipeDef));
@@ -15,7 +15,15 @@ module minerva.controls.canvas {
         }
     }
     export module reactTo {
-        function topLeft (updater: core.Updater) {
+        export function left(updater: core.Updater, oldValue: number, newValue: number) {
+            invalidateTopLeft(updater);
+        }
+
+        export function top(updater: core.Updater, oldValue: number, newValue: number) {
+            invalidateTopLeft(updater);
+        }
+
+        function invalidateTopLeft(updater: core.Updater) {
             var vp = updater.tree.visualParent;
             if (updater instanceof CanvasUpdater && !vp) {
                 updater.assets.dirtyFlags |= DirtyFlags.LocalTransform;
@@ -38,8 +46,5 @@ module minerva.controls.canvas {
             }
             updater.invalidateArrange();
         }
-
-        export var left = <Function>topLeft;
-        export var top = <Function>topLeft;
     }
 }

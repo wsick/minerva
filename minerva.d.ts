@@ -1124,8 +1124,8 @@ declare module minerva.controls.canvas {
         public init(): void;
     }
     module reactTo {
-        var left: Function;
-        var top: Function;
+        function left(updater: core.Updater, oldValue: number, newValue: number): void;
+        function top(updater: core.Updater, oldValue: number, newValue: number): void;
     }
 }
 declare module minerva.controls.panel.arrange {
