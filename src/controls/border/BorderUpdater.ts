@@ -17,6 +17,7 @@ module minerva.controls.border {
             var assets = this.assets;
             assets.padding = new Thickness();
             assets.borderThickness = new Thickness();
+            assets.cornerRadius = new CornerRadius();
 
             super.init();
         }

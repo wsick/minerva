@@ -4259,6 +4259,7 @@ var minerva;
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();
                     assets.borderThickness = new minerva.Thickness();
+                    assets.cornerRadius = new minerva.CornerRadius();
 
                     _super.prototype.init.call(this);
                 };
