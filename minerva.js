@@ -158,6 +158,10 @@ var minerva;
             this.x = x == null ? 0 : x;
             this.y = y == null ? 0 : y;
         }
+        Point.isEqual = function (p1, p2) {
+            return p1.x === p2.x && p1.y === p2.y;
+        };
+
         Point.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
