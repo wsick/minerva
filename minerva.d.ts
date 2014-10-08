@@ -221,6 +221,7 @@ declare module minerva {
         static grow(dest: Rect, left: number, top: number, right: number, bottom: number): Rect;
         static shrink(dest: Rect, left: number, top: number, right: number, bottom: number): void;
         static rectIn(rect1: Rect, rect2: Rect): RectOverlap;
+        static transform(dest: Rect, mat: number[]): Rect;
     }
 }
 declare module minerva {
