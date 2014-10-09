@@ -5643,8 +5643,8 @@ var minerva;
             }
 
             function zIndexComparer(upd1, upd2) {
-                var zi1 = upd1.getAttachedValue("Panel.ZIndex");
-                var zi2 = upd2.getAttachedValue("Panel.ZIndex");
+                var zi1 = upd1.getAttachedValue("Panel.ZIndex") || 0;
+                var zi2 = upd2.getAttachedValue("Panel.ZIndex") || 0;
                 return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
             }
         })(controls.panel || (controls.panel = {}));
@@ -5723,9 +5723,9 @@ var minerva;
 
                     ctx.save();
 
+                    var raw = ctx.raw;
                     var composite = input.compositeLayoutClip;
                     if (composite && !minerva.Rect.isEmpty(composite)) {
-                        var raw = ctx.raw;
                         raw.beginPath();
                         raw.rect(composite.x, composite.y, composite.width, composite.height);
                         raw.clip();

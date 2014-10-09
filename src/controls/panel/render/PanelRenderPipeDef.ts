@@ -21,9 +21,9 @@ module minerva.controls.panel.render {
 
         ctx.save();
 
+        var raw = ctx.raw;
         var composite = input.compositeLayoutClip;
         if (composite && !Rect.isEmpty(composite)) {
-            var raw = ctx.raw;
             raw.beginPath();
             raw.rect(composite.x, composite.y, composite.width, composite.height);
             raw.clip();

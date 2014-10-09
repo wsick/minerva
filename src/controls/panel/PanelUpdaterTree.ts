@@ -68,8 +68,8 @@ module minerva.controls.panel {
     }
 
     function zIndexComparer(upd1: core.Updater, upd2: core.Updater): number {
-        var zi1 = upd1.getAttachedValue("Panel.ZIndex");
-        var zi2 = upd2.getAttachedValue("Panel.ZIndex");
+        var zi1 = upd1.getAttachedValue("Panel.ZIndex") || 0;
+        var zi2 = upd2.getAttachedValue("Panel.ZIndex") || 0;
         return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
     }
 }
