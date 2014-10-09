@@ -2,20 +2,23 @@ module minerva.core.measure.tests {
     var mock = {
         input: function (): IInput {
             return {
-                margin: new Thickness(),
-                previousConstraint: new Size(),
-                visibility: Visibility.Visible,
-                desiredSize: new Size(),
-                hiddenDesire: new Size(),
-                dirtyFlags: 0,
-                uiFlags: UIFlags.None,
                 width: NaN,
                 height: NaN,
                 minWidth: 0,
                 minHeight: 0,
                 maxWidth: Number.POSITIVE_INFINITY,
                 maxHeight: Number.POSITIVE_INFINITY,
-                useLayoutRounding: true
+                useLayoutRounding: true,
+
+                margin: new Thickness(),
+                visibility: Visibility.Visible,
+
+                previousConstraint: new Size(),
+                desiredSize: new Size(),
+                hiddenDesire: new Size(),
+
+                dirtyFlags: 0,
+                uiFlags: UIFlags.None
             };
         }
     };
