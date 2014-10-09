@@ -122,7 +122,7 @@ module minerva.core.processup.tapins.tests {
         var tree = updater.tree;
 
         var vo = null;
-        input.extentsWithChildren = new Rect(0, 0, 150, 300);
+        output.extentsWithChildren = new Rect(0, 0, 150, 300);
         assert.ok(tapins.calcPaintBounds(input, state, output, vo, tree));
         assert.deepEqual(output.globalBoundsWithChildren, new Rect());
         assert.deepEqual(output.surfaceBoundsWithChildren, new Rect());

@@ -3742,8 +3742,8 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
-                    core.helpers.copyGrowTransform4(output.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
-                    core.helpers.copyGrowTransform4(output.surfaceBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.absoluteProjection);
+                    core.helpers.copyGrowTransform4(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.localProjection);
+                    core.helpers.copyGrowTransform4(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteProjection);
 
                     return true;
                 };
