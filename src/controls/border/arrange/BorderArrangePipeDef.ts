@@ -35,7 +35,7 @@ module minerva.controls.border.arrange {
         var cr = state.childRect;
         cr.x = cr.y = 0;
         Size.copyTo(state.finalSize, cr);
-        Thickness.shrinkSize(tb, cr);
+        Thickness.shrinkRect(tb, cr);
         return true;
     }
 
