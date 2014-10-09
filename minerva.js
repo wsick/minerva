@@ -3606,6 +3606,11 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.propagateDirtyToChildren = function (input, state, output, vpinput, tree) {
+                    var newDownDirty = (output.dirtyFlags & ~input.dirtyFlags) & minerva.DirtyFlags.PropagateDown;
+                    for (var walker = tree.walk(); walker.step();) {
+                        walker.current.assets.dirtyFlags |= newDownDirty;
+                        core.Updater.$$addDownDirty(walker.current);
+                    }
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
