@@ -13,7 +13,7 @@ module minerva.controls.border {
                 step: function (): boolean {
                     this.current = !visited ? _this.subtree : undefined;
                     visited = true;
-                    return this.current !== undefined;
+                    return this.current != null;
                 }
             }
         }

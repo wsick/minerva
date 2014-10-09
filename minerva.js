@@ -4298,7 +4298,7 @@ var minerva;
                         step: function () {
                             this.current = !visited ? _this.subtree : undefined;
                             visited = true;
-                            return this.current !== undefined;
+                            return this.current != null;
                         }
                     };
                 };
