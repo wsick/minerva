@@ -1,4 +1,6 @@
 module minerva.core.arrange.tests {
+    QUnit.module("Arrange Pipe");
+
     function typedToArray (typed) {
         var arr = [];
         for (var i = 0; i < typed.length; i++) {

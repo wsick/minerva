@@ -1,4 +1,6 @@
 module minerva.core.measure.tests {
+    QUnit.module("Measure Pipe");
+
     var mock = {
         input: function (): IInput {
             return {
