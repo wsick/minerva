@@ -6992,8 +6992,9 @@ var minerva;
                 pass.tree = pass.updater.tree;
                 pass.assets = pass.updater.assets;
                 while (pass.count < pass.maxCount) {
-                    if (draftPipe.run(pass))
-                        updated = true;
+                    if (!draftPipe.run(pass))
+                        break;
+                    updated = true;
                     pass.count++;
                 }
             }
