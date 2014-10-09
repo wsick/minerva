@@ -5,8 +5,9 @@ module minerva.core.processdown.tapins {
 
         var rx = output.renderXform;
         if (input.carrierXform)
-            mat3.set(input.carrierXform, rx);
-        mat3.multiply(rx, input.layoutXform, rx); //render = layout * render
+            mat3.multiply(input.carrierXform, input.layoutXform, rx); //render = layout * carrier
+        else
+            mat3.set(input.layoutXform, rx); //render = layout
         mat3.multiply(rx, state.localXform, rx); //render = local * render
         mat3.toAffineMat4(rx, state.renderAsProjection);
 

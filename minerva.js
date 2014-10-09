@@ -3401,8 +3401,9 @@ var minerva;
 
                     var rx = output.renderXform;
                     if (input.carrierXform)
-                        mat3.set(input.carrierXform, rx);
-                    mat3.multiply(rx, input.layoutXform, rx);
+                        mat3.multiply(input.carrierXform, input.layoutXform, rx);
+                    else
+                        mat3.set(input.layoutXform, rx);
                     mat3.multiply(rx, state.localXform, rx);
                     mat3.toAffineMat4(rx, state.renderAsProjection);
 

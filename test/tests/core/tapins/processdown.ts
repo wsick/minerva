@@ -200,6 +200,19 @@ module minerva.core.processdown.tapins.tests {
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
         assert.deepEqual(typedToArray(state.renderAsProjection), [-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+        //Ensure running twice doesn't change renderXform
+        mat3.set(output.renderXform, input.renderXform);
+        assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
+        assert.deepEqual(typedToArray(state.renderAsProjection), [-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+        //Ensure running again without a carrier doesn't affect the renderXform
+        mat3.set(output.renderXform, input.renderXform);
+        input.carrierXform = null;
+        assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
+        assert.deepEqual(typedToArray(output.renderXform), [-1, 0, -10, 0, 1, 50, 0, 0, 1]);
+        assert.deepEqual(typedToArray(state.renderAsProjection), [-1, 0, 0, -10, 0, 1, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
     });
 
     QUnit.test("calcLocalProjection", (assert) => {
