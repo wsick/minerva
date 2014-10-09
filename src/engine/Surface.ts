@@ -105,9 +105,10 @@ module minerva.engine {
                 this.$$sizechanged = false;
                 ctx.raw.canvas.width = this.$$width;
                 ctx.raw.canvas.height = this.$$height;
+            } else {
+                ctx.raw.clearRect(region.x, region.y, region.width, region.height);
             }
 
-            ctx.raw.clearRect(region.x, region.y, region.width, region.height);
             ctx.save();
             ctx.clipRect(region);
             for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
@@ -156,6 +157,7 @@ module minerva.engine {
             this.$$width = width;
             this.$$height = height;
             this.$$sizechanged = true;
+            this.invalidate(new Rect(0, 0, width, height));
             for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
                 layers[i].invalidateMeasure();
             }
