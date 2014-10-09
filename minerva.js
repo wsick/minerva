@@ -7016,7 +7016,7 @@ var minerva;
         engine.process = process;
 
         function processDown(list) {
-            for (var updater = list[0]; updater != null;) {
+            for (var updater; (updater = list[0]) != null;) {
                 if (updater.processDown()) {
                     list.shift();
                 } else {
@@ -7029,7 +7029,7 @@ var minerva;
         }
 
         function processUp(list) {
-            for (var updater = list[0]; updater != null;) {
+            for (var updater; (updater = list[0]) != null;) {
                 var childIndex = updater.findChildInList(list);
                 if (childIndex > -1) {
                     list.splice(childIndex + 1, 0, list.shift());

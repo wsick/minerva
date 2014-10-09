@@ -8,7 +8,7 @@ module minerva.engine {
 
     //Down --> RenderVisibility, HitTestVisibility, Transformation, Clip, ChildrenZIndices
     function processDown (list: core.Updater[]) {
-        for (var updater = list[0]; updater != null;) {
+        for (var updater: core.Updater; (updater = list[0]) != null;) {
             if (updater.processDown()) {
                 list.shift();
             } else {
@@ -22,7 +22,7 @@ module minerva.engine {
 
     //Up --> Bounds, Invalidation
     function processUp (list: core.Updater[]) {
-        for (var updater = list[0]; updater != null;) {
+        for (var updater: core.Updater; (updater = list[0]) != null;) {
             var childIndex = updater.findChildInList(list);
             if (childIndex > -1) {
                 // OPTIMIZATION: Parent is overzealous, children will invalidate him
