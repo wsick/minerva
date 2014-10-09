@@ -183,17 +183,10 @@ module minerva.core {
             var cur: core.Updater;
             for (var walker = this.walkDeep(); walker.step();) {
                 cur = walker.current;
-                if (cur.tree.surface === surface) {
+                if (cur.tree.surface === surface)
                     walker.skipBranch();
-                    continue;
-                }
-                cur.tree.surface = surface;
-                if (surface) {
-                    if (cur.$$inDownDirty || (cur.assets.dirtyFlags & DirtyFlags.DownDirtyState) > 0)
-                        surface.addDownDirty(cur);
-                    if (cur.$$inUpDirty || (cur.assets.dirtyFlags & DirtyFlags.UpDirtyState) > 0)
-                        surface.addDownDirty(cur);
-                }
+                else
+                    cur.tree.surface = surface;
             }
             return this;
         }
