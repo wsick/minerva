@@ -14,11 +14,11 @@ module minerva.controls.border.render.tapins {
             ctx.drawRectEx(fillExtents, state.innerCornerRadius);
             ctx.fillEx(borderBrush, extents, FillRule.EvenOdd);
         }
-        var backgroundBrush = input.backgroundBrush;
-        if (backgroundBrush && !Rect.isEmpty(fillExtents)) {
+        var background = input.background;
+        if (background && !Rect.isEmpty(fillExtents)) {
             raw.beginPath();
             ctx.drawRectEx(fillExtents, state.innerCornerRadius);
-            ctx.fillEx(backgroundBrush, fillExtents);
+            ctx.fillEx(background, fillExtents);
         }
 
         ctx.restore();

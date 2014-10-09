@@ -1,7 +1,7 @@
 module minerva.controls.border.render {
     export interface IInput extends core.render.IInput {
         extents: Rect;
-        backgroundBrush: IBrush;
+        background: IBrush;
         borderBrush: IBrush;
         borderThickness: Thickness;
         cornerRadius: CornerRadius;

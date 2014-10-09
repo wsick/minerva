@@ -1057,7 +1057,7 @@ declare module minerva.controls.border.measure {
 declare module minerva.controls.border.render {
     interface IInput extends core.render.IInput {
         extents: Rect;
-        backgroundBrush: IBrush;
+        background: IBrush;
         borderBrush: IBrush;
         borderThickness: Thickness;
         cornerRadius: CornerRadius;

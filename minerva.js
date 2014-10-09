@@ -4507,12 +4507,12 @@ var minerva;
                 (function (tapins) {
                     function calcShouldRender(input, state, output, ctx, region, tree) {
                         state.shouldRender = false;
-                        if (!input.backgroundBrush && !input.borderBrush)
+                        if (!input.background && !input.borderBrush)
                             return true;
                         if (minerva.Rect.isEmpty(input.extents))
                             return true;
                         var fillOnly = !input.borderBrush || !input.borderThickness || minerva.Thickness.isEmpty(input.borderThickness);
-                        if (fillOnly && !input.backgroundBrush)
+                        if (fillOnly && !input.background)
                             return true;
                         state.shouldRender = true;
                         return true;
@@ -4548,11 +4548,11 @@ var minerva;
                             ctx.drawRectEx(fillExtents, state.innerCornerRadius);
                             ctx.fillEx(borderBrush, extents, 0 /* EvenOdd */);
                         }
-                        var backgroundBrush = input.backgroundBrush;
-                        if (backgroundBrush && !minerva.Rect.isEmpty(fillExtents)) {
+                        var background = input.background;
+                        if (background && !minerva.Rect.isEmpty(fillExtents)) {
                             raw.beginPath();
                             ctx.drawRectEx(fillExtents, state.innerCornerRadius);
-                            ctx.fillEx(backgroundBrush, fillExtents);
+                            ctx.fillEx(background, fillExtents);
                         }
 
                         ctx.restore();
