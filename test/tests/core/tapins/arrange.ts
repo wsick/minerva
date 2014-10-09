@@ -39,6 +39,7 @@ module minerva.core.arrange.tapins.tests {
                 renderSize: new Size(),
                 lastRenderSize: undefined,
                 layoutClip: new Rect(),
+                layoutXform: mat3.identity(),
                 isTopLevel: false
             };
         },
