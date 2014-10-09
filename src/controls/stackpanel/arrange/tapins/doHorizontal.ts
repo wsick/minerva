@@ -3,7 +3,7 @@ module minerva.controls.stackpanel.arrange.tapins {
         if (input.orientation !== Orientation.Horizontal)
             return true;
 
-        var arranged = output.arrangedSize;
+        var arranged = state.arrangedSize;
         arranged.width = 0;
         var childRect = state.childRect;
 

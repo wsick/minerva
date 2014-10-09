@@ -3,7 +3,7 @@ module minerva.controls.stackpanel.arrange.tapins {
         var cr = state.childRect;
         cr.x = cr.y = 0;
         Size.copyTo(state.finalSize, cr);
-        Size.copyTo(state.finalSize, output.arrangedSize);
+        Size.copyTo(state.finalSize, state.arrangedSize);
         return true;
     }
 }

@@ -24,12 +24,12 @@ module minerva.controls.panel.arrange {
         var cr = state.childRect;
         cr.x = cr.y = 0;
         Size.copyTo(state.finalSize, cr);
-        Size.copyTo(state.finalSize, output.arrangedSize);
 
         for (var walker = tree.walk(); walker.step();) {
             walker.current.arrange(cr);
         }
 
+        Size.copyTo(state.finalSize, state.arrangedSize);
         return true;
     }
 }

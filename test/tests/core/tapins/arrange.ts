@@ -45,6 +45,7 @@ module minerva.core.arrange.tapins.tests {
         },
         state: function (): arrange.IState {
             return {
+                arrangedSize: new Size(),
                 finalRect: new Rect(),
                 finalSize: new Size(),
                 framework: new Size(),
@@ -58,7 +59,6 @@ module minerva.core.arrange.tapins.tests {
             return {
                 error: null,
                 layoutSlot: new Rect(),
-                arrangedSize: new Size(),
                 layoutXform: mat3.identity(),
                 layoutClip: new Rect(),
                 renderSize: new Size(),
@@ -223,13 +223,13 @@ module minerva.core.arrange.tapins.tests {
         var tree = mock.tree();
 
         output.dirtyFlags |= DirtyFlags.Arrange;
-        output.arrangedSize.width = 100;
-        output.arrangedSize.height = 100;
+        state.arrangedSize.width = 100;
+        state.arrangedSize.height = 100;
         state.framework.width = 150.6;
         state.framework.height = 95.3;
         assert.ok(tapins.completeOverride(input, state, output, tree, new Rect()));
         assert.strictEqual(output.dirtyFlags & DirtyFlags.Arrange, 0);
-        assert.deepEqual(output.arrangedSize, new Size(151, 100));
+        assert.deepEqual(state.arrangedSize, new Size(151, 100));
         assert.deepEqual(state.constrained, new Size(151, 100));
     });
 
@@ -272,7 +272,7 @@ module minerva.core.arrange.tapins.tests {
         tree.isTop = false;
         state.visualOffset = new Point(5, 15);
         state.finalRect = new Rect(5, 15, 200, 300);
-        output.arrangedSize = new Size(100, 100);
+        state.arrangedSize = new Size(100, 100);
         input.layoutClip = new Rect(0, 0, 0, 0);
         assert.ok(tapins.buildLayoutClip(input, state, output, tree, new Rect()));
         assert.deepEqual(output.layoutClip, new Rect(0, 0, 200, 300));
@@ -289,7 +289,7 @@ module minerva.core.arrange.tapins.tests {
         assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
         assert.deepEqual(typedToArray(output.layoutXform), [1, 0, 150, 0, 1, 200, 0, 0, 1]);
 
-        output.arrangedSize.width = 100;
+        state.arrangedSize.width = 100;
         state.flipHorizontal = true;
         assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
         assert.deepEqual(typedToArray(output.layoutXform), [-1, 0, -250, 0, 1, 200, 0, 0, 1]);
@@ -302,11 +302,11 @@ module minerva.core.arrange.tapins.tests {
         var tree = mock.tree();
 
         input.renderSize = new Size(100, 200);
-        output.arrangedSize = new Size(250, 300);
+        state.arrangedSize = new Size(250, 300);
         output.uiFlags = 0;
         assert.ok(tapins.buildRenderSize(input, state, output, tree, new Rect()));
-        assert.deepEqual(output.renderSize, output.arrangedSize);
-        assert.notStrictEqual(output.renderSize, output.arrangedSize);
+        assert.deepEqual(output.renderSize, state.arrangedSize);
+        assert.notStrictEqual(output.renderSize, state.arrangedSize);
         assert.strictEqual(output.lastRenderSize, output.renderSize);
         assert.strictEqual(output.uiFlags, UIFlags.SizeHint);
     });

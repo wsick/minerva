@@ -2,7 +2,7 @@ module minerva.core.arrange.tapins {
     export var completeOverride: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree, finalRect: Rect): boolean {
         output.dirtyFlags &= ~DirtyFlags.Arrange;
 
-        var as = output.arrangedSize;
+        var as = state.arrangedSize;
         if (input.horizontalAlignment === HorizontalAlignment.Stretch)
             as.width = Math.max(as.width, state.framework.width);
 

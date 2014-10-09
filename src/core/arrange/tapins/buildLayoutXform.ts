@@ -3,7 +3,7 @@ module minerva.core.arrange.tapins {
         var vo = state.visualOffset;
         var layoutXform = mat3.createTranslate(vo.x, vo.y, output.layoutXform);
         if (state.flipHorizontal) {
-            mat3.translate(layoutXform, output.arrangedSize.width, 0);
+            mat3.translate(layoutXform, state.arrangedSize.width, 0);
             mat3.scale(layoutXform, -1, 1);
         }
         return true;

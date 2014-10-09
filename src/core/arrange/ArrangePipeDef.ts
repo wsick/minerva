@@ -17,6 +17,7 @@ module minerva.core.arrange {
         layoutClip: Rect; //NOTE: empty represents no layout clip
     }
     export interface IState extends pipe.IPipeState {
+        arrangedSize: Size;
         finalRect: Rect;
         finalSize: Size;
         framework: Size;
@@ -29,7 +30,6 @@ module minerva.core.arrange {
         error: string;
         dirtyFlags: DirtyFlags;
         layoutSlot: Rect;
-        arrangedSize: Size;
         layoutXform: number[];
         layoutClip: Rect;
         renderSize: Size;
@@ -62,6 +62,7 @@ module minerva.core.arrange {
 
         createState (): IState {
             return {
+                arrangedSize: new Size(),
                 finalRect: new Rect(),
                 finalSize: new Size(),
                 framework: new Size(),
@@ -78,7 +79,6 @@ module minerva.core.arrange {
                 dirtyFlags: 0,
                 uiFlags: 0,
                 layoutSlot: new Rect(),
-                arrangedSize: new Size(),
                 layoutXform: mat3.identity(),
                 layoutClip: new Rect(),
                 renderSize: new Size(),
@@ -92,6 +92,7 @@ module minerva.core.arrange {
         prepare (input: IInput, state: IState, output: IOutput) {
             output.dirtyFlags = input.dirtyFlags;
             output.uiFlags = input.uiFlags;
+
             Rect.copyTo(input.layoutSlot, output.layoutSlot);
             Rect.copyTo(input.layoutClip, output.layoutClip);
             Size.copyTo(input.renderSize, output.renderSize);
@@ -106,6 +107,7 @@ module minerva.core.arrange {
             output.newUiFlags = output.uiFlags & ~input.uiFlags;
             input.dirtyFlags = output.dirtyFlags;
             input.uiFlags = output.uiFlags;
+
             Rect.copyTo(output.layoutSlot, input.layoutSlot);
             Rect.copyTo(output.layoutClip, input.layoutClip);
             Size.copyTo(output.renderSize, input.renderSize);

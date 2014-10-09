@@ -20,8 +20,8 @@ module minerva.core.arrange.tapins {
 
         testRect.x = 0;
         testRect.y = 0;
-        Size.copyTo(output.arrangedSize, testRect);
-        if (!Rect.isContainedIn(testRect, layoutClip) || !Size.isEqual(state.constrained, output.arrangedSize)) {
+        Size.copyTo(state.arrangedSize, testRect);
+        if (!Rect.isContainedIn(testRect, layoutClip) || !Size.isEqual(state.constrained, state.arrangedSize)) {
             fwClip.width = Number.POSITIVE_INFINITY;
             fwClip.height = Number.POSITIVE_INFINITY;
             helpers.coerceSize(fwClip, input);

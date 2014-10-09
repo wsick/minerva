@@ -2243,6 +2243,7 @@ var minerva;
                 }
                 ArrangePipeDef.prototype.createState = function () {
                     return {
+                        arrangedSize: new minerva.Size(),
                         finalRect: new minerva.Rect(),
                         finalSize: new minerva.Size(),
                         framework: new minerva.Size(),
@@ -2259,7 +2260,6 @@ var minerva;
                         dirtyFlags: 0,
                         uiFlags: 0,
                         layoutSlot: new minerva.Rect(),
-                        arrangedSize: new minerva.Size(),
                         layoutXform: mat3.identity(),
                         layoutClip: new minerva.Rect(),
                         renderSize: new minerva.Size(),
@@ -2273,6 +2273,7 @@ var minerva;
                 ArrangePipeDef.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
                     output.uiFlags = input.uiFlags;
+
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
                     minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
@@ -2287,6 +2288,7 @@ var minerva;
                     output.newUiFlags = output.uiFlags & ~input.uiFlags;
                     input.dirtyFlags = output.dirtyFlags;
                     input.uiFlags = output.uiFlags;
+
                     minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
                     minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
@@ -2351,8 +2353,8 @@ var minerva;
 
                     testRect.x = 0;
                     testRect.y = 0;
-                    minerva.Size.copyTo(output.arrangedSize, testRect);
-                    if (!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, output.arrangedSize)) {
+                    minerva.Size.copyTo(state.arrangedSize, testRect);
+                    if (!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, state.arrangedSize)) {
                         fwClip.width = Number.POSITIVE_INFINITY;
                         fwClip.height = Number.POSITIVE_INFINITY;
                         core.helpers.coerceSize(fwClip, input);
@@ -2383,7 +2385,7 @@ var minerva;
                     var vo = state.visualOffset;
                     var layoutXform = mat3.createTranslate(vo.x, vo.y, output.layoutXform);
                     if (state.flipHorizontal) {
-                        mat3.translate(layoutXform, output.arrangedSize.width, 0);
+                        mat3.translate(layoutXform, state.arrangedSize.width, 0);
                         mat3.scale(layoutXform, -1, 1);
                     }
                     return true;
@@ -2401,7 +2403,7 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.buildRenderSize = function (input, state, output, tree, finalRect) {
-                    minerva.Size.copyTo(output.arrangedSize, output.renderSize);
+                    minerva.Size.copyTo(state.arrangedSize, output.renderSize);
                     if (!minerva.Size.isEqual(input.renderSize, output.renderSize)) {
                         if (!output.lastRenderSize) {
                             output.lastRenderSize = output.renderSize;
@@ -2539,7 +2541,7 @@ var minerva;
                 tapins.completeOverride = function (input, state, output, tree, finalRect) {
                     output.dirtyFlags &= ~minerva.DirtyFlags.Arrange;
 
-                    var as = output.arrangedSize;
+                    var as = state.arrangedSize;
                     if (input.horizontalAlignment === 3 /* Stretch */)
                         as.width = Math.max(as.width, state.framework.width);
 
@@ -2571,8 +2573,8 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, finalRect) {
-                    output.arrangedSize.width = 0;
-                    output.arrangedSize.height = 0;
+                    state.arrangedSize.width = 0;
+                    state.arrangedSize.height = 0;
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
@@ -4345,7 +4347,7 @@ var minerva;
                 function doOverride(input, state, output, tree, finalRect) {
                     if (tree.subtree)
                         tree.subtree.arrange(state.childRect);
-                    minerva.Size.copyTo(state.finalSize, output.arrangedSize);
+                    minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                     return true;
                 }
                 arrange.doOverride = doOverride;
@@ -4872,12 +4874,12 @@ var minerva;
                     var cr = state.childRect;
                     cr.x = cr.y = 0;
                     minerva.Size.copyTo(state.finalSize, cr);
-                    minerva.Size.copyTo(state.finalSize, output.arrangedSize);
 
                     for (var walker = tree.walk(); walker.step();) {
                         walker.current.arrange(cr);
                     }
 
+                    minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                     return true;
                 }
             })(panel.arrange || (panel.arrange = {}));
@@ -5272,7 +5274,7 @@ var minerva;
             (function (arrange) {
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
-                        var as = output.arrangedSize;
+                        var as = state.arrangedSize;
                         as.width = state.imageBounds.width * state.stretchX;
                         as.height = state.imageBounds.height * state.stretchY;
                         return true;
@@ -6090,7 +6092,7 @@ var minerva;
             (function (arrange) {
                 (function (tapins) {
                     tapins.doOverride = function (input, state, output, tree, finalRect) {
-                        var as = output.arrangedSize;
+                        var as = state.arrangedSize;
                         if (!tree.content || !tree.templateOwner) {
                             as.width = as.height = 0;
                             return true;
@@ -6398,7 +6400,7 @@ var minerva;
                         if (input.orientation !== 0 /* Horizontal */)
                             return true;
 
-                        var arranged = output.arrangedSize;
+                        var arranged = state.arrangedSize;
                         arranged.width = 0;
                         var childRect = state.childRect;
 
@@ -6442,7 +6444,7 @@ var minerva;
                         var cr = state.childRect;
                         cr.x = cr.y = 0;
                         minerva.Size.copyTo(state.finalSize, cr);
-                        minerva.Size.copyTo(state.finalSize, output.arrangedSize);
+                        minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                         return true;
                     }
                     tapins.doOverride = doOverride;
@@ -6465,7 +6467,7 @@ var minerva;
                         if (input.orientation !== 1 /* Vertical */)
                             return true;
 
-                        var arranged = output.arrangedSize;
+                        var arranged = state.arrangedSize;
                         arranged.height = 0;
                         var childRect = state.childRect;
 
@@ -6688,6 +6690,8 @@ var minerva;
                     function doOverride(input, state, output, tree, finalRect) {
                         if (tree.subtree)
                             tree.subtree.arrange(state.childRect);
+
+                        minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                         return true;
                     }
                     tapins.doOverride = doOverride;
