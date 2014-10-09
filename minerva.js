@@ -6365,8 +6365,10 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 StackPanelUpdater.prototype.init = function () {
-                    this.assets.orientation = 0 /* Horizontal */;
                     this.setMeasurePipe(minerva.singleton(stackpanel.measure.StackPanelMeasurePipeDef)).setArrangePipe(minerva.singleton(stackpanel.arrange.StackPanelArrangePipeDef));
+
+                    this.assets.orientation = 1 /* Vertical */;
+
                     _super.prototype.init.call(this);
                 };
                 return StackPanelUpdater;

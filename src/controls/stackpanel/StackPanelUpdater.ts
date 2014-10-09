@@ -5,9 +5,11 @@ module minerva.controls.stackpanel {
         assets: IStackPanelUpdaterAssets;
 
         init () {
-            this.assets.orientation = Orientation.Horizontal;
             this.setMeasurePipe(singleton(stackpanel.measure.StackPanelMeasurePipeDef))
                 .setArrangePipe(singleton(stackpanel.arrange.StackPanelArrangePipeDef));
+
+            this.assets.orientation = Orientation.Vertical;
+
             super.init();
         }
     }
