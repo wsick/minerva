@@ -13,6 +13,7 @@ module minerva.core.arrange {
         layoutSlot: Rect;
         renderSize: Size;
         lastRenderSize: Size;
+        layoutXform: number[];
         layoutClip: Rect; //NOTE: empty represents no layout clip
     }
     export interface IState extends pipe.IPipeState {
@@ -95,6 +96,7 @@ module minerva.core.arrange {
             Rect.copyTo(input.layoutClip, output.layoutClip);
             Size.copyTo(input.renderSize, output.renderSize);
             output.lastRenderSize = input.lastRenderSize;
+            mat3.set(input.layoutXform, output.layoutXform);
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
@@ -108,6 +110,7 @@ module minerva.core.arrange {
             Rect.copyTo(output.layoutClip, input.layoutClip);
             Size.copyTo(output.renderSize, input.renderSize);
             input.lastRenderSize = output.lastRenderSize;
+            mat3.set(output.layoutXform, input.layoutXform);
         }
     }
 }

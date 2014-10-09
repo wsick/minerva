@@ -2277,6 +2277,7 @@ var minerva;
                     minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
                     output.lastRenderSize = input.lastRenderSize;
+                    mat3.set(input.layoutXform, output.layoutXform);
                 };
 
                 ArrangePipeDef.prototype.flush = function (input, state, output) {
@@ -2290,6 +2291,7 @@ var minerva;
                     minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
                     input.lastRenderSize = output.lastRenderSize;
+                    mat3.set(output.layoutXform, input.layoutXform);
                 };
                 return ArrangePipeDef;
             })(minerva.pipe.TriPipeDef);
@@ -2437,9 +2439,9 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.calcStretched = function (input, state, output, tree, finalRect) {
-                    var fr = state.finalRect;
-                    minerva.Rect.copyTo(fr, output.layoutSlot);
+                    minerva.Rect.copyTo(finalRect, output.layoutSlot);
 
+                    var fr = state.finalRect;
                     minerva.Thickness.shrinkRect(input.margin, fr);
 
                     var stretched = state.stretched;
@@ -4335,7 +4337,7 @@ var minerva;
                     var cr = state.childRect;
                     cr.x = cr.y = 0;
                     minerva.Size.copyTo(state.finalSize, cr);
-                    minerva.Thickness.shrinkSize(tb, cr);
+                    minerva.Thickness.shrinkRect(tb, cr);
                     return true;
                 }
                 arrange.preOverride = preOverride;

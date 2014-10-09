@@ -531,6 +531,7 @@ declare module minerva.core.arrange {
         layoutSlot: Rect;
         renderSize: Size;
         lastRenderSize: Size;
+        layoutXform: number[];
         layoutClip: Rect;
     }
     interface IState extends pipe.IPipeState {
