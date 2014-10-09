@@ -1,7 +1,7 @@
 /// <reference path="../../core/UpdaterTree" />
 
 module minerva.controls.border {
-    export class BorderTree extends core.UpdaterTree {
+    export class BorderUpdaterTree extends core.UpdaterTree {
         isLayoutContainer = true;
         isContainer = true;
         child: core.Updater = undefined; //TODO: Can we use subtree instead?

@@ -4257,7 +4257,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 BorderUpdater.prototype.init = function () {
-                    this.setTree(new border.BorderTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+                    this.setTree(new border.BorderUpdaterTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
 
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();
@@ -4278,15 +4278,15 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (border) {
-            var BorderTree = (function (_super) {
-                __extends(BorderTree, _super);
-                function BorderTree() {
+            var BorderUpdaterTree = (function (_super) {
+                __extends(BorderUpdaterTree, _super);
+                function BorderUpdaterTree() {
                     _super.apply(this, arguments);
                     this.isLayoutContainer = true;
                     this.isContainer = true;
                     this.child = undefined;
                 }
-                BorderTree.prototype.walk = function (direction) {
+                BorderUpdaterTree.prototype.walk = function (direction) {
                     var visited = false;
                     var _this = this;
                     return {
@@ -4298,9 +4298,9 @@ var minerva;
                         }
                     };
                 };
-                return BorderTree;
+                return BorderUpdaterTree;
             })(minerva.core.UpdaterTree);
-            border.BorderTree = BorderTree;
+            border.BorderUpdaterTree = BorderUpdaterTree;
         })(controls.border || (controls.border = {}));
         var border = controls.border;
     })(minerva.controls || (minerva.controls = {}));

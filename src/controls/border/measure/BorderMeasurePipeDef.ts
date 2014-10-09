@@ -26,7 +26,7 @@ module minerva.controls.border.measure {
         }
     }
 
-    export function preOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean {
+    export function preOverride (input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, availableSize: Size): boolean {
         var tb = state.totalBorder;
         Thickness.copyTo(input.padding, tb);
         Thickness.add(tb, input.borderThickness);
@@ -34,7 +34,7 @@ module minerva.controls.border.measure {
         return true;
     }
 
-    export function doOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean {
+    export function doOverride (input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, availableSize: Size): boolean {
         var ds = output.desiredSize;
         if (tree.child) {
             tree.child.measure(state.availableSize);
@@ -43,7 +43,7 @@ module minerva.controls.border.measure {
         return true;
     }
 
-    export function postOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean {
+    export function postOverride (input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, availableSize: Size): boolean {
         Thickness.growSize(state.totalBorder, output.desiredSize);
         Size.min(output.desiredSize, state.availableSize);
         return true;

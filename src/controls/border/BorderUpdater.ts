@@ -5,11 +5,11 @@ module minerva.controls.border {
     }
 
     export class BorderUpdater extends core.Updater {
-        tree: BorderTree;
+        tree: BorderUpdaterTree;
         assets: IBorderUpdaterAssets;
 
         init () {
-            this.setTree(new BorderTree())
+            this.setTree(new BorderUpdaterTree())
                 .setMeasurePipe(singleton(border.measure.BorderMeasurePipeDef))
                 .setArrangePipe(singleton(border.arrange.BorderArrangePipeDef))
                 .setRenderPipe(singleton(core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));

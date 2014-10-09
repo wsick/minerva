@@ -1005,13 +1005,13 @@ declare module minerva.controls.border {
     interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
     class BorderUpdater extends core.Updater {
-        public tree: BorderTree;
+        public tree: BorderUpdaterTree;
         public assets: IBorderUpdaterAssets;
         public init(): void;
     }
 }
 declare module minerva.controls.border {
-    class BorderTree extends core.UpdaterTree {
+    class BorderUpdaterTree extends core.UpdaterTree {
         public isLayoutContainer: boolean;
         public isContainer: boolean;
         public child: core.Updater;
@@ -1033,8 +1033,8 @@ declare module minerva.controls.border.arrange {
         constructor();
         public createState(): IState;
     }
-    function preOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean;
-    function doOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean;
+    function preOverride(input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, finalRect: Rect): boolean;
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.border.measure {
     interface IInput extends core.measure.IInput {
@@ -1050,9 +1050,9 @@ declare module minerva.controls.border.measure {
         constructor();
         public createState(): IState;
     }
-    function preOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean;
-    function doOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean;
-    function postOverride(input: IInput, state: IState, output: IOutput, tree: BorderTree, availableSize: Size): boolean;
+    function preOverride(input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, availableSize: Size): boolean;
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, availableSize: Size): boolean;
+    function postOverride(input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.border.render {
     interface IInput extends core.render.IInput {

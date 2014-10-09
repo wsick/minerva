@@ -25,7 +25,7 @@ module minerva.controls.border.arrange {
         }
     }
 
-    export function preOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean {
+    export function preOverride (input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, finalRect: Rect): boolean {
         if (!tree.child)
             return true;
         var tb = state.totalBorder;
@@ -39,7 +39,7 @@ module minerva.controls.border.arrange {
         return true;
     }
 
-    export function doOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean {
+    export function doOverride (input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, finalRect: Rect): boolean {
         if (tree.child)
             tree.child.arrange(state.childRect);
         Size.copyTo(state.finalSize, output.arrangedSize);
