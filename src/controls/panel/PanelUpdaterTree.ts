@@ -19,13 +19,13 @@ module minerva.controls.panel {
 
         zSort() {
             var zs = this.zSorted;
-            if (zs)
+            if (zs) //NOTE: zSorted = null when invalidated
                 return;
-            this.zSorted = [];
+            zs = this.zSorted = [];
             for (var walker = this.walk(); walker.step();) {
                 zs.push(walker.current);
             }
-            this.zSorted.sort(zIndexComparer);
+            zs.sort(zIndexComparer);
         }
 
         onChildAttached(child: core.Updater) {
