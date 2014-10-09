@@ -3228,7 +3228,7 @@ var minerva;
                 __extends(ProcessDownPipeDef, _super);
                 function ProcessDownPipeDef() {
                     _super.call(this);
-                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('processZIndices', processdown.tapins.processZIndices).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
+                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
                 }
                 ProcessDownPipeDef.prototype.createState = function () {
                     return {
@@ -3576,21 +3576,6 @@ var minerva;
 
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
 
-                    return true;
-                };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (core) {
-        (function (processdown) {
-            (function (tapins) {
-                tapins.processZIndices = function (input, state, output, vpinput, tree) {
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
@@ -6873,14 +6858,14 @@ var minerva;
                 else
                     this.$$layers.push(layer);
                 layer.tree.isTop = true;
-                layer.tree.surface = this;
+                layer.setSurface(this);
                 layer.fullInvalidate();
                 layer.invalidateMeasure();
             };
 
             Surface.prototype.detachLayer = function (layer) {
                 layer.tree.isTop = false;
-                layer.tree.surface = null;
+                layer.setSurface(null);
                 var index = this.$$layers.indexOf(layer);
                 if (index > -1)
                     this.$$layers.splice(index, 1);

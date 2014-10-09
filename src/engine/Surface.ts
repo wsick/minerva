@@ -42,14 +42,14 @@ module minerva.engine {
             else
                 this.$$layers.push(layer);
             layer.tree.isTop = true;
-            layer.tree.surface = this;
+            layer.setSurface(this);
             layer.fullInvalidate();
             layer.invalidateMeasure();
         }
 
         detachLayer (layer: core.Updater) {
             layer.tree.isTop = false;
-            layer.tree.surface = null;
+            layer.setSurface(null);
             var index = this.$$layers.indexOf(layer);
             if (index > -1)
                 this.$$layers.splice(index, 1);

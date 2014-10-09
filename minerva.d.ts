@@ -820,9 +820,6 @@ declare module minerva.core.processdown.tapins {
     var processXform: IProcessDownTapin;
 }
 declare module minerva.core.processdown.tapins {
-    var processZIndices: IProcessDownTapin;
-}
-declare module minerva.core.processdown.tapins {
     var propagateDirtyToChildren: IProcessDownTapin;
 }
 declare module minerva.core.processup {
