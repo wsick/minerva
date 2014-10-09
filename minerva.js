@@ -6824,8 +6824,6 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (engine) {
-        var profile = true;
-
         var Surface = (function () {
             function Surface() {
                 this.$$layout = new minerva.core.draft.DraftPipeDef();
@@ -6835,10 +6833,13 @@ var minerva;
                 this.$$downDirty = [];
                 this.$$upDirty = [];
                 this.$$dirtyRegion = null;
+                this.$$width = 0;
+                this.$$height = 0;
+                this.$$sizechanged = false;
             }
             Object.defineProperty(Surface.prototype, "width", {
                 get: function () {
-                    return this.$$canvas.offsetWidth;
+                    return this.$$width;
                 },
                 enumerable: true,
                 configurable: true
@@ -6846,7 +6847,7 @@ var minerva;
 
             Object.defineProperty(Surface.prototype, "height", {
                 get: function () {
-                    return this.$$canvas.offsetHeight;
+                    return this.$$height;
                 },
                 enumerable: true,
                 configurable: true
@@ -6855,6 +6856,8 @@ var minerva;
             Surface.prototype.init = function (canvas) {
                 this.$$canvas = canvas;
                 this.$$ctx = new minerva.core.render.RenderContext(canvas.getContext('2d'));
+                this.$$width = canvas.offsetWidth;
+                this.$$height = canvas.offsetHeight;
             };
 
             Surface.prototype.attachLayer = function (layer, root) {
@@ -6921,6 +6924,12 @@ var minerva;
                 minerva.Rect.roundOut(region);
 
                 var ctx = this.$$ctx;
+                if (this.$$sizechanged) {
+                    this.$$sizechanged = false;
+                    ctx.raw.canvas.width = this.$$width;
+                    ctx.raw.canvas.height = this.$$height;
+                }
+
                 ctx.raw.clearRect(region.x, region.y, region.width, region.height);
                 ctx.save();
                 ctx.clipRect(region);
@@ -6939,9 +6948,6 @@ var minerva;
             };
 
             Surface.prototype.updateLayout = function () {
-                if (profile)
-                    console.profile('updateLayout');
-
                 var pass = {
                     count: 0,
                     maxCount: 250,
@@ -6952,7 +6958,7 @@ var minerva;
                     measureList: [],
                     arrangeList: [],
                     sizingList: [],
-                    surfaceSize: new minerva.Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight),
+                    surfaceSize: new minerva.Size(this.$$width, this.$$height),
                     sizingUpdates: []
                 };
                 var updated = false;
@@ -6966,15 +6972,13 @@ var minerva;
                     console.error("[MINERVA] Aborting infinite update loop");
                 }
 
-                if (profile) {
-                    console.profileEnd();
-                    profile = false;
-                }
-
                 return updated;
             };
 
             Surface.prototype.resize = function (width, height) {
+                this.$$width = width;
+                this.$$height = height;
+                this.$$sizechanged = true;
                 for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
                     layers[i].invalidateMeasure();
                 }

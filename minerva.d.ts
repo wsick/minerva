@@ -1590,6 +1590,9 @@ declare module minerva.engine {
         private $$downDirty;
         private $$upDirty;
         private $$dirtyRegion;
+        private $$width;
+        private $$height;
+        private $$sizechanged;
         public width : number;
         public height : number;
         public init(canvas: HTMLCanvasElement): void;

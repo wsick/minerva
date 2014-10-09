@@ -16,17 +16,24 @@ module minerva.engine {
         private $$upDirty: core.Updater[] = [];
         private $$dirtyRegion: Rect = null;
 
+        private $$width: number = 0;
+        private $$height: number = 0;
+        //NOTE: If we resize the HTML5 canvas during resize, the canvas will go blank until render happens
+        private $$sizechanged: boolean = false;
+
         get width (): number {
-            return this.$$canvas.offsetWidth;
+            return this.$$width;
         }
 
         get height (): number {
-            return this.$$canvas.offsetHeight;
+            return this.$$height;
         }
 
         init (canvas: HTMLCanvasElement) {
             this.$$canvas = canvas;
             this.$$ctx = new core.render.RenderContext(canvas.getContext('2d'));
+            this.$$width = canvas.offsetWidth;
+            this.$$height = canvas.offsetHeight;
         }
 
         attachLayer (layer: core.Updater, root?: boolean) {
@@ -94,6 +101,12 @@ module minerva.engine {
             Rect.roundOut(region);
 
             var ctx = this.$$ctx;
+            if (this.$$sizechanged) {
+                this.$$sizechanged = false;
+                ctx.raw.canvas.width = this.$$width;
+                ctx.raw.canvas.height = this.$$height;
+            }
+
             ctx.raw.clearRect(region.x, region.y, region.width, region.height);
             ctx.save();
             ctx.clipRect(region);
@@ -122,7 +135,7 @@ module minerva.engine {
                 measureList: [],
                 arrangeList: [],
                 sizingList: [],
-                surfaceSize: new Size(this.$$canvas.offsetWidth, this.$$canvas.offsetHeight),
+                surfaceSize: new Size(this.$$width, this.$$height),
                 sizingUpdates: []
             };
             var updated = false;
@@ -140,6 +153,9 @@ module minerva.engine {
         }
 
         resize (width: number, height: number) {
+            this.$$width = width;
+            this.$$height = height;
+            this.$$sizechanged = true;
             for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
                 layers[i].invalidateMeasure();
             }
