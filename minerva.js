@@ -1569,7 +1569,7 @@ var minerva;
                     desiredSize: new minerva.Size(),
                     hiddenDesire: new minerva.Size(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY),
                     renderSize: new minerva.Size(),
-                    lastRenderSize: new minerva.Size(),
+                    lastRenderSize: undefined,
                     layoutSlot: new minerva.Rect(),
                     layoutClip: new minerva.Rect(),
                     compositeLayoutClip: new minerva.Rect(),
@@ -2254,7 +2254,7 @@ var minerva;
                         layoutXform: mat3.identity(),
                         layoutClip: new minerva.Rect(),
                         renderSize: new minerva.Size(),
-                        lastRenderSize: null,
+                        lastRenderSize: undefined,
                         newUpDirty: 0,
                         newDownDirty: 0,
                         newUiFlags: 0
@@ -2267,7 +2267,7 @@ var minerva;
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
                     minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
-                    output.lastRenderSize = null;
+                    output.lastRenderSize = input.lastRenderSize;
                 };
 
                 ArrangePipeDef.prototype.flush = function (input, state, output) {
@@ -2280,8 +2280,7 @@ var minerva;
                     minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
                     minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
-                    if (output.lastRenderSize)
-                        input.lastRenderSize = output.lastRenderSize;
+                    input.lastRenderSize = output.lastRenderSize;
                 };
                 return ArrangePipeDef;
             })(minerva.pipe.TriPipeDef);
@@ -2393,8 +2392,8 @@ var minerva;
                 tapins.buildRenderSize = function (input, state, output, tree, finalRect) {
                     minerva.Size.copyTo(output.arrangedSize, output.renderSize);
                     if (!minerva.Size.isEqual(input.renderSize, output.renderSize)) {
-                        if (input.lastRenderSize.width <= 0 && input.lastRenderSize.height <= 0) {
-                            minerva.Size.copyTo(input.renderSize, output.lastRenderSize);
+                        if (!output.lastRenderSize) {
+                            output.lastRenderSize = output.renderSize;
                             output.uiFlags |= 8192 /* SizeHint */;
                         }
                     }
@@ -6825,6 +6824,8 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (engine) {
+        var profile = true;
+
         var Surface = (function () {
             function Surface() {
                 this.$$layout = new minerva.core.draft.DraftPipeDef();
@@ -6938,6 +6939,9 @@ var minerva;
             };
 
             Surface.prototype.updateLayout = function () {
+                if (profile)
+                    console.profile('updateLayout');
+
                 var pass = {
                     count: 0,
                     maxCount: 250,
@@ -6960,6 +6964,11 @@ var minerva;
 
                 if (pass.count >= pass.maxCount) {
                     console.error("[MINERVA] Aborting infinite update loop");
+                }
+
+                if (profile) {
+                    console.profileEnd();
+                    profile = false;
                 }
 
                 return updated;

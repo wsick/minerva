@@ -47,7 +47,7 @@ module minerva.core {
             hiddenDesire: new Size(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY),
 
             renderSize: new Size(),
-            lastRenderSize: new Size(),
+            lastRenderSize: undefined,
             layoutSlot: new Rect(),
             layoutClip: new Rect(),
             compositeLayoutClip: new Rect(),

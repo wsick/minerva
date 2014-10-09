@@ -81,7 +81,7 @@ module minerva.core.arrange {
                 layoutXform: mat3.identity(),
                 layoutClip: new Rect(),
                 renderSize: new Size(),
-                lastRenderSize: null,
+                lastRenderSize: undefined,
                 newUpDirty: 0,
                 newDownDirty: 0,
                 newUiFlags: 0
@@ -94,7 +94,7 @@ module minerva.core.arrange {
             Rect.copyTo(input.layoutSlot, output.layoutSlot);
             Rect.copyTo(input.layoutClip, output.layoutClip);
             Size.copyTo(input.renderSize, output.renderSize);
-            output.lastRenderSize = null;
+            output.lastRenderSize = input.lastRenderSize;
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
@@ -107,8 +107,7 @@ module minerva.core.arrange {
             Rect.copyTo(output.layoutSlot, input.layoutSlot);
             Rect.copyTo(output.layoutClip, input.layoutClip);
             Size.copyTo(output.renderSize, input.renderSize);
-            if (output.lastRenderSize)
-                input.lastRenderSize = output.lastRenderSize;
+            input.lastRenderSize = output.lastRenderSize;
         }
     }
 }

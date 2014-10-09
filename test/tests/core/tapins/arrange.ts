@@ -37,7 +37,7 @@ module minerva.core.arrange.tapins.tests {
                 uiFlags: 0,
                 layoutSlot: new Rect(),
                 renderSize: new Size(),
-                lastRenderSize: new Size(),
+                lastRenderSize: undefined,
                 layoutClip: new Rect(),
                 isTopLevel: false
             };
@@ -61,7 +61,7 @@ module minerva.core.arrange.tapins.tests {
                 layoutXform: mat3.identity(),
                 layoutClip: new Rect(),
                 renderSize: new Size(),
-                lastRenderSize: new Size(),
+                lastRenderSize: undefined,
                 dirtyFlags: 0,
                 uiFlags: 0,
                 newUpDirty: 0,
@@ -306,8 +306,7 @@ module minerva.core.arrange.tapins.tests {
         assert.ok(tapins.buildRenderSize(input, state, output, tree, new Rect()));
         assert.deepEqual(output.renderSize, output.arrangedSize);
         assert.notStrictEqual(output.renderSize, output.arrangedSize);
-        assert.deepEqual(output.lastRenderSize, input.renderSize);
-        assert.notStrictEqual(output.lastRenderSize, input.renderSize);
+        assert.strictEqual(output.lastRenderSize, output.renderSize);
         assert.strictEqual(output.uiFlags, UIFlags.SizeHint);
     });
 }
