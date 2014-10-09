@@ -1,3 +1,27 @@
+# Pipeline
+
+## Tapin Order
+
+* applyRounding
+* validateFinalRect
+* validateVisibility
+* checkNeedArrange
+* ensureMeasured (*)
+* invalidateFuture
+* calcStretched
+* prepareOverride
+* doOverride
+    * Assign `arrangedSize` based on compilation of child `arrangedSize`.
+* completeOverride
+* calcFlip
+* calcVisualOffset
+* buildLayoutClip
+* buildLayoutXform
+* buildRenderSize
+
+
+# Legacy
+
 ## _DoArrangeWithError
 
 * Set `last` to `LayoutSlot`

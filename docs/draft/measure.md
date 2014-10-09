@@ -1,3 +1,21 @@
+# Pipeline
+
+## Tapin Order
+
+* validate
+* validateVisibility
+* applyTemplate
+* checkNeedMeasure
+* invalidateFuture
+* prepareOverride
+* doOverride
+    * Assign `desiredSize` based on compilation of child `desiredSize`.
+* completeOverride
+* finishDesired
+
+
+# Legacy
+
 ## _DoMeasureWithError
 
 * Use `PreviousConstraint` as `availableSize` to initiate start of measure traversal
