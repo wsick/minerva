@@ -3357,7 +3357,10 @@ var minerva;
                     output.totalHasRenderProjection = vpinput ? vpinput.totalHasRenderProjection : false;
 
                     var lp = output.localProjection;
-                    mat4.multiply(input.carrierProjection, state.renderAsProjection, lp);
+                    if (input.carrierProjection)
+                        mat4.multiply(input.carrierProjection, state.renderAsProjection, lp);
+                    else
+                        mat4.set(state.renderAsProjection, lp);
                     var projection = input.projection;
                     if (projection) {
                         mat4.multiply(lp, input.projection.getTransform(), lp);
@@ -3383,7 +3386,8 @@ var minerva;
                         return true;
 
                     var rx = output.renderXform;
-                    mat3.set(input.carrierXform, rx);
+                    if (input.carrierXform)
+                        mat3.set(input.carrierXform, rx);
                     mat3.multiply(rx, input.layoutXform, rx);
                     mat3.multiply(rx, state.localXform, rx);
                     mat3.toAffineMat4(rx, state.renderAsProjection);
