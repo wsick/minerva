@@ -4289,7 +4289,6 @@ var minerva;
                     _super.apply(this, arguments);
                     this.isLayoutContainer = true;
                     this.isContainer = true;
-                    this.child = undefined;
                 }
                 BorderUpdaterTree.prototype.walk = function (direction) {
                     var visited = false;
@@ -4297,7 +4296,7 @@ var minerva;
                     return {
                         current: undefined,
                         step: function () {
-                            this.current = !visited ? _this.child : undefined;
+                            this.current = !visited ? _this.subtree : undefined;
                             visited = true;
                             return this.current !== undefined;
                         }
@@ -4333,7 +4332,7 @@ var minerva;
                 arrange.BorderArrangePipeDef = BorderArrangePipeDef;
 
                 function preOverride(input, state, output, tree, finalRect) {
-                    if (!tree.child)
+                    if (!tree.subtree)
                         return true;
                     var tb = state.totalBorder;
                     minerva.Thickness.copyTo(input.padding, tb);
@@ -4348,8 +4347,8 @@ var minerva;
                 arrange.preOverride = preOverride;
 
                 function doOverride(input, state, output, tree, finalRect) {
-                    if (tree.child)
-                        tree.child.arrange(state.childRect);
+                    if (tree.subtree)
+                        tree.subtree.arrange(state.childRect);
                     minerva.Size.copyTo(state.finalSize, output.arrangedSize);
                     return true;
                 }
@@ -4392,9 +4391,9 @@ var minerva;
 
                 function doOverride(input, state, output, tree, availableSize) {
                     var ds = output.desiredSize;
-                    if (tree.child) {
-                        tree.child.measure(state.availableSize);
-                        minerva.Size.copyTo(tree.child.assets.desiredSize, ds);
+                    if (tree.subtree) {
+                        tree.subtree.measure(state.availableSize);
+                        minerva.Size.copyTo(tree.subtree.assets.desiredSize, ds);
                     }
                     return true;
                 }

@@ -1014,7 +1014,6 @@ declare module minerva.controls.border {
     class BorderUpdaterTree extends core.UpdaterTree {
         public isLayoutContainer: boolean;
         public isContainer: boolean;
-        public child: core.Updater;
         public walk(direction?: WalkDirection): IWalker<core.Updater>;
     }
 }

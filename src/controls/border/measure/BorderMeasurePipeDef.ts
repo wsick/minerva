@@ -36,9 +36,9 @@ module minerva.controls.border.measure {
 
     export function doOverride (input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, availableSize: Size): boolean {
         var ds = output.desiredSize;
-        if (tree.child) {
-            tree.child.measure(state.availableSize);
-            Size.copyTo(tree.child.assets.desiredSize, ds);
+        if (tree.subtree) {
+            tree.subtree.measure(state.availableSize);
+            Size.copyTo(tree.subtree.assets.desiredSize, ds);
         }
         return true;
     }
