@@ -62,7 +62,8 @@ module minerva.core.processdown {
                 .addTapin('calcAbsoluteProjection', tapins.calcAbsoluteProjection)
                 .addTapin('processXform', tapins.processXform)
                 .addTapin('processLayoutClip', tapins.processLayoutClip)
-                .addTapin('processZIndices', tapins.processZIndices);
+                .addTapin('processZIndices', tapins.processZIndices)
+                .addTapin('propagateDirtyToChildren', tapins.propagateDirtyToChildren);
         }
 
         createState (): IState {
