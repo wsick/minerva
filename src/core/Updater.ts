@@ -227,6 +227,8 @@ module minerva.core {
         /////// PREPARE PIPES
 
         setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
+            if (this.$$measure)
+                return this;
             var def = pipedef || new measure.MeasurePipeDef();
             this.$$measure = <IMeasurePipe>pipe.createTriPipe(def);
             return this;
@@ -238,6 +240,8 @@ module minerva.core {
         }
 
         setArrangePipe (pipedef?: arrange.ArrangePipeDef): Updater {
+            if (this.$$arrange)
+                return this;
             var def = pipedef || new arrange.ArrangePipeDef();
             this.$$arrange = <IArrangePipe>pipe.createTriPipe(def);
             return this;
@@ -249,6 +253,8 @@ module minerva.core {
         }
 
         setSizingPipe (pipedef?: sizing.SizingPipeDef): Updater {
+            if (this.$$sizing)
+                return this;
             var def: pipe.TriPipeDef<sizing.ISizingTapin, sizing.IInput, sizing.IState, sizing.IOutput> = pipedef;
             if (!def)
                 def = new sizing.SizingPipeDef();
@@ -265,6 +271,8 @@ module minerva.core {
         }
 
         setProcessUpPipe (pipedef?: processup.ProcessUpPipeDef): Updater {
+            if (this.$$processup)
+                return this;
             var def: pipe.TriPipeDef<processup.IProcessUpTapin, processup.IInput, processup.IState, processup.IOutput> = pipedef;
             if (!def)
                 def = new processup.ProcessUpPipeDef();
@@ -273,6 +281,8 @@ module minerva.core {
         }
 
         setRenderPipe (pipedef?: render.RenderPipeDef): Updater {
+            if (this.$$render)
+                return this;
             var def = pipedef || new render.RenderPipeDef();
             this.$$render = <IRenderPipe>pipe.createTriPipe(def);
             return this;

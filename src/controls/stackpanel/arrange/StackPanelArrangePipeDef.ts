@@ -3,7 +3,6 @@ module minerva.controls.stackpanel.arrange {
         orientation: Orientation;
     }
     export interface IState extends panel.arrange.IState {
-        childRect: Rect;
     }
     export interface IOutput extends panel.arrange.IOutput {
     }
@@ -14,12 +13,6 @@ module minerva.controls.stackpanel.arrange {
             this.replaceTapin('doOverride', tapins.doOverride)
                 .addTapinAfter('doOverride', 'doHorizontal', tapins.doHorizontal)
                 .addTapinAfter('doOverride', 'doVertical', tapins.doVertical);
-        }
-
-        createState (): IState {
-            var state = <IState>super.createState();
-            state.childRect = new Rect();
-            return state;
         }
     }
 }

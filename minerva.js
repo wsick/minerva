@@ -1719,6 +1719,8 @@ var minerva;
             };
 
             Updater.prototype.setMeasurePipe = function (pipedef) {
+                if (this.$$measure)
+                    return this;
                 var def = pipedef || new core.measure.MeasurePipeDef();
                 this.$$measure = minerva.pipe.createTriPipe(def);
                 return this;
@@ -1730,6 +1732,8 @@ var minerva;
             };
 
             Updater.prototype.setArrangePipe = function (pipedef) {
+                if (this.$$arrange)
+                    return this;
                 var def = pipedef || new core.arrange.ArrangePipeDef();
                 this.$$arrange = minerva.pipe.createTriPipe(def);
                 return this;
@@ -1741,6 +1745,8 @@ var minerva;
             };
 
             Updater.prototype.setSizingPipe = function (pipedef) {
+                if (this.$$sizing)
+                    return this;
                 var def = pipedef;
                 if (!def)
                     def = new core.sizing.SizingPipeDef();
@@ -1757,6 +1763,8 @@ var minerva;
             };
 
             Updater.prototype.setProcessUpPipe = function (pipedef) {
+                if (this.$$processup)
+                    return this;
                 var def = pipedef;
                 if (!def)
                     def = new core.processup.ProcessUpPipeDef();
@@ -1765,6 +1773,8 @@ var minerva;
             };
 
             Updater.prototype.setRenderPipe = function (pipedef) {
+                if (this.$$render)
+                    return this;
                 var def = pipedef || new core.render.RenderPipeDef();
                 this.$$render = minerva.pipe.createTriPipe(def);
                 return this;
@@ -6378,11 +6388,6 @@ var minerva;
                         _super.call(this);
                         this.replaceTapin('doOverride', arrange.tapins.doOverride).addTapinAfter('doOverride', 'doHorizontal', arrange.tapins.doHorizontal).addTapinAfter('doOverride', 'doVertical', arrange.tapins.doVertical);
                     }
-                    StackPanelArrangePipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.childRect = new minerva.Rect();
-                        return state;
-                    };
                     return StackPanelArrangePipeDef;
                 })(controls.panel.arrange.PanelArrangePipeDef);
                 arrange.StackPanelArrangePipeDef = StackPanelArrangePipeDef;

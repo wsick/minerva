@@ -1484,13 +1484,11 @@ declare module minerva.controls.stackpanel.arrange {
         orientation: Orientation;
     }
     interface IState extends panel.arrange.IState {
-        childRect: Rect;
     }
     interface IOutput extends panel.arrange.IOutput {
     }
     class StackPanelArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
         constructor();
-        public createState(): IState;
     }
 }
 declare module minerva.controls.stackpanel.arrange.tapins {
