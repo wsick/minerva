@@ -1675,6 +1675,7 @@ var minerva;
 
             Updater.prototype.setSurface = function (surface) {
                 var cur;
+                var newUps = [];
                 for (var walker = this.walkDeep(); walker.step();) {
                     cur = walker.current;
                     if (cur.tree.surface === surface) {
@@ -1682,12 +1683,13 @@ var minerva;
                         continue;
                     }
                     cur.tree.surface = surface;
-                    if (surface) {
-                        if (cur.$$inDownDirty || (cur.assets.dirtyFlags & minerva.DirtyFlags.DownDirtyState) > 0)
-                            surface.addDownDirty(cur);
-                        if (cur.$$inUpDirty || (cur.assets.dirtyFlags & minerva.DirtyFlags.UpDirtyState) > 0)
-                            surface.addDownDirty(cur);
-                    }
+                    if (surface && (cur.assets.dirtyFlags & minerva.DirtyFlags.UpDirtyState) > 0)
+                        newUps.push(cur);
+                }
+
+                while ((cur = newUps.pop()) != null) {
+                    cur.$$inUpDirty = true;
+                    surface.addUpDirty(cur);
                 }
                 return this;
             };
@@ -5592,11 +5594,11 @@ var minerva;
                     var zs = this.zSorted;
                     if (zs)
                         return;
-                    this.zSorted = [];
+                    zs = this.zSorted = [];
                     for (var walker = this.walk(); walker.step();) {
                         zs.push(walker.current);
                     }
-                    this.zSorted.sort(zIndexComparer);
+                    zs.sort(zIndexComparer);
                 };
 
                 PanelUpdaterTree.prototype.onChildAttached = function (child) {

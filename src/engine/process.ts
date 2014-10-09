@@ -6,7 +6,7 @@ module minerva.engine {
         return updated;
     }
 
-    //Down --> RenderVisibility, HitTestVisibility, Transformation, Clip, ChildrenZIndices
+    //Down --> RenderVisibility, HitTestVisibility, Transformation, Clip
     function processDown (list: core.Updater[]) {
         for (var updater: core.Updater; (updater = list[0]) != null;) {
             if (updater.processDown()) {

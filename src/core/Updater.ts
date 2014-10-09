@@ -181,12 +181,21 @@ module minerva.core {
 
         setSurface (surface: ISurface): Updater {
             var cur: core.Updater;
+            var newUps: core.Updater[] = [];
             for (var walker = this.walkDeep(); walker.step();) {
                 cur = walker.current;
-                if (cur.tree.surface === surface)
+                if (cur.tree.surface === surface) {
                     walker.skipBranch();
-                else
-                    cur.tree.surface = surface;
+                    continue;
+                }
+                cur.tree.surface = surface;
+                if (surface && (cur.assets.dirtyFlags & DirtyFlags.UpDirtyState) > 0)
+                    newUps.push(cur);
+            }
+            //NOTE: Adding Updaters to surface in reverse deep walk order for process up pass
+            while ((cur = newUps.pop()) != null) {
+                cur.$$inUpDirty = true;
+                surface.addUpDirty(cur);
             }
             return this;
         }
