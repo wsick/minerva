@@ -50,11 +50,13 @@ module minerva.core.measure {
         createOutput (): IOutput {
             return {
                 error: null,
+
                 previousConstraint: new Size(),
                 desiredSize: new Size(),
                 hiddenDesire: new Size(),
                 dirtyFlags: 0,
                 uiFlags: 0,
+
                 newUpDirty: 0,
                 newDownDirty: 0,
                 newUiFlags: 0
@@ -62,9 +64,11 @@ module minerva.core.measure {
         }
 
         prepare (input: IInput, state: IState, output: IOutput) {
-            output.dirtyFlags = input.dirtyFlags;
             Size.copyTo(input.previousConstraint, output.previousConstraint);
+            Size.copyTo(input.desiredSize, output.desiredSize);
             Size.copyTo(input.hiddenDesire, output.hiddenDesire);
+            output.dirtyFlags = input.dirtyFlags;
+            output.uiFlags = input.uiFlags;
         }
 
         flush (input: IInput, state: IState, output: IOutput) {

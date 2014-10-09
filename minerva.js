@@ -3040,9 +3040,11 @@ var minerva;
                 };
 
                 MeasurePipeDef.prototype.prepare = function (input, state, output) {
-                    output.dirtyFlags = input.dirtyFlags;
                     minerva.Size.copyTo(input.previousConstraint, output.previousConstraint);
+                    minerva.Size.copyTo(input.desiredSize, output.desiredSize);
                     minerva.Size.copyTo(input.hiddenDesire, output.hiddenDesire);
+                    output.dirtyFlags = input.dirtyFlags;
+                    output.uiFlags = input.uiFlags;
                 };
 
                 MeasurePipeDef.prototype.flush = function (input, state, output) {
