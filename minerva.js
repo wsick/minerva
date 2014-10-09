@@ -5583,9 +5583,11 @@ var minerva;
             var PanelUpdaterTree = (function (_super) {
                 __extends(PanelUpdaterTree, _super);
                 function PanelUpdaterTree() {
-                    _super.apply(this, arguments);
+                    _super.call(this);
                     this.children = null;
                     this.zSorted = null;
+                    this.isContainer = true;
+                    this.isLayoutContainer = true;
                 }
                 PanelUpdaterTree.prototype.walk = function (direction) {
                     if (direction === 2 /* ZForward */ || direction === 3 /* ZReverse */) {

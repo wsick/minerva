@@ -1322,6 +1322,7 @@ declare module minerva.controls.panel {
     class PanelUpdaterTree extends core.UpdaterTree {
         public children: core.Updater[];
         public zSorted: core.Updater[];
+        constructor();
         public walk(direction?: WalkDirection): IWalker<core.Updater>;
         public zSort(): void;
         public onChildAttached(child: core.Updater): void;

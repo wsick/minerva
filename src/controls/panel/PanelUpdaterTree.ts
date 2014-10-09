@@ -3,6 +3,12 @@ module minerva.controls.panel {
         children: core.Updater[] = null;
         zSorted: core.Updater[] = null;
 
+        constructor() {
+            super();
+            this.isContainer = true;
+            this.isLayoutContainer = true;
+        }
+
         walk(direction?: WalkDirection): IWalker<core.Updater> {
             if (direction === WalkDirection.ZForward || direction === WalkDirection.ZReverse) {
                 this.zSort();
