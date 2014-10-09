@@ -42,6 +42,7 @@ module minerva.controls.border.arrange {
     export function doOverride (input: IInput, state: IState, output: IOutput, tree: BorderTree, finalRect: Rect): boolean {
         if (tree.child)
             tree.child.arrange(state.childRect);
+        Size.copyTo(state.finalSize, output.arrangedSize);
         return true;
     }
 }

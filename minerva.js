@@ -4345,6 +4345,7 @@ var minerva;
                 function doOverride(input, state, output, tree, finalRect) {
                     if (tree.child)
                         tree.child.arrange(state.childRect);
+                    minerva.Size.copyTo(state.finalSize, output.arrangedSize);
                     return true;
                 }
                 arrange.doOverride = doOverride;
@@ -6928,9 +6929,10 @@ var minerva;
                     this.$$sizechanged = false;
                     ctx.raw.canvas.width = this.$$width;
                     ctx.raw.canvas.height = this.$$height;
+                } else {
+                    ctx.raw.clearRect(region.x, region.y, region.width, region.height);
                 }
 
-                ctx.raw.clearRect(region.x, region.y, region.width, region.height);
                 ctx.save();
                 ctx.clipRect(region);
                 for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
@@ -6979,6 +6981,7 @@ var minerva;
                 this.$$width = width;
                 this.$$height = height;
                 this.$$sizechanged = true;
+                this.invalidate(new minerva.Rect(0, 0, width, height));
                 for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
                     layers[i].invalidateMeasure();
                 }
