@@ -3,18 +3,39 @@ module minerva.controls.image.processdown.tapins {
         if (!state.calcImageMetrics)
             return true;
 
+        var imgRect = state.imgRect;
+        imgRect.x = imgRect.y = 0;
+
+        var source = input.source;
+        source.lock();
+        imgRect.width = source.pixelWidth;
+        imgRect.height = source.pixelHeight;
+        source.unlock();
+
+        var paintRect = state.paintRect;
+        paintRect.x = paintRect.y = 0;
+        paintRect.width = input.actualWidth;
+        paintRect.height = input.actualHeight;
+
         /*
-        var paintBounds = state.paintBounds;
-        paintBounds.x = paintBounds.y = 0;
-        paintBounds.width = input.actualWidth;
-        paintBounds.height = input.actualHeight;
-
+        See note below
         var stretched = state.stretched;
-        Size.copyTo(paintBounds, stretched);
-        helpers.coerceSize(stretched, input);
-
-        state.imgAdjust = !Size.isEqual(paintBounds, input.renderSize);
+        Size.copyTo(paintRect, stretched);
         */
+
+        state.imgAdjust = !Size.isEqual(paintRect, input.renderSize);
+
+        /*
+         Removing `stretched` since actualWidth, actualHeight should already be coerced
+        core.helpers.coerceSize(stretched, input);
+        if (input.stretch !== Stretch.UniformToFill) {
+            paintRect.width = Math.min(paintRect.width, stretched.width);
+            paintRect.height = Math.min(paintRect.height, stretched.height);
+        }
+        */
+
+        if (input.stretch === Stretch.None)
+            Rect.union(paintRect, imgRect);
 
         return true;
     }

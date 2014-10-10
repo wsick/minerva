@@ -28,11 +28,20 @@ module minerva.controls.image.processdown.tests {
                 absoluteProjection: mat4.identity(),
                 totalHasRenderProjection: false,
                 dirtyFlags: 0,
+                //ISized
+                width: NaN,
+                height: NaN,
+                minWidth: 0,
+                minHeight: 0,
+                maxWidth: Number.POSITIVE_INFINITY,
+                maxHeight: Number.POSITIVE_INFINITY,
+                useLayoutRounding: true,
                 //IMAGE
                 source: null,
                 stretch: Stretch.None,
                 imgXform: mat3.identity(),
-                overlap: RectOverlap.In
+                overlap: RectOverlap.In,
+                renderSize: new Size()
             };
         },
         state: function (): IState {
@@ -92,7 +101,7 @@ module minerva.controls.image.processdown.tests {
     }
 
     QUnit.test("checkNeedImageMetrics", (assert) => {
-        //DOF: dirtyFlags, source.pixelWidth, source.pixelHeight
+        //DOF: dirtyFlags, source
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
@@ -106,22 +115,45 @@ module minerva.controls.image.processdown.tests {
         assert.strictEqual(state.calcImageMetrics, false);
 
         input.source = mock.imageSource();
-        input.source.pixelWidth = 50;
-        input.source.pixelHeight = 100;
-        assert.strictEqual((<any>input.source).islocked, false);
         assert.ok(tapins.checkNeedImageMetrics(input, state, output, vpinput, null));
         assert.strictEqual(state.calcImageMetrics, true);
-        assert.strictEqual((<any>input.source).islocked, false);
-        assert.deepEqual(state.imgRect, new Rect(0, 0, 50, 100));
     });
 
     QUnit.test("prepareImageMetrics", (assert) => {
+        //DOF: imgRect, stretch, actualWidth, actualHeight, renderSize, (width, height, minWidth, minHeight, maxWidth, maxHeight, useLayoutRounding)
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
         var vpinput = mock.input();
 
-        assert.ok(true);
+        state.calcImageMetrics = true;
+
+        input.source = mock.imageSource();
+        input.source.pixelWidth = 50;
+        input.source.pixelHeight = 100;
+        assert.strictEqual((<any>input.source).islocked, false);
+        assert.ok(tapins.prepareImageMetrics(input, state, output, vpinput, null));
+        assert.deepEqual(state.imgRect, new Rect(0, 0, 50, 100));
+        assert.strictEqual((<any>input.source).islocked, false);
+
+        input.actualWidth = 100;
+        input.actualHeight = 200;
+        input.renderSize = new Size(100, 100);
+        assert.ok(tapins.prepareImageMetrics(input, state, output, vpinput, null));
+        assert.strictEqual(state.imgAdjust, true);
+
+        input.actualWidth = 100;
+        input.actualHeight = 200;
+        input.renderSize = new Size(100, 200);
+        assert.ok(tapins.prepareImageMetrics(input, state, output, vpinput, null));
+        assert.strictEqual(state.imgAdjust, false);
+
+        input.source.pixelWidth = 50;
+        input.source.pixelHeight = 50;
+        input.stretch = Stretch.UniformToFill;
+        assert.ok(tapins.prepareImageMetrics(input, state, output, vpinput, null));
+        assert.deepEqual(state.imgRect, new Rect(0, 0, 50, 50));
+        assert.deepEqual(state.paintRect, new Rect(0, 0, 100, 200));
     });
 
     QUnit.test("calcImageTransform", (assert) => {

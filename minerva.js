@@ -5166,7 +5166,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 ImageUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setProcessUpPipe(minerva.singleton(image.processup.ImageProcessUpPipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setProcessDownPipe(minerva.singleton(image.processdown.ImageProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(image.processup.ImageProcessUpPipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef));
 
                     var assets = this.assets;
                     assets.source = null;
@@ -5469,7 +5469,6 @@ var minerva;
                         state.imgRect = new minerva.Rect();
                         state.paintRect = new minerva.Rect();
                         state.calcImageMetrics = false;
-                        state.stretched = new minerva.Rect();
                         state.imgAdjust = false;
                         return state;
                     };
@@ -5575,11 +5574,11 @@ var minerva;
                             var paint = state.paintRect;
                             minerva.Rect.roundOut(paint);
 
-                            var stretched = state.stretched;
-                            minerva.Rect.copyTo(state.imgRect, stretched);
-                            minerva.Rect.transform(stretched, output.imgXform);
-                            minerva.Rect.roundIn(stretched);
-                            output.overlap = minerva.Rect.rectIn(paint, stretched);
+                            var imgRect = state.imgRect;
+                            minerva.Rect.transform(imgRect, output.imgXform);
+                            minerva.Rect.roundIn(imgRect);
+
+                            output.overlap = minerva.Rect.rectIn(paint, imgRect);
                         }
 
                         return true;
@@ -5611,16 +5610,7 @@ var minerva;
                         var imgRect = state.imgRect;
                         imgRect.x = imgRect.y = imgRect.width = imgRect.height = 0;
 
-                        var source = input.source;
-                        if (!source)
-                            return true;
-
-                        source.lock();
-                        imgRect.width = source.pixelWidth;
-                        imgRect.height = source.pixelHeight;
-                        source.unlock();
-
-                        state.calcImageMetrics = true;
+                        state.calcImageMetrics = !!input.source;
                         return true;
                     }
                     tapins.checkNeedImageMetrics = checkNeedImageMetrics;
@@ -5642,6 +5632,25 @@ var minerva;
                     function prepareImageMetrics(input, state, output, vpinput, tree) {
                         if (!state.calcImageMetrics)
                             return true;
+
+                        var imgRect = state.imgRect;
+                        imgRect.x = imgRect.y = 0;
+
+                        var source = input.source;
+                        source.lock();
+                        imgRect.width = source.pixelWidth;
+                        imgRect.height = source.pixelHeight;
+                        source.unlock();
+
+                        var paintRect = state.paintRect;
+                        paintRect.x = paintRect.y = 0;
+                        paintRect.width = input.actualWidth;
+                        paintRect.height = input.actualHeight;
+
+                        state.imgAdjust = !minerva.Size.isEqual(paintRect, input.renderSize);
+
+                        if (input.stretch === 0 /* None */)
+                            minerva.Rect.union(paintRect, imgRect);
 
                         return true;
                     }
@@ -5738,45 +5747,18 @@ var minerva;
         (function (image) {
             (function (render) {
                 (function (tapins) {
-                    function calcMetrics(input, state, output, ctx, region, tree) {
-                        var source = input.source;
-                        if (!input.source)
-                            return true;
-
-                        return true;
-                    }
-                    tapins.calcMetrics = calcMetrics;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(image.render || (image.render = {}));
-            var render = image.render;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (controls) {
-        (function (image) {
-            (function (render) {
-                (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
                         var source = input.source;
-                        if (!source)
+                        if (!source || source.pixelWidth === 0 || source.pixelHeight === 0)
                             return true;
 
-                        if (source.pixelWidth === 0 || source.pixelHeight === 0) {
-                            source.unlock();
-                            return true;
-                        }
-
+                        source.lock();
                         ctx.save();
 
                         ctx.pretransformMatrix(input.imgXform);
                         ctx.raw.drawImage(source.image, 0, 0);
-                        ctx.restore();
 
+                        ctx.restore();
                         source.unlock();
 
                         return true;

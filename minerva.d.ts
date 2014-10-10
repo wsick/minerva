@@ -1280,17 +1280,17 @@ declare module minerva.controls.image.measure.tapins {
     function doOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.image.processdown {
-    interface IInput extends core.processdown.IInput {
+    interface IInput extends core.processdown.IInput, core.helpers.ISized {
         source: IImageSource;
         stretch: Stretch;
         imgXform: number[];
         overlap: RectOverlap;
+        renderSize: Size;
     }
     interface IState extends core.processdown.IState {
         imgRect: Rect;
         paintRect: Rect;
         calcImageMetrics: boolean;
-        stretched: Rect;
         imgAdjust: boolean;
     }
     interface IOutput extends core.processdown.IOutput {
@@ -1341,9 +1341,6 @@ declare module minerva.controls.image.render {
     class ImageRenderPipeDef extends core.render.RenderPipeDef {
         constructor();
     }
-}
-declare module minerva.controls.image.render.tapins {
-    function calcMetrics(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.image.render.tapins {
     function doRender(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;

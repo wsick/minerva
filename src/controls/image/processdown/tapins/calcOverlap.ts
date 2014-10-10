@@ -7,11 +7,11 @@ module minerva.controls.image.processdown.tapins {
             var paint = state.paintRect;
             Rect.roundOut(paint);
 
-            var stretched = state.stretched;
-            Rect.copyTo(state.imgRect, stretched);
-            Rect.transform(stretched, output.imgXform);
-            Rect.roundIn(stretched);
-            output.overlap = Rect.rectIn(paint, stretched);
+            var imgRect = state.imgRect;
+            Rect.transform(imgRect, output.imgXform);
+            Rect.roundIn(imgRect);
+
+            output.overlap = Rect.rectIn(paint, imgRect);
         }
 
         return true;

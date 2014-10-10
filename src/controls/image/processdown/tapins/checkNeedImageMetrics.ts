@@ -10,16 +10,7 @@ module minerva.controls.image.processdown.tapins {
         var imgRect = state.imgRect;
         imgRect.x = imgRect.y = imgRect.width = imgRect.height = 0;
 
-        var source = input.source;
-        if (!source)
-            return true;
-
-        source.lock();
-        imgRect.width = source.pixelWidth;
-        imgRect.height = source.pixelHeight;
-        source.unlock();
-
-        state.calcImageMetrics = true;
+        state.calcImageMetrics = !!input.source;
         return true;
     }
 }

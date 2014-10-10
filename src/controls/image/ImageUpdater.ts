@@ -8,6 +8,7 @@ module minerva.controls.image {
         init () {
             this.setMeasurePipe(singleton(measure.ImageMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.ImageArrangePipeDef))
+                .setProcessDownPipe(singleton(processdown.ImageProcessDownPipeDef))
                 .setProcessUpPipe(singleton(processup.ImageProcessUpPipeDef))
                 .setRenderPipe(singleton(render.ImageRenderPipeDef));
 
@@ -19,7 +20,7 @@ module minerva.controls.image {
 
             super.init();
         }
-        
+
         //TODO: Hit Testing
         /*
          InsideObject (ctx: RenderContextEx, x: number, y: number) {

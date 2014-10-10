@@ -1,16 +1,16 @@
 module minerva.controls.image.processdown {
-    export interface IInput extends core.processdown.IInput {
+    export interface IInput extends core.processdown.IInput, core.helpers.ISized {
         source: IImageSource;
         stretch: Stretch;
         imgXform: number[];
         overlap: RectOverlap;
+        renderSize: Size;
     }
     export interface IState extends core.processdown.IState {
         imgRect: Rect;
         paintRect: Rect;
         calcImageMetrics: boolean;
-        stretched: Rect;
-        imgAdjust: boolean;
+        imgAdjust: boolean; //TODO: This may be overkill, requires more investigation
     }
     export interface IOutput extends core.processdown.IOutput {
         imgXform: number[];
@@ -32,7 +32,6 @@ module minerva.controls.image.processdown {
             state.imgRect = new Rect();
             state.paintRect = new Rect();
             state.calcImageMetrics = false;
-            state.stretched = new Rect();
             state.imgAdjust = false;
             return state;
         }
