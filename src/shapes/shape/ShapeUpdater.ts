@@ -12,8 +12,9 @@ module minerva.shapes.shape {
             this.setMeasurePipe(singleton(measure.ShapeMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.ShapeArrangePipeDef))
                 .setRenderPipe(singleton(render.ShapeRenderPipeDef))
-                .setSizingPipe(singleton(sizing.ShapeSizingPipeDef));
-            //TODO: Process Up Pipe (compute extents)
+                .setSizingPipe(singleton(sizing.ShapeSizingPipeDef))
+                //TODO: Process Up Pipe (compute extents)
+                .setHitTestPipe(singleton(hittest.ShapeHitTestPipeDef))
 
             var assets = this.assets;
             assets.shape = this.createShape();

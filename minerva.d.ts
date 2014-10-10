@@ -1793,6 +1793,17 @@ declare module minerva.shapes.shape.arrange {
         constructor();
     }
 }
+declare module minerva.shapes.shape.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IShapeUpdaterAssets;
+    }
+    class ShapeHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
 declare module minerva.shapes.shape.measure {
     class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();

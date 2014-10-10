@@ -4645,9 +4645,7 @@ var minerva;
 
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
-                        var bg = data.assets.background;
-                        var bb = data.assets.borderBrush;
-                        if ((!bg || bg.isTransparent()) && (!bb || bb.isTransparent())) {
+                        if (!data.assets.background && !data.assets.borderBrush) {
                             hitList.shift();
                             ctx.restore();
                             return false;
@@ -6195,8 +6193,7 @@ var minerva;
 
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
-                        var bg = data.assets.background;
-                        if (!bg || bg.isTransparent()) {
+                        if (!data.assets.background) {
                             hitList.shift();
                             ctx.restore();
                             return false;
@@ -7766,7 +7763,7 @@ var minerva;
                 __extends(ShapeUpdater, _super);
                 function ShapeUpdater() {
                     _super.call(this);
-                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef));
+                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef)).setHitTestPipe(minerva.singleton(shape.hittest.ShapeHitTestPipeDef));
 
                     var assets = this.assets;
                     assets.shape = this.createShape();
@@ -7815,6 +7812,40 @@ var minerva;
                 arrange.ShapeArrangePipeDef = ShapeArrangePipeDef;
             })(shape.arrange || (shape.arrange = {}));
             var arrange = shape.arrange;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (hittest) {
+                var ShapeHitTestPipeDef = (function (_super) {
+                    __extends(ShapeHitTestPipeDef, _super);
+                    function ShapeHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return ShapeHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.ShapeHitTestPipeDef = ShapeHitTestPipeDef;
+
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        if (!data.assets.shape.fill && !data.assets.shape.stroke) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(shape.hittest || (shape.hittest = {}));
+            var hittest = shape.hittest;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
