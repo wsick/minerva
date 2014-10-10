@@ -20,7 +20,8 @@ module minerva.controls.image.processdown {
     export class ImageProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
         constructor () {
             super();
-            this.addTapinBefore('propagateDirtyToChildren', 'checkNeedImageMetrics', tapins.checkNeedImageMetrics)
+            //TODO: Should we merge the overlap into the layout clip for render?
+            this.addTapinBefore('processLayoutClip', 'checkNeedImageMetrics', tapins.checkNeedImageMetrics)
                 .addTapinAfter('checkNeedImageMetrics', 'prepareImageMetrics', tapins.prepareImageMetrics)
                 .addTapinAfter('prepareImageMetrics', 'calcImageTransform', tapins.calcImageTransform)
                 .addTapinAfter('calcImageTransform', 'calcOverlap', tapins.calcOverlap);

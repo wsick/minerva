@@ -5461,7 +5461,8 @@ var minerva;
                     __extends(ImageProcessDownPipeDef, _super);
                     function ImageProcessDownPipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('propagateDirtyToChildren', 'checkNeedImageMetrics', processdown.tapins.checkNeedImageMetrics).addTapinAfter('checkNeedImageMetrics', 'prepareImageMetrics', processdown.tapins.prepareImageMetrics).addTapinAfter('prepareImageMetrics', 'calcImageTransform', processdown.tapins.calcImageTransform).addTapinAfter('calcImageTransform', 'calcOverlap', processdown.tapins.calcOverlap);
+
+                        this.addTapinBefore('processLayoutClip', 'checkNeedImageMetrics', processdown.tapins.checkNeedImageMetrics).addTapinAfter('checkNeedImageMetrics', 'prepareImageMetrics', processdown.tapins.prepareImageMetrics).addTapinAfter('prepareImageMetrics', 'calcImageTransform', processdown.tapins.calcImageTransform).addTapinAfter('calcImageTransform', 'calcOverlap', processdown.tapins.calcOverlap);
                     }
                     ImageProcessDownPipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
@@ -5510,6 +5511,43 @@ var minerva;
                     function calcImageTransform(input, state, output, vpinput, tree) {
                         if (!state.calcImageMetrics)
                             return true;
+
+                        var w = state.paintRect.width;
+                        var h = state.paintRect.height;
+                        var sw = state.imgRect.width;
+                        var sh = state.imgRect.height;
+
+                        var sx = w / sw;
+                        var sy = h / sh;
+                        if (w === 0)
+                            sx = 1.0;
+                        if (h === 0)
+                            sy = 1.0;
+
+                        var xform = output.imgXform;
+                        if (input.stretch === 1 /* Fill */) {
+                            mat3.createScale(sx, sy, xform);
+                            return true;
+                        }
+
+                        var scale = 1.0;
+                        switch (input.stretch) {
+                            case 2 /* Uniform */:
+                                scale = sx < sy ? sx : sy;
+                                break;
+                            case 3 /* UniformToFill */:
+                                scale = sx < sy ? sy : sx;
+                                break;
+                            case 0 /* None */:
+                                break;
+                        }
+
+                        var dx = (w - (scale * sw)) / 2;
+
+                        var dy = (h - (scale * sh)) / 2;
+
+                        mat3.createScale(scale, scale, xform);
+                        mat3.translate(xform, dx, dy);
 
                         return true;
                     }

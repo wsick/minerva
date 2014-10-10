@@ -92,6 +92,7 @@ module minerva.controls.image.processdown.tests {
     }
 
     QUnit.test("checkNeedImageMetrics", (assert) => {
+        //DOF: dirtyFlags, source.pixelWidth, source.pixelHeight
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
@@ -107,6 +108,7 @@ module minerva.controls.image.processdown.tests {
         input.source = mock.imageSource();
         input.source.pixelWidth = 50;
         input.source.pixelHeight = 100;
+        assert.strictEqual((<any>input.source).islocked, false);
         assert.ok(tapins.checkNeedImageMetrics(input, state, output, vpinput, null));
         assert.strictEqual(state.calcImageMetrics, true);
         assert.strictEqual((<any>input.source).islocked, false);
@@ -123,15 +125,35 @@ module minerva.controls.image.processdown.tests {
     });
 
     QUnit.test("calcImageTransform", (assert) => {
+        //DOF: Stretch, imgRect, paintRect
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
         var vpinput = mock.input();
 
-        assert.ok(true);
+        state.calcImageMetrics = true;
+
+        input.stretch = Stretch.None;
+        state.paintRect = new Rect(0, 0, 100, 200);
+        state.imgRect = new Rect(25, 25, 50, 50);
+        assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
+        assert.deepEqual(typedToArray(output.imgXform), [1, 0, 25, 0, 1, 75, 0, 0, 1]);
+
+        input.stretch = Stretch.Uniform;
+        assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
+        assert.deepEqual(typedToArray(output.imgXform), [2, 0, 0, 0, 2, 50, 0, 0, 1]);
+
+        input.stretch = Stretch.UniformToFill;
+        assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
+        assert.deepEqual(typedToArray(output.imgXform), [4, 0, -50, 0, 4, 0, 0, 0, 1]);
+
+        input.stretch = Stretch.Fill;
+        assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
+        assert.deepEqual(typedToArray(output.imgXform), [2, 0, 0, 0, 4, 0, 0, 0, 1]);
     });
 
     QUnit.test("calcOverlap", (assert) => {
+        //DOF: imgRect, paintRect, imgXform
         var input = mock.input();
         var state = mock.state();
         var output = mock.output();
