@@ -8,7 +8,7 @@ module minerva.controls.control {
 
         init () {
             this.setTree(new ControlUpdaterTree())
-                .setHitTestPipe(new hittest.ControlHitTestPipeDef());
+                .setHitTestPipe(singleton(hittest.ControlHitTestPipeDef));
 
             this.assets.isEnabled = true;
 
