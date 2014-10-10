@@ -1,4 +1,4 @@
-module minerva.controls.image.hittest {
+module minerva.controls.image.hittest.tapins {
     export function insideStretch (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
         //TODO: Implement
         /*

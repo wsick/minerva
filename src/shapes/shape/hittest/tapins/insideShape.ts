@@ -1,4 +1,4 @@
-module minerva.shapes.shape.hittest {
+module minerva.shapes.shape.hittest.tapins {
     export function insideShape (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
         //TODO: Implement insideShape
         /*
