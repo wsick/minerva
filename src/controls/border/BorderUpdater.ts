@@ -10,9 +10,10 @@ module minerva.controls.border {
 
         init () {
             this.setTree(new BorderUpdaterTree())
-                .setMeasurePipe(singleton(border.measure.BorderMeasurePipeDef))
-                .setArrangePipe(singleton(border.arrange.BorderArrangePipeDef))
-                .setRenderPipe(singleton(core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+                .setMeasurePipe(singleton(measure.BorderMeasurePipeDef))
+                .setArrangePipe(singleton(arrange.BorderArrangePipeDef))
+                .setRenderPipe(singleton(core.render.RenderContext.hasFillRule ? render.BorderRenderPipeDef : render.ShimBorderRenderPipeDef))
+                .setHitTestPipe(singleton(hittest.BorderHitTestPipeDef));
 
             var assets = this.assets;
             assets.padding = new Thickness();

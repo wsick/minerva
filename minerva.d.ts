@@ -1085,6 +1085,17 @@ declare module minerva.controls.border.arrange {
     function preOverride(input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, finalRect: Rect): boolean;
     function doOverride(input: IInput, state: IState, output: IOutput, tree: BorderUpdaterTree, finalRect: Rect): boolean;
 }
+declare module minerva.controls.border.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IBorderUpdaterAssets;
+    }
+    class BorderHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
 declare module minerva.controls.border.measure {
     interface IInput extends core.measure.IInput {
         padding: Thickness;
@@ -1324,6 +1335,17 @@ declare module minerva.controls.image.arrange.tapins {
 }
 declare module minerva.controls.image.arrange.tapins {
     function invalidateMetrics(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.image.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IImageUpdaterAssets;
+    }
+    class ImageHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
 }
 declare module minerva.controls.image.measure {
     interface IInput extends core.measure.IInput {
@@ -1620,6 +1642,17 @@ declare module minerva.controls.stackpanel.measure.tapins {
 }
 declare module minerva.controls.stackpanel.measure.tapins {
     function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.textblock.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: core.IUpdaterAssets;
+    }
+    class TextBlockHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
 }
 declare module minerva.controls.usercontrol {
     interface IUserControlUpdaterAssets extends control.IControlUpdaterAssets, measure.IInput, arrange.IInput {

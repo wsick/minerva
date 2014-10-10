@@ -3065,7 +3065,9 @@ var minerva;
                     if (data.hitChildren)
                         return true;
 
-                    return true;
+                    hitList.shift();
+                    ctx.restore();
+                    return false;
                 }
                 tapins.canHitInside = canHitInside;
             })(hittest.tapins || (hittest.tapins = {}));
@@ -4528,7 +4530,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 BorderUpdater.prototype.init = function () {
-                    this.setTree(new border.BorderUpdaterTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef));
+                    this.setTree(new border.BorderUpdaterTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef)).setHitTestPipe(minerva.singleton(border.hittest.BorderHitTestPipeDef));
 
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();
@@ -4621,6 +4623,42 @@ var minerva;
                 arrange.doOverride = doOverride;
             })(border.arrange || (border.arrange = {}));
             var arrange = border.arrange;
+        })(controls.border || (controls.border = {}));
+        var border = controls.border;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (border) {
+            (function (hittest) {
+                var BorderHitTestPipeDef = (function (_super) {
+                    __extends(BorderHitTestPipeDef, _super);
+                    function BorderHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return BorderHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.BorderHitTestPipeDef = BorderHitTestPipeDef;
+
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        var bg = data.assets.background;
+                        var bb = data.assets.borderBrush;
+                        if ((!bg || bg.isTransparent()) && (!bb || bb.isTransparent())) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(border.hittest || (border.hittest = {}));
+            var hittest = border.hittest;
         })(controls.border || (controls.border = {}));
         var border = controls.border;
     })(minerva.controls || (minerva.controls = {}));
@@ -5451,7 +5489,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 ImageUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setProcessDownPipe(minerva.singleton(image.processdown.ImageProcessDownPipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setProcessDownPipe(minerva.singleton(image.processdown.ImageProcessDownPipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef)).setHitTestPipe(minerva.singleton(image.hittest.ImageHitTestPipeDef));
 
                     var assets = this.assets;
                     assets.source = null;
@@ -5621,6 +5659,35 @@ var minerva;
                 var tapins = arrange.tapins;
             })(image.arrange || (image.arrange = {}));
             var arrange = image.arrange;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (hittest) {
+                var ImageHitTestPipeDef = (function (_super) {
+                    __extends(ImageHitTestPipeDef, _super);
+                    function ImageHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return ImageHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.ImageHitTestPipeDef = ImageHitTestPipeDef;
+
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(image.hittest || (image.hittest = {}));
+            var hittest = image.hittest;
         })(controls.image || (controls.image = {}));
         var image = controls.image;
     })(minerva.controls || (minerva.controls = {}));
@@ -6247,7 +6314,6 @@ var minerva;
                     if (!this.assets.isVisible || !vchild)
                         return false;
                     this.assets.isVisible = false;
-
                     var surface = this.tree.surface;
                     if (!surface)
                         return false;
@@ -6260,7 +6326,6 @@ var minerva;
                     if (this.assets.isVisible || !vchild)
                         return false;
                     this.assets.isVisible = true;
-
                     var surface = this.tree.surface;
                     if (!surface)
                         return false;
@@ -7106,6 +7171,35 @@ var minerva;
             var measure = stackpanel.measure;
         })(controls.stackpanel || (controls.stackpanel = {}));
         var stackpanel = controls.stackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textblock) {
+            (function (hittest) {
+                var TextBlockHitTestPipeDef = (function (_super) {
+                    __extends(TextBlockHitTestPipeDef, _super);
+                    function TextBlockHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return TextBlockHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.TextBlockHitTestPipeDef = TextBlockHitTestPipeDef;
+
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(textblock.hittest || (textblock.hittest = {}));
+            var hittest = textblock.hittest;
+        })(controls.textblock || (controls.textblock = {}));
+        var textblock = controls.textblock;
     })(minerva.controls || (minerva.controls = {}));
     var controls = minerva.controls;
 })(minerva || (minerva = {}));
