@@ -1,5 +1,5 @@
 module minerva.controls.usercontrol {
-    export interface IUserControlUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    export interface IUserControlUpdaterAssets extends control.IControlUpdaterAssets, measure.IInput, arrange.IInput {
     }
 
     export class UserControlUpdater extends controls.control.ControlUpdater {

@@ -5369,7 +5369,9 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 ControlUpdater.prototype.init = function () {
-                    this.setTree(new control.ControlUpdaterTree());
+                    this.setTree(new control.ControlUpdaterTree()).setHitTestPipe(new control.hittest.ControlHitTestPipeDef());
+
+                    this.assets.isEnabled = true;
 
                     _super.prototype.init.call(this);
                 };
@@ -5395,6 +5397,49 @@ var minerva;
                 return ControlUpdaterTree;
             })(minerva.core.UpdaterTree);
             control.ControlUpdaterTree = ControlUpdaterTree;
+        })(controls.control || (controls.control = {}));
+        var control = controls.control;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (control) {
+            (function (hittest) {
+                var ControlHitTestPipeDef = (function (_super) {
+                    __extends(ControlHitTestPipeDef, _super);
+                    function ControlHitTestPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('canHit', 'shouldSkip', tapins.shouldSkip).replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return ControlHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.ControlHitTestPipeDef = ControlHitTestPipeDef;
+
+                (function (tapins) {
+                    function shouldSkip(data, pos, hitList, ctx) {
+                        if (data.assets.isEnabled)
+                            return true;
+                        hitList.shift();
+                        ctx.restore();
+                        return false;
+                    }
+                    tapins.shouldSkip = shouldSkip;
+
+                    function canHitInside(data, pos, hitList, ctx) {
+                        if (data.hitChildren)
+                            return true;
+
+                        hitList.shift();
+                        ctx.restore();
+                        return false;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(control.hittest || (control.hittest = {}));
+            var hittest = control.hittest;
         })(controls.control || (controls.control = {}));
         var control = controls.control;
     })(minerva.controls || (minerva.controls = {}));

@@ -1255,13 +1255,29 @@ declare module minerva.controls.contentpresenter {
     }
 }
 declare module minerva.controls.control {
+    interface IControlUpdaterAssets extends core.IUpdaterAssets {
+        isEnabled: boolean;
+    }
     class ControlUpdater extends core.Updater {
+        public assets: IControlUpdaterAssets;
         public init(): void;
     }
 }
 declare module minerva.controls.control {
     class ControlUpdaterTree extends core.UpdaterTree {
         constructor();
+    }
+}
+declare module minerva.controls.control.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IControlUpdaterAssets;
+    }
+    class ControlHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function shouldSkip(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
     }
 }
 declare module minerva.controls.image {
@@ -1595,7 +1611,7 @@ declare module minerva.controls.stackpanel.measure.tapins {
     function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.usercontrol {
-    interface IUserControlUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    interface IUserControlUpdaterAssets extends control.IControlUpdaterAssets, measure.IInput, arrange.IInput {
     }
     class UserControlUpdater extends control.ControlUpdater {
         public assets: IUserControlUpdaterAssets;

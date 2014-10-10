@@ -1,10 +1,16 @@
 module minerva.controls.control {
-    export class ControlUpdater extends core.Updater {
-        init () {
-            this.setTree(new ControlUpdaterTree());
+    export interface IControlUpdaterAssets extends core.IUpdaterAssets {
+        isEnabled: boolean;
+    }
 
-            //TODO: Use for hit-testing
-            //this.assets.isNeverInsideObject = true;
+    export class ControlUpdater extends core.Updater {
+        assets: IControlUpdaterAssets;
+
+        init () {
+            this.setTree(new ControlUpdaterTree())
+                .setHitTestPipe(new hittest.ControlHitTestPipeDef());
+
+            this.assets.isEnabled = true;
 
             super.init();
         }
