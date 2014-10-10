@@ -20,6 +20,12 @@ module minerva.controls.image {
             super.init();
         }
 
+        invalidateMetrics (): ImageUpdater {
+            this.assets.dirtyFlags |= DirtyFlags.ImageMetrics;
+            core.Updater.$$addDownDirty(this);
+            return this;
+        }
+
         //TODO: Hit Testing
         /*
          InsideObject (ctx: RenderContextEx, x: number, y: number) {

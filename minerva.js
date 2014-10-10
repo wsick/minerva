@@ -5176,6 +5176,12 @@ var minerva;
 
                     _super.prototype.init.call(this);
                 };
+
+                ImageUpdater.prototype.invalidateMetrics = function () {
+                    this.assets.dirtyFlags |= minerva.DirtyFlags.ImageMetrics;
+                    minerva.core.Updater.$$addDownDirty(this);
+                    return this;
+                };
                 return ImageUpdater;
             })(minerva.core.Updater);
             image.ImageUpdater = ImageUpdater;
@@ -5193,7 +5199,7 @@ var minerva;
                     __extends(ImageArrangePipeDef, _super);
                     function ImageArrangePipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('doOverride', 'calcImageBounds', arrange.tapins.calcImageBounds).addTapinBefore('doOverride', 'calcStretch', arrange.tapins.calcStretch).replaceTapin('doOverride', arrange.tapins.doOverride);
+                        this.addTapinAfter('invalidateFuture', 'invalidateMetrics', arrange.tapins.invalidateMetrics).addTapinBefore('doOverride', 'calcImageBounds', arrange.tapins.calcImageBounds).addTapinBefore('doOverride', 'calcStretch', arrange.tapins.calcStretch).replaceTapin('doOverride', arrange.tapins.doOverride);
                     }
                     ImageArrangePipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
@@ -5306,6 +5312,26 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(image.arrange || (image.arrange = {}));
+            var arrange = image.arrange;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (arrange) {
+                (function (tapins) {
+                    function invalidateMetrics(input, state, output, tree, finalRect) {
+                        output.dirtyFlags |= minerva.DirtyFlags.ImageMetrics;
+                        return true;
+                    }
+                    tapins.invalidateMetrics = invalidateMetrics;
                 })(arrange.tapins || (arrange.tapins = {}));
                 var tapins = arrange.tapins;
             })(image.arrange || (image.arrange = {}));

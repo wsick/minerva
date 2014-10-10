@@ -1229,6 +1229,7 @@ declare module minerva.controls.image {
     class ImageUpdater extends core.Updater {
         public assets: IImageUpdaterAssets;
         public init(): void;
+        public invalidateMetrics(): ImageUpdater;
     }
 }
 declare module minerva.controls.image.arrange {
@@ -1254,6 +1255,9 @@ declare module minerva.controls.image.arrange.tapins {
 }
 declare module minerva.controls.image.arrange.tapins {
     function doOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.image.arrange.tapins {
+    function invalidateMetrics(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.image.measure {
     interface IInput extends core.measure.IInput {

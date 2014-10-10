@@ -12,7 +12,8 @@ module minerva.controls.image.arrange {
     export class ImageArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor () {
             super();
-            this.addTapinBefore('doOverride', 'calcImageBounds', tapins.calcImageBounds)
+            this.addTapinAfter('invalidateFuture', 'invalidateMetrics', tapins.invalidateMetrics)
+                .addTapinBefore('doOverride', 'calcImageBounds', tapins.calcImageBounds)
                 .addTapinBefore('doOverride', 'calcStretch', tapins.calcStretch)
                 .replaceTapin('doOverride', tapins.doOverride);
         }
