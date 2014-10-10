@@ -11,10 +11,11 @@ module minerva.controls.panel {
             assets.background = null;
 
             this.setTree(new PanelUpdaterTree())
-                .setMeasurePipe(singleton(panel.measure.PanelMeasurePipeDef))
-                .setArrangePipe(singleton(panel.arrange.PanelArrangePipeDef))
-                .setProcessUpPipe(singleton(panel.processup.PanelProcessUpPipeDef))
-                .setRenderPipe(singleton(panel.render.PanelRenderPipeDef));
+                .setMeasurePipe(singleton(measure.PanelMeasurePipeDef))
+                .setArrangePipe(singleton(arrange.PanelArrangePipeDef))
+                .setProcessUpPipe(singleton(processup.PanelProcessUpPipeDef))
+                .setRenderPipe(singleton(render.PanelRenderPipeDef))
+                .setHitTestPipe(singleton(hittest.PanelHitTestPipeDef));
             super.init();
         }
 

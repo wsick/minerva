@@ -5073,7 +5073,7 @@ var minerva;
                     var assets = this.assets;
                     assets.background = null;
 
-                    this.setTree(new panel.PanelUpdaterTree()).setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef));
+                    this.setTree(new panel.PanelUpdaterTree()).setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef)).setHitTestPipe(minerva.singleton(panel.hittest.PanelHitTestPipeDef));
                     _super.prototype.init.call(this);
                 };
 
@@ -6173,6 +6173,41 @@ var minerva;
                 var zi2 = upd2.getAttachedValue("Panel.ZIndex") || 0;
                 return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
             }
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (hittest) {
+                var PanelHitTestPipeDef = (function (_super) {
+                    __extends(PanelHitTestPipeDef, _super);
+                    function PanelHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return PanelHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.PanelHitTestPipeDef = PanelHitTestPipeDef;
+
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        var bg = data.assets.background;
+                        if (!bg || bg.isTransparent()) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(panel.hittest || (panel.hittest = {}));
+            var hittest = panel.hittest;
         })(controls.panel || (controls.panel = {}));
         var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));

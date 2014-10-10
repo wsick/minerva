@@ -1435,6 +1435,17 @@ declare module minerva.controls.panel {
         public onChildDetached(child: core.Updater): void;
     }
 }
+declare module minerva.controls.panel.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IPanelUpdaterAssets;
+    }
+    class PanelHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
 declare module minerva.controls.panel.processup {
     interface IInput extends core.processup.IInput {
         background: IBrush;
