@@ -3,15 +3,8 @@ module minerva.core.hittest.tapins {
         if (data.hitChildren)
             return true;
 
-        //TODO: Handle in overrides
-        /*
-        if (!this.CanHitElement || !this.IsNeverInsideObject) {
-            hitList.shift();
-            ctx.restore();
-            return false;
-        }
-        */
-
-        return true;
+        hitList.shift();
+        ctx.restore();
+        return false;
     }
 }
