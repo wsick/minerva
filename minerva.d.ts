@@ -1317,19 +1317,6 @@ declare module minerva.controls.image.processdown.tapins {
 declare module minerva.controls.image.processdown.tapins {
     function prepareImageMetrics(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
 }
-declare module minerva.controls.image.processup {
-    interface IInput extends core.processup.IInput {
-    }
-    interface IState extends core.processup.IState {
-    }
-    class ImageProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
-        constructor();
-        public createState(): IState;
-    }
-}
-declare module minerva.controls.image.processup.tapins {
-    function calcActualSize(input: IInput, state: IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
-}
 declare module minerva.controls.image.render {
     interface IInput extends core.render.IInput {
         source: IImageSource;
