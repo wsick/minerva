@@ -12,8 +12,7 @@ module minerva.controls.panel.hittest {
 
     export module tapins {
         export function canHitInside (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
-            var bg = data.assets.background;
-            if (!bg || bg.isTransparent()) {
+            if (!data.assets.background) {
                 hitList.shift();
                 ctx.restore();
                 return false;
