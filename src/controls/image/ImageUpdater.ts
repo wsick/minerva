@@ -9,7 +9,8 @@ module minerva.controls.image {
             this.setMeasurePipe(singleton(measure.ImageMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.ImageArrangePipeDef))
                 .setProcessDownPipe(singleton(processdown.ImageProcessDownPipeDef))
-                .setRenderPipe(singleton(render.ImageRenderPipeDef));
+                .setRenderPipe(singleton(render.ImageRenderPipeDef))
+                .setHitTestPipe(singleton(hittest.ImageHitTestPipeDef));
 
             var assets = this.assets;
             assets.source = null;
