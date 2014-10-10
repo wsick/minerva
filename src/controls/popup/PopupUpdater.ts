@@ -11,7 +11,8 @@ module minerva.controls.popup {
         init () {
             this.setTree(new PopupUpdaterTree())
                 .setProcessDownPipe(singleton(processdown.PopupProcessDownPipeDef))
-                .setProcessUpPipe(singleton(processup.PopupProcessUpPipeDef));
+                .setProcessUpPipe(singleton(processup.PopupProcessUpPipeDef))
+                .setHitTestPipe(singleton(hittest.PopupHitTestPipeDef));
 
             var assets = this.assets;
             assets.horizontalOffset = 0;
@@ -43,8 +44,6 @@ module minerva.controls.popup {
             if (!this.assets.isVisible || !vchild)
                 return false;
             this.assets.isVisible = false;
-            //TODO: Use for hit testing
-            //this.LayoutUpdater.ShouldSkipHitTest = true;
             var surface = this.tree.surface;
             if (!surface)
                 return false;
@@ -57,8 +56,6 @@ module minerva.controls.popup {
             if (this.assets.isVisible || !vchild)
                 return false;
             this.assets.isVisible = true;
-            //TODO: Use for hit testing
-            //this.LayoutUpdater.ShouldSkipHitTest = false;
             var surface = this.tree.surface;
             if (!surface)
                 return false;

@@ -1463,6 +1463,17 @@ declare module minerva.controls.popup {
         public walk(direction?: WalkDirection): IWalker<core.Updater>;
     }
 }
+declare module minerva.controls.popup.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IPopupUpdaterAssets;
+    }
+    class PopupHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function shouldSkip(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
 declare module minerva.controls.popup.processdown {
     interface IInput extends core.processdown.IInput {
         horizontalOffset: number;

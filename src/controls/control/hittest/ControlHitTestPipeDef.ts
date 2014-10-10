@@ -13,11 +13,7 @@ module minerva.controls.control.hittest {
 
     export module tapins {
         export function shouldSkip (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
-            if (data.assets.isEnabled)
-                return true;
-            hitList.shift();
-            ctx.restore();
-            return false;
+            return !!data.assets.isEnabled;
         }
 
         export function canHitInside (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {

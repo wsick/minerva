@@ -5369,7 +5369,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 ControlUpdater.prototype.init = function () {
-                    this.setTree(new control.ControlUpdaterTree()).setHitTestPipe(new control.hittest.ControlHitTestPipeDef());
+                    this.setTree(new control.ControlUpdaterTree()).setHitTestPipe(minerva.singleton(control.hittest.ControlHitTestPipeDef));
 
                     this.assets.isEnabled = true;
 
@@ -5419,11 +5419,7 @@ var minerva;
 
                 (function (tapins) {
                     function shouldSkip(data, pos, hitList, ctx) {
-                        if (data.assets.isEnabled)
-                            return true;
-                        hitList.shift();
-                        ctx.restore();
-                        return false;
+                        return !!data.assets.isEnabled;
                     }
                     tapins.shouldSkip = shouldSkip;
 
@@ -6219,7 +6215,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 PopupUpdater.prototype.init = function () {
-                    this.setTree(new popup.PopupUpdaterTree()).setProcessDownPipe(minerva.singleton(popup.processdown.PopupProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(popup.processup.PopupProcessUpPipeDef));
+                    this.setTree(new popup.PopupUpdaterTree()).setProcessDownPipe(minerva.singleton(popup.processdown.PopupProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(popup.processup.PopupProcessUpPipeDef)).setHitTestPipe(minerva.singleton(popup.hittest.PopupHitTestPipeDef));
 
                     var assets = this.assets;
                     assets.horizontalOffset = 0;
@@ -6351,6 +6347,35 @@ var minerva;
                 return PopupUpdaterTree;
             })(minerva.core.UpdaterTree);
             popup.PopupUpdaterTree = PopupUpdaterTree;
+        })(controls.popup || (controls.popup = {}));
+        var popup = controls.popup;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (popup) {
+            (function (hittest) {
+                var PopupHitTestPipeDef = (function (_super) {
+                    __extends(PopupHitTestPipeDef, _super);
+                    function PopupHitTestPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('canHit', 'shouldSkip', tapins.shouldSkip);
+                    }
+                    return PopupHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.PopupHitTestPipeDef = PopupHitTestPipeDef;
+
+                (function (tapins) {
+                    function shouldSkip(data, pos, hitList, ctx) {
+                        return !!data.assets.isVisible;
+                    }
+                    tapins.shouldSkip = shouldSkip;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(popup.hittest || (popup.hittest = {}));
+            var hittest = popup.hittest;
         })(controls.popup || (controls.popup = {}));
         var popup = controls.popup;
     })(minerva.controls || (minerva.controls = {}));
