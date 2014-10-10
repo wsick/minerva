@@ -8,8 +8,9 @@ module minerva {
         LayoutClip = 1 << 5,
         RenderVisibility = 1 << 6,
         HitTestVisibility = 1 << 7,
-        Measure = 1 << 8,
-        Arrange = 1 << 9,
+        ImageMetrics = 1 << 8,
+        Measure = 1 << 9,
+        Arrange = 1 << 10,
         Bounds = 1 << 20,
         NewBounds = 1 << 21,
         Invalidate = 1 << 22,
@@ -17,7 +18,8 @@ module minerva {
         InDownDirtyList = 1 << 31,
 
         DownDirtyState = Transform | LocalTransform | LocalProjection
-            | Clip | LocalClip | LayoutClip | RenderVisibility | HitTestVisibility,
+            | Clip | LocalClip | LayoutClip | RenderVisibility
+            | HitTestVisibility | ImageMetrics,
         UpDirtyState = Bounds | NewBounds | Invalidate,
 
         PropagateDown = RenderVisibility | HitTestVisibility | Transform | LayoutClip

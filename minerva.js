@@ -104,15 +104,16 @@ var minerva;
         DirtyFlags[DirtyFlags["LayoutClip"] = 1 << 5] = "LayoutClip";
         DirtyFlags[DirtyFlags["RenderVisibility"] = 1 << 6] = "RenderVisibility";
         DirtyFlags[DirtyFlags["HitTestVisibility"] = 1 << 7] = "HitTestVisibility";
-        DirtyFlags[DirtyFlags["Measure"] = 1 << 8] = "Measure";
-        DirtyFlags[DirtyFlags["Arrange"] = 1 << 9] = "Arrange";
+        DirtyFlags[DirtyFlags["ImageMetrics"] = 1 << 8] = "ImageMetrics";
+        DirtyFlags[DirtyFlags["Measure"] = 1 << 9] = "Measure";
+        DirtyFlags[DirtyFlags["Arrange"] = 1 << 10] = "Arrange";
         DirtyFlags[DirtyFlags["Bounds"] = 1 << 20] = "Bounds";
         DirtyFlags[DirtyFlags["NewBounds"] = 1 << 21] = "NewBounds";
         DirtyFlags[DirtyFlags["Invalidate"] = 1 << 22] = "Invalidate";
         DirtyFlags[DirtyFlags["InUpDirtyList"] = 1 << 30] = "InUpDirtyList";
         DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
 
-        DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility] = "DownDirtyState";
+        DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ImageMetrics] = "DownDirtyState";
         DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.NewBounds | DirtyFlags.Invalidate] = "UpDirtyState";
 
         DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
@@ -931,13 +932,23 @@ var minerva;
             dest.height = src.height;
         };
 
-        Rect.roundOut = function (r) {
-            var x = Math.floor(r.x);
-            var y = Math.floor(r.y);
-            r.width = Math.ceil(r.x + r.width) - x;
-            r.height = Math.ceil(r.y + r.height) - y;
-            r.x = x;
-            r.y = y;
+        Rect.roundOut = function (dest) {
+            var x = Math.floor(dest.x);
+            var y = Math.floor(dest.y);
+            dest.width = Math.ceil(dest.x + dest.width) - x;
+            dest.height = Math.ceil(dest.y + dest.height) - y;
+            dest.x = x;
+            dest.y = y;
+        };
+
+        Rect.roundIn = function (dest) {
+            var x = Math.ceil(dest.x);
+            var y = Math.ceil(dest.y);
+            dest.width = Math.floor(dest.x + dest.width) - Math.ceil(dest.x);
+            dest.height = Math.floor(dest.y + dest.height) - Math.ceil(dest.y);
+            dest.x = x;
+            dest.y = y;
+            return dest;
         };
 
         Rect.intersection = function (dest, rect2) {
@@ -5160,6 +5171,8 @@ var minerva;
                     var assets = this.assets;
                     assets.source = null;
                     assets.stretch = 2 /* Uniform */;
+                    assets.overlap = 1 /* In */;
+                    assets.imgXform = mat3.identity();
 
                     _super.prototype.init.call(this);
                 };
@@ -5443,6 +5456,171 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (image) {
+            (function (processdown) {
+                var ImageProcessDownPipeDef = (function (_super) {
+                    __extends(ImageProcessDownPipeDef, _super);
+                    function ImageProcessDownPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('propagateDirtyToChildren', 'checkNeedImageMetrics', processdown.tapins.checkNeedImageMetrics).addTapinAfter('checkNeedImageMetrics', 'prepareImageMetrics', processdown.tapins.prepareImageMetrics).addTapinAfter('prepareImageMetrics', 'calcImageTransform', processdown.tapins.calcImageTransform).addTapinAfter('calcImageTransform', 'calcOverlap', processdown.tapins.calcOverlap);
+                    }
+                    ImageProcessDownPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.imgRect = new minerva.Rect();
+                        state.paintRect = new minerva.Rect();
+                        state.calcImageMetrics = false;
+                        state.stretched = new minerva.Rect();
+                        state.imgAdjust = false;
+                        return state;
+                    };
+
+                    ImageProcessDownPipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.imgXform = mat3.identity();
+                        output.overlap = 1 /* In */;
+                        return output;
+                    };
+
+                    ImageProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
+                        _super.prototype.prepare.call(this, input, state, output, vpinput, tree);
+                        output.overlap = input.overlap;
+                        mat3.set(input.imgXform, output.imgXform);
+                    };
+
+                    ImageProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
+                        _super.prototype.flush.call(this, input, state, output, vpinput, tree);
+                        input.overlap = output.overlap;
+                        mat3.set(output.imgXform, input.imgXform);
+                    };
+                    return ImageProcessDownPipeDef;
+                })(minerva.core.processdown.ProcessDownPipeDef);
+                processdown.ImageProcessDownPipeDef = ImageProcessDownPipeDef;
+            })(image.processdown || (image.processdown = {}));
+            var processdown = image.processdown;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (processdown) {
+                (function (tapins) {
+                    function calcImageTransform(input, state, output, vpinput, tree) {
+                        if (!state.calcImageMetrics)
+                            return true;
+
+                        return true;
+                    }
+                    tapins.calcImageTransform = calcImageTransform;
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(image.processdown || (image.processdown = {}));
+            var processdown = image.processdown;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (processdown) {
+                (function (tapins) {
+                    function calcOverlap(input, state, output, vpinput, tree) {
+                        if (!state.calcImageMetrics)
+                            return true;
+
+                        if (input.stretch === 3 /* UniformToFill */ || state.imgAdjust) {
+                            var paint = state.paintRect;
+                            minerva.Rect.roundOut(paint);
+
+                            var stretched = state.stretched;
+                            minerva.Rect.copyTo(state.imgRect, stretched);
+                            minerva.Rect.transform(stretched, output.imgXform);
+                            minerva.Rect.roundIn(stretched);
+                            output.overlap = minerva.Rect.rectIn(paint, stretched);
+                        }
+
+                        return true;
+                    }
+                    tapins.calcOverlap = calcOverlap;
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(image.processdown || (image.processdown = {}));
+            var processdown = image.processdown;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (processdown) {
+                (function (tapins) {
+                    function checkNeedImageMetrics(input, state, output, vpinput, tree) {
+                        state.calcImageMetrics = false;
+                        if ((input.dirtyFlags & minerva.DirtyFlags.ImageMetrics) === 0)
+                            return true;
+
+                        mat3.identity(output.imgXform);
+                        output.overlap = 1 /* In */;
+
+                        var imgRect = state.imgRect;
+                        imgRect.x = imgRect.y = imgRect.width = imgRect.height = 0;
+
+                        var source = input.source;
+                        if (!source)
+                            return true;
+
+                        source.lock();
+                        imgRect.width = source.pixelWidth;
+                        imgRect.height = source.pixelHeight;
+                        source.unlock();
+
+                        state.calcImageMetrics = true;
+                        return true;
+                    }
+                    tapins.checkNeedImageMetrics = checkNeedImageMetrics;
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(image.processdown || (image.processdown = {}));
+            var processdown = image.processdown;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (processdown) {
+                (function (tapins) {
+                    function prepareImageMetrics(input, state, output, vpinput, tree) {
+                        if (!state.calcImageMetrics)
+                            return true;
+
+                        return true;
+                    }
+                    tapins.prepareImageMetrics = prepareImageMetrics;
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(image.processdown || (image.processdown = {}));
+            var processdown = image.processdown;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
             (function (processup) {
                 var ImageProcessUpPipeDef = (function (_super) {
                     __extends(ImageProcessUpPipeDef, _super);
@@ -5504,16 +5682,8 @@ var minerva;
                     __extends(ImageRenderPipeDef, _super);
                     function ImageRenderPipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('doRender', 'calcMetrics', render.tapins.calcMetrics).replaceTapin('doRender', render.tapins.doRender);
+                        this.replaceTapin('doRender', render.tapins.doRender);
                     }
-                    ImageRenderPipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.metrics = {
-                            matrix: mat3.identity(),
-                            overlap: 1 /* In */
-                        };
-                        return state;
-                    };
                     return ImageRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.ImageRenderPipeDef = ImageRenderPipeDef;
@@ -5534,8 +5704,6 @@ var minerva;
                         var source = input.source;
                         if (!input.source)
                             return true;
-
-                        source.lock();
 
                         return true;
                     }
@@ -5565,10 +5733,9 @@ var minerva;
                             return true;
                         }
 
-                        var metrics = state.metrics;
                         ctx.save();
 
-                        ctx.pretransformMatrix(metrics.matrix);
+                        ctx.pretransformMatrix(input.imgXform);
                         ctx.raw.drawImage(source.image, 0, 0);
                         ctx.restore();
 

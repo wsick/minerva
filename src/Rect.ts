@@ -45,13 +45,23 @@ module minerva {
             dest.height = src.height;
         }
 
-        static roundOut (r: Rect) {
-            var x = Math.floor(r.x);
-            var y = Math.floor(r.y);
-            r.width = Math.ceil(r.x + r.width) - x;
-            r.height = Math.ceil(r.y + r.height) - y;
-            r.x = x;
-            r.y = y;
+        static roundOut (dest: Rect) {
+            var x = Math.floor(dest.x);
+            var y = Math.floor(dest.y);
+            dest.width = Math.ceil(dest.x + dest.width) - x;
+            dest.height = Math.ceil(dest.y + dest.height) - y;
+            dest.x = x;
+            dest.y = y;
+        }
+
+        static roundIn (dest: Rect) {
+            var x = Math.ceil(dest.x);
+            var y = Math.ceil(dest.y);
+            dest.width = Math.floor(dest.x + dest.width) - Math.ceil(dest.x);
+            dest.height = Math.floor(dest.y + dest.height) - Math.ceil(dest.y);
+            dest.x = x;
+            dest.y = y;
+            return dest;
         }
 
         static intersection (dest: Rect, rect2: Rect) {

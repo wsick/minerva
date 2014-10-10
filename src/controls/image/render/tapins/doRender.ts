@@ -9,14 +9,13 @@ module minerva.controls.image.render.tapins {
             return true;
         }
 
-        var metrics = state.metrics;
         ctx.save();
         //TODO: RenderLayoutClip
         /*
-        if (this.CompositeLayoutClip || metrics.overlap !== RectOverlap.In)
+        if (this.CompositeLayoutClip || input.overlap !== RectOverlap.In)
             this.RenderLayoutClip(ctx);
         */
-        ctx.pretransformMatrix(metrics.matrix);
+        ctx.pretransformMatrix(input.imgXform);
         ctx.raw.drawImage(source.image, 0, 0);
         ctx.restore();
 

@@ -75,6 +75,7 @@ declare module minerva {
         LayoutClip,
         RenderVisibility,
         HitTestVisibility,
+        ImageMetrics,
         Measure,
         Arrange,
         Bounds,
@@ -211,7 +212,8 @@ declare module minerva {
         static isEqual(rect1: Rect, rect2: Rect): boolean;
         static isEmpty(src: Rect): boolean;
         static copyTo(src: Rect, dest: Rect): void;
-        static roundOut(r: Rect): void;
+        static roundOut(dest: Rect): void;
+        static roundIn(dest: Rect): Rect;
         static intersection(dest: Rect, rect2: Rect): void;
         static union(dest: Rect, rect2: Rect): void;
         static isContainedIn(src: Rect, test: Rect): boolean;
@@ -1222,7 +1224,7 @@ declare module minerva.controls.image {
     }
 }
 declare module minerva.controls.image {
-    interface IImageUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
+    interface IImageUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
     }
     class ImageUpdater extends core.Updater {
         public assets: IImageUpdaterAssets;
@@ -1277,6 +1279,44 @@ declare module minerva.controls.image.measure.tapins {
 declare module minerva.controls.image.measure.tapins {
     function doOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
+declare module minerva.controls.image.processdown {
+    interface IInput extends core.processdown.IInput {
+        source: IImageSource;
+        stretch: Stretch;
+        imgXform: number[];
+        overlap: RectOverlap;
+    }
+    interface IState extends core.processdown.IState {
+        imgRect: Rect;
+        paintRect: Rect;
+        calcImageMetrics: boolean;
+        stretched: Rect;
+        imgAdjust: boolean;
+    }
+    interface IOutput extends core.processdown.IOutput {
+        imgXform: number[];
+        overlap: RectOverlap;
+    }
+    class ImageProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
+        constructor();
+        public createState(): IState;
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
+        public flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
+    }
+}
+declare module minerva.controls.image.processdown.tapins {
+    function calcImageTransform(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.image.processdown.tapins {
+    function calcOverlap(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.image.processdown.tapins {
+    function checkNeedImageMetrics(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.image.processdown.tapins {
+    function prepareImageMetrics(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
 declare module minerva.controls.image.processup {
     interface IInput extends core.processup.IInput {
     }
@@ -1291,22 +1331,15 @@ declare module minerva.controls.image.processup.tapins {
     function calcActualSize(input: IInput, state: IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.image.render {
-    interface IImageRenderMetrics {
-        matrix: number[];
-        overlap: RectOverlap;
-    }
-}
-declare module minerva.controls.image.render {
     interface IInput extends core.render.IInput {
         source: IImageSource;
-        renderSize: Size;
+        imgXform: number[];
+        overlap: RectOverlap;
     }
     interface IState extends core.render.IState {
-        metrics: IImageRenderMetrics;
     }
     class ImageRenderPipeDef extends core.render.RenderPipeDef {
         constructor();
-        public createState(): IState;
     }
 }
 declare module minerva.controls.image.render.tapins {

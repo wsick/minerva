@@ -1,5 +1,5 @@
 module minerva.controls.image {
-    export interface IImageUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
+    export interface IImageUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
     }
 
     export class ImageUpdater extends core.Updater {
@@ -14,6 +14,8 @@ module minerva.controls.image {
             var assets = this.assets;
             assets.source = null;
             assets.stretch = Stretch.Uniform;
+            assets.overlap = RectOverlap.In;
+            assets.imgXform = mat3.identity();
 
             super.init();
         }

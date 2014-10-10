@@ -4,38 +4,48 @@ module minerva.controls.image.render.tapins {
         if (!input.source)
             return true;
 
+        //TODO: Remove me!
+
+        /*
         // Just to get something working, we do all the matrix transforms for stretching.
         // Eventually, we can let the html5 canvas do all the dirty work.
         source.lock();
 
-        //TODO: Calculate render metrics
-        /*
-        var stretch = img.Stretch;
-        var specified = size.fromRaw(img.ActualWidth, img.ActualHeight);
-        var stretched = lu.CoerceSize(size.copyTo(specified));
-        var adjust = !Size.isEqual(specified, input.renderSize);
+        var specified = state.specified;
+        specified.width = input.actualWidth;
+        specified.height = input.actualHeight;
+
+        var stretched = state.stretched;
+        Size.copyTo(specified, stretched);
+        helpers.coerceSize(stretched, input);
 
         var pw = source.pixelWidth;
         var ph = source.pixelHeight;
         if (pw === 0 || ph === 0)
             return null;
 
-        if (stretch !== Stretch.UniformToFill) {
+        var adjust = !Size.isEqual(specified, input.renderSize);
+
+        if (input.stretch !== Stretch.UniformToFill) {
             specified.width = Math.min(specified.width, stretched.width);
             specified.height = Math.min(specified.height, stretched.height);
         }
 
-        var paint = rect.fromSize(specified);
-        var image = new rect();
+        var paint = state.paint;
+        paint.x = paint.y = 0;
+        Size.copyTo(specified, paint);
+
+        var image = state.image;
+        image.x = image.y = 0;
         image.width = pw;
         image.height = ph;
 
-        if (stretch === Stretch.None)
-            rect.union(paint, image);
+        if (input.stretch === Stretch.None)
+            Rect.union(paint, image);
 
         var matrix = state.metrics.matrix;
-        var matrix = computeMatrix(paint.width, paint.height, image.width, image.height,
-            stretch, AlignmentX.Center, AlignmentY.Center);
+        computeMatrix(matrix, paint.width, paint.height, image.width, image.height,
+            input.stretch, AlignmentX.Center, AlignmentY.Center);
 
         if (adjust) {
             img.MeasureOverride(specified);
@@ -45,7 +55,7 @@ module minerva.controls.image.render.tapins {
         }
 
         state.metrics.overlap = RectOverlap.In;
-        if (stretch === Stretch.UniformToFill || adjust) {
+        if (input.stretch === Stretch.UniformToFill || adjust) {
             var bounds = Rect.copyTo(paint);
             Rect.roundOut(bounds);
             var box = Rect.copyTo(image);
