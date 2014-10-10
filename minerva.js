@@ -5671,17 +5671,74 @@ var minerva;
                     __extends(ImageHitTestPipeDef, _super);
                     function ImageHitTestPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                        this.replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'insideStretch', hittest.tapins.insideStretch);
                     }
+                    ImageHitTestPipeDef.prototype.prepare = function (data) {
+                        data.imgRect = data.imgRect || new minerva.Rect();
+                    };
                     return ImageHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.ImageHitTestPipeDef = ImageHitTestPipeDef;
-
+            })(image.hittest || (image.hittest = {}));
+            var hittest = image.hittest;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (hittest) {
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(image.hittest || (image.hittest = {}));
+            var hittest = image.hittest;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (hittest) {
+                (function (tapins) {
+                    function insideStretch(data, pos, hitList, ctx) {
+                        var source = data.assets.source;
+                        if (!source || source.pixelWidth === 0 || source.pixelHeight === 0) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+
+                        var stretch = data.assets.stretch;
+                        if (stretch === 1 /* Fill */ || stretch === 3 /* UniformToFill */)
+                            return true;
+
+                        var ir = data.imgRect;
+                        ir.x = ir.y = 0;
+                        ir.width = source.pixelWidth;
+                        ir.height = source.pixelHeight;
+                        minerva.Rect.transform(ir, data.assets.imgXform);
+                        minerva.Rect.transform(ir, ctx.currentTransform);
+
+                        if (!minerva.Rect.containsPoint(ir, pos)) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+
+                        return true;
+                    }
+                    tapins.insideStretch = insideStretch;
                 })(hittest.tapins || (hittest.tapins = {}));
                 var tapins = hittest.tapins;
             })(image.hittest || (image.hittest = {}));
@@ -7826,12 +7883,23 @@ var minerva;
                     __extends(ShapeHitTestPipeDef, _super);
                     function ShapeHitTestPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                        this.replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'insideShape', hittest.tapins.insideShape);
                     }
                     return ShapeHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.ShapeHitTestPipeDef = ShapeHitTestPipeDef;
-
+            })(shape.hittest || (shape.hittest = {}));
+            var hittest = shape.hittest;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (hittest) {
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         if (!data.assets.shape.fill && !data.assets.shape.stroke) {
@@ -7842,6 +7910,25 @@ var minerva;
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(shape.hittest || (shape.hittest = {}));
+            var hittest = shape.hittest;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (hittest) {
+                (function (tapins) {
+                    function insideShape(data, pos, hitList, ctx) {
+                        return true;
+                    }
+                    tapins.insideShape = insideShape;
                 })(hittest.tapins || (hittest.tapins = {}));
                 var tapins = hittest.tapins;
             })(shape.hittest || (shape.hittest = {}));

@@ -1339,13 +1339,18 @@ declare module minerva.controls.image.arrange.tapins {
 declare module minerva.controls.image.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
         assets: IImageUpdaterAssets;
+        imgRect: Rect;
     }
     class ImageHitTestPipeDef extends core.hittest.HitTestPipeDef {
         constructor();
+        public prepare(data: IHitTestData): void;
     }
-    module tapins {
-        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
-    }
+}
+declare module minerva.controls.image.hittest.tapins {
+    function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.controls.image.hittest.tapins {
+    function insideStretch(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.controls.image.measure {
     interface IInput extends core.measure.IInput {
@@ -1800,9 +1805,12 @@ declare module minerva.shapes.shape.hittest {
     class ShapeHitTestPipeDef extends core.hittest.HitTestPipeDef {
         constructor();
     }
-    module tapins {
-        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
-    }
+}
+declare module minerva.shapes.shape.hittest.tapins {
+    function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.shapes.shape.hittest.tapins {
+    function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.shapes.shape.measure {
     class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
