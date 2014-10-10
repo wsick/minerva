@@ -11,6 +11,10 @@ module minerva.core {
     }
     export interface IRenderPipe extends pipe.ITriPipe<render.IInput, render.IState, render.IOutput> {
     }
+    export interface IHitTestPipe {
+        def: pipe.IPipeDef<hittest.IHitTestData>;
+        data: hittest.IHitTestData;
+    }
 
     export interface IVisualOwner extends processup.IProcessVisualOwner {
     }

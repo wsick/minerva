@@ -217,6 +217,7 @@ declare module minerva {
         static intersection(dest: Rect, rect2: Rect): void;
         static union(dest: Rect, rect2: Rect): void;
         static isContainedIn(src: Rect, test: Rect): boolean;
+        static containsPoint(rect1: Rect, p: Point): boolean;
         private static clipmask(clip);
         static transform4(dest: Rect, projection: number[]): void;
         static extendTo(dest: Rect, x: number, y: number): void;
@@ -273,6 +274,7 @@ declare module minerva {
     }
     interface IGeometry {
         Draw(ctx: core.render.RenderContext): any;
+        GetBounds(): Rect;
     }
 }
 declare module minerva {
@@ -377,6 +379,10 @@ declare module minerva.core {
     }
     interface IRenderPipe extends pipe.ITriPipe<render.IInput, render.IState, render.IOutput> {
     }
+    interface IHitTestPipe {
+        def: pipe.IPipeDef<hittest.IHitTestData>;
+        data: hittest.IHitTestData;
+    }
     interface IVisualOwner extends processup.IProcessVisualOwner {
     }
     interface ISurface extends IVisualOwner {
@@ -400,6 +406,7 @@ declare module minerva.core {
         private $$processdown;
         private $$processup;
         private $$render;
+        private $$hittest;
         private $$inDownDirty;
         private $$inUpDirty;
         private $$attached;
@@ -424,6 +431,7 @@ declare module minerva.core {
         public setProcessDownPipe(pipedef?: processdown.ProcessDownPipeDef): Updater;
         public setProcessUpPipe(pipedef?: processup.ProcessUpPipeDef): Updater;
         public setRenderPipe(pipedef?: render.RenderPipeDef): Updater;
+        public setHitTestPipe(pipedef?: hittest.HitTestPipeDef): Updater;
         public doMeasure(): void;
         public measure(availableSize: Size): boolean;
         public doArrange(): void;
@@ -432,7 +440,7 @@ declare module minerva.core {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: render.RenderContext, region: Rect): boolean;
-        public hitTest(pos: Point, list: Updater[], ctx: render.RenderContext): void;
+        public hitTest(pos: Point, list: Updater[], ctx: render.RenderContext): boolean;
         public invalidateMeasure(): Updater;
         public invalidateArrange(): Updater;
         public updateBounds(forceRedraw?: boolean): Updater;
@@ -662,6 +670,46 @@ declare module minerva.core.draft.tapins {
 }
 declare module minerva.core.draft.tapins {
     var sizing: IDraftTapin;
+}
+declare module minerva.core.hittest {
+    interface IHitTestTapin {
+        (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    }
+    interface IHitTestData {
+        assets: IUpdaterAssets;
+        tree: IUpdaterTree;
+        updater: Updater;
+        hitChildren: boolean;
+        bounds: Rect;
+        layoutClipBounds: Rect;
+    }
+    class HitTestPipeDef extends pipe.PipeDef<IHitTestTapin, IHitTestData> {
+        constructor();
+    }
+}
+declare module minerva.core.hittest.tapins {
+    function canHit(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+}
+declare module minerva.core.hittest.tapins {
+    function canHitInside(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+}
+declare module minerva.core.hittest.tapins {
+    function completeCtx(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+}
+declare module minerva.core.hittest.tapins {
+    function insideChildren(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+}
+declare module minerva.core.hittest.tapins {
+    function insideClip(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+}
+declare module minerva.core.hittest.tapins {
+    function insideLayoutClip(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+}
+declare module minerva.core.hittest.tapins {
+    function insideObject(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+}
+declare module minerva.core.hittest.tapins {
+    function prepareCtx(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
 }
 declare module minerva.core.measure {
     interface IMeasureBinder {

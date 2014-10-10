@@ -15,6 +15,7 @@ module minerva.core {
         private $$processdown: IProcessDownPipe = null;
         private $$processup: IProcessUpPipe = null;
         private $$render: IRenderPipe = null;
+        private $$hittest: IHitTestPipe = null;
 
         private $$inDownDirty = false;
         private $$inUpDirty = false;
@@ -102,6 +103,8 @@ module minerva.core {
                 this.setProcessUpPipe();
             if (!this.$$render)
                 this.setRenderPipe();
+            if (!this.$$hittest)
+                this.setHitTestPipe();
         }
 
         /*
@@ -288,6 +291,24 @@ module minerva.core {
             return this;
         }
 
+        setHitTestPipe (pipedef?: hittest.HitTestPipeDef) {
+            if (this.$$hittest)
+                return this;
+            var def = pipedef || new hittest.HitTestPipeDef();
+            this.$$hittest = {
+                def: def,
+                data: {
+                    updater: this,
+                    assets: this.assets,
+                    tree: this.tree,
+                    hitChildren: false,
+                    bounds: new Rect(),
+                    layoutClipBounds: new Rect()
+                }
+            };
+            return this;
+        }
+
         /////// RUN PIPES
 
         doMeasure () {
@@ -371,8 +392,9 @@ module minerva.core {
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
         }
 
-        hitTest(pos: Point, list: Updater[], ctx: render.RenderContext) {
-
+        hitTest (pos: Point, list: Updater[], ctx: render.RenderContext): boolean {
+            var pipe = this.$$hittest;
+            return pipe.def.run(pipe.data, pos, list, ctx);
         }
 
         /////// INVALIDATES

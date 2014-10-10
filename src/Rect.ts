@@ -107,6 +107,13 @@ module minerva {
             return true;
         }
 
+        static containsPoint (rect1: Rect, p: Point): boolean {
+            return rect1.x <= p.x
+                && rect1.y <= p.y
+                && (rect1.x + rect1.width) >= p.x
+                && (rect1.y + rect1.height) >= p.y;
+        }
+
         private static clipmask (clip: number[]): number {
             var mask = 0;
 

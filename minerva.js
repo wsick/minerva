@@ -994,6 +994,10 @@ var minerva;
             return true;
         };
 
+        Rect.containsPoint = function (rect1, p) {
+            return rect1.x <= p.x && rect1.y <= p.y && (rect1.x + rect1.width) >= p.x && (rect1.y + rect1.height) >= p.y;
+        };
+
         Rect.clipmask = function (clip) {
             var mask = 0;
 
@@ -1553,6 +1557,7 @@ var minerva;
                 this.$$processdown = null;
                 this.$$processup = null;
                 this.$$render = null;
+                this.$$hittest = null;
                 this.$$inDownDirty = false;
                 this.$$inUpDirty = false;
                 this.$$attached = {};
@@ -1624,6 +1629,8 @@ var minerva;
                     this.setProcessUpPipe();
                 if (!this.$$render)
                     this.setRenderPipe();
+                if (!this.$$hittest)
+                    this.setHitTestPipe();
             };
 
             Updater.prototype.onSizeChanged = function (oldSize, newSize) {
@@ -1791,6 +1798,24 @@ var minerva;
                 return this;
             };
 
+            Updater.prototype.setHitTestPipe = function (pipedef) {
+                if (this.$$hittest)
+                    return this;
+                var def = pipedef || new core.hittest.HitTestPipeDef();
+                this.$$hittest = {
+                    def: def,
+                    data: {
+                        updater: this,
+                        assets: this.assets,
+                        tree: this.tree,
+                        hitChildren: false,
+                        bounds: new minerva.Rect(),
+                        layoutClipBounds: new minerva.Rect()
+                    }
+                };
+                return this;
+            };
+
             Updater.prototype.doMeasure = function () {
                 this.$$measureBinder.bind(this);
             };
@@ -1872,6 +1897,8 @@ var minerva;
             };
 
             Updater.prototype.hitTest = function (pos, list, ctx) {
+                var pipe = this.$$hittest;
+                return pipe.def.run(pipe.data, pos, list, ctx);
             };
 
             Updater.prototype.invalidateMeasure = function () {
@@ -2992,6 +3019,214 @@ var minerva;
             var tapins = draft.tapins;
         })(core.draft || (core.draft = {}));
         var draft = core.draft;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            var HitTestPipeDef = (function (_super) {
+                __extends(HitTestPipeDef, _super);
+                function HitTestPipeDef() {
+                    _super.call(this);
+                    this.addTapin('canHit', hittest.tapins.canHit).addTapin('prepareCtx', hittest.tapins.prepareCtx).addTapin('insideClip', hittest.tapins.insideClip).addTapin('insideChildren', hittest.tapins.insideChildren).addTapin('canHitInside', hittest.tapins.canHitInside).addTapin('insideObject', hittest.tapins.insideObject).addTapin('insideLayoutClip', hittest.tapins.insideLayoutClip).addTapin('completeCtx', hittest.tapins.completeCtx);
+                }
+                return HitTestPipeDef;
+            })(minerva.pipe.PipeDef);
+            hittest.HitTestPipeDef = HitTestPipeDef;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function canHit(data, pos, hitList, ctx) {
+                    return data.assets.totalIsRenderVisible && data.assets.totalIsHitTestVisible;
+                }
+                tapins.canHit = canHit;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function canHitInside(data, pos, hitList, ctx) {
+                    if (data.hitChildren)
+                        return true;
+
+                    return true;
+                }
+                tapins.canHitInside = canHitInside;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function completeCtx(data, pos, hitList, ctx) {
+                    ctx.restore();
+                    return true;
+                }
+                tapins.completeCtx = completeCtx;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function insideChildren(data, pos, hitList, ctx) {
+                    hitList.unshift(data.updater);
+
+                    data.hitChildren = false;
+                    for (var walker = data.tree.walk(3 /* ZReverse */); walker.step();) {
+                        if (walker.current.hitTest(pos, hitList, ctx)) {
+                            data.hitChildren = true;
+                            return true;
+                        }
+                    }
+
+                    return true;
+                }
+                tapins.insideChildren = insideChildren;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function insideClip(data, pos, hitList, ctx) {
+                    var clip = data.assets.clip;
+                    if (!clip)
+                        return true;
+
+                    var bounds = clip.GetBounds();
+                    minerva.Rect.transform(bounds, ctx.currentTransform);
+                    if (!minerva.Rect.containsPoint(bounds, pos)) {
+                        ctx.restore();
+                        return false;
+                    }
+
+                    clip.Draw(ctx);
+                    if (!ctx.raw.isPointInPath(pos.x, pos.y)) {
+                        ctx.restore();
+                        return false;
+                    }
+
+                    return true;
+                }
+                tapins.insideClip = insideClip;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function insideLayoutClip(data, pos, hitList, ctx) {
+                    if (data.hitChildren)
+                        return true;
+
+                    var layoutClip = data.assets.layoutClip;
+                    if (!layoutClip || minerva.Rect.isEmpty(layoutClip))
+                        return true;
+
+                    var lcbounds = data.layoutClipBounds;
+                    minerva.Rect.copyTo(layoutClip, lcbounds);
+                    minerva.Rect.transform(lcbounds, ctx.currentTransform);
+
+                    if (!minerva.Rect.containsPoint(lcbounds, pos)) {
+                        hitList.shift();
+                        ctx.restore();
+                        return false;
+                    }
+
+                    return true;
+                }
+                tapins.insideLayoutClip = insideLayoutClip;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function insideObject(data, pos, hitList, ctx) {
+                    if (data.hitChildren)
+                        return true;
+
+                    var bounds = data.bounds;
+                    minerva.Rect.copyTo(data.assets.extents, bounds);
+                    minerva.Rect.transform(bounds, ctx.currentTransform);
+                    if (!minerva.Rect.containsPoint(bounds, pos)) {
+                        hitList.unshift();
+                        ctx.restore();
+                        return false;
+                    }
+
+                    return true;
+                }
+                tapins.insideObject = insideObject;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (hittest) {
+            (function (tapins) {
+                function prepareCtx(data, pos, hitList, ctx) {
+                    ctx.save();
+                    ctx.pretransformMatrix(data.assets.renderXform);
+                    return true;
+                }
+                tapins.prepareCtx = prepareCtx;
+            })(hittest.tapins || (hittest.tapins = {}));
+            var tapins = hittest.tapins;
+        })(core.hittest || (core.hittest = {}));
+        var hittest = core.hittest;
     })(minerva.core || (minerva.core = {}));
     var core = minerva.core;
 })(minerva || (minerva = {}));
