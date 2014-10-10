@@ -371,6 +371,10 @@ module minerva.core {
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
         }
 
+        hitTest(pos: Point, list: Updater[], ctx: render.RenderContext) {
+
+        }
+
         /////// INVALIDATES
 
         invalidateMeasure (): Updater {

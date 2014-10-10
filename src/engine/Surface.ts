@@ -4,6 +4,7 @@ module minerva.engine {
         maxCount: number;
     }
 
+    var hitTestCtx: core.render.RenderContext = null;
     export class Surface implements core.ISurface {
         private $$layout = new core.draft.DraftPipeDef();
 
@@ -63,7 +64,7 @@ module minerva.engine {
                 i = layers.length;
                 return {
                     current: undefined,
-                    step: function(): boolean {
+                    step: function (): boolean {
                         i--;
                         this.current = layers[i];
                         return this.current !== undefined;
@@ -72,7 +73,7 @@ module minerva.engine {
             } else {
                 return {
                     current: undefined,
-                    step: function(): boolean {
+                    step: function (): boolean {
                         i++;
                         this.current = layers[i];
                         return this.current !== undefined;
@@ -103,8 +104,7 @@ module minerva.engine {
             var ctx = this.$$ctx;
             if (this.$$sizechanged) {
                 this.$$sizechanged = false;
-                ctx.raw.canvas.width = this.$$width;
-                ctx.raw.canvas.height = this.$$height;
+                ctx.resize(this.$$width, this.$$height);
             } else {
                 ctx.raw.clearRect(region.x, region.y, region.width, region.height);
             }
@@ -163,8 +163,17 @@ module minerva.engine {
             }
         }
 
-        hitTestPoint (pos: Point): core.Updater[] {
-            return [];
+        hitTest (pos: Point): core.Updater[] {
+            if (this.$$layers.length < 1)
+                return null;
+            hitTestCtx = hitTestCtx || new core.render.RenderContext(document.createElement('canvas').getContext('2d'));
+            hitTestCtx.resize(this.$$canvas.width, this.$$canvas.height);
+
+            var list: core.Updater[] = [];
+            for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
+                layers[i].hitTest(pos, list, hitTestCtx);
+            }
+            return list;
         }
     }
 }

@@ -20,6 +20,12 @@ module minerva.core.render {
             return true;
         }
 
+        resize (width: number, height: number) {
+            var canvas = this.raw.canvas;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
         save () {
             this.$$transforms.push(mat3.clone(this.currentTransform));
             this.raw.save();

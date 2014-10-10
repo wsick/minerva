@@ -1871,6 +1871,9 @@ var minerva;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
             };
 
+            Updater.prototype.hitTest = function (pos, list, ctx) {
+            };
+
             Updater.prototype.invalidateMeasure = function () {
                 this.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
                 Updater.$$propagateUiFlagsUp(this, 2048 /* MeasureHint */);
@@ -3871,6 +3874,12 @@ var minerva;
                     enumerable: true,
                     configurable: true
                 });
+
+                RenderContext.prototype.resize = function (width, height) {
+                    var canvas = this.raw.canvas;
+                    canvas.width = width;
+                    canvas.height = height;
+                };
 
                 RenderContext.prototype.save = function () {
                     this.$$transforms.push(mat3.clone(this.currentTransform));
@@ -6998,6 +7007,7 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (engine) {
+        var hitTestCtx = null;
         var Surface = (function () {
             function Surface() {
                 this.$$layout = new minerva.core.draft.DraftPipeDef();
@@ -7100,8 +7110,7 @@ var minerva;
                 var ctx = this.$$ctx;
                 if (this.$$sizechanged) {
                     this.$$sizechanged = false;
-                    ctx.raw.canvas.width = this.$$width;
-                    ctx.raw.canvas.height = this.$$height;
+                    ctx.resize(this.$$width, this.$$height);
                 } else {
                     ctx.raw.clearRect(region.x, region.y, region.width, region.height);
                 }
@@ -7160,8 +7169,17 @@ var minerva;
                 }
             };
 
-            Surface.prototype.hitTestPoint = function (pos) {
-                return [];
+            Surface.prototype.hitTest = function (pos) {
+                if (this.$$layers.length < 1)
+                    return null;
+                hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
+                hitTestCtx.resize(this.$$canvas.width, this.$$canvas.height);
+
+                var list = [];
+                for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
+                    layers[i].hitTest(pos, list, hitTestCtx);
+                }
+                return list;
             };
             return Surface;
         })();

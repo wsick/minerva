@@ -432,6 +432,7 @@ declare module minerva.core {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: render.RenderContext, region: Rect): boolean;
+        public hitTest(pos: Point, list: Updater[], ctx: render.RenderContext): void;
         public invalidateMeasure(): Updater;
         public invalidateArrange(): Updater;
         public updateBounds(forceRedraw?: boolean): Updater;
@@ -905,6 +906,7 @@ declare module minerva.core.render {
         public hasFillRule: boolean;
         constructor(ctx: CanvasRenderingContext2D);
         static hasFillRule : boolean;
+        public resize(width: number, height: number): void;
         public save(): void;
         public restore(): void;
         public setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
@@ -1623,7 +1625,7 @@ declare module minerva.engine {
         public addDownDirty(updater: core.Updater): void;
         public updateLayout(): boolean;
         public resize(width: number, height: number): void;
-        public hitTestPoint(pos: Point): core.Updater[];
+        public hitTest(pos: Point): core.Updater[];
     }
 }
 declare module minerva.engine {
