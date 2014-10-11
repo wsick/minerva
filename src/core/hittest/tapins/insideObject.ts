@@ -7,7 +7,7 @@ module minerva.core.hittest.tapins {
         Rect.copyTo(data.assets.extents, bounds);
         Rect.transform(bounds, ctx.currentTransform);
         if (!Rect.containsPoint(bounds, pos)) {
-            hitList.unshift();
+            hitList.shift();
             ctx.restore();
             return false;
         }

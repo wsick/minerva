@@ -192,8 +192,35 @@ module minerva.core.hittest.tapins.tests {
     });
 
     QUnit.test("insideObject", (assert) => {
+        var updater = mock.updater();
+        var data = mock.data(updater);
+        var pos = new Point();
+        var hitList: Updater[] = [updater];
+        var ctx = mock.ctx();
 
-        assert.ok(true);
+        var restored = false;
+        ctx.restore = function () {
+            restored = true;
+        };
+
+        data.hitChildren = true;
+        assert.ok(tapins.insideObject(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(restored, false);
+
+        data.hitChildren = false;
+        data.assets.extents = new Rect(0, 0, 100, 100);
+        ctx.translate(0, 0);
+        pos.x = 10;
+        pos.y = 10;
+        assert.ok(tapins.insideObject(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(restored, false);
+
+        ctx.translate(100, 100);
+        assert.ok(!tapins.insideObject(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 0);
+        assert.strictEqual(restored, true);
     });
 
     QUnit.test("insideLayoutClip", (assert) => {
@@ -202,7 +229,19 @@ module minerva.core.hittest.tapins.tests {
     });
 
     QUnit.test("completeCtx", (assert) => {
+        var updater = mock.updater();
+        var data = mock.data(updater);
+        var pos = new Point();
+        var hitList: Updater[] = [updater];
+        var ctx = mock.ctx();
 
-        assert.ok(true);
+        var restored = false;
+        ctx.restore = function () {
+            restored = true;
+        };
+
+        assert.ok(tapins.completeCtx(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(restored, true);
     });
 }

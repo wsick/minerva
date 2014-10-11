@@ -3199,7 +3199,7 @@ var minerva;
                     minerva.Rect.copyTo(data.assets.extents, bounds);
                     minerva.Rect.transform(bounds, ctx.currentTransform);
                     if (!minerva.Rect.containsPoint(bounds, pos)) {
-                        hitList.unshift();
+                        hitList.shift();
                         ctx.restore();
                         return false;
                     }
