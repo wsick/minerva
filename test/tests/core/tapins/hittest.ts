@@ -68,8 +68,46 @@ module minerva.core.hittest.tapins.tests {
     });
 
     QUnit.test("insideClip", (assert) => {
+        var updater = mock.updater();
+        var data = mock.data(updater);
+        var pos = new Point();
+        var hitList: Updater[] = [];
+        var ctx = mock.ctx();
 
-        assert.ok(true);
+        var restored = false;
+        ctx.restore = function () {
+            restored = true;
+        };
+
+        //No clip
+        assert.ok(tapins.insideClip(data, pos, hitList, ctx));
+        assert.strictEqual(restored, false);
+
+        //Outside clip bounds
+        pos.x = 75;
+        pos.y = 5;
+        data.assets.clip = {
+            GetBounds: function () {
+                return new Rect(0, 0, 50, 50);
+            },
+            Draw: function (ctx: render.RenderContext) {
+                ctx.raw.rect(0, 10, 50, 40);
+            }
+        };
+        assert.ok(!tapins.insideClip(data, pos, hitList, ctx));
+        assert.strictEqual(restored, true);
+        restored = false;
+
+        //Outside clip path
+        ctx.translate(50, 0);
+        assert.ok(!tapins.insideClip(data, pos, hitList, ctx));
+        assert.strictEqual(restored, true);
+        restored = false;
+
+        //Inside
+        ctx.translate(0, -10);
+        assert.ok(tapins.insideClip(data, pos, hitList, ctx));
+        assert.strictEqual(restored, false);
     });
 
     QUnit.test("insideChildren", (assert) => {
