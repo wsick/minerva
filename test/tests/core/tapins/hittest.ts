@@ -17,6 +17,34 @@ module minerva.core.hittest.tapins.tests {
         },
         ctx: function (): render.RenderContext {
             return new render.RenderContext(document.createElement('canvas').getContext('2d'));
+        },
+        walk: function (children: Updater[]): (direction?: WalkDirection) => IWalker<Updater> {
+            children.push(mock.updater());
+            children.push(mock.updater());
+            return (direction ?: WalkDirection): IWalker<Updater> => {
+                var isReverse = (direction === WalkDirection.Reverse || direction === WalkDirection.ZReverse);
+                var i = -1;
+                if (isReverse) {
+                    i = children.length;
+                    return {
+                        current: undefined,
+                        step: function (): boolean {
+                            i--;
+                            this.current = children[i];
+                            return this.current !== undefined;
+                        }
+                    };
+                } else {
+                    return {
+                        current: undefined,
+                        step: function (): boolean {
+                            i++;
+                            this.current = children[i];
+                            return this.current !== undefined;
+                        }
+                    };
+                }
+            };
         }
     };
 
@@ -111,8 +139,33 @@ module minerva.core.hittest.tapins.tests {
     });
 
     QUnit.test("insideChildren", (assert) => {
+        var updater = mock.updater();
+        var data = mock.data(updater);
+        var pos = new Point();
+        var hitList: Updater[] = [];
+        var ctx = mock.ctx();
 
-        assert.ok(true);
+        assert.ok(tapins.insideChildren(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(hitList[0], updater);
+        assert.strictEqual(data.hitChildren, false);
+
+        hitList = [];
+        var children: Updater[] = [];
+        data.tree.walk = mock.walk(children);
+        children[0].hitTest = function (pos2, hitList2, ctx2) {
+            hitList.unshift(children[0]);
+            return true;
+        };
+        children[1].hitTest = function (pos2, hitList2, ctx2) {
+            hitList.unshift(children[1]);
+            return true;
+        };
+        assert.ok(tapins.insideChildren(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 2);
+        assert.strictEqual(hitList[0], children[1]);
+        assert.strictEqual(hitList[1], updater);
+        assert.strictEqual(data.hitChildren, true);
     });
 
     QUnit.test("canHitInside", (assert) => {
