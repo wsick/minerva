@@ -224,8 +224,50 @@ module minerva.core.hittest.tapins.tests {
     });
 
     QUnit.test("insideLayoutClip", (assert) => {
+        var updater = mock.updater();
+        var data = mock.data(updater);
+        var pos = new Point();
+        var hitList: Updater[] = [updater];
+        var ctx = mock.ctx();
 
-        assert.ok(true);
+        var restored = false;
+        ctx.restore = function () {
+            restored = true;
+        };
+
+        //Hit children
+        data.assets.layoutClip = null;
+        data.hitChildren = true;
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(restored, false);
+
+        //No layout clip
+        data.hitChildren = false;
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(restored, false);
+
+        //Empty layout clip
+        var lc = data.assets.layoutClip = new Rect();
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(restored, false);
+
+        //Inside layout clip
+        lc.width = 50;
+        lc.height = 50;
+        pos.x = 25;
+        pos.y = 15;
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 1);
+        assert.strictEqual(restored, false);
+
+        //Not inside layout clip
+        ctx.translate(0, 40);
+        assert.ok(!tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.strictEqual(hitList.length, 0);
+        assert.strictEqual(restored, true);
     });
 
     QUnit.test("completeCtx", (assert) => {

@@ -3,7 +3,7 @@ module minerva.core.hittest.tapins {
         if (data.hitChildren)
             return true;
 
-        var layoutClip = data.assets.layoutClip
+        var layoutClip = data.assets.layoutClip;
         if (!layoutClip || Rect.isEmpty(layoutClip))
             return true;
 
