@@ -1,6 +1,6 @@
 module minerva.controls.textblock.hittest {
     export interface IHitTestData extends core.hittest.IHitTestData {
-        assets: core.IUpdaterAssets;
+        assets: ITextBlockUpdaterAssets;
     }
 
     export class TextBlockHitTestPipeDef extends core.hittest.HitTestPipeDef {

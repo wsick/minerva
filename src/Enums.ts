@@ -33,4 +33,44 @@ module minerva {
         LeftToRight = 0,
         RightToLeft = 1,
     }
+
+    export enum LineStackingStrategy {
+        MaxHeight = 0,
+        BlockLineHeight = 1,
+    }
+
+    export enum TextAlignment {
+        Left = 0,
+        Center = 1,
+        Right = 2,
+        Justify = 3,
+    }
+
+    export enum TextTrimming {
+        None = 0,
+    }
+
+    export enum TextWrapping {
+        NoWrap = 0,
+        Wrap = 1,
+        WrapWithOverflow = 2,
+    }
+
+    export enum TextDecorations {
+        None = 0,
+        Underline = 1,
+    }
+
+    export enum FontWeight {
+        Thin = 100,
+        ExtraLight = 200,
+        Light = 300,
+        Normal = 400,
+        Medium = 500,
+        SemiBold = 600,
+        Bold = 700,
+        ExtraBold = 800,
+        Black = 900,
+        ExtraBlack = 950,
+    }
 }

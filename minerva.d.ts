@@ -64,6 +64,40 @@ declare module minerva {
         LeftToRight = 0,
         RightToLeft = 1,
     }
+    enum LineStackingStrategy {
+        MaxHeight = 0,
+        BlockLineHeight = 1,
+    }
+    enum TextAlignment {
+        Left = 0,
+        Center = 1,
+        Right = 2,
+        Justify = 3,
+    }
+    enum TextTrimming {
+        None = 0,
+    }
+    enum TextWrapping {
+        NoWrap = 0,
+        Wrap = 1,
+        WrapWithOverflow = 2,
+    }
+    enum TextDecorations {
+        None = 0,
+        Underline = 1,
+    }
+    enum FontWeight {
+        Thin = 100,
+        ExtraLight = 200,
+        Light = 300,
+        Normal = 400,
+        Medium = 500,
+        SemiBold = 600,
+        Bold = 700,
+        ExtraBold = 800,
+        Black = 900,
+        ExtraBlack = 950,
+    }
 }
 declare module minerva {
     enum DirtyFlags {
@@ -104,6 +138,21 @@ declare module minerva {
         Normal = 2,
         Degenerate = 4,
         Radii = 8,
+    }
+}
+declare module minerva {
+    class Font {
+        static DEFAULT_FAMILY: string;
+        static DEFAULT_STRETCH: string;
+        static DEFAULT_STYLE: string;
+        static DEFAULT_WEIGHT: FontWeight;
+        static DEFAULT_SIZE: number;
+        public family: string;
+        public size: number;
+        public stretch: string;
+        public style: string;
+        public weight: FontWeight;
+        static mergeInto(font: Font, family: string, size: number, stretch: string, style: string, weight: FontWeight): boolean;
     }
 }
 declare module minerva {
@@ -1659,15 +1708,45 @@ declare module minerva.controls.stackpanel.measure.tapins {
 declare module minerva.controls.stackpanel.measure.tapins {
     function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
+declare module minerva.controls.textblock {
+    interface ITextBlockUpdaterAssets extends core.IUpdaterAssets, measure.IInput {
+        fontFamily: string;
+        fontSize: number;
+        fontStretch: string;
+        fontStyle: string;
+        fontWeight: FontWeight;
+        textDecorations: TextDecorations;
+        language: string;
+    }
+    class TextBlockUpdater extends core.Updater {
+        public assets: ITextBlockUpdaterAssets;
+        public init(): void;
+        public invalidateFont(): void;
+        public invalidateTextMetrics(): void;
+    }
+}
 declare module minerva.controls.textblock.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
-        assets: core.IUpdaterAssets;
+        assets: ITextBlockUpdaterAssets;
     }
     class TextBlockHitTestPipeDef extends core.hittest.HitTestPipeDef {
         constructor();
     }
     module tapins {
         function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
+declare module minerva.controls.textblock.measure {
+    interface IInput extends core.measure.IInput {
+        lineStackingStrategy: LineStackingStrategy;
+        lineHeight: number;
+        textAlignment: TextAlignment;
+        textTrimming: TextTrimming;
+        textWrapping: TextWrapping;
+        font: Font;
+    }
+    class TextBlockMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
     }
 }
 declare module minerva.controls.usercontrol {

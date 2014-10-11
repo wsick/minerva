@@ -92,6 +92,52 @@ var minerva;
         FlowDirection[FlowDirection["RightToLeft"] = 1] = "RightToLeft";
     })(minerva.FlowDirection || (minerva.FlowDirection = {}));
     var FlowDirection = minerva.FlowDirection;
+
+    (function (LineStackingStrategy) {
+        LineStackingStrategy[LineStackingStrategy["MaxHeight"] = 0] = "MaxHeight";
+        LineStackingStrategy[LineStackingStrategy["BlockLineHeight"] = 1] = "BlockLineHeight";
+    })(minerva.LineStackingStrategy || (minerva.LineStackingStrategy = {}));
+    var LineStackingStrategy = minerva.LineStackingStrategy;
+
+    (function (TextAlignment) {
+        TextAlignment[TextAlignment["Left"] = 0] = "Left";
+        TextAlignment[TextAlignment["Center"] = 1] = "Center";
+        TextAlignment[TextAlignment["Right"] = 2] = "Right";
+        TextAlignment[TextAlignment["Justify"] = 3] = "Justify";
+    })(minerva.TextAlignment || (minerva.TextAlignment = {}));
+    var TextAlignment = minerva.TextAlignment;
+
+    (function (TextTrimming) {
+        TextTrimming[TextTrimming["None"] = 0] = "None";
+    })(minerva.TextTrimming || (minerva.TextTrimming = {}));
+    var TextTrimming = minerva.TextTrimming;
+
+    (function (TextWrapping) {
+        TextWrapping[TextWrapping["NoWrap"] = 0] = "NoWrap";
+        TextWrapping[TextWrapping["Wrap"] = 1] = "Wrap";
+        TextWrapping[TextWrapping["WrapWithOverflow"] = 2] = "WrapWithOverflow";
+    })(minerva.TextWrapping || (minerva.TextWrapping = {}));
+    var TextWrapping = minerva.TextWrapping;
+
+    (function (TextDecorations) {
+        TextDecorations[TextDecorations["None"] = 0] = "None";
+        TextDecorations[TextDecorations["Underline"] = 1] = "Underline";
+    })(minerva.TextDecorations || (minerva.TextDecorations = {}));
+    var TextDecorations = minerva.TextDecorations;
+
+    (function (FontWeight) {
+        FontWeight[FontWeight["Thin"] = 100] = "Thin";
+        FontWeight[FontWeight["ExtraLight"] = 200] = "ExtraLight";
+        FontWeight[FontWeight["Light"] = 300] = "Light";
+        FontWeight[FontWeight["Normal"] = 400] = "Normal";
+        FontWeight[FontWeight["Medium"] = 500] = "Medium";
+        FontWeight[FontWeight["SemiBold"] = 600] = "SemiBold";
+        FontWeight[FontWeight["Bold"] = 700] = "Bold";
+        FontWeight[FontWeight["ExtraBold"] = 800] = "ExtraBold";
+        FontWeight[FontWeight["Black"] = 900] = "Black";
+        FontWeight[FontWeight["ExtraBlack"] = 950] = "ExtraBlack";
+    })(minerva.FontWeight || (minerva.FontWeight = {}));
+    var FontWeight = minerva.FontWeight;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -141,6 +187,51 @@ var minerva;
         ShapeFlags[ShapeFlags["Radii"] = 8] = "Radii";
     })(minerva.ShapeFlags || (minerva.ShapeFlags = {}));
     var ShapeFlags = minerva.ShapeFlags;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var FontStyle = {
+        Normal: "normal",
+        Italic: "italic",
+        Oblique: "oblique"
+    };
+    var FontStretch = {
+        UltraCondensed: "ultra-condensed",
+        ExtraCondensed: "extra-condensed",
+        Condensed: "condensed",
+        SemiCondensed: "semi-condensed",
+        Normal: "normal",
+        SemiExpanded: "semi-expanded",
+        Expanded: "expanded",
+        ExtraExpanded: "extra-expanded",
+        UltraExpanded: "ultra-expanded"
+    };
+
+    var Font = (function () {
+        function Font() {
+            this.family = Font.DEFAULT_FAMILY;
+            this.size = Font.DEFAULT_SIZE;
+            this.stretch = Font.DEFAULT_STRETCH;
+            this.style = Font.DEFAULT_STYLE;
+            this.weight = Font.DEFAULT_WEIGHT;
+        }
+        Font.mergeInto = function (font, family, size, stretch, style, weight) {
+            var changed = font.family !== family || font.size !== size || font.stretch !== stretch || font.style !== style || font.weight !== weight;
+            font.family = family;
+            font.size = size;
+            font.stretch = stretch;
+            font.style = style;
+            font.weight = weight;
+            return changed;
+        };
+        Font.DEFAULT_FAMILY = "Segoe UI, Lucida Sans Unicode, Verdana";
+        Font.DEFAULT_STRETCH = FontStretch.Normal;
+        Font.DEFAULT_STYLE = FontStyle.Normal;
+        Font.DEFAULT_WEIGHT = 400 /* Normal */;
+        Font.DEFAULT_SIZE = 14;
+        return Font;
+    })();
+    minerva.Font = Font;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -7267,6 +7358,48 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (textblock) {
+            var TextBlockUpdater = (function (_super) {
+                __extends(TextBlockUpdater, _super);
+                function TextBlockUpdater() {
+                    _super.apply(this, arguments);
+                }
+                TextBlockUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(textblock.measure.TextBlockMeasurePipeDef)).setHitTestPipe(minerva.singleton(textblock.hittest.TextBlockHitTestPipeDef));
+
+                    this.assets.font = new minerva.Font();
+
+                    _super.prototype.init.call(this);
+                };
+
+                TextBlockUpdater.prototype.invalidateFont = function () {
+                    var assets = this.assets;
+                    var changed = minerva.Font.mergeInto(assets.font, assets.fontFamily, assets.fontSize, assets.fontStretch, assets.fontStyle, assets.fontWeight);
+                    if (changed) {
+                        this.invalidateMeasure();
+                        this.invalidateArrange();
+                        this.updateBounds(true);
+                    }
+                    this.invalidate();
+                };
+
+                TextBlockUpdater.prototype.invalidateTextMetrics = function () {
+                    this.invalidateMeasure();
+                    this.invalidateArrange();
+                    this.updateBounds(true);
+                    this.invalidate();
+                };
+                return TextBlockUpdater;
+            })(minerva.core.Updater);
+            textblock.TextBlockUpdater = TextBlockUpdater;
+        })(controls.textblock || (controls.textblock = {}));
+        var textblock = controls.textblock;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textblock) {
             (function (hittest) {
                 var TextBlockHitTestPipeDef = (function (_super) {
                     __extends(TextBlockHitTestPipeDef, _super);
@@ -7287,6 +7420,26 @@ var minerva;
                 var tapins = hittest.tapins;
             })(textblock.hittest || (textblock.hittest = {}));
             var hittest = textblock.hittest;
+        })(controls.textblock || (controls.textblock = {}));
+        var textblock = controls.textblock;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textblock) {
+            (function (measure) {
+                var TextBlockMeasurePipeDef = (function (_super) {
+                    __extends(TextBlockMeasurePipeDef, _super);
+                    function TextBlockMeasurePipeDef() {
+                        _super.call(this);
+                    }
+                    return TextBlockMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.TextBlockMeasurePipeDef = TextBlockMeasurePipeDef;
+            })(textblock.measure || (textblock.measure = {}));
+            var measure = textblock.measure;
         })(controls.textblock || (controls.textblock = {}));
         var textblock = controls.textblock;
     })(minerva.controls || (minerva.controls = {}));
