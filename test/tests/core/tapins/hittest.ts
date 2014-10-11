@@ -169,8 +169,26 @@ module minerva.core.hittest.tapins.tests {
     });
 
     QUnit.test("canHitInside", (assert) => {
+        var updater = mock.updater();
+        var data = mock.data(updater);
+        var pos = new Point();
+        var hitList: Updater[] = [updater];
+        var ctx = mock.ctx();
 
-        assert.ok(true);
+        var restored = false;
+        ctx.restore = function () {
+            restored = true;
+        };
+
+        data.hitChildren = true;
+        assert.ok(tapins.canHitInside(data, pos, hitList, ctx));
+        assert.strictEqual(restored, false);
+        assert.strictEqual(hitList.length, 1);
+
+        data.hitChildren = false;
+        assert.ok(!tapins.canHitInside(data, pos, hitList, ctx));
+        assert.strictEqual(restored, true);
+        assert.strictEqual(hitList.length, 0);
     });
 
     QUnit.test("insideObject", (assert) => {
