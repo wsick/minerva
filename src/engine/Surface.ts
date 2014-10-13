@@ -4,6 +4,7 @@ module minerva.engine {
         maxCount: number;
     }
 
+    var fontCtx: CanvasRenderingContext2D = null;
     var hitTestCtx: core.render.RenderContext = null;
     export class Surface implements core.ISurface {
         private $$layout = new core.draft.DraftPipeDef();
@@ -174,6 +175,12 @@ module minerva.engine {
                 layers[i].hitTest(pos, list, hitTestCtx);
             }
             return list;
+        }
+
+        static measureWidth (text: string, font: Font): number {
+            fontCtx = fontCtx || document.createElement('canvas').getContext('2d');
+            fontCtx.font = font.toHtml5Object();
+            return fontCtx.measureText(text).width;
         }
     }
 }
