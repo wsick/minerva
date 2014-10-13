@@ -31,6 +31,9 @@ module minerva {
         style: string = Font.DEFAULT_STYLE;
         weight: FontWeight = Font.DEFAULT_WEIGHT;
 
+        private $$cachedObj: string = null;
+        private $$cachedHeight: number = null;
+
         static mergeInto (font: Font, family: string, size: number, stretch: string, style: string, weight: FontWeight): boolean {
             var changed = font.family !== family
                 || font.size !== size
@@ -42,7 +45,58 @@ module minerva {
             font.stretch = stretch;
             font.style = style;
             font.weight = weight;
+            if (changed) {
+                font.$$cachedObj = null;
+                font.$$cachedHeight = null;
+            }
             return changed;
         }
+
+        toHtml5Object (): any {
+            return this.$$cachedObj = this.$$cachedObj || translateFont(this);
+        }
+
+        getHeight (): number {
+            if (this.$$cachedHeight == null)
+                this.$$cachedHeight = measureFontHeight(this);
+            return this.$$cachedHeight;
+        }
+
+        getAscender (): number {
+            return 0;
+        }
+
+        getDescender (): number {
+            return 0;
+        }
+    }
+
+    function translateFont (font: Font): string {
+        //Format: font-style font-variant font-weight font-size/line-height font-family
+        //Font Styles: normal, italic, oblique
+        //Font Variants: normal, small-caps
+        //Font Weights: normal, bold, bolder, lighter, 100, 200, 300, 400, 500, 600, 700, 800, 900
+        var s = "";
+        s += font.style.toString() + " ";
+        s += "normal ";
+        s += (<number>font.weight).toString() + " ";
+        s += font.size + "px ";
+        s += font.family.toString();
+        return s;
+    }
+
+    var dummy: HTMLElement;
+
+    function measureFontHeight (font: Font): number {
+        if (!dummy) {
+            dummy = document.createElement("div");
+            dummy.appendChild(document.createTextNode("M"));
+            document.body.appendChild(dummy);
+        }
+        dummy.style.display = "";
+        dummy.style.font = font.toHtml5Object();
+        var result = dummy.offsetHeight;
+        dummy.style.display = "none";
+        return result;
     }
 }
