@@ -214,6 +214,8 @@ var minerva;
             this.stretch = Font.DEFAULT_STRETCH;
             this.style = Font.DEFAULT_STYLE;
             this.weight = Font.DEFAULT_WEIGHT;
+            this.$$cachedObj = null;
+            this.$$cachedHeight = null;
         }
         Font.mergeInto = function (font, family, size, stretch, style, weight) {
             var changed = font.family !== family || font.size !== size || font.stretch !== stretch || font.style !== style || font.weight !== weight;
@@ -222,7 +224,29 @@ var minerva;
             font.stretch = stretch;
             font.style = style;
             font.weight = weight;
+            if (changed) {
+                font.$$cachedObj = null;
+                font.$$cachedHeight = null;
+            }
             return changed;
+        };
+
+        Font.prototype.toHtml5Object = function () {
+            return this.$$cachedObj = this.$$cachedObj || translateFont(this);
+        };
+
+        Font.prototype.getHeight = function () {
+            if (this.$$cachedHeight == null)
+                this.$$cachedHeight = measureFontHeight(this);
+            return this.$$cachedHeight;
+        };
+
+        Font.prototype.getAscender = function () {
+            return 0;
+        };
+
+        Font.prototype.getDescender = function () {
+            return 0;
         };
         Font.DEFAULT_FAMILY = "Segoe UI, Lucida Sans Unicode, Verdana";
         Font.DEFAULT_STRETCH = FontStretch.Normal;
@@ -232,6 +256,31 @@ var minerva;
         return Font;
     })();
     minerva.Font = Font;
+
+    function translateFont(font) {
+        var s = "";
+        s += font.style.toString() + " ";
+        s += "normal ";
+        s += font.weight.toString() + " ";
+        s += font.size + "px ";
+        s += font.family.toString();
+        return s;
+    }
+
+    var dummy;
+
+    function measureFontHeight(font) {
+        if (!dummy) {
+            dummy = document.createElement("div");
+            dummy.appendChild(document.createTextNode("M"));
+            document.body.appendChild(dummy);
+        }
+        dummy.style.display = "";
+        dummy.style.font = font.toHtml5Object();
+        var result = dummy.offsetHeight;
+        dummy.style.display = "none";
+        return result;
+    }
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -7648,6 +7697,7 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (engine) {
+        var fontCtx = null;
         var hitTestCtx = null;
         var Surface = (function () {
             function Surface() {
@@ -7821,6 +7871,12 @@ var minerva;
                     layers[i].hitTest(pos, list, hitTestCtx);
                 }
                 return list;
+            };
+
+            Surface.measureWidth = function (text, font) {
+                fontCtx = fontCtx || document.createElement('canvas').getContext('2d');
+                fontCtx.font = font.toHtml5Object();
+                return fontCtx.measureText(text).width;
             };
             return Surface;
         })();
@@ -8334,5 +8390,318 @@ var minerva;
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
     var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (_text) {
+        var TextLayoutDef = (function () {
+            function TextLayoutDef() {
+            }
+            TextLayoutDef.prototype.invalidate = function (assets) {
+                assets.actualWidth = NaN;
+                assets.actualHeight = NaN;
+            };
+
+            TextLayoutDef.prototype.invalidateSelection = function (assets) {
+                assets.selCached = false;
+            };
+
+            TextLayoutDef.prototype.layout = function (lctx, attrs, assets) {
+                if (!isNaN(assets.actualWidth))
+                    return false;
+
+                assets.actualWidth = 0.0;
+                assets.actualHeight = 0.0;
+                assets.lines = [];
+
+                var text = lctx.text;
+                if (!text)
+                    return false;
+
+                if (lctx.textWrapping === 0 /* NoWrap */)
+                    this.doLayoutNoWrap(lctx, attrs, assets);
+                else
+                    this.doLayoutWrap(lctx, attrs, assets);
+                this.invalidateSelection(assets);
+            };
+
+            TextLayoutDef.prototype.doLayoutNoWrap = function (lctx, attrs, assets) {
+                var text = lctx.text;
+
+                var usedText = text;
+                var end = text.length - 1;
+                var width;
+
+                if ((width = this.measureTextWidth(usedText, attrs.font)) > assets.maxWidth) {
+                    end = (Math.ceil(assets.maxWidth / width) * text.length) || 0;
+                    usedText = text.slice(0, end);
+                }
+
+                while (end > -1 && (width = this.measureTextWidth(usedText, attrs.font)) > assets.maxWidth) {
+                    end--;
+                    usedText = text.slice(0, end);
+                }
+
+                while (end < text.length && (width = this.measureTextWidth(usedText, attrs.font)) > assets.maxWidth) {
+                    end++;
+                    usedText = text.slice(0, end);
+                }
+
+                var line = new _text.layout.Line();
+                line.height = attrs.font.getHeight();
+                assets.lines.push(line);
+
+                var run = new _text.layout.Run();
+                run.attrs = attrs;
+                run.text = usedText;
+                run.start = 0;
+                run.length = end;
+                run.width = width;
+
+                line.width = run.width;
+                line.runs.push(run);
+            };
+
+            TextLayoutDef.prototype.doLayoutWrap = function (lctx, attrs, assets) {
+            };
+
+            TextLayoutDef.prototype.splitSelection = function (lctx, assets) {
+                var _this = this;
+                if (!assets.selCached)
+                    return;
+                var start = lctx.selectionStart;
+                var end = start + lctx.selectionLength;
+                assets.lines.forEach(function (line) {
+                    return line.runs.forEach(function (run) {
+                        return _text.layout.Run.splitSelection(run, start, end, function (text, attrs) {
+                            return _this.measureTextWidth(text, attrs.font);
+                        });
+                    });
+                });
+                assets.selCached = true;
+            };
+
+            TextLayoutDef.prototype.render = function (ctx, lctx, assets) {
+                var _this = this;
+                this.splitSelection(lctx, assets);
+
+                ctx.save();
+                assets.lines.forEach(function (line) {
+                    var halign = _this.getHorizontalAlignmentX(lctx, assets, line);
+                    ctx.translate(halign, 0);
+                    line.runs.forEach(function (run) {
+                        if (run.pre) {
+                            _text.layout.Cluster.render(run.pre, run.attrs, ctx);
+                            ctx.translate(run.pre.width, 0);
+                        }
+                        if (run.sel) {
+                            _text.layout.Cluster.render(run.sel, run.attrs, ctx);
+                            ctx.translate(run.sel.width, 0);
+                        }
+                        if (run.post) {
+                            _text.layout.Cluster.render(run.post, run.attrs, ctx);
+                            ctx.translate(run.post.width, 0);
+                        }
+                    });
+                    ctx.translate(-line.width - halign, line.height);
+                });
+                ctx.restore();
+            };
+
+            TextLayoutDef.prototype.getHorizontalAlignmentX = function (lctx, assets, line) {
+                if (lctx.textAlignment === 0 /* Left */ || lctx.textAlignment === 3 /* Justify */)
+                    return 0;
+                var width = getWidthConstraint(assets);
+                if (line.width < width)
+                    return 0;
+                if (lctx.textAlignment === 1 /* Center */)
+                    return (width - line.width) / 2.0;
+                return width - line.width;
+            };
+
+            TextLayoutDef.prototype.advanceLineBreak = function (run, pass, font) {
+                var c0 = pass.text.charAt(pass.index);
+                if (c0 === '\n') {
+                    run.length++;
+                    run.text += c0;
+                    run.width = this.measureTextWidth(run.text, font);
+                    pass.index++;
+                    return true;
+                }
+                var c1 = pass.text.charAt(pass.index + 1);
+                if (c0 === '\r' && c1 === '\n') {
+                    run.length += 2;
+                    run.text += (c0 + c1);
+                    run.width = this.measureTextWidth(run.text, font);
+                    pass.index += 2;
+                    return true;
+                }
+                return false;
+            };
+
+            TextLayoutDef.prototype.advanceToBreak = function (run, pass, font) {
+                var c = pass.text.charAt(pass.index);
+
+                return true;
+            };
+
+            TextLayoutDef.prototype.measureTextWidth = function (text, font) {
+                return minerva.engine.Surface.measureWidth(text, font);
+            };
+            return TextLayoutDef;
+        })();
+        _text.TextLayoutDef = TextLayoutDef;
+
+        function getWidthConstraint(assets) {
+            if (isFinite(assets.availableWidth))
+                return assets.availableWidth;
+            if (!isFinite(assets.maxWidth))
+                return assets.actualWidth;
+            return Math.min(assets.actualWidth, assets.maxWidth);
+        }
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (text) {
+        (function (layout) {
+            var isFirefox = /firefox/i.test(navigator.userAgent);
+
+            var Cluster = (function () {
+                function Cluster() {
+                    this.isSelected = false;
+                    this.text = null;
+                    this.width = 0;
+                }
+                Cluster.render = function (cluster, attrs, ctx) {
+                    var fontHeight = attrs.font.getHeight();
+                    var area = new minerva.Rect(0, 0, cluster.width, fontHeight);
+
+                    var raw = ctx.raw;
+
+                    var bg = cluster.isSelected ? attrs.selectionBackground : attrs.background;
+                    if (bg) {
+                        raw.rect(area.x, area.y, area.width, area.height);
+                        ctx.fillEx(bg, area);
+                    }
+
+                    var fg = cluster.isSelected ? attrs.selectionForeground : attrs.foreground;
+                    var fg5 = "#000000";
+                    if (fg) {
+                        fg.setupBrush(raw, area);
+                        fg5 = fg.toHtml5Object();
+                    }
+                    raw.fillStyle = fg5;
+                    raw.font = attrs.font.toHtml5Object();
+                    raw.textAlign = "left";
+                    if (isFirefox) {
+                        raw.textBaseline = "bottom";
+                        raw.fillText(cluster.text, 0, fontHeight);
+                    } else {
+                        raw.textBaseline = "top";
+                        raw.fillText(cluster.text, 0, 0);
+                    }
+
+                    if (attrs.isUnderlined) {
+                        raw.beginPath();
+                        raw.moveTo(0, fontHeight);
+                        raw.lineTo(cluster.width, fontHeight);
+                        raw.lineWidth = 2;
+                        raw.strokeStyle = fg5;
+                        raw.stroke();
+                    }
+                };
+                return Cluster;
+            })();
+            layout.Cluster = Cluster;
+        })(text.layout || (text.layout = {}));
+        var layout = text.layout;
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (text) {
+        (function (layout) {
+            var Line = (function () {
+                function Line() {
+                    this.runs = [];
+                    this.width = 0;
+                    this.height = 0;
+                }
+                Line.getLineFromY = function (lines, y) {
+                    var line;
+                    for (var i = 0, oy = 0.0; i < lines.length; i++) {
+                        line = lines[i];
+                        oy += line.height;
+                        if (y < oy)
+                            return line;
+                    }
+                    return lines[lines.length - 1];
+                };
+                return Line;
+            })();
+            layout.Line = Line;
+        })(text.layout || (text.layout = {}));
+        var layout = text.layout;
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (_text) {
+        (function (layout) {
+            var Run = (function () {
+                function Run() {
+                    this.text = null;
+                    this.start = 0;
+                    this.length = 0;
+                    this.width = 0;
+                    this.pre = null;
+                    this.sel = null;
+                    this.post = null;
+                }
+                Run.getCursorFromX = function (runs, x) {
+                    return 0;
+                };
+
+                Run.splitSelection = function (run, start, end, measureWidth) {
+                    run.pre = run.sel = run.post = null;
+
+                    var rs = run.start;
+                    var re = rs + run.length;
+
+                    var prelen = Math.min(run.length, Math.max(0, start - rs));
+                    if (prelen > 0) {
+                        var pre = run.pre = new layout.Cluster();
+                        pre.text = run.text.substr(0, prelen);
+                        pre.width = measureWidth(pre.text, run.attrs);
+                    }
+
+                    var postlen = Math.min(run.length, Math.max(0, re - end));
+                    if (postlen > 0) {
+                        var post = run.post = new layout.Cluster();
+                        post.text = run.text.substr(run.length - postlen);
+                        post.width = measureWidth(post.text, run.attrs);
+                    }
+
+                    var ss = Math.min(re, Math.max(rs, start));
+                    var se = Math.max(rs, Math.min(re, end));
+                    var sellen = Math.max(0, se - ss);
+                    if (sellen > 0) {
+                        var sel = run.sel = new layout.Cluster();
+                        sel.isSelected = true;
+                        sel.text = run.text.substr(ss - rs, sellen);
+                        sel.width = measureWidth(sel.text, run.attrs);
+                    }
+                };
+                return Run;
+            })();
+            layout.Run = Run;
+        })(_text.layout || (_text.layout = {}));
+        var layout = _text.layout;
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
 })(minerva || (minerva = {}));
 //# sourceMappingURL=minerva.js.map

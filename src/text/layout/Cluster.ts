@@ -6,7 +6,7 @@ module minerva.text.layout {
         text: string = null;
         width: number = 0;
 
-        static render (cluster: Cluster, attrs: IAttributes, ctx: core.render.RenderContext) {
+        static render (cluster: Cluster, attrs: ITextAttributes, ctx: core.render.RenderContext) {
             var fontHeight = attrs.font.getHeight();
             var area = new Rect(0, 0, cluster.width, fontHeight);
 
@@ -27,7 +27,7 @@ module minerva.text.layout {
                 fg5 = fg.toHtml5Object();
             }
             raw.fillStyle = fg5;
-            raw.font = font.toHtml5Object();
+            raw.font = attrs.font.toHtml5Object();
             raw.textAlign = "left";
             if (isFirefox) {
                 raw.textBaseline = "bottom";

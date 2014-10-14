@@ -37,6 +37,7 @@ module minerva.controls.textblock {
             this.invalidateArrange();
             this.updateBounds(true);
             this.invalidate();
+            //this.$$layout.reset();
         }
     }
 }

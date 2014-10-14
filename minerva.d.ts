@@ -152,7 +152,13 @@ declare module minerva {
         public stretch: string;
         public style: string;
         public weight: FontWeight;
+        private $$cachedObj;
+        private $$cachedHeight;
         static mergeInto(font: Font, family: string, size: number, stretch: string, style: string, weight: FontWeight): boolean;
+        public toHtml5Object(): any;
+        public getHeight(): number;
+        public getAscender(): number;
+        public getDescender(): number;
     }
 }
 declare module minerva {
@@ -1829,6 +1835,7 @@ declare module minerva.engine {
         public updateLayout(): boolean;
         public resize(width: number, height: number): void;
         public hitTest(pos: Point): core.Updater[];
+        static measureWidth(text: string, font: Font): number;
     }
 }
 declare module minerva.engine {
@@ -1945,4 +1952,81 @@ declare module minerva.shapes.shape.sizing.tapins {
 }
 declare module minerva.shapes.shape.sizing.tapins {
     function stretchActual(input: IInput, state: IState, output: core.sizing.IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.text {
+    interface ITextLayoutContext {
+        text: string;
+        selectionStart: number;
+        selectionLength: number;
+        textWrapping: TextWrapping;
+        textAlignment: TextAlignment;
+        lineStackingStrategy: LineStackingStrategy;
+        lineHeight: number;
+    }
+    interface ITextAttributes {
+        background: IBrush;
+        selectionBackground: IBrush;
+        foreground: IBrush;
+        selectionForeground: IBrush;
+        isUnderlined: boolean;
+        font: Font;
+    }
+    interface ITextLayoutAssets {
+        availableWidth: number;
+        actualWidth: number;
+        actualHeight: number;
+        wrapped: boolean;
+        maxWidth: number;
+        maxHeight: number;
+        lines: layout.Line[];
+        selCached: boolean;
+    }
+    interface ITextLayoutPass {
+        text: string;
+        index: number;
+        max: number;
+    }
+    class TextLayoutDef {
+        public invalidate(assets: ITextLayoutAssets): void;
+        public invalidateSelection(assets: ITextLayoutAssets): void;
+        public layout(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): boolean;
+        public doLayoutNoWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
+        public doLayoutWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
+        public splitSelection(lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
+        public render(ctx: core.render.RenderContext, lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
+        public getHorizontalAlignmentX(lctx: ITextLayoutContext, assets: ITextLayoutAssets, line: layout.Line): number;
+        public advanceLineBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
+        public advanceToBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
+        public measureTextWidth(text: string, font: Font): number;
+    }
+}
+declare module minerva.text.layout {
+    class Cluster {
+        public isSelected: boolean;
+        public text: string;
+        public width: number;
+        static render(cluster: Cluster, attrs: ITextAttributes, ctx: core.render.RenderContext): void;
+    }
+}
+declare module minerva.text.layout {
+    class Line {
+        public runs: Run[];
+        public width: number;
+        public height: number;
+        static getLineFromY(lines: Line[], y: number): Line;
+    }
+}
+declare module minerva.text.layout {
+    class Run {
+        public attrs: ITextAttributes;
+        public text: string;
+        public start: number;
+        public length: number;
+        public width: number;
+        public pre: Cluster;
+        public sel: Cluster;
+        public post: Cluster;
+        static getCursorFromX(runs: Run[], x: number): number;
+        static splitSelection(run: Run, start: number, end: number, measureWidth: (text: string, attrs: ITextAttributes) => number): void;
+    }
 }
