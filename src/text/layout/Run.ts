@@ -1,7 +1,7 @@
 module minerva.text.layout {
     export class Run {
         attrs: ITextAttributes;
-        text: string = null;
+        text: string = "";
         start: number = 0;
         length: number = 0;
         width: number = 0;

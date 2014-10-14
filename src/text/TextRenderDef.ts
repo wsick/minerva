@@ -47,6 +47,7 @@ module minerva.text {
                 return (width - line.width) / 2.0;
             return width - line.width;
         }
+
         measureTextWidth (text: string, font: Font): number {
             return engine.Surface.measureWidth(text, font);
         }

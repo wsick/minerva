@@ -1975,7 +1975,6 @@ declare module minerva.text {
         availableWidth: number;
         actualWidth: number;
         actualHeight: number;
-        wrapped: boolean;
         maxWidth: number;
         maxHeight: number;
         lines: layout.Line[];
@@ -1994,7 +1993,7 @@ declare module minerva.text {
         public doLayoutNoWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
         public doLayoutWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
         public advanceLineBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
-        public advanceToBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
+        public advanceToBreak(run: layout.Run, pass: ITextLayoutPass, font: Font, maxWidth: number): boolean;
         public measureTextWidth(text: string, font: Font): number;
     }
 }

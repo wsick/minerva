@@ -20,7 +20,6 @@ module minerva.text {
         availableWidth: number;
         actualWidth: number;
         actualHeight: number;
-        wrapped: boolean;
         maxWidth: number;
         maxHeight: number;
         lines: layout.Line[];
