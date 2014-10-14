@@ -8501,6 +8501,7 @@ var minerva;
                         line.runs.push(run);
                     }
                 }
+                line.width = run.width;
                 assets.actualWidth = Math.max(assets.actualWidth, run.width);
             };
 
@@ -8525,38 +8526,41 @@ var minerva;
             };
 
             TextLayoutDef.prototype.advanceToBreak = function (run, pass, font, maxWidth) {
+                var text = pass.text;
+
                 if (!isFinite(maxWidth)) {
-                    run.text += pass.text.substr(pass.index);
+                    run.text += text.substr(pass.index);
                     run.length = run.text.length;
+                    pass.index += run.text.length;
                     run.width = this.measureTextWidth(run.text, font);
                     return false;
                 }
 
-                var nextIndex = pass.text.indexOf(' ', pass.index);
-                var nextText;
-                var nextWidth;
-                if (nextIndex === -1) {
-                    nextText = pass.text.substr(pass.index);
-                    nextWidth = this.measureTextWidth(nextText, font);
-                    if ((run.width + nextWidth) < maxWidth) {
-                        run.text += nextText;
-                        run.length += nextText.length;
-                        run.width += nextWidth;
-                        return false;
+                var start = pass.index;
+                var lastSpace = -1;
+                var c;
+                var curText = "";
+                var curWidth = 0;
+                while (pass.index < pass.max) {
+                    c = text.charAt(pass.index);
+                    curText += c;
+                    curWidth = this.measureTextWidth(curText, font);
+                    if (curWidth > maxWidth) {
+                        var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index - 1;
+                        run.length = (breakIndex - start) || 1;
+                        run.text = text.substr(start, run.length);
+                        run.width = this.measureTextWidth(run.text, font);
+                        pass.index = breakIndex;
+                        return true;
                     }
-
-                    return true;
+                    if (c === ' ')
+                        lastSpace = pass.index;
+                    pass.index++;
                 }
-
-                while ((nextText = pass.text.slice(pass.index, nextIndex + 1)) != null && ((nextWidth = this.measureTextWidth(nextText, font)) + run.width) < maxWidth) {
-                    run.text += nextText;
-                    run.length += nextText.length;
-                    run.width += nextWidth;
-                    pass.index = nextIndex + 1;
-                    nextIndex = pass.text.indexOf(' ', pass.index);
-                }
-
-                return nextText.length > 0;
+                run.text = text.substr(start);
+                run.length = run.text.length;
+                run.width = this.measureTextWidth(run.text, font);
+                return false;
             };
 
             TextLayoutDef.prototype.measureTextWidth = function (text, font) {
@@ -8741,9 +8745,6 @@ var minerva;
                     this.start = 0;
                     this.length = 0;
                     this.width = 0;
-                    this.pre = null;
-                    this.sel = null;
-                    this.post = null;
                 }
                 Run.getCursorFromX = function (runs, x) {
                     return 0;

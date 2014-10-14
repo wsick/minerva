@@ -6,9 +6,9 @@ module minerva.text.layout {
         length: number = 0;
         width: number = 0;
 
-        pre: Cluster = null;
-        sel: Cluster = null;
-        post: Cluster = null;
+        pre: Cluster;
+        sel: Cluster;
+        post: Cluster;
 
         static getCursorFromX (runs: Run[], x: number): number {
             return 0;
