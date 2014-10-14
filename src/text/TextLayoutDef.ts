@@ -1,46 +1,8 @@
 module minerva.text {
-    export interface ITextLayoutContext {
-        text: string;
-        selectionStart: number;
-        selectionLength: number;
-        textWrapping: TextWrapping;
-        textAlignment: TextAlignment;
-        lineStackingStrategy: LineStackingStrategy;
-        lineHeight: number;
-    }
-    export interface ITextAttributes {
-        background: IBrush;
-        selectionBackground: IBrush;
-        foreground: IBrush;
-        selectionForeground: IBrush;
-        isUnderlined: boolean;
-        font: Font;
-    }
-    export interface ITextLayoutAssets {
-        availableWidth: number;
-        actualWidth: number;
-        actualHeight: number;
-        wrapped: boolean;
-        maxWidth: number;
-        maxHeight: number;
-        lines: layout.Line[];
-        selCached: boolean;
-    }
-
-    export interface ITextLayoutPass {
-        text: string;
-        index: number;
-        max: number;
-    }
-
     export class TextLayoutDef {
         invalidate (assets: ITextLayoutAssets) {
             assets.actualWidth = NaN;
             assets.actualHeight = NaN;
-        }
-
-        invalidateSelection (assets: ITextLayoutAssets) {
-            assets.selCached = false;
         }
 
         layout (lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets) {
@@ -60,7 +22,7 @@ module minerva.text {
                 this.doLayoutNoWrap(lctx, attrs, assets);
             else
                 this.doLayoutWrap(lctx, attrs, assets);
-            this.invalidateSelection(assets);
+            assets.selCached = false;
         }
 
         doLayoutNoWrap (lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets) {
@@ -101,55 +63,12 @@ module minerva.text {
         }
 
         doLayoutWrap (lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets) {
+            var pass: ITextLayoutPass = {
+                text: lctx.text,
+                index: 0,
+                max: lctx.text.length
+            };
 
-        }
-
-        splitSelection (lctx: ITextLayoutContext, assets: ITextLayoutAssets) {
-            if (!assets.selCached)
-                return;
-            var start = lctx.selectionStart;
-            var end = start + lctx.selectionLength;
-            assets.lines.forEach(line =>
-                line.runs.forEach(run =>
-                    layout.Run.splitSelection(run, start, end, (text, attrs) => this.measureTextWidth(text, attrs.font))));
-            assets.selCached = true;
-        }
-
-        render (ctx: core.render.RenderContext, lctx: ITextLayoutContext, assets: ITextLayoutAssets) {
-            this.splitSelection(lctx, assets);
-
-            ctx.save();
-            assets.lines.forEach(line => {
-                var halign = this.getHorizontalAlignmentX(lctx, assets, line);
-                ctx.translate(halign, 0);
-                line.runs.forEach(run => {
-                    if (run.pre) {
-                        layout.Cluster.render(run.pre, run.attrs, ctx);
-                        ctx.translate(run.pre.width, 0);
-                    }
-                    if (run.sel) {
-                        layout.Cluster.render(run.sel, run.attrs, ctx);
-                        ctx.translate(run.sel.width, 0);
-                    }
-                    if (run.post) {
-                        layout.Cluster.render(run.post, run.attrs, ctx);
-                        ctx.translate(run.post.width, 0);
-                    }
-                });
-                ctx.translate(-line.width - halign, line.height);
-            });
-            ctx.restore();
-        }
-
-        getHorizontalAlignmentX (lctx: ITextLayoutContext, assets: ITextLayoutAssets, line: layout.Line) {
-            if (lctx.textAlignment === TextAlignment.Left || lctx.textAlignment === TextAlignment.Justify)
-                return 0;
-            var width = getWidthConstraint(assets);
-            if (line.width < width)
-                return 0;
-            if (lctx.textAlignment === TextAlignment.Center)
-                return (width - line.width) / 2.0;
-            return width - line.width;
         }
 
         advanceLineBreak (run: layout.Run, pass: ITextLayoutPass, font: Font): boolean {
@@ -181,13 +100,5 @@ module minerva.text {
         measureTextWidth (text: string, font: Font): number {
             return engine.Surface.measureWidth(text, font);
         }
-    }
-
-    function getWidthConstraint (assets: ITextLayoutAssets): number {
-        if (isFinite(assets.availableWidth))
-            return assets.availableWidth;
-        if (!isFinite(assets.maxWidth))
-            return assets.actualWidth;
-        return Math.min(assets.actualWidth, assets.maxWidth);
     }
 }

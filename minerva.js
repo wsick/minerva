@@ -8402,10 +8402,6 @@ var minerva;
                 assets.actualHeight = NaN;
             };
 
-            TextLayoutDef.prototype.invalidateSelection = function (assets) {
-                assets.selCached = false;
-            };
-
             TextLayoutDef.prototype.layout = function (lctx, attrs, assets) {
                 if (!isNaN(assets.actualWidth))
                     return false;
@@ -8422,7 +8418,7 @@ var minerva;
                     this.doLayoutNoWrap(lctx, attrs, assets);
                 else
                     this.doLayoutWrap(lctx, attrs, assets);
-                this.invalidateSelection(assets);
+                assets.selCached = false;
             };
 
             TextLayoutDef.prototype.doLayoutNoWrap = function (lctx, attrs, assets) {
@@ -8463,60 +8459,11 @@ var minerva;
             };
 
             TextLayoutDef.prototype.doLayoutWrap = function (lctx, attrs, assets) {
-            };
-
-            TextLayoutDef.prototype.splitSelection = function (lctx, assets) {
-                var _this = this;
-                if (!assets.selCached)
-                    return;
-                var start = lctx.selectionStart;
-                var end = start + lctx.selectionLength;
-                assets.lines.forEach(function (line) {
-                    return line.runs.forEach(function (run) {
-                        return _text.layout.Run.splitSelection(run, start, end, function (text, attrs) {
-                            return _this.measureTextWidth(text, attrs.font);
-                        });
-                    });
-                });
-                assets.selCached = true;
-            };
-
-            TextLayoutDef.prototype.render = function (ctx, lctx, assets) {
-                var _this = this;
-                this.splitSelection(lctx, assets);
-
-                ctx.save();
-                assets.lines.forEach(function (line) {
-                    var halign = _this.getHorizontalAlignmentX(lctx, assets, line);
-                    ctx.translate(halign, 0);
-                    line.runs.forEach(function (run) {
-                        if (run.pre) {
-                            _text.layout.Cluster.render(run.pre, run.attrs, ctx);
-                            ctx.translate(run.pre.width, 0);
-                        }
-                        if (run.sel) {
-                            _text.layout.Cluster.render(run.sel, run.attrs, ctx);
-                            ctx.translate(run.sel.width, 0);
-                        }
-                        if (run.post) {
-                            _text.layout.Cluster.render(run.post, run.attrs, ctx);
-                            ctx.translate(run.post.width, 0);
-                        }
-                    });
-                    ctx.translate(-line.width - halign, line.height);
-                });
-                ctx.restore();
-            };
-
-            TextLayoutDef.prototype.getHorizontalAlignmentX = function (lctx, assets, line) {
-                if (lctx.textAlignment === 0 /* Left */ || lctx.textAlignment === 3 /* Justify */)
-                    return 0;
-                var width = getWidthConstraint(assets);
-                if (line.width < width)
-                    return 0;
-                if (lctx.textAlignment === 1 /* Center */)
-                    return (width - line.width) / 2.0;
-                return width - line.width;
+                var pass = {
+                    text: lctx.text,
+                    index: 0,
+                    max: lctx.text.length
+                };
             };
 
             TextLayoutDef.prototype.advanceLineBreak = function (run, pass, font) {
@@ -8551,6 +8498,74 @@ var minerva;
             return TextLayoutDef;
         })();
         _text.TextLayoutDef = TextLayoutDef;
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (_text) {
+        var TextRenderDef = (function () {
+            function TextRenderDef() {
+            }
+            TextRenderDef.prototype.render = function (ctx, lctx, assets) {
+                var _this = this;
+                this.splitSelection(lctx, assets);
+
+                ctx.save();
+                assets.lines.forEach(function (line) {
+                    var halign = _this.getHorizontalAlignmentX(lctx, assets, line);
+                    ctx.translate(halign, 0);
+                    line.runs.forEach(function (run) {
+                        if (run.pre) {
+                            _text.layout.Cluster.render(run.pre, run.attrs, ctx);
+                            ctx.translate(run.pre.width, 0);
+                        }
+                        if (run.sel) {
+                            _text.layout.Cluster.render(run.sel, run.attrs, ctx);
+                            ctx.translate(run.sel.width, 0);
+                        }
+                        if (run.post) {
+                            _text.layout.Cluster.render(run.post, run.attrs, ctx);
+                            ctx.translate(run.post.width, 0);
+                        }
+                    });
+                    ctx.translate(-line.width - halign, line.height);
+                });
+                ctx.restore();
+            };
+
+            TextRenderDef.prototype.splitSelection = function (lctx, assets) {
+                var _this = this;
+                if (!assets.selCached)
+                    return;
+                var start = lctx.selectionStart;
+                var end = start + lctx.selectionLength;
+                assets.lines.forEach(function (line) {
+                    return line.runs.forEach(function (run) {
+                        return _text.layout.Run.splitSelection(run, start, end, function (text, attrs) {
+                            return _this.measureTextWidth(text, attrs.font);
+                        });
+                    });
+                });
+                assets.selCached = true;
+            };
+
+            TextRenderDef.prototype.getHorizontalAlignmentX = function (lctx, assets, line) {
+                if (lctx.textAlignment === 0 /* Left */ || lctx.textAlignment === 3 /* Justify */)
+                    return 0;
+                var width = getWidthConstraint(assets);
+                if (line.width < width)
+                    return 0;
+                if (lctx.textAlignment === 1 /* Center */)
+                    return (width - line.width) / 2.0;
+                return width - line.width;
+            };
+            TextRenderDef.prototype.measureTextWidth = function (text, font) {
+                return minerva.engine.Surface.measureWidth(text, font);
+            };
+            return TextRenderDef;
+        })();
+        _text.TextRenderDef = TextRenderDef;
 
         function getWidthConstraint(assets) {
             if (isFinite(assets.availableWidth))

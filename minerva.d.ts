@@ -1986,17 +1986,23 @@ declare module minerva.text {
         index: number;
         max: number;
     }
+}
+declare module minerva.text {
     class TextLayoutDef {
         public invalidate(assets: ITextLayoutAssets): void;
-        public invalidateSelection(assets: ITextLayoutAssets): void;
         public layout(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): boolean;
         public doLayoutNoWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
         public doLayoutWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
-        public splitSelection(lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
-        public render(ctx: core.render.RenderContext, lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
-        public getHorizontalAlignmentX(lctx: ITextLayoutContext, assets: ITextLayoutAssets, line: layout.Line): number;
         public advanceLineBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
         public advanceToBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
+        public measureTextWidth(text: string, font: Font): number;
+    }
+}
+declare module minerva.text {
+    class TextRenderDef {
+        public render(ctx: core.render.RenderContext, lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
+        public splitSelection(lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
+        public getHorizontalAlignmentX(lctx: ITextLayoutContext, assets: ITextLayoutAssets, line: layout.Line): number;
         public measureTextWidth(text: string, font: Font): number;
     }
 }
