@@ -29,6 +29,10 @@ module minerva.text {
 
         private $$textlayout: text.TextLayoutDef;
 
+        constructor() {
+            this.init();
+        }
+
         init () {
             this.setTextLayout();
         }

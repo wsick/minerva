@@ -8753,6 +8753,7 @@ var minerva;
                     font: new minerva.Font(),
                     text: ""
                 };
+                this.init();
             }
             TextUpdater.prototype.init = function () {
                 this.setTextLayout();

@@ -2033,6 +2033,7 @@ declare module minerva.text {
     class TextUpdater {
         public assets: ITextUpdaterAssets;
         private $$textlayout;
+        constructor();
         public init(): void;
         public setTextLayout(tldef?: TextLayoutDef): TextUpdater;
         public layout(docctx: IDocumentContext, docassets: IDocumentAssets): number;
