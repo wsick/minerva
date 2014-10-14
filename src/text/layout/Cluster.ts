@@ -6,28 +6,28 @@ module minerva.text.layout {
         text: string = null;
         width: number = 0;
 
-        static render (cluster: Cluster, attrs: ITextAttributes, ctx: core.render.RenderContext) {
-            var fontHeight = attrs.font.getHeight();
+        static render (cluster: Cluster, assets: ITextAssets, ctx: core.render.RenderContext) {
+            var fontHeight = assets.font.getHeight();
             var area = new Rect(0, 0, cluster.width, fontHeight);
 
             var raw = ctx.raw;
 
             //Background
-            var bg = cluster.isSelected ? attrs.selectionBackground : attrs.background;
+            var bg = cluster.isSelected ? assets.selectionBackground : assets.background;
             if (bg) {
                 raw.rect(area.x, area.y, area.width, area.height);
                 ctx.fillEx(bg, area);
             }
 
             //Text
-            var fg = cluster.isSelected ? attrs.selectionForeground : attrs.foreground;
+            var fg = cluster.isSelected ? assets.selectionForeground : assets.foreground;
             var fg5 = "#000000";
             if (fg) {
                 fg.setupBrush(raw, area);
                 fg5 = fg.toHtml5Object();
             }
             raw.fillStyle = fg5;
-            raw.font = attrs.font.toHtml5Object();
+            raw.font = assets.font.toHtml5Object();
             raw.textAlign = "left";
             if (isFirefox) {
                 raw.textBaseline = "bottom";
@@ -38,7 +38,7 @@ module minerva.text.layout {
             }
 
             //Underline
-            if (attrs.isUnderlined) {
+            if (assets.isUnderlined) {
                 raw.beginPath();
                 raw.moveTo(0, fontHeight);
                 raw.lineTo(cluster.width, fontHeight);

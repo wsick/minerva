@@ -1,6 +1,6 @@
 module minerva.text.layout {
     export class Run {
-        attrs: ITextAttributes;
+        attrs: ITextAssets;
         text: string = "";
         start: number = 0;
         length: number = 0;
@@ -78,7 +78,7 @@ module minerva.text.layout {
              */
         }
 
-        static splitSelection (run: Run, start: number, end: number, measureWidth: (text: string, attrs: ITextAttributes) => number) {
+        static splitSelection (run: Run, start: number, end: number, measureWidth: (text: string, assets: ITextAssets) => number) {
             run.pre = run.sel = run.post = null;
 
             var rs = run.start;

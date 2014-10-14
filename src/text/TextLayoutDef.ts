@@ -1,50 +1,54 @@
 module minerva.text {
+    export interface ITextAssets {
+        text: string;
+        background: IBrush;
+        selectionBackground: IBrush;
+        foreground: IBrush;
+        selectionForeground: IBrush;
+        isUnderlined: boolean;
+        font: Font;
+    }
+
+    export interface ITextLayoutPass {
+        text: string;
+        index: number;
+        max: number;
+    }
+
     export class TextLayoutDef {
-        invalidate (assets: ITextLayoutAssets) {
-            assets.actualWidth = NaN;
-            assets.actualHeight = NaN;
-        }
-
-        layout (lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): boolean {
+        layout (docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): boolean {
             //TODO: Implement lineStackingStrategy, lineHeight
-            if (!isNaN(assets.actualWidth))
-                return false;
-
-            assets.actualWidth = 0.0;
-            assets.actualHeight = 0.0;
-            assets.lines = [];
-
-            var text = lctx.text;
+            var text = assets.text;
             if (!text)
                 return false;
 
-            if (lctx.textWrapping === TextWrapping.NoWrap)
-                this.doLayoutNoWrap(lctx, attrs, assets);
+            if (docctx.textWrapping === TextWrapping.NoWrap)
+                this.doLayoutNoWrap(docctx, docassets, assets);
             else
-                this.doLayoutWrap(lctx, attrs, assets);
+                this.doLayoutWrap(docctx, docassets, assets);
 
-            assets.selCached = false;
+            docassets.selCached = false;
             return true;
         }
 
-        doLayoutNoWrap (lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets) {
-            var text = lctx.text;
+        doLayoutNoWrap (docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets) {
+            var text = assets.text;
 
             var usedText = text;
             var end = text.length - 1;
             var width: number;
             //NOTE: Guess at clip point
-            if ((width = this.measureTextWidth(usedText, attrs.font)) > assets.maxWidth) {
-                end = (Math.ceil(assets.maxWidth / width * text.length)) || 0;
+            if ((width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
+                end = (Math.ceil(docassets.maxWidth / width * text.length)) || 0;
                 usedText = text.slice(0, end);
             }
             //NOTE: Move backward if still need to clip
-            while (end > -1 && (width = this.measureTextWidth(usedText, attrs.font)) > assets.maxWidth) {
+            while (end > -1 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                 end--;
                 usedText = text.slice(0, end);
             }
             //NOTE: Move forward if not clipping remaining characters
-            while (end < text.length && (width = this.measureTextWidth(usedText, attrs.font)) > assets.maxWidth) {
+            while (end < text.length && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                 end++;
                 usedText = text.slice(0, end);
             }
@@ -52,15 +56,15 @@ module minerva.text {
             if ((end + 1) < text.length) {
                 end++;
                 usedText += text[end + 1];
-                width = this.measureTextWidth(usedText, attrs.font);
+                width = this.measureTextWidth(usedText, assets.font);
             }
 
             var line = new layout.Line();
-            line.height = attrs.font.getHeight();
-            assets.lines.push(line);
+            line.height = assets.font.getHeight();
+            docassets.lines.push(line);
 
             var run = new layout.Run();
-            run.attrs = attrs;
+            run.attrs = assets;
             run.text = usedText;
             run.start = 0;
             run.length = end;
@@ -69,44 +73,44 @@ module minerva.text {
             line.width = run.width;
             line.runs.push(run);
 
-            assets.actualWidth = line.width;
-            assets.actualHeight = line.height;
+            docassets.actualWidth = line.width;
+            docassets.actualHeight = line.height;
         }
 
-        doLayoutWrap (lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets) {
+        doLayoutWrap (docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets) {
             var pass: ITextLayoutPass = {
-                text: lctx.text,
+                text: assets.text,
                 index: 0,
-                max: lctx.text.length
+                max: assets.text.length
             };
 
-            var font = attrs.font;
+            var font = assets.font;
 
             var line = new layout.Line();
             line.height = font.getHeight();
-            assets.actualHeight += line.height;
-            assets.lines.push(line);
+            docassets.actualHeight += line.height;
+            docassets.lines.push(line);
 
             var run = new layout.Run();
-            run.attrs = attrs;
+            run.attrs = assets;
             line.runs.push(run);
 
             while (pass.index < pass.max) {
-                if (this.advanceLineBreak(run, pass, font) || this.advanceToBreak(run, pass, font, assets.maxWidth)) {
-                    assets.actualWidth = Math.max(assets.actualWidth, run.width);
+                if (this.advanceLineBreak(run, pass, font) || this.advanceToBreak(run, pass, font, docassets.maxWidth)) {
+                    docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
                     line.width = run.width;
                     line = new layout.Line();
                     line.height = font.getHeight();
-                    assets.actualHeight += line.height;
-                    assets.lines.push(line);
+                    docassets.actualHeight += line.height;
+                    docassets.lines.push(line);
 
                     run = new layout.Run();
-                    run.attrs = attrs;
+                    run.attrs = assets;
                     line.runs.push(run);
                 }
             }
             line.width = run.width;
-            assets.actualWidth = Math.max(assets.actualWidth, run.width);
+            docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
         }
 
         advanceLineBreak (run: layout.Run, pass: ITextLayoutPass, font: Font): boolean {

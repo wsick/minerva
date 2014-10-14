@@ -1715,20 +1715,30 @@ declare module minerva.controls.stackpanel.measure.tapins {
     function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.textblock {
-    interface ITextBlockUpdaterAssets extends core.IUpdaterAssets, measure.IInput {
-        fontFamily: string;
-        fontSize: number;
-        fontStretch: string;
-        fontStyle: string;
-        fontWeight: FontWeight;
-        textDecorations: TextDecorations;
-        language: string;
+    interface ITextBlockUpdaterAssets extends core.IUpdaterAssets, measure.IInput, text.IDocumentContext {
     }
     class TextBlockUpdater extends core.Updater {
         public assets: ITextBlockUpdaterAssets;
+        private $$doc;
+        public doctree: TextBlockUpdaterTree;
         public init(): void;
-        public invalidateFont(): void;
+        public setDocument(docdef?: text.IDocumentLayoutDef): TextBlockUpdater;
+        public layout(constraint: Size): boolean;
         public invalidateTextMetrics(): void;
+    }
+}
+declare module minerva.controls.textblock {
+    interface ITextBlockUpdaterTree {
+        walk(): IWalker<text.TextUpdater>;
+        onChildAttached(child: text.TextUpdater): any;
+        onChildDetached(child: text.TextUpdater): any;
+    }
+    class TextBlockUpdaterTree implements ITextBlockUpdaterTree {
+        public children: text.TextUpdater[];
+        public clear(): void;
+        public walk(): IWalker<text.TextUpdater>;
+        public onChildAttached(child: text.TextUpdater, index?: number): void;
+        public onChildDetached(child: text.TextUpdater): void;
     }
 }
 declare module minerva.controls.textblock.hittest {
@@ -1744,12 +1754,6 @@ declare module minerva.controls.textblock.hittest {
 }
 declare module minerva.controls.textblock.measure {
     interface IInput extends core.measure.IInput {
-        lineStackingStrategy: LineStackingStrategy;
-        lineHeight: number;
-        textAlignment: TextAlignment;
-        textTrimming: TextTrimming;
-        textWrapping: TextWrapping;
-        font: Font;
     }
     class TextBlockMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();
@@ -1954,8 +1958,7 @@ declare module minerva.shapes.shape.sizing.tapins {
     function stretchActual(input: IInput, state: IState, output: core.sizing.IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.text {
-    interface ITextLayoutContext {
-        text: string;
+    interface IDocumentContext {
         selectionStart: number;
         selectionLength: number;
         textWrapping: TextWrapping;
@@ -1963,15 +1966,7 @@ declare module minerva.text {
         lineStackingStrategy: LineStackingStrategy;
         lineHeight: number;
     }
-    interface ITextAttributes {
-        background: IBrush;
-        selectionBackground: IBrush;
-        foreground: IBrush;
-        selectionForeground: IBrush;
-        isUnderlined: boolean;
-        font: Font;
-    }
-    interface ITextLayoutAssets {
+    interface IDocumentAssets {
         availableWidth: number;
         actualWidth: number;
         actualHeight: number;
@@ -1980,29 +1975,68 @@ declare module minerva.text {
         lines: layout.Line[];
         selCached: boolean;
     }
+    interface IDocumentLayoutDef {
+        createAssets(): IDocumentAssets;
+        layout(docctx: IDocumentContext, docassets: IDocumentAssets, walker: IWalker<TextUpdater>): boolean;
+        render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
+    }
+    class DocumentLayoutDef implements IDocumentLayoutDef {
+        public createAssets(): IDocumentAssets;
+        public layout(docctx: IDocumentContext, docassets: IDocumentAssets, walker: IWalker<TextUpdater>): boolean;
+        public render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
+        public splitSelection(docctx: IDocumentContext, assets: IDocumentAssets): void;
+        public getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, line: layout.Line): number;
+        public measureTextWidth(text: string, font: Font): number;
+    }
+}
+declare module minerva.text {
+    interface IDocumentLayout<T extends IDocumentLayoutDef, TAssets extends IDocumentAssets> {
+        def: T;
+        assets: TAssets;
+    }
+    function createDocumentLayout<T extends IDocumentLayoutDef, TAssets extends IDocumentAssets>(def: T): IDocumentLayout<T, TAssets>;
+}
+declare module minerva.text {
+    interface ITextAssets {
+        text: string;
+        background: IBrush;
+        selectionBackground: IBrush;
+        foreground: IBrush;
+        selectionForeground: IBrush;
+        isUnderlined: boolean;
+        font: Font;
+    }
     interface ITextLayoutPass {
         text: string;
         index: number;
         max: number;
     }
-}
-declare module minerva.text {
     class TextLayoutDef {
-        public invalidate(assets: ITextLayoutAssets): void;
-        public layout(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): boolean;
-        public doLayoutNoWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
-        public doLayoutWrap(lctx: ITextLayoutContext, attrs: ITextAttributes, assets: ITextLayoutAssets): void;
+        public layout(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): boolean;
+        public doLayoutNoWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
+        public doLayoutWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
         public advanceLineBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
         public advanceToBreak(run: layout.Run, pass: ITextLayoutPass, font: Font, maxWidth: number): boolean;
         public measureTextWidth(text: string, font: Font): number;
     }
 }
 declare module minerva.text {
-    class TextRenderDef {
-        public render(ctx: core.render.RenderContext, lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
-        public splitSelection(lctx: ITextLayoutContext, assets: ITextLayoutAssets): void;
-        public getHorizontalAlignmentX(lctx: ITextLayoutContext, assets: ITextLayoutAssets, line: layout.Line): number;
-        public measureTextWidth(text: string, font: Font): number;
+    interface ITextUpdaterAssets extends ITextAssets {
+        fontFamily: string;
+        fontSize: number;
+        fontStretch: string;
+        fontStyle: string;
+        fontWeight: FontWeight;
+        textDecorations: TextDecorations;
+        language: string;
+    }
+    class TextUpdater {
+        public assets: ITextUpdaterAssets;
+        private $$textlayout;
+        public init(): void;
+        public setTextLayout(tldef?: TextLayoutDef): TextUpdater;
+        public layout(docctx: IDocumentContext, docassets: IDocumentAssets): number;
+        public invalidateFont(): boolean;
     }
 }
 declare module minerva.text.layout {
@@ -2010,7 +2044,7 @@ declare module minerva.text.layout {
         public isSelected: boolean;
         public text: string;
         public width: number;
-        static render(cluster: Cluster, attrs: ITextAttributes, ctx: core.render.RenderContext): void;
+        static render(cluster: Cluster, assets: ITextAssets, ctx: core.render.RenderContext): void;
     }
 }
 declare module minerva.text.layout {
@@ -2023,7 +2057,7 @@ declare module minerva.text.layout {
 }
 declare module minerva.text.layout {
     class Run {
-        public attrs: ITextAttributes;
+        public attrs: ITextAssets;
         public text: string;
         public start: number;
         public length: number;
@@ -2032,6 +2066,6 @@ declare module minerva.text.layout {
         public sel: Cluster;
         public post: Cluster;
         static getCursorFromX(runs: Run[], x: number): number;
-        static splitSelection(run: Run, start: number, end: number, measureWidth: (text: string, attrs: ITextAttributes) => number): void;
+        static splitSelection(run: Run, start: number, end: number, measureWidth: (text: string, assets: ITextAssets) => number): void;
     }
 }
