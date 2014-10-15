@@ -78,7 +78,7 @@ module minerva.text {
         }
 
         splitSelection (docctx: IDocumentContext, assets: IDocumentAssets) {
-            if (!assets.selCached)
+            if (assets.selCached)
                 return;
             var start = docctx.selectionStart;
             var end = start + docctx.selectionLength;

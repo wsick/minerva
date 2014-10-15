@@ -8682,7 +8682,7 @@ var minerva;
 
             DocumentLayoutDef.prototype.splitSelection = function (docctx, assets) {
                 var _this = this;
-                if (!assets.selCached)
+                if (assets.selCached)
                     return;
                 var start = docctx.selectionStart;
                 var end = start + docctx.selectionLength;
