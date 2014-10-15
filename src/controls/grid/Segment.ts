@@ -24,7 +24,7 @@ module minerva.controls.grid {
             return this.desired = this.offered;
         }
 
-        static init (segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType) {
+        static init (segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType): Segment {
             segment.offered = offered || 0.0;
             segment.min = min || 0.0;
             segment.max = max != null ? max : Number.POSITIVE_INFINITY;
@@ -34,6 +34,8 @@ module minerva.controls.grid {
                 segment.offered = min;
             else if (segment.offered > max)
                 segment.offered = max;
+
+            return segment;
         }
     }
 }

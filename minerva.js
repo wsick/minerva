@@ -5751,6 +5751,8 @@ var minerva;
                         segment.offered = min;
                     else if (segment.offered > max)
                         segment.offered = max;
+
+                    return segment;
                 };
                 return Segment;
             })();
@@ -6159,8 +6161,13 @@ var minerva;
                     __extends(GridMeasurePipeDef, _super);
                     function GridMeasurePipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('doOverride', 'prepareRowMatrix', measure.tapins.prepareRowMatrix).addTapinBefore('doOverride', 'prepareColMatrix', measure.tapins.prepareColMatrix).replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'saveMeasureResults', measure.tapins.saveMeasureResults);
+                        this.addTapinBefore('doOverride', 'ensureRowMatrix', measure.tapins.ensureRowMatrix).addTapinBefore('doOverride', 'prepareRowMatrix', measure.tapins.prepareRowMatrix).addTapinBefore('doOverride', 'ensureColMatrix', measure.tapins.ensureColMatrix).addTapinBefore('doOverride', 'prepareColMatrix', measure.tapins.prepareColMatrix).replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'saveMeasureResults', measure.tapins.saveMeasureResults);
                     }
+                    GridMeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.totalStars = new minerva.Size();
+                        return state;
+                    };
                     return GridMeasurePipeDef;
                 })(controls.panel.measure.PanelMeasurePipeDef);
                 measure.GridMeasurePipeDef = GridMeasurePipeDef;
@@ -6196,8 +6203,8 @@ var minerva;
         (function (grid) {
             (function (measure) {
                 (function (tapins) {
-                    function prepareColMatrix(input, state, output, tree, finalRect) {
-                        var colCount = input.columnDefinitions.length;
+                    function ensureColMatrix(input, state, output, tree, finalRect) {
+                        var colCount = input.columnDefinitions.length || 1;
                         var cm = input.gridState.colMatrix;
                         if (cm.length > colCount)
                             cm.splice(colCount, cm.length - colCount);
@@ -6212,6 +6219,99 @@ var minerva;
                                     mrow.push(new grid.Segment());
                                 else
                                     grid.Segment.init(mrow[cc]);
+                            }
+                        }
+
+                        return true;
+                    }
+                    tapins.ensureColMatrix = ensureColMatrix;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(grid.measure || (grid.measure = {}));
+            var measure = grid.measure;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (measure) {
+                (function (tapins) {
+                    function ensureRowMatrix(input, state, output, tree, finalRect) {
+                        var rowCount = input.rowDefinitions.length || 1;
+                        var rm = input.gridState.rowMatrix;
+                        if (rm.length > rowCount)
+                            rm.splice(rowCount, rm.length - rowCount);
+                        for (var r = 0; r < rowCount; r++) {
+                            if (rm.length <= r)
+                                rm.push([]);
+                            var mrow = rm[r];
+                            if (mrow.length > r)
+                                mrow.splice(r, mrow.length - r);
+                            for (var rr = 0; rr <= r; rr++) {
+                                if (mrow.length <= rr)
+                                    mrow.push(new grid.Segment());
+                                else
+                                    grid.Segment.init(mrow[rr]);
+                            }
+                        }
+
+                        return true;
+                    }
+                    tapins.ensureRowMatrix = ensureRowMatrix;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(grid.measure || (grid.measure = {}));
+            var measure = grid.measure;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (measure) {
+                (function (tapins) {
+                    var DEFAULT_GRID_LEN = {
+                        Value: 1.0,
+                        Type: 2 /* Star */
+                    };
+
+                    function prepareColMatrix(input, state, output, tree, finalRect) {
+                        var coldefs = input.columnDefinitions;
+                        var cm = input.gridState.colMatrix;
+
+                        var ts = state.totalStars;
+                        ts.width = 0.0;
+
+                        if (coldefs.length === 0) {
+                            var mcell = cm[0][0];
+                            mcell.type = 2 /* Star */;
+                            mcell.stars = 1.0;
+                            ts.width += 1.0;
+                            return true;
+                        }
+
+                        for (var i = 0; i < coldefs.length; i++) {
+                            var coldef = coldefs[i];
+                            var width = coldef.Width || DEFAULT_GRID_LEN;
+                            coldef.setActualWidth(Number.POSITIVE_INFINITY);
+
+                            var cell = grid.Segment.init(cm[i][i], 0.0, coldef.MinWidth, coldef.MaxWidth, width.Type);
+                            if (width.Type === 1 /* Pixel */) {
+                                cell.offered = cell.clamp(width.Value);
+                                coldef.setActualWidth(cell.setDesiredToOffered());
+                            } else if (width.Type === 2 /* Star */) {
+                                cell.stars = width.Value;
+                                ts.width += width.Value;
+                            } else if (width.Type === 0 /* Auto */) {
+                                cell.offered = cell.clamp(0);
+                                cell.setDesiredToOffered();
                             }
                         }
 
@@ -6233,22 +6333,41 @@ var minerva;
         (function (grid) {
             (function (measure) {
                 (function (tapins) {
+                    var DEFAULT_GRID_LEN = {
+                        Value: 1.0,
+                        Type: 2 /* Star */
+                    };
+
                     function prepareRowMatrix(input, state, output, tree, finalRect) {
-                        var rowCount = input.rowDefinitions.length;
+                        var rowdefs = input.rowDefinitions;
                         var rm = input.gridState.rowMatrix;
-                        if (rm.length > rowCount)
-                            rm.splice(rowCount, rm.length - rowCount);
-                        for (var r = 0; r < rowCount; r++) {
-                            if (rm.length <= r)
-                                rm.push([]);
-                            var mrow = rm[r];
-                            if (mrow.length > r)
-                                mrow.splice(r, mrow.length - r);
-                            for (var rr = 0; rr <= r; rr++) {
-                                if (mrow.length <= rr)
-                                    mrow.push(new grid.Segment());
-                                else
-                                    grid.Segment.init(mrow[rr]);
+
+                        var ts = state.totalStars;
+                        ts.height = 0.0;
+
+                        if (rowdefs.length === 0) {
+                            var mcell = rm[0][0];
+                            mcell.type = 2 /* Star */;
+                            mcell.stars = 1.0;
+                            ts.height += 1.0;
+                            return true;
+                        }
+
+                        for (var i = 0; i < rowdefs.length; i++) {
+                            var rowdef = rowdefs[i];
+                            var height = rowdef.Height || DEFAULT_GRID_LEN;
+                            rowdef.setActualHeight(Number.POSITIVE_INFINITY);
+
+                            var cell = grid.Segment.init(rm[i][i], 0.0, rowdef.MinHeight, rowdef.MaxHeight, height.Type);
+                            if (height.Type === 1 /* Pixel */) {
+                                cell.offered = cell.clamp(height.Value);
+                                rowdef.setActualHeight(cell.setDesiredToOffered());
+                            } else if (height.Type === 2 /* Star */) {
+                                cell.stars = height.Value;
+                                ts.height += height.Value;
+                            } else if (height.Type === 0 /* Auto */) {
+                                cell.offered = cell.clamp(0);
+                                cell.setDesiredToOffered();
                             }
                         }
 

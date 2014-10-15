@@ -1412,7 +1412,7 @@ declare module minerva.controls.grid {
         public clamp(value: number): number;
         public setOfferedToDesired(): number;
         public setDesiredToOffered(): number;
-        static init(segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType): void;
+        static init(segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType): Segment;
     }
 }
 declare module minerva.controls.grid.arrange {
@@ -1470,13 +1470,21 @@ declare module minerva.controls.grid.measure {
         rowDefinitions: IRowDefinition[];
     }
     interface IState extends panel.measure.IState {
+        totalStars: Size;
     }
     class GridMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
         constructor();
+        public createState(): IState;
     }
 }
 declare module minerva.controls.grid.measure.tapins {
     function doOverride(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.measure.tapins {
+    function ensureColMatrix(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.measure.tapins {
+    function ensureRowMatrix(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.grid.measure.tapins {
     function prepareColMatrix(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
