@@ -21,6 +21,7 @@ module minerva.text {
         createAssets (): IDocumentAssets;
         layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render (ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets);
+        getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
     }
 
     export class DocumentLayoutDef implements IDocumentLayoutDef {
@@ -55,7 +56,7 @@ module minerva.text {
 
             ctx.save();
             docassets.lines.forEach(line => {
-                var halign = this.getHorizontalAlignmentX(docctx, docassets, line);
+                var halign = this.getHorizontalAlignmentX(docctx, docassets, line.width);
                 ctx.translate(halign, 0);
                 line.runs.forEach(run => {
                     if (run.pre) {
@@ -87,15 +88,15 @@ module minerva.text {
             assets.selCached = true;
         }
 
-        getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, line: layout.Line) {
+        getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number {
             if (docctx.textAlignment === TextAlignment.Left || docctx.textAlignment === TextAlignment.Justify)
                 return 0;
             var width = getWidthConstraint(assets);
-            if (line.width < width)
+            if (lineWidth < width)
                 return 0;
             if (docctx.textAlignment === TextAlignment.Center)
-                return (width - line.width) / 2.0;
-            return width - line.width;
+                return (width - lineWidth) / 2.0;
+            return width - lineWidth;
         }
 
         measureTextWidth (text: string, font: Font): number {

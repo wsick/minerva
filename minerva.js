@@ -7478,6 +7478,11 @@ var minerva;
                     this.doc.assets.availableWidth = width;
                 };
 
+                TextBlockUpdaterTree.prototype.getHorizontalOffset = function (docctx) {
+                    var doc = this.doc;
+                    return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
+                };
+
                 TextBlockUpdaterTree.prototype.clearText = function () {
                     this.children.length = 0;
                 };
@@ -7613,6 +7618,65 @@ var minerva;
                 var tapins = measure.tapins;
             })(textblock.measure || (textblock.measure = {}));
             var measure = textblock.measure;
+        })(controls.textblock || (controls.textblock = {}));
+        var textblock = controls.textblock;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textblock) {
+            (function (processup) {
+                var TextBlockProcessUpPipeDef = (function (_super) {
+                    __extends(TextBlockProcessUpPipeDef, _super);
+                    function TextBlockProcessUpPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('calcActualSize', tapins.calcActualSize).replaceTapin('calcExtents', tapins.calcExtents);
+                    }
+                    return TextBlockProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.TextBlockProcessUpPipeDef = TextBlockProcessUpPipeDef;
+
+                (function (tapins) {
+                    function calcActualSize(input, state, output, vo, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+
+                        var as = state.actualSize;
+                        as.width = Number.POSITIVE_INFINITY;
+                        as.height = Number.POSITIVE_INFINITY;
+                        minerva.core.helpers.coerceSize(as, input);
+
+                        minerva.Thickness.shrinkSize(input.padding, as);
+                        minerva.Size.copyTo(tree.layout(as, input), as);
+                        minerva.Thickness.growSize(input.padding, as);
+
+                        return true;
+                    }
+                    tapins.calcActualSize = calcActualSize;
+
+                    function calcExtents(input, state, output, vo, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+
+                        var e = input.extents;
+                        e.x = tree.getHorizontalOffset(input);
+                        e.y = 0;
+                        minerva.Size.copyTo(state.actualSize, e);
+
+                        var padding = input.padding;
+                        e.x += padding.left;
+                        e.y += padding.top;
+                        minerva.Rect.copyTo(e, output.extentsWithChildren);
+
+                        return true;
+                    }
+                    tapins.calcExtents = calcExtents;
+                })(processup.tapins || (processup.tapins = {}));
+                var tapins = processup.tapins;
+            })(textblock.processup || (textblock.processup = {}));
+            var processup = textblock.processup;
         })(controls.textblock || (controls.textblock = {}));
         var textblock = controls.textblock;
     })(minerva.controls || (minerva.controls = {}));
@@ -8586,7 +8650,7 @@ var minerva;
 
                 ctx.save();
                 docassets.lines.forEach(function (line) {
-                    var halign = _this.getHorizontalAlignmentX(docctx, docassets, line);
+                    var halign = _this.getHorizontalAlignmentX(docctx, docassets, line.width);
                     ctx.translate(halign, 0);
                     line.runs.forEach(function (run) {
                         if (run.pre) {
@@ -8623,15 +8687,15 @@ var minerva;
                 assets.selCached = true;
             };
 
-            DocumentLayoutDef.prototype.getHorizontalAlignmentX = function (docctx, assets, line) {
+            DocumentLayoutDef.prototype.getHorizontalAlignmentX = function (docctx, assets, lineWidth) {
                 if (docctx.textAlignment === 0 /* Left */ || docctx.textAlignment === 3 /* Justify */)
                     return 0;
                 var width = getWidthConstraint(assets);
-                if (line.width < width)
+                if (lineWidth < width)
                     return 0;
                 if (docctx.textAlignment === 1 /* Center */)
-                    return (width - line.width) / 2.0;
-                return width - line.width;
+                    return (width - lineWidth) / 2.0;
+                return width - lineWidth;
             };
 
             DocumentLayoutDef.prototype.measureTextWidth = function (text, font) {

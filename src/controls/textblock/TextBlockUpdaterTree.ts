@@ -4,6 +4,7 @@ module minerva.controls.textblock {
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext);
         setAvailableWidth(width: number);
+        getHorizontalOffset(docctx: text.IDocumentContext): number;
         walkText(): IWalker<text.TextUpdater>;
         onTextAttached(child: text.TextUpdater);
         onTextDetached(child: text.TextUpdater);
@@ -25,6 +26,11 @@ module minerva.controls.textblock {
 
         setAvailableWidth(width: number) {
             this.doc.assets.availableWidth = width;
+        }
+
+        getHorizontalOffset(docctx: text.IDocumentContext): number {
+            var doc = this.doc;
+            return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
         }
 
         clearText () {

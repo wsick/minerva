@@ -1731,6 +1731,7 @@ declare module minerva.controls.textblock {
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): any;
         setAvailableWidth(width: number): any;
+        getHorizontalOffset(docctx: text.IDocumentContext): number;
         walkText(): IWalker<text.TextUpdater>;
         onTextAttached(child: text.TextUpdater): any;
         onTextDetached(child: text.TextUpdater): any;
@@ -1741,6 +1742,7 @@ declare module minerva.controls.textblock {
         public layout(constraint: Size, docctx: text.IDocumentContext): Size;
         public render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): void;
         public setAvailableWidth(width: number): void;
+        public getHorizontalOffset(docctx: text.IDocumentContext): number;
         public clearText(): void;
         public walkText(): IWalker<text.TextUpdater>;
         public onTextAttached(child: text.TextUpdater, index?: number): void;
@@ -1778,6 +1780,18 @@ declare module minerva.controls.textblock.measure {
     }
     module tapins {
         function doOverride(input: IInput, state: core.measure.IState, output: core.measure.IOutput, tree: TextBlockUpdaterTree, availableSize: Size): boolean;
+    }
+}
+declare module minerva.controls.textblock.processup {
+    interface IInput extends core.processup.IInput, text.IDocumentContext {
+        padding: Thickness;
+    }
+    class TextBlockProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+    module tapins {
+        function calcActualSize(input: IInput, state: core.processup.IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: TextBlockUpdaterTree): boolean;
+        function calcExtents(input: IInput, state: core.processup.IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: TextBlockUpdaterTree): boolean;
     }
 }
 declare module minerva.controls.textblock.render {
@@ -2011,13 +2025,14 @@ declare module minerva.text {
         createAssets(): IDocumentAssets;
         layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
+        getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
     }
     class DocumentLayoutDef implements IDocumentLayoutDef {
         public createAssets(): IDocumentAssets;
         public layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         public render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
         public splitSelection(docctx: IDocumentContext, assets: IDocumentAssets): void;
-        public getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, line: layout.Line): number;
+        public getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
         public measureTextWidth(text: string, font: Font): number;
     }
 }
