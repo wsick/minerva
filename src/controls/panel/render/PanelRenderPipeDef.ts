@@ -19,8 +19,6 @@ module minerva.controls.panel.render {
         if (Rect.isEmpty(renderRegion))
             return true;
 
-        ctx.save();
-
         var raw = ctx.raw;
         var composite = input.compositeLayoutClip;
         if (composite && !Rect.isEmpty(composite)) {
@@ -32,8 +30,6 @@ module minerva.controls.panel.render {
         raw.beginPath();
         raw.rect(renderRegion.x, renderRegion.y, renderRegion.width, renderRegion.height);
         ctx.fillEx(background, renderRegion);
-
-        ctx.restore();
 
         return true;
     }

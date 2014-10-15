@@ -5620,6 +5620,134 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (controls) {
+        (function (grid) {
+            var GridUpdater = (function (_super) {
+                __extends(GridUpdater, _super);
+                function GridUpdater() {
+                    _super.apply(this, arguments);
+                }
+                GridUpdater.prototype.init = function () {
+                    this.setRenderPipe(minerva.singleton(grid.render.GridRenderPipeDef));
+
+                    var assets = this.assets;
+                    assets.showGridLines = false;
+                    assets.columnDefinitions = [];
+                    assets.rowDefinitions = [];
+
+                    _super.prototype.init.call(this);
+                };
+                return GridUpdater;
+            })(controls.panel.PanelUpdater);
+            grid.GridUpdater = GridUpdater;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (render) {
+                var PanelRenderPipeDef = (function (_super) {
+                    __extends(PanelRenderPipeDef, _super);
+                    function PanelRenderPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doRender', doRender);
+                    }
+                    return PanelRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.PanelRenderPipeDef = PanelRenderPipeDef;
+
+                function doRender(input, state, output, ctx, region, tree) {
+                    var background = input.background;
+                    if (!background || background.isTransparent())
+                        return true;
+                    var renderRegion = state.renderRegion;
+                    if (minerva.Rect.isEmpty(renderRegion))
+                        return true;
+
+                    var raw = ctx.raw;
+                    var composite = input.compositeLayoutClip;
+                    if (composite && !minerva.Rect.isEmpty(composite)) {
+                        raw.beginPath();
+                        raw.rect(composite.x, composite.y, composite.width, composite.height);
+                        raw.clip();
+                    }
+
+                    raw.beginPath();
+                    raw.rect(renderRegion.x, renderRegion.y, renderRegion.width, renderRegion.height);
+                    ctx.fillEx(background, renderRegion);
+
+                    return true;
+                }
+            })(panel.render || (panel.render = {}));
+            var render = panel.render;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (render) {
+                var GridRenderPipeDef = (function (_super) {
+                    __extends(GridRenderPipeDef, _super);
+                    function GridRenderPipeDef() {
+                        _super.call(this);
+                        this.addTapinAfter('doRender', 'renderGridLines', tapins.renderGridLines);
+                    }
+                    return GridRenderPipeDef;
+                })(controls.panel.render.PanelRenderPipeDef);
+                render.GridRenderPipeDef = GridRenderPipeDef;
+
+                (function (tapins) {
+                    function renderGridLines(input, state, output, ctx, region, tree) {
+                        if (!input.showGridLines)
+                            return true;
+
+                        var framework = state.framework;
+                        framework.width = input.actualWidth;
+                        framework.height = input.actualHeight;
+                        minerva.core.helpers.coerceSize(framework, input);
+
+                        var raw = ctx.raw;
+
+                        for (var cols = input.columnDefinitions, i = 0, x = 0; i < cols.length; i++) {
+                            x += cols[i].ActualWidth;
+                            raw.beginPath();
+                            raw.setLineDash([5]);
+                            raw.moveTo(x, 0);
+                            raw.lineTo(x, framework.height);
+                            raw.stroke();
+                        }
+
+                        for (var rows = input.rowDefinitions, i = 0, y = 0; i < rows.length; i++) {
+                            y += rows[i].ActualHeight;
+                            raw.beginPath();
+                            raw.setLineDash([5]);
+                            raw.moveTo(0, y);
+                            raw.lineTo(framework.width, y);
+                            raw.stroke();
+                        }
+
+                        return true;
+                    }
+                    tapins.renderGridLines = renderGridLines;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(grid.render || (grid.render = {}));
+            var render = grid.render;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
         (function (image) {
             var ImageUpdater = (function (_super) {
                 __extends(ImageUpdater, _super);
@@ -6448,54 +6576,6 @@ var minerva;
                 var tapins = processup.tapins;
             })(panel.processup || (panel.processup = {}));
             var processup = panel.processup;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (controls) {
-        (function (panel) {
-            (function (render) {
-                var PanelRenderPipeDef = (function (_super) {
-                    __extends(PanelRenderPipeDef, _super);
-                    function PanelRenderPipeDef() {
-                        _super.call(this);
-                        this.replaceTapin('doRender', doRender);
-                    }
-                    return PanelRenderPipeDef;
-                })(minerva.core.render.RenderPipeDef);
-                render.PanelRenderPipeDef = PanelRenderPipeDef;
-
-                function doRender(input, state, output, ctx, region, tree) {
-                    var background = input.background;
-                    if (!background || background.isTransparent())
-                        return true;
-                    var renderRegion = state.renderRegion;
-                    if (minerva.Rect.isEmpty(renderRegion))
-                        return true;
-
-                    ctx.save();
-
-                    var raw = ctx.raw;
-                    var composite = input.compositeLayoutClip;
-                    if (composite && !minerva.Rect.isEmpty(composite)) {
-                        raw.beginPath();
-                        raw.rect(composite.x, composite.y, composite.width, composite.height);
-                        raw.clip();
-                    }
-
-                    raw.beginPath();
-                    raw.rect(renderRegion.x, renderRegion.y, renderRegion.width, renderRegion.height);
-                    ctx.fillEx(background, renderRegion);
-
-                    ctx.restore();
-
-                    return true;
-                }
-            })(panel.render || (panel.render = {}));
-            var render = panel.render;
         })(controls.panel || (controls.panel = {}));
         var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));

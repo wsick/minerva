@@ -1346,6 +1346,51 @@ declare module minerva.controls.control.hittest {
         function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
     }
 }
+declare module minerva.controls.grid {
+    interface IGridUpdaterAssets extends panel.IPanelUpdaterAssets, render.IInput {
+    }
+    class GridUpdater extends panel.PanelUpdater {
+        public assets: IGridUpdaterAssets;
+        public init(): void;
+    }
+}
+declare module minerva.controls.grid {
+    interface IColumnDefinition {
+        ActualWidth: number;
+    }
+}
+declare module minerva.controls.grid {
+    interface IRowDefinition {
+        ActualHeight: number;
+    }
+}
+declare module minerva.controls.panel.render {
+    interface IInput extends core.render.IInput, core.helpers.ISized {
+        background: IBrush;
+        compositeLayoutClip: Rect;
+    }
+    class PanelRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.grid.render {
+    interface IInput extends panel.render.IInput {
+        actualWidth: number;
+        actualHeight: number;
+        showGridLines: boolean;
+        columnDefinitions: IColumnDefinition[];
+        rowDefinitions: IRowDefinition[];
+    }
+    interface IState extends core.render.IState {
+        framework: Size;
+    }
+    class GridRenderPipeDef extends panel.render.PanelRenderPipeDef {
+        constructor();
+    }
+    module tapins {
+        function renderGridLines(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    }
+}
 declare module minerva.controls.image {
     interface IImageSource {
         image: HTMLImageElement;
@@ -1520,15 +1565,6 @@ declare module minerva.controls.panel.processup {
 }
 declare module minerva.controls.panel.processup.tapins {
     function preCalcExtents(input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
-}
-declare module minerva.controls.panel.render {
-    interface IInput extends core.render.IInput, core.helpers.ISized {
-        background: IBrush;
-        compositeLayoutClip: Rect;
-    }
-    class PanelRenderPipeDef extends core.render.RenderPipeDef {
-        constructor();
-    }
 }
 declare module minerva.controls.popup {
     interface IPopupUpdaterAssets extends core.IUpdaterAssets, processdown.IInput {
