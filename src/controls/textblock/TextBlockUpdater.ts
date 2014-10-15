@@ -35,17 +35,14 @@ module minerva.controls.textblock {
             return this;
         }
 
-        //TODO: Implement
-        /*
-         invalidateFont () {
-         if (this.$$textupdater.invalidateFont()) {
-         this.invalidateMeasure();
-         this.invalidateArrange();
-         this.updateBounds(true);
-         }
-         this.invalidate();
-         }
-         */
+        invalidateFont (full?: boolean) {
+            if (full === true) {
+                this.invalidateMeasure();
+                this.invalidateArrange();
+                this.updateBounds(true);
+            }
+            this.invalidate();
+        }
 
         invalidateTextMetrics () {
             this.invalidateMeasure();

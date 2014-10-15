@@ -1722,6 +1722,7 @@ declare module minerva.controls.textblock {
         public tree: TextBlockUpdaterTree;
         public init(): void;
         public setDocument(docdef?: text.IDocumentLayoutDef): TextBlockUpdater;
+        public invalidateFont(full?: boolean): void;
         public invalidateTextMetrics(): void;
     }
 }

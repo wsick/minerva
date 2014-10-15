@@ -7436,6 +7436,15 @@ var minerva;
                     return this;
                 };
 
+                TextBlockUpdater.prototype.invalidateFont = function (full) {
+                    if (full === true) {
+                        this.invalidateMeasure();
+                        this.invalidateArrange();
+                        this.updateBounds(true);
+                    }
+                    this.invalidate();
+                };
+
                 TextBlockUpdater.prototype.invalidateTextMetrics = function () {
                     this.invalidateMeasure();
                     this.invalidateArrange();
