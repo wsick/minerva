@@ -1,8 +1,8 @@
 module minerva.controls.grid.helpers {
-    export function allocateDesiredSize (rowMat: Segment[][], rowCount: number, colMat: Segment[][], colCount: number) {
+    export function allocateDesiredSize (rowMat: Segment[][], colMat: Segment[][]) {
         for (var i = 0; i < 2; i++) {
             var matrix = i === 0 ? rowMat : colMat;
-            var count = i === 0 ? rowCount : colCount;
+            var count = matrix.length;
 
             for (var row = count - 1; row >= 0; row--) {
                 for (var col = row; col >= 0; col--) {

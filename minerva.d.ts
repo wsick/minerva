@@ -1444,7 +1444,7 @@ declare module minerva.controls.grid.arrange.tapins {
     function setActuals(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.grid.helpers {
-    function allocateDesiredSize(rowMat: Segment[][], rowCount: number, colMat: Segment[][], colCount: number): void;
+    function allocateDesiredSize(rowMat: Segment[][], colMat: Segment[][]): void;
 }
 declare module minerva.controls.grid.helpers {
     function assignSize(mat: Segment[][], start: number, end: number, size: number, unitType: GridUnitType, desiredSize: boolean): number;
@@ -1455,13 +1455,39 @@ declare module minerva.controls.grid.helpers {
 declare module minerva.controls.grid.helpers {
     function expandStarRows(mat: Segment[][], rowdefs: IRowDefinition[], availableSize: Size): void;
 }
-declare module minerva.controls.grid.helpers {
-    interface IGridShape {
-        HasAutoAuto: boolean;
-        HasStarAuto: boolean;
-        HasAutoStar: boolean;
+declare module minerva.controls.grid.measure {
+    class GridChildPlacement {
+        public matrix: Segment[][];
+        public row: number;
+        public col: number;
+        public size: number;
+        constructor(matrix: Segment[][], row: number, col: number, size: number);
+        static row(matrix: Segment[][], childShape: GridChildShape, child: core.Updater): GridChildPlacement;
+        static col(matrix: Segment[][], childShape: GridChildShape, child: core.Updater): GridChildPlacement;
     }
-    function getGridShape(tree: core.IUpdaterTree, rm: Segment[][], cm: Segment[][]): IGridShape;
+}
+declare module minerva.controls.grid.measure {
+    enum OverridePass {
+        AutoAuto = 0,
+        StarAuto = 1,
+        AutoStar = 2,
+        StarAutoAgain = 3,
+        NonStar = 4,
+        RemainingStar = 5,
+    }
+    class GridChildShape {
+        public starRow: boolean;
+        public autoRow: boolean;
+        public starCol: boolean;
+        public autoCol: boolean;
+        public col: number;
+        public row: number;
+        public colspan: number;
+        public rowspan: number;
+        public init(child: core.Updater, rm: Segment[][], cm: Segment[][]): GridChildShape;
+        public shouldMeasurePass(gridShape: GridShape, childSize: Size, pass: OverridePass): boolean;
+        public size(childSize: Size, rm: Segment[][], cm: Segment[][]): void;
+    }
 }
 declare module minerva.controls.grid.measure {
     interface IInput extends panel.measure.IInput {
@@ -1471,11 +1497,30 @@ declare module minerva.controls.grid.measure {
     }
     interface IState extends panel.measure.IState {
         totalStars: Size;
+        gridShape: GridShape;
+        childShapes: GridChildShape[];
+        childSize: Size;
+        placements: GridChildPlacement[];
+        placementIndex: number;
     }
     class GridMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
         constructor();
         public createState(): IState;
     }
+}
+declare module minerva.controls.grid.measure {
+    class GridShape {
+        public hasAutoAuto: boolean;
+        public hasStarAuto: boolean;
+        public hasAutoStar: boolean;
+        public init(childShapes: GridChildShape[]): void;
+    }
+}
+declare module minerva.controls.grid.measure.tapins {
+    function buildShape(input: IInput, state: IState, output: panel.measure.IOutput, tree: panel.PanelUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.measure.tapins {
+    function createDoOverridePass(pass: OverridePass): (input: IInput, state: IState, output: panel.measure.IOutput, tree: panel.PanelUpdaterTree, finalRect: Rect) => boolean;
 }
 declare module minerva.controls.grid.measure.tapins {
     function doOverride(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
