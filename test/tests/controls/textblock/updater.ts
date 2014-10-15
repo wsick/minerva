@@ -29,12 +29,12 @@ module minerva.controls.textblock.tests {
         updater.assets.textWrapping = TextWrapping.NoWrap;
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
-        updater.doctree.onChildAttached(run);
-        var docassets = (<any>updater).$$doc.assets;
+        updater.tree.onTextAttached(run);
+        var docassets = updater.tree.doc.assets;
 
         run.assets.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris efficitur nunc lobortis varius dignissim. Sed sed sem non orci laoreet tempus. Nullam a nisi consequat, dignissim diam volutpat, blandit augue. Praesent et nulla nec ante consectetur varius et condimentum leo. Nam ornare odio neque, ut lobortis purus volutpat eu. In hac habitasse platea dictumst. Etiam accumsan bibendum vehicula.";
         updater.invalidateTextMetrics();
-        updater.layout(new Size(99, Number.POSITIVE_INFINITY));
+        updater.tree.layout(new Size(99, Number.POSITIVE_INFINITY), updater.assets);
         assert.strictEqual(docassets.lines.length, 1);
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "Lorem ipsum do");
@@ -43,7 +43,7 @@ module minerva.controls.textblock.tests {
 
         run.assets.text = "Lorem";
         updater.invalidateTextMetrics();
-        updater.layout(new Size(99, Number.POSITIVE_INFINITY));
+        updater.tree.layout(new Size(99, Number.POSITIVE_INFINITY), updater.assets);
         assert.strictEqual(docassets.lines.length, 1);
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "Lorem");
@@ -56,12 +56,12 @@ module minerva.controls.textblock.tests {
         updater.assets.textWrapping = TextWrapping.Wrap;
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
-        updater.doctree.onChildAttached(run);
-        var docassets: text.IDocumentAssets = (<any>updater).$$doc.assets;
+        updater.tree.onTextAttached(run);
+        var docassets = updater.tree.doc.assets;
 
         run.assets.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris efficitur nunc lobortis varius dignissim. Sed sed sem non orci laoreet tempus. Nullam a nisi consequat, dignissim diam volutpat, blandit augue.";
         updater.invalidateTextMetrics();
-        updater.layout(new Size(99, Number.POSITIVE_INFINITY));
+        updater.tree.layout(new Size(99, Number.POSITIVE_INFINITY), updater.assets);
         assert.strictEqual(docassets.lines.length, 16);
         docassets.lines.forEach(line => assert.strictEqual(line.width, line.runs.reduce<number>((agg, run) => agg + run.width, 0), "Line Width === Run Widths"));
         var runs = docassets.lines.reduce<minerva.text.layout.Run[]>((agg, line) => agg.concat(line.runs), []);

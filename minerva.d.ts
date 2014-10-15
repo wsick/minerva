@@ -1715,30 +1715,47 @@ declare module minerva.controls.stackpanel.measure.tapins {
     function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.textblock {
-    interface ITextBlockUpdaterAssets extends core.IUpdaterAssets, measure.IInput, text.IDocumentContext {
+    interface ITextBlockUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput, text.IDocumentContext {
     }
     class TextBlockUpdater extends core.Updater {
         public assets: ITextBlockUpdaterAssets;
-        private $$doc;
-        public doctree: TextBlockUpdaterTree;
+        public tree: TextBlockUpdaterTree;
         public init(): void;
         public setDocument(docdef?: text.IDocumentLayoutDef): TextBlockUpdater;
-        public layout(constraint: Size): boolean;
         public invalidateTextMetrics(): void;
     }
 }
 declare module minerva.controls.textblock {
     interface ITextBlockUpdaterTree {
-        walk(): IWalker<text.TextUpdater>;
-        onChildAttached(child: text.TextUpdater): any;
-        onChildDetached(child: text.TextUpdater): any;
+        doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
+        layout(constraint: Size, docctx: text.IDocumentContext): Size;
+        render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): any;
+        setAvailableWidth(width: number): any;
+        walkText(): IWalker<text.TextUpdater>;
+        onTextAttached(child: text.TextUpdater): any;
+        onTextDetached(child: text.TextUpdater): any;
     }
-    class TextBlockUpdaterTree implements ITextBlockUpdaterTree {
+    class TextBlockUpdaterTree extends core.UpdaterTree implements ITextBlockUpdaterTree {
+        public doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         public children: text.TextUpdater[];
-        public clear(): void;
-        public walk(): IWalker<text.TextUpdater>;
-        public onChildAttached(child: text.TextUpdater, index?: number): void;
-        public onChildDetached(child: text.TextUpdater): void;
+        public layout(constraint: Size, docctx: text.IDocumentContext): Size;
+        public render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): void;
+        public setAvailableWidth(width: number): void;
+        public clearText(): void;
+        public walkText(): IWalker<text.TextUpdater>;
+        public onTextAttached(child: text.TextUpdater, index?: number): void;
+        public onTextDetached(child: text.TextUpdater): void;
+    }
+}
+declare module minerva.controls.textblock.arrange {
+    interface IInput extends core.arrange.IInput, text.IDocumentContext {
+        padding: Thickness;
+    }
+    class TextBlockArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+    }
+    module tapins {
+        function doOverride(input: IInput, state: core.arrange.IState, output: core.arrange.IOutput, tree: TextBlockUpdaterTree, finalRect: Rect): boolean;
     }
 }
 declare module minerva.controls.textblock.hittest {
@@ -1753,10 +1770,25 @@ declare module minerva.controls.textblock.hittest {
     }
 }
 declare module minerva.controls.textblock.measure {
-    interface IInput extends core.measure.IInput {
+    interface IInput extends core.measure.IInput, text.IDocumentContext {
+        padding: Thickness;
     }
     class TextBlockMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();
+    }
+    module tapins {
+        function doOverride(input: IInput, state: core.measure.IState, output: core.measure.IOutput, tree: TextBlockUpdaterTree, availableSize: Size): boolean;
+    }
+}
+declare module minerva.controls.textblock.render {
+    interface IInput extends core.render.IInput, text.IDocumentContext {
+        padding: Thickness;
+    }
+    class TextBlockRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+    }
+    module tapins {
+        function doRender(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBlockUpdaterTree): boolean;
     }
 }
 declare module minerva.controls.usercontrol {
@@ -1977,12 +2009,12 @@ declare module minerva.text {
     }
     interface IDocumentLayoutDef {
         createAssets(): IDocumentAssets;
-        layout(docctx: IDocumentContext, docassets: IDocumentAssets, walker: IWalker<TextUpdater>): boolean;
+        layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
     }
     class DocumentLayoutDef implements IDocumentLayoutDef {
         public createAssets(): IDocumentAssets;
-        public layout(docctx: IDocumentContext, docassets: IDocumentAssets, walker: IWalker<TextUpdater>): boolean;
+        public layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         public render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
         public splitSelection(docctx: IDocumentContext, assets: IDocumentAssets): void;
         public getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, line: layout.Line): number;

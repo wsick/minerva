@@ -19,7 +19,7 @@ module minerva.text {
 
     export interface IDocumentLayoutDef {
         createAssets (): IDocumentAssets;
-        layout (docctx: IDocumentContext, docassets: IDocumentAssets, walker: IWalker<text.TextUpdater>): boolean;
+        layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render (ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets);
     }
 
@@ -36,7 +36,11 @@ module minerva.text {
             };
         }
 
-        layout (docctx: IDocumentContext, docassets: IDocumentAssets, walker: IWalker<text.TextUpdater>): boolean {
+        layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean {
+            if (!isNaN(docassets.actualWidth))
+                return false;
+            docassets.maxWidth = constraint.width;
+
             docassets.actualWidth = 0.0;
             docassets.actualHeight = 0.0;
             docassets.lines = [];

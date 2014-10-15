@@ -7411,12 +7411,14 @@ var minerva;
                 __extends(TextBlockUpdater, _super);
                 function TextBlockUpdater() {
                     _super.apply(this, arguments);
-                    this.doctree = new textblock.TextBlockUpdaterTree();
                 }
                 TextBlockUpdater.prototype.init = function () {
-                    this.setDocument().setMeasurePipe(minerva.singleton(textblock.measure.TextBlockMeasurePipeDef)).setHitTestPipe(minerva.singleton(textblock.hittest.TextBlockHitTestPipeDef));
+                    this.setTree(new textblock.TextBlockUpdaterTree()).setMeasurePipe(minerva.singleton(textblock.measure.TextBlockMeasurePipeDef)).setArrangePipe(minerva.singleton(textblock.arrange.TextBlockArrangePipeDef)).setRenderPipe(minerva.singleton(textblock.render.TextBlockRenderPipeDef)).setHitTestPipe(minerva.singleton(textblock.hittest.TextBlockHitTestPipeDef));
+
+                    this.setDocument();
 
                     var assets = this.assets;
+                    assets.padding = new minerva.Thickness();
                     assets.selectionStart = 0;
                     assets.selectionLength = 0;
                     assets.textWrapping = 0 /* NoWrap */;
@@ -7428,19 +7430,10 @@ var minerva;
                 };
 
                 TextBlockUpdater.prototype.setDocument = function (docdef) {
-                    if (this.$$doc)
+                    if (this.tree.doc)
                         return this;
-                    this.$$doc = minerva.text.createDocumentLayout(docdef || new minerva.text.DocumentLayoutDef());
+                    this.tree.doc = minerva.text.createDocumentLayout(docdef || new minerva.text.DocumentLayoutDef());
                     return this;
-                };
-
-                TextBlockUpdater.prototype.layout = function (constraint) {
-                    var doc = this.$$doc;
-                    if (!isNaN(doc.assets.actualWidth))
-                        return false;
-                    doc.assets.maxWidth = constraint.width;
-                    doc.def.layout(this.assets, doc.assets, this.doctree.walk());
-                    return true;
                 };
 
                 TextBlockUpdater.prototype.invalidateTextMetrics = function () {
@@ -7448,7 +7441,7 @@ var minerva;
                     this.invalidateArrange();
                     this.updateBounds(true);
                     this.invalidate();
-                    var docassets = this.$$doc.assets;
+                    var docassets = this.tree.doc.assets;
                     docassets.actualWidth = NaN;
                     docassets.actualHeight = NaN;
                 };
@@ -7464,15 +7457,32 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (textblock) {
-            var TextBlockUpdaterTree = (function () {
+            var TextBlockUpdaterTree = (function (_super) {
+                __extends(TextBlockUpdaterTree, _super);
                 function TextBlockUpdaterTree() {
+                    _super.apply(this, arguments);
                     this.children = [];
                 }
-                TextBlockUpdaterTree.prototype.clear = function () {
+                TextBlockUpdaterTree.prototype.layout = function (constraint, docctx) {
+                    var doc = this.doc;
+                    doc.def.layout(docctx, doc.assets, constraint, this.walkText());
+                    return new minerva.Size(doc.assets.actualWidth, doc.assets.actualHeight);
+                };
+
+                TextBlockUpdaterTree.prototype.render = function (ctx, docctx) {
+                    var doc = this.doc;
+                    doc.def.render(ctx, docctx, doc.assets);
+                };
+
+                TextBlockUpdaterTree.prototype.setAvailableWidth = function (width) {
+                    this.doc.assets.availableWidth = width;
+                };
+
+                TextBlockUpdaterTree.prototype.clearText = function () {
                     this.children.length = 0;
                 };
 
-                TextBlockUpdaterTree.prototype.walk = function () {
+                TextBlockUpdaterTree.prototype.walkText = function () {
                     var i = -1;
                     var children = this.children;
                     return {
@@ -7485,21 +7495,60 @@ var minerva;
                     };
                 };
 
-                TextBlockUpdaterTree.prototype.onChildAttached = function (child, index) {
+                TextBlockUpdaterTree.prototype.onTextAttached = function (child, index) {
                     if (index == null || index < 0 || index >= this.children.length)
                         this.children.push(child);
                     else
                         this.children.splice(index, 0, child);
                 };
 
-                TextBlockUpdaterTree.prototype.onChildDetached = function (child) {
+                TextBlockUpdaterTree.prototype.onTextDetached = function (child) {
                     var index = this.children.indexOf(child);
                     if (index > -1)
                         this.children.splice(index, 1);
                 };
                 return TextBlockUpdaterTree;
-            })();
+            })(minerva.core.UpdaterTree);
             textblock.TextBlockUpdaterTree = TextBlockUpdaterTree;
+        })(controls.textblock || (controls.textblock = {}));
+        var textblock = controls.textblock;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textblock) {
+            (function (arrange) {
+                var TextBlockArrangePipeDef = (function (_super) {
+                    __extends(TextBlockArrangePipeDef, _super);
+                    function TextBlockArrangePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', tapins.doOverride);
+                    }
+                    return TextBlockArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.TextBlockArrangePipeDef = TextBlockArrangePipeDef;
+
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        var fs = state.finalSize;
+                        var as = state.arrangedSize;
+
+                        minerva.Thickness.shrinkSize(input.padding, fs);
+                        minerva.Size.copyTo(tree.layout(fs, input), as);
+                        as.width = Math.max(as.width, fs.width);
+                        as.height = Math.max(as.height, fs.height);
+                        tree.setAvailableWidth(fs.width);
+                        minerva.Thickness.growSize(input.padding, as);
+
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(textblock.arrange || (textblock.arrange = {}));
+            var arrange = textblock.arrange;
         })(controls.textblock || (controls.textblock = {}));
         var textblock = controls.textblock;
     })(minerva.controls || (minerva.controls = {}));
@@ -7543,12 +7592,60 @@ var minerva;
                     __extends(TextBlockMeasurePipeDef, _super);
                     function TextBlockMeasurePipeDef() {
                         _super.call(this);
+                        this.replaceTapin('doOverride', tapins.doOverride);
                     }
                     return TextBlockMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.TextBlockMeasurePipeDef = TextBlockMeasurePipeDef;
+
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+
+                        minerva.Thickness.shrinkSize(input.padding, state.availableSize);
+                        minerva.Size.copyTo(tree.layout(state.availableSize, input), ds);
+                        minerva.Thickness.growSize(input.padding, ds);
+
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
             })(textblock.measure || (textblock.measure = {}));
             var measure = textblock.measure;
+        })(controls.textblock || (controls.textblock = {}));
+        var textblock = controls.textblock;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textblock) {
+            (function (render) {
+                var TextBlockRenderPipeDef = (function (_super) {
+                    __extends(TextBlockRenderPipeDef, _super);
+                    function TextBlockRenderPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doRender', tapins.doRender);
+                    }
+                    return TextBlockRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.TextBlockRenderPipeDef = TextBlockRenderPipeDef;
+
+                (function (tapins) {
+                    function doRender(input, state, output, ctx, region, tree) {
+                        var padding = input.padding;
+                        if (padding)
+                            ctx.translate(padding.left, padding.top);
+                        tree.render(ctx, input);
+                        return true;
+                    }
+                    tapins.doRender = doRender;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(textblock.render || (textblock.render = {}));
+            var render = textblock.render;
         })(controls.textblock || (controls.textblock = {}));
         var textblock = controls.textblock;
     })(minerva.controls || (minerva.controls = {}));
@@ -8469,7 +8566,11 @@ var minerva;
                 };
             };
 
-            DocumentLayoutDef.prototype.layout = function (docctx, docassets, walker) {
+            DocumentLayoutDef.prototype.layout = function (docctx, docassets, constraint, walker) {
+                if (!isNaN(docassets.actualWidth))
+                    return false;
+                docassets.maxWidth = constraint.width;
+
                 docassets.actualWidth = 0.0;
                 docassets.actualHeight = 0.0;
                 docassets.lines = [];

@@ -1,18 +1,22 @@
 module minerva.controls.textblock {
-    export interface ITextBlockUpdaterAssets extends core.IUpdaterAssets, measure.IInput, text.IDocumentContext {
+    export interface ITextBlockUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput, text.IDocumentContext {
     }
 
     export class TextBlockUpdater extends core.Updater {
         assets: ITextBlockUpdaterAssets;
-        private $$doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
-        doctree = new TextBlockUpdaterTree();
+        tree: TextBlockUpdaterTree;
 
         init () {
-            this.setDocument()
+            this.setTree(new TextBlockUpdaterTree())
                 .setMeasurePipe(singleton(measure.TextBlockMeasurePipeDef))
+                .setArrangePipe(singleton(arrange.TextBlockArrangePipeDef))
+                .setRenderPipe(singleton(render.TextBlockRenderPipeDef))
                 .setHitTestPipe(singleton(hittest.TextBlockHitTestPipeDef));
 
+            this.setDocument();
+
             var assets = this.assets;
+            assets.padding = new Thickness();
             assets.selectionStart = 0;
             assets.selectionLength = 0;
             assets.textWrapping = TextWrapping.NoWrap;
@@ -24,19 +28,10 @@ module minerva.controls.textblock {
         }
 
         setDocument (docdef?: text.IDocumentLayoutDef): TextBlockUpdater {
-            if (this.$$doc)
+            if (this.tree.doc)
                 return this;
-            this.$$doc = text.createDocumentLayout(docdef || new text.DocumentLayoutDef());
+            this.tree.doc = text.createDocumentLayout(docdef || new text.DocumentLayoutDef());
             return this;
-        }
-
-        layout (constraint: Size): boolean {
-            var doc = this.$$doc;
-            if (!isNaN(doc.assets.actualWidth))
-                return false;
-            doc.assets.maxWidth = constraint.width;
-            doc.def.layout(this.assets, doc.assets, this.doctree.walk());
-            return true;
         }
 
         //TODO: Implement
@@ -56,7 +51,7 @@ module minerva.controls.textblock {
             this.invalidateArrange();
             this.updateBounds(true);
             this.invalidate();
-            var docassets = this.$$doc.assets;
+            var docassets = this.tree.doc.assets;
             docassets.actualWidth = NaN;
             docassets.actualHeight = NaN;
         }
