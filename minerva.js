@@ -7413,7 +7413,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 TextBlockUpdater.prototype.init = function () {
-                    this.setTree(new textblock.TextBlockUpdaterTree()).setMeasurePipe(minerva.singleton(textblock.measure.TextBlockMeasurePipeDef)).setArrangePipe(minerva.singleton(textblock.arrange.TextBlockArrangePipeDef)).setRenderPipe(minerva.singleton(textblock.render.TextBlockRenderPipeDef)).setHitTestPipe(minerva.singleton(textblock.hittest.TextBlockHitTestPipeDef));
+                    this.setTree(new textblock.TextBlockUpdaterTree()).setMeasurePipe(minerva.singleton(textblock.measure.TextBlockMeasurePipeDef)).setArrangePipe(minerva.singleton(textblock.arrange.TextBlockArrangePipeDef)).setProcessUpPipe(minerva.singleton(textblock.processup.TextBlockProcessUpPipeDef)).setRenderPipe(minerva.singleton(textblock.render.TextBlockRenderPipeDef)).setHitTestPipe(minerva.singleton(textblock.hittest.TextBlockHitTestPipeDef));
 
                     this.setDocument();
 

@@ -10,6 +10,7 @@ module minerva.controls.textblock {
             this.setTree(new TextBlockUpdaterTree())
                 .setMeasurePipe(singleton(measure.TextBlockMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.TextBlockArrangePipeDef))
+                .setProcessUpPipe(singleton(processup.TextBlockProcessUpPipeDef))
                 .setRenderPipe(singleton(render.TextBlockRenderPipeDef))
                 .setHitTestPipe(singleton(hittest.TextBlockHitTestPipeDef));
 
