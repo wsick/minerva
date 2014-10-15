@@ -4,6 +4,6 @@ module minerva.controls.grid {
         MaxWidth: number;
         MinWidth: number;
         ActualWidth: number;
-        actualWidth: number;
+        setActualWidth(value: number);
     }
 }

@@ -1375,7 +1375,7 @@ declare module minerva.controls.grid {
         MaxWidth: number;
         MinWidth: number;
         ActualWidth: number;
-        actualWidth: number;
+        setActualWidth(value: number): any;
     }
 }
 declare module minerva.controls.grid {
@@ -1397,7 +1397,7 @@ declare module minerva.controls.grid {
         MaxHeight: number;
         MinHeight: number;
         ActualHeight: number;
-        actualHeight: number;
+        setActualHeight(value: number): any;
     }
 }
 declare module minerva.controls.grid {
@@ -1447,6 +1447,7 @@ declare module minerva.controls.grid {
     module helpers {
         function expandStarCols(mat: Segment[][], coldefs: IColumnDefinition[], availableSize: Size): void;
         function expandStarRows(mat: Segment[][], rowdefs: IRowDefinition[], availableSize: Size): void;
+        function allocateDesiredSize(rowMat: Segment[][], rowCount: number, colMat: Segment[][], colCount: number): void;
     }
 }
 declare module minerva.controls.grid.measure {

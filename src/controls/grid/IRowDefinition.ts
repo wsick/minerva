@@ -4,6 +4,6 @@ module minerva.controls.grid {
         MaxHeight: number;
         MinHeight: number;
         ActualHeight: number;
-        actualHeight: number;
+        setActualHeight(value: number);
     }
 }

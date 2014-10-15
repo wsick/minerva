@@ -5912,11 +5912,11 @@ var minerva;
                 (function (tapins) {
                     function setActuals(input, state, output, tree, finalRect) {
                         for (var coldefs = input.columnDefinitions, cm = input.gridState.colMatrix, i = 0; i < coldefs.length; i++) {
-                            coldefs[i].actualWidth = cm[i][i].offered;
+                            coldefs[i].setActualWidth(cm[i][i].offered);
                         }
 
                         for (var rowdefs = input.rowDefinitions, rm = input.gridState.rowMatrix, i = 0; i < rowdefs.length; i++) {
-                            rowdefs[i].actualHeight = rm[i][i].offered;
+                            rowdefs[i].setActualHeight(rm[i][i].offered);
                         }
 
                         return true;
@@ -5951,7 +5951,7 @@ var minerva;
                     for (var i = 0; i < coldefs.length; i++) {
                         var cur = mat[i][i];
                         if (cur.type === 2 /* Star */)
-                            coldefs[i].actualWidth = cur.offered;
+                            coldefs[i].setActualWidth(cur.offered);
                     }
                 }
                 helpers.expandStarCols = expandStarCols;
@@ -5971,7 +5971,7 @@ var minerva;
                     for (var i = 0; i < rowdefs.length; i++) {
                         var cur = mat[i][i];
                         if (cur.type === 2 /* Star */)
-                            rowdefs[i].actualHeight = cur.offered;
+                            rowdefs[i].setActualHeight(cur.offered);
                     }
                 }
                 helpers.expandStarRows = expandStarRows;
@@ -6008,6 +6008,43 @@ var minerva;
                     } while(assigned);
                     return size;
                 }
+
+                function allocateDesiredSize(rowMat, rowCount, colMat, colCount) {
+                    for (var i = 0; i < 2; i++) {
+                        var matrix = i === 0 ? rowMat : colMat;
+                        var count = i === 0 ? rowCount : colCount;
+
+                        for (var row = count - 1; row >= 0; row--) {
+                            for (var col = row; col >= 0; col--) {
+                                var spansStar = false;
+                                for (var j = row; j >= col; j--) {
+                                    spansStar = spansStar || (matrix[j][j].type === 2 /* Star */);
+                                }
+                                var current = matrix[row][col].desired;
+                                var totalAllocated = 0;
+                                for (var a = row; a >= col; a--) {
+                                    totalAllocated += matrix[a][a].desired;
+                                }
+                                if (totalAllocated < current) {
+                                    var additional = current - totalAllocated;
+                                    if (spansStar) {
+                                        additional = assignSize(matrix, col, row, additional, 2 /* Star */, true);
+                                    } else {
+                                        additional = assignSize(matrix, col, row, additional, 1 /* Pixel */, true);
+                                        additional = assignSize(matrix, col, row, additional, 0 /* Auto */, true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (var i = 0; i < rowMat.length; i++) {
+                        rowMat[i][i].offered = rowMat[i][i].desired;
+                    }
+                    for (var i = 0; i < matrix.length; i++) {
+                        colMat[i][i].offered = colMat[i][i].desired;
+                    }
+                }
+                helpers.allocateDesiredSize = allocateDesiredSize;
             })(grid.helpers || (grid.helpers = {}));
             var helpers = grid.helpers;
         })(controls.grid || (controls.grid = {}));
