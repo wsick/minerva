@@ -1473,6 +1473,36 @@ declare module minerva.controls.grid.measure.tapins {
 declare module minerva.controls.grid.measure.tapins {
     function saveMeasureResults(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
+declare module minerva.controls.panel.processup {
+    interface IInput extends core.processup.IInput {
+        background: IBrush;
+    }
+    interface IState extends core.processup.IState {
+    }
+    interface IOutput extends core.processup.IOutput {
+    }
+    class PanelProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.grid.processup {
+    interface IInput extends panel.processup.IInput {
+        showGridLines: boolean;
+    }
+    interface IState extends panel.processup.IState {
+    }
+    interface IOutput extends panel.processup.IOutput {
+    }
+    class GridProcessUpPipeDef extends panel.processup.PanelProcessUpPipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.grid.processup.tapins {
+    function calcExtents(input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.grid.processup.tapins {
+    function preCalcExtents(input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
+}
 declare module minerva.controls.panel.render {
     interface IInput extends core.render.IInput, core.helpers.ISized {
         background: IBrush;
@@ -1658,18 +1688,6 @@ declare module minerva.controls.panel.hittest {
     }
     module tapins {
         function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
-    }
-}
-declare module minerva.controls.panel.processup {
-    interface IInput extends core.processup.IInput {
-        background: IBrush;
-    }
-    interface IState extends core.processup.IState {
-    }
-    interface IOutput extends core.processup.IOutput {
-    }
-    class PanelProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
-        constructor();
     }
 }
 declare module minerva.controls.panel.processup.tapins {

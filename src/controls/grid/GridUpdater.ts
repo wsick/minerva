@@ -9,6 +9,7 @@ module minerva.controls.grid {
         init () {
             this.setMeasurePipe(singleton(measure.GridMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.GridArrangePipeDef))
+                .setProcessUpPipe(singleton(processup.GridProcessUpPipeDef))
                 .setRenderPipe(singleton(render.GridRenderPipeDef));
 
             var assets = this.assets;
