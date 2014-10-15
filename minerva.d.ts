@@ -1443,12 +1443,25 @@ declare module minerva.controls.grid.arrange.tapins {
 declare module minerva.controls.grid.arrange.tapins {
     function setActuals(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
-declare module minerva.controls.grid {
-    module helpers {
-        function expandStarCols(mat: Segment[][], coldefs: IColumnDefinition[], availableSize: Size): void;
-        function expandStarRows(mat: Segment[][], rowdefs: IRowDefinition[], availableSize: Size): void;
-        function allocateDesiredSize(rowMat: Segment[][], rowCount: number, colMat: Segment[][], colCount: number): void;
+declare module minerva.controls.grid.helpers {
+    function allocateDesiredSize(rowMat: Segment[][], rowCount: number, colMat: Segment[][], colCount: number): void;
+}
+declare module minerva.controls.grid.helpers {
+    function assignSize(mat: Segment[][], start: number, end: number, size: number, unitType: GridUnitType, desiredSize: boolean): number;
+}
+declare module minerva.controls.grid.helpers {
+    function expandStarCols(mat: Segment[][], coldefs: IColumnDefinition[], availableSize: Size): void;
+}
+declare module minerva.controls.grid.helpers {
+    function expandStarRows(mat: Segment[][], rowdefs: IRowDefinition[], availableSize: Size): void;
+}
+declare module minerva.controls.grid.helpers {
+    interface IGridShape {
+        HasAutoAuto: boolean;
+        HasStarAuto: boolean;
+        HasAutoStar: boolean;
     }
+    function getGridShape(tree: core.IUpdaterTree, rm: Segment[][], cm: Segment[][]): IGridShape;
 }
 declare module minerva.controls.grid.measure {
     interface IInput extends panel.measure.IInput {
