@@ -1353,6 +1353,13 @@ declare module minerva.controls.grid {
         public assets: IGridUpdaterAssets;
         public init(): void;
     }
+    module reactTo {
+        function showGridLines(updater: GridUpdater, ov: boolean, nv: boolean): void;
+        function column(updater: core.Updater, ov: number, nv: number): void;
+        function columnSpan(updater: core.Updater, ov: number, nv: number): void;
+        function row(updater: core.Updater, ov: number, nv: number): void;
+        function rowSpan(updater: core.Updater, ov: number, nv: number): void;
+    }
 }
 declare module minerva.controls.grid {
     interface IColumnDefinition {

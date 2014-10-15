@@ -5639,6 +5639,42 @@ var minerva;
                 return GridUpdater;
             })(controls.panel.PanelUpdater);
             grid.GridUpdater = GridUpdater;
+
+            (function (reactTo) {
+                function invalidateCell(updater) {
+                    var vp = updater.tree.visualParent;
+                    if (vp instanceof GridUpdater)
+                        vp.invalidateMeasure();
+                    updater.invalidateMeasure();
+                }
+
+                function showGridLines(updater, ov, nv) {
+                    updater.invalidateMeasure();
+                    updater.invalidate();
+                }
+                reactTo.showGridLines = showGridLines;
+
+                function column(updater, ov, nv) {
+                    invalidateCell(updater);
+                }
+                reactTo.column = column;
+
+                function columnSpan(updater, ov, nv) {
+                    invalidateCell(updater);
+                }
+                reactTo.columnSpan = columnSpan;
+
+                function row(updater, ov, nv) {
+                    invalidateCell(updater);
+                }
+                reactTo.row = row;
+
+                function rowSpan(updater, ov, nv) {
+                    invalidateCell(updater);
+                }
+                reactTo.rowSpan = rowSpan;
+            })(grid.reactTo || (grid.reactTo = {}));
+            var reactTo = grid.reactTo;
         })(controls.grid || (controls.grid = {}));
         var grid = controls.grid;
     })(minerva.controls || (minerva.controls = {}));
