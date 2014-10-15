@@ -5621,18 +5621,34 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (grid) {
+            (function (GridUnitType) {
+                GridUnitType[GridUnitType["Auto"] = 0] = "Auto";
+                GridUnitType[GridUnitType["Pixel"] = 1] = "Pixel";
+                GridUnitType[GridUnitType["Star"] = 2] = "Star";
+            })(grid.GridUnitType || (grid.GridUnitType = {}));
+            var GridUnitType = grid.GridUnitType;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
             var GridUpdater = (function (_super) {
                 __extends(GridUpdater, _super);
                 function GridUpdater() {
                     _super.apply(this, arguments);
                 }
                 GridUpdater.prototype.init = function () {
-                    this.setRenderPipe(minerva.singleton(grid.render.GridRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(grid.measure.GridMeasurePipeDef)).setArrangePipe(minerva.singleton(grid.arrange.GridArrangePipeDef)).setRenderPipe(minerva.singleton(grid.render.GridRenderPipeDef));
 
                     var assets = this.assets;
                     assets.showGridLines = false;
                     assets.columnDefinitions = [];
                     assets.rowDefinitions = [];
+                    assets.gridState = grid.createGridState();
 
                     _super.prototype.init.call(this);
                 };
@@ -5675,6 +5691,470 @@ var minerva;
                 reactTo.rowSpan = rowSpan;
             })(grid.reactTo || (grid.reactTo = {}));
             var reactTo = grid.reactTo;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            function createGridState() {
+                return {
+                    rowMatrix: [],
+                    colMatrix: []
+                };
+            }
+            grid.createGridState = createGridState;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            var Segment = (function () {
+                function Segment() {
+                    this.desired = 0.0;
+                    this.offered = 0.0;
+                    this.original = 0.0;
+                    this.min = 0.0;
+                    this.max = Number.POSITIVE_INFINITY;
+                    this.stars = 0;
+                }
+                Segment.prototype.clamp = function (value) {
+                    if (value < this.min)
+                        return this.min;
+                    if (value > this.max)
+                        return this.max;
+                    return value;
+                };
+
+                Segment.prototype.setOfferedToDesired = function () {
+                    return this.offered = this.desired;
+                };
+
+                Segment.prototype.setDesiredToOffered = function () {
+                    return this.desired = this.offered;
+                };
+
+                Segment.init = function (segment, offered, min, max, unitType) {
+                    segment.offered = offered || 0.0;
+                    segment.min = min || 0.0;
+                    segment.max = max != null ? max : Number.POSITIVE_INFINITY;
+                    segment.type = unitType != null ? unitType : 1 /* Pixel */;
+
+                    if (segment.offered < min)
+                        segment.offered = min;
+                    else if (segment.offered > max)
+                        segment.offered = max;
+                };
+                return Segment;
+            })();
+            grid.Segment = Segment;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (arrange) {
+                var GridArrangePipeDef = (function (_super) {
+                    __extends(GridArrangePipeDef, _super);
+                    function GridArrangePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'restoreMeasureResults', arrange.tapins.restoreMeasureResults).addTapinBefore('doOverride', 'calcConsumed', arrange.tapins.calcConsumed).addTapinBefore('doOverride', 'setActuals', arrange.tapins.setActuals).replaceTapin('doOverride', arrange.tapins.doOverride);
+                    }
+                    GridArrangePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.consumed = new minerva.Size();
+                        return state;
+                    };
+                    return GridArrangePipeDef;
+                })(controls.panel.arrange.PanelArrangePipeDef);
+                arrange.GridArrangePipeDef = GridArrangePipeDef;
+            })(grid.arrange || (grid.arrange = {}));
+            var arrange = grid.arrange;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (arrange) {
+                (function (tapins) {
+                    function calcConsumed(input, state, output, tree, finalRect) {
+                        var con = state.consumed;
+                        con.width = con.height = 0;
+                        var fs = state.finalSize;
+
+                        var cm = input.gridState.colMatrix;
+                        for (var i = 0; i < cm.length; i++) {
+                            con.width += cm[i][i].setOfferedToDesired();
+                        }
+                        if (con.width !== fs.width)
+                            grid.helpers.expandStarCols(cm, input.columnDefinitions, fs);
+
+                        var rm = input.gridState.rowMatrix;
+                        for (var i = 0; i < rm.length; i++) {
+                            con.height += rm[i][i].setOfferedToDesired();
+                        }
+                        if (con.height !== fs.height)
+                            grid.helpers.expandStarRows(rm, input.rowDefinitions, fs);
+
+                        return true;
+                    }
+                    tapins.calcConsumed = calcConsumed;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(grid.arrange || (grid.arrange = {}));
+            var arrange = grid.arrange;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (arrange) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        var cr = state.childRect;
+
+                        var rm = input.gridState.rowMatrix;
+                        var cm = input.gridState.colMatrix;
+
+                        for (var walker = tree.walk(); walker.step();) {
+                            var child = walker.current;
+
+                            var col = Math.min(child.getAttachedValue("Grid.Column"), cm.length - 1);
+                            var row = Math.min(child.getAttachedValue("Grid.Row"), rm.length - 1);
+                            var colspan = Math.min(child.getAttachedValue("Grid.ColumnSpan"), cm.length - col);
+                            var rowspan = Math.min(child.getAttachedValue("Grid.RowSpan"), rm.length - row);
+
+                            cr.x = cr.y = cr.width = cr.height = 0;
+                            for (var i = 0; i < col; i++) {
+                                cr.x += cm[i][i].offered;
+                            }
+                            for (var i = col; i < col + colspan; i++) {
+                                cr.width += cm[i][i].offered;
+                            }
+                            for (var i = 0; i < row; i++) {
+                                cr.y += rm[i][i].offered;
+                            }
+                            for (var i = row; i < row + rowspan; i++) {
+                                cr.height += rm[i][i].offered;
+                            }
+
+                            child.arrange(cr);
+                        }
+
+                        minerva.Size.copyTo(state.finalSize, state.arrangedSize);
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(grid.arrange || (grid.arrange = {}));
+            var arrange = grid.arrange;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (arrange) {
+                (function (tapins) {
+                    function restoreMeasureResults(input, state, output, tree, finalRect) {
+                        for (var rm = input.gridState.rowMatrix, i = 0; i < rm.length; i++) {
+                            for (var j = 0; j <= i; j++) {
+                                rm[i][j].offered = rm[i][j].original;
+                            }
+                        }
+
+                        for (var cm = input.gridState.colMatrix, i = 0; i < cm.length; i++) {
+                            for (var j = 0; j <= i; j++) {
+                                cm[i][j].offered = cm[i][j].original;
+                            }
+                        }
+
+                        return true;
+                    }
+                    tapins.restoreMeasureResults = restoreMeasureResults;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(grid.arrange || (grid.arrange = {}));
+            var arrange = grid.arrange;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (arrange) {
+                (function (tapins) {
+                    function setActuals(input, state, output, tree, finalRect) {
+                        for (var coldefs = input.columnDefinitions, cm = input.gridState.colMatrix, i = 0; i < coldefs.length; i++) {
+                            coldefs[i].actualWidth = cm[i][i].offered;
+                        }
+
+                        for (var rowdefs = input.rowDefinitions, rm = input.gridState.rowMatrix, i = 0; i < rowdefs.length; i++) {
+                            rowdefs[i].actualHeight = rm[i][i].offered;
+                        }
+
+                        return true;
+                    }
+                    tapins.setActuals = setActuals;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(grid.arrange || (grid.arrange = {}));
+            var arrange = grid.arrange;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (helpers) {
+                function expandStarCols(mat, coldefs, availableSize) {
+                    var aw = availableSize.width;
+
+                    for (var i = 0; i < mat.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === 2 /* Star */)
+                            cur.offered = 0;
+                        else
+                            aw = Math.max(aw - cur.offered, 0);
+                    }
+                    aw = assignSize(mat, 0, mat.length - 1, aw, 2 /* Star */, false);
+
+                    for (var i = 0; i < coldefs.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === 2 /* Star */)
+                            coldefs[i].actualWidth = cur.offered;
+                    }
+                }
+                helpers.expandStarCols = expandStarCols;
+
+                function expandStarRows(mat, rowdefs, availableSize) {
+                    var ah = availableSize.height;
+
+                    for (var i = 0; i < mat.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === 2 /* Star */)
+                            cur.offered = 0;
+                        else
+                            ah = Math.max(ah - cur.offered, 0);
+                    }
+                    ah = assignSize(mat, 0, mat.length - 1, ah, 2 /* Star */, false);
+
+                    for (var i = 0; i < rowdefs.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === 2 /* Star */)
+                            rowdefs[i].actualHeight = cur.offered;
+                    }
+                }
+                helpers.expandStarRows = expandStarRows;
+
+                function assignSize(mat, start, end, size, unitType, desiredSize) {
+                    var count = 0;
+                    var assigned = false;
+                    var segmentSize = 0;
+                    for (var i = start; i <= end; i++) {
+                        var cur = mat[i][i];
+                        segmentSize = desiredSize ? cur.desired : cur.offered;
+                        if (segmentSize < cur.max)
+                            count += (unitType === 2 /* Star */) ? cur.stars : 1;
+                    }
+
+                    do {
+                        assigned = false;
+                        var contribution = size / count;
+                        for (i = start; i <= end; i++) {
+                            cur = mat[i][i];
+                            segmentSize = desiredSize ? cur.desired : cur.offered;
+                            if (!(cur.type === unitType && segmentSize < cur.max))
+                                continue;
+                            var newSize = segmentSize;
+                            newSize += contribution * (unitType === 2 /* Star */ ? cur.stars : 1);
+                            newSize = Math.min(newSize, cur.max);
+                            assigned = assigned || (newSize > segmentSize);
+                            size -= newSize - segmentSize;
+                            if (desiredSize)
+                                cur.desired = newSize;
+                            else
+                                cur.offered = newSize;
+                        }
+                    } while(assigned);
+                    return size;
+                }
+            })(grid.helpers || (grid.helpers = {}));
+            var helpers = grid.helpers;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (measure) {
+                var GridMeasurePipeDef = (function (_super) {
+                    __extends(GridMeasurePipeDef, _super);
+                    function GridMeasurePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'prepareRowMatrix', measure.tapins.prepareRowMatrix).addTapinBefore('doOverride', 'prepareColMatrix', measure.tapins.prepareColMatrix).replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'saveMeasureResults', measure.tapins.saveMeasureResults);
+                    }
+                    return GridMeasurePipeDef;
+                })(controls.panel.measure.PanelMeasurePipeDef);
+                measure.GridMeasurePipeDef = GridMeasurePipeDef;
+            })(grid.measure || (grid.measure = {}));
+            var measure = grid.measure;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (measure) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(grid.measure || (grid.measure = {}));
+            var measure = grid.measure;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (measure) {
+                (function (tapins) {
+                    function prepareColMatrix(input, state, output, tree, finalRect) {
+                        var colCount = input.columnDefinitions.length;
+                        var cm = input.gridState.colMatrix;
+                        if (cm.length > colCount)
+                            cm.splice(colCount, cm.length - colCount);
+                        for (var c = 0; c < colCount; c++) {
+                            if (cm.length <= c)
+                                cm.push([]);
+                            var mrow = cm[c];
+                            if (mrow.length > c)
+                                mrow.splice(c, mrow.length - c);
+                            for (var cc = 0; cc <= c; cc++) {
+                                if (mrow.length <= cc)
+                                    mrow.push(new grid.Segment());
+                                else
+                                    grid.Segment.init(mrow[cc]);
+                            }
+                        }
+
+                        return true;
+                    }
+                    tapins.prepareColMatrix = prepareColMatrix;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(grid.measure || (grid.measure = {}));
+            var measure = grid.measure;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (measure) {
+                (function (tapins) {
+                    function prepareRowMatrix(input, state, output, tree, finalRect) {
+                        var rowCount = input.rowDefinitions.length;
+                        var rm = input.gridState.rowMatrix;
+                        if (rm.length > rowCount)
+                            rm.splice(rowCount, rm.length - rowCount);
+                        for (var r = 0; r < rowCount; r++) {
+                            if (rm.length <= r)
+                                rm.push([]);
+                            var mrow = rm[r];
+                            if (mrow.length > r)
+                                mrow.splice(r, mrow.length - r);
+                            for (var rr = 0; rr <= r; rr++) {
+                                if (mrow.length <= rr)
+                                    mrow.push(new grid.Segment());
+                                else
+                                    grid.Segment.init(mrow[rr]);
+                            }
+                        }
+
+                        return true;
+                    }
+                    tapins.prepareRowMatrix = prepareRowMatrix;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(grid.measure || (grid.measure = {}));
+            var measure = grid.measure;
+        })(controls.grid || (controls.grid = {}));
+        var grid = controls.grid;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (grid) {
+            (function (measure) {
+                (function (tapins) {
+                    function saveMeasureResults(input, state, output, tree, finalRect) {
+                        for (var rm = input.gridState.rowMatrix, i = 0; i < rm.length; i++) {
+                            for (var j = 0; j <= i; j++) {
+                                rm[i][j].original = rm[i][j].offered;
+                            }
+                        }
+
+                        for (var cm = input.gridState.colMatrix, i = 0; i < cm.length; i++) {
+                            for (j = 0; j <= i; j++) {
+                                cm[i][j].original = cm[i][j].offered;
+                            }
+                        }
+
+                        return true;
+                    }
+                    tapins.saveMeasureResults = saveMeasureResults;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(grid.measure || (grid.measure = {}));
+            var measure = grid.measure;
         })(controls.grid || (controls.grid = {}));
         var grid = controls.grid;
     })(minerva.controls || (minerva.controls = {}));

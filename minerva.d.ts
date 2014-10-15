@@ -1347,7 +1347,15 @@ declare module minerva.controls.control.hittest {
     }
 }
 declare module minerva.controls.grid {
-    interface IGridUpdaterAssets extends panel.IPanelUpdaterAssets, render.IInput {
+    enum GridUnitType {
+        Auto = 0,
+        Pixel = 1,
+        Star = 2,
+    }
+}
+declare module minerva.controls.grid {
+    interface IGridUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
+        gridState: IGridState;
     }
     class GridUpdater extends panel.PanelUpdater {
         public assets: IGridUpdaterAssets;
@@ -1363,13 +1371,107 @@ declare module minerva.controls.grid {
 }
 declare module minerva.controls.grid {
     interface IColumnDefinition {
+        Width: IGridLength;
+        MaxWidth: number;
+        MinWidth: number;
         ActualWidth: number;
+        actualWidth: number;
     }
 }
 declare module minerva.controls.grid {
-    interface IRowDefinition {
-        ActualHeight: number;
+    interface IGridLength {
+        Value: number;
+        Type: GridUnitType;
     }
+}
+declare module minerva.controls.grid {
+    interface IGridState {
+        rowMatrix: Segment[][];
+        colMatrix: Segment[][];
+    }
+    function createGridState(): IGridState;
+}
+declare module minerva.controls.grid {
+    interface IRowDefinition {
+        Height: IGridLength;
+        MaxHeight: number;
+        MinHeight: number;
+        ActualHeight: number;
+        actualHeight: number;
+    }
+}
+declare module minerva.controls.grid {
+    class Segment {
+        public desired: number;
+        public offered: number;
+        public original: number;
+        public min: number;
+        public max: number;
+        public stars: number;
+        public type: GridUnitType;
+        public clamp(value: number): number;
+        public setOfferedToDesired(): number;
+        public setDesiredToOffered(): number;
+        static init(segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType): void;
+    }
+}
+declare module minerva.controls.grid.arrange {
+    interface IInput extends panel.arrange.IInput {
+        gridState: IGridState;
+        columnDefinitions: IColumnDefinition[];
+        rowDefinitions: IRowDefinition[];
+    }
+    interface IState extends panel.arrange.IState {
+        consumed: Size;
+    }
+    interface IOutput extends panel.arrange.IOutput {
+    }
+    class GridArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
+        constructor();
+        public createState(): IState;
+    }
+}
+declare module minerva.controls.grid.arrange.tapins {
+    function calcConsumed(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.arrange.tapins {
+    function restoreMeasureResults(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.arrange.tapins {
+    function setActuals(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid {
+    module helpers {
+        function expandStarCols(mat: Segment[][], coldefs: IColumnDefinition[], availableSize: Size): void;
+        function expandStarRows(mat: Segment[][], rowdefs: IRowDefinition[], availableSize: Size): void;
+    }
+}
+declare module minerva.controls.grid.measure {
+    interface IInput extends panel.measure.IInput {
+        gridState: IGridState;
+        columnDefinitions: IColumnDefinition[];
+        rowDefinitions: IRowDefinition[];
+    }
+    interface IState extends panel.measure.IState {
+    }
+    class GridMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.grid.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.measure.tapins {
+    function prepareColMatrix(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.measure.tapins {
+    function prepareRowMatrix(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.grid.measure.tapins {
+    function saveMeasureResults(input: IInput, state: IState, output: panel.measure.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.panel.render {
     interface IInput extends core.render.IInput, core.helpers.ISized {
