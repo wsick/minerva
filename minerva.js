@@ -6291,7 +6291,7 @@ var minerva;
                             if (i > shapes.length)
                                 shapes.push(new measure.GridChildShape().init(walker.current, rm, cm));
                             else
-                                shapes[i].init(walker.current, rm, cm);
+                                (shapes[i] = shapes[i] || new measure.GridChildShape()).init(walker.current, rm, cm);
                         }
                         if (i < shapes.length)
                             shapes.slice(i, shapes.length - i);

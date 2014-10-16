@@ -33,7 +33,7 @@ module minerva.core.arrange.tests {
                 renderSize: new Size(),
                 lastRenderSize: null,
                 layoutXform: mat3.identity(),
-                layoutClip: new Rect //NOTE: empty represents no layout clip
+                layoutClip: new Rect() //NOTE: empty represents no layout clip
             };
         }
     };
