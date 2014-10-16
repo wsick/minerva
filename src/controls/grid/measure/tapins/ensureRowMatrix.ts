@@ -8,8 +8,8 @@ module minerva.controls.grid.measure.tapins {
             if (rm.length <= r)
                 rm.push([]);
             var mrow = rm[r];
-            if (mrow.length > r)
-                mrow.splice(r, mrow.length - r);
+            if (mrow.length > (r + 1))
+                mrow.splice(r, mrow.length - r - 1);
             for (var rr = 0; rr <= r; rr++) {
                 if (mrow.length <= rr)
                     mrow.push(new Segment());

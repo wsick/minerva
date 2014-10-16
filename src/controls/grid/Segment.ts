@@ -6,7 +6,7 @@ module minerva.controls.grid {
         min: number = 0.0;
         max: number = Number.POSITIVE_INFINITY;
         stars: number = 0;
-        type: GridUnitType;
+        type =  GridUnitType.Pixel;
 
         clamp (value: number): number {
             if (value < this.min)
