@@ -57,6 +57,28 @@ module minerva.controls.grid.arrange.tests {
             segment.offered = offered || 0.0;
             segment.desired = desired || 0.0;
             return segment;
+        },
+        coldef: function (): IColumnDefinition {
+            return {
+                Width: { Value: 1.0, Type: GridUnitType.Star },
+                MinWidth: 0,
+                MaxWidth: Number.POSITIVE_INFINITY,
+                ActualWidth: NaN,
+                setActualWidth: function (value: number) {
+                    this.ActualWidth = value;
+                }
+            };
+        },
+        rowdef: function (): IRowDefinition {
+            return {
+                Height: { Value: 1.0, Type: GridUnitType.Star },
+                MinHeight: 0,
+                MaxHeight: Number.POSITIVE_INFINITY,
+                ActualHeight: NaN,
+                setActualHeight: function (value: number) {
+                    this.ActualHeight = value;
+                }
+            };
         }
     };
 
@@ -123,8 +145,32 @@ module minerva.controls.grid.arrange.tests {
     });
 
     QUnit.test("setActuals", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
 
-        assert.ok(true);
+        input.gridState.rowMatrix = [
+            [mock.segment(10, 20, 20)],
+            [null, mock.segment(60, 70, 70)],
+            [null, null, mock.segment(100, 110, 110)]
+        ];
+
+        input.rowDefinitions = [mock.rowdef(), mock.rowdef(), mock.rowdef()];
+
+        input.gridState.colMatrix = [
+            [mock.segment(10, 20, 20)],
+            [null, mock.segment(60, 70, 70)],
+            [null, null, mock.segment(100, 110, 110)]
+        ];
+
+        input.columnDefinitions = [mock.coldef(), mock.coldef(), mock.coldef()];
+
+        assert.ok(tapins.setActuals(input, state, null, null, null));
+        assert.strictEqual(input.columnDefinitions[0].ActualWidth, 20);
+        assert.strictEqual(input.columnDefinitions[1].ActualWidth, 70);
+        assert.strictEqual(input.columnDefinitions[2].ActualWidth, 110);
+        assert.strictEqual(input.rowDefinitions[0].ActualHeight, 20);
+        assert.strictEqual(input.rowDefinitions[1].ActualHeight, 70);
+        assert.strictEqual(input.rowDefinitions[2].ActualHeight, 110);
     });
 
     QUnit.test("doOverride", (assert) => {
