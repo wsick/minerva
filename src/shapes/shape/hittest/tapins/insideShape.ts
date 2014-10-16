@@ -2,7 +2,7 @@ module minerva.shapes.shape.hittest.tapins {
     export function insideShape (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
         //TODO: Implement insideShape
         /*
-         if (this.SFlags & ShapeFlags.Empty)
+         if ((data.assets.shapeFlags & ShapeFlags.Empty) === 0)
          return false;
          if (!this.Fill && !this.Stroke)
          return false;

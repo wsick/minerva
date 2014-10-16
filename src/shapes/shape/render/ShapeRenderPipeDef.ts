@@ -1,6 +1,14 @@
 module minerva.shapes.shape.render {
     export interface IInput extends core.render.IInput {
-        shape: core.IShape;
+        fill: IBrush;
+        fillRule: FillRule;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+
         extents: Rect;
         shapeFlags: ShapeFlags;
         stretchXform: number[];
@@ -17,7 +25,9 @@ module minerva.shapes.shape.render {
             this.addTapinBefore('doRender', 'calcShouldDraw', tapins.calcShouldDraw)
                 .addTapinBefore('doRender', 'prepareDraw', tapins.prepareDraw)
                 .replaceTapin('doRender', tapins.draw)
-                .addTapinAfter('doRender', 'finishDraw', tapins.finishDraw);
+                .addTapinAfter('doRender', 'fill', tapins.fill)
+                .addTapinAfter('fill', 'stroke', tapins.stroke)
+                .addTapinAfter('stroke', 'finishDraw', tapins.finishDraw);
         }
 
         createState (): IState {

@@ -2,7 +2,7 @@ module minerva.shapes.shape.sizing.tapins {
     export function calcShouldStretch (input: IInput, state: IState, output: core.sizing.IOutput, tree: core.IUpdaterTree): boolean {
         state.shouldStretch = false;
 
-        // If visual parent is canvas and no previousConstraint and no layoutSlot
+        //TODO: If visual parent is canvas and no previousConstraint and no layoutSlot
         //  return true
 
         if (!tree.surface)

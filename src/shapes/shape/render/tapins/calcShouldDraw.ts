@@ -3,7 +3,7 @@ module minerva.shapes.shape.render.tapins {
         state.shouldDraw = false;
         if ((input.shapeFlags & ShapeFlags.Empty) === 0)
             return true;
-        if (!input.shape.fill && !input.shape.stroke)
+        if (!input.fill && !input.stroke)
             return true;
         state.shouldDraw = true;
         return true;

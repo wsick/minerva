@@ -2128,42 +2128,43 @@ declare module minerva.engine {
 declare module minerva.engine {
     function process(down: core.Updater[], up: core.Updater[]): boolean;
 }
-declare module minerva.shapes {
-    class Shape implements core.IShape {
-        public stretch: Stretch;
-        public fill: IBrush;
-        public fillRule: FillRule;
-        public stroke: IBrush;
-        public strokeThickness: number;
-        public strokeStartLineCap: PenLineCap;
-        public strokeEndLineCap: PenLineCap;
-        public strokeLineJoin: PenLineJoin;
-        public strokeMiterLimit: number;
-        public actualWidth: number;
-        public actualHeight: number;
-        public draw(ctx: core.render.RenderContext): core.IShape;
-        public doFill(ctx: core.render.RenderContext, region: Rect): core.IShape;
-        public doStroke(ctx: core.render.RenderContext, region: Rect): core.IShape;
-    }
-}
-declare module minerva.shapes.rectangle {
-    class RectangleShape extends Shape {
-        public radiusX: number;
-        public radiusY: number;
-    }
-}
 declare module minerva.shapes.shape {
-    interface IShapeUpdaterAssets extends core.IUpdaterAssets, render.IInput, sizing.IInput {
+    interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, render.IInput {
     }
     class ShapeUpdater extends core.Updater {
         public assets: IShapeUpdaterAssets;
         constructor();
-        public createShape(): Shape;
         public invalidateStretch(): void;
         public invalidateNaturalBounds(): void;
     }
 }
+declare module minerva.shapes.rectangle {
+    interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput {
+    }
+    class RectangleUpdater extends shape.ShapeUpdater {
+        public assets: IRectangleUpdaterAssets;
+        public init(): void;
+    }
+}
+declare module minerva.shapes.shape.measure {
+    interface IInput extends core.measure.IInput {
+    }
+    class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.rectangle.measure {
+    interface IInput extends shape.measure.IInput {
+        radiusX: number;
+        radiusY: number;
+    }
+    class RectangleMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+        constructor();
+    }
+}
 declare module minerva.shapes.shape.arrange {
+    interface IInput extends core.arrange.IInput {
+    }
     class ShapeArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
     }
@@ -2182,14 +2183,16 @@ declare module minerva.shapes.shape.hittest.tapins {
 declare module minerva.shapes.shape.hittest.tapins {
     function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
-declare module minerva.shapes.shape.measure {
-    class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
-        constructor();
-    }
-}
 declare module minerva.shapes.shape.render {
     interface IInput extends core.render.IInput {
-        shape: core.IShape;
+        fill: IBrush;
+        fillRule: FillRule;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
         extents: Rect;
         shapeFlags: ShapeFlags;
         stretchXform: number[];
@@ -2211,10 +2214,16 @@ declare module minerva.shapes.shape.render.tapins {
     function draw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.render.tapins {
+    function fill(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.shapes.shape.render.tapins {
     function finishDraw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.render.tapins {
     function prepareDraw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.shapes.shape.render.tapins {
+    function stroke(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.sizing {
     interface IInput extends core.sizing.IInput {

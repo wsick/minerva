@@ -1,7 +1,7 @@
 /// <reference path="../../core/Updater" />
 
 module minerva.shapes.shape {
-    export interface IShapeUpdaterAssets extends core.IUpdaterAssets, render.IInput, sizing.IInput {
+    export interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, render.IInput {
     }
 
     export class ShapeUpdater extends core.Updater {
@@ -17,14 +17,9 @@ module minerva.shapes.shape {
                 .setHitTestPipe(singleton(hittest.ShapeHitTestPipeDef))
 
             var assets = this.assets;
-            assets.shape = this.createShape();
             assets.naturalBounds = new Rect();
             assets.shapeFlags = ShapeFlags.None;
             assets.stretchXform = mat3.identity();
-        }
-
-        createShape (): Shape {
-            return new Shape();
         }
 
         invalidateStretch () {
