@@ -241,5 +241,7 @@ module minerva.controls.grid.measure.tests {
         assert.deepEqual(cshapes[0], mock.childshape(0, 1, 0, 1, true, false, true, false));
         assert.deepEqual(cshapes[1], mock.childshape(1, 1, 0, 2, false, true, true, false));
         assert.deepEqual(state.gridShape, mock.shape(false, true, false));
+        assert.strictEqual(state.placementIndex, 0);
+        assert.deepEqual(state.placements, [new GridChildPlacement(null, 0, 0, 0)]);
     });
 }
