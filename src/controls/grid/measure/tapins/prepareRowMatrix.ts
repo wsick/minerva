@@ -22,7 +22,6 @@ module minerva.controls.grid.measure.tapins {
         for (var i = 0; i < rowdefs.length; i++) {
             var rowdef = rowdefs[i];
             var height = rowdef.Height || DEFAULT_GRID_LEN;
-            rowdef.setActualHeight(Number.POSITIVE_INFINITY);
 
             var cell = Segment.init(rm[i][i], 0.0, rowdef.MinHeight, rowdef.MaxHeight, height.Type);
             if (height.Type === GridUnitType.Pixel) {
@@ -31,6 +30,7 @@ module minerva.controls.grid.measure.tapins {
             } else if (height.Type === GridUnitType.Star) {
                 cell.stars = height.Value;
                 ts.height += height.Value;
+                rowdef.setActualHeight(Number.POSITIVE_INFINITY);
             } else if (height.Type === GridUnitType.Auto) {
                 cell.offered = cell.clamp(0);
                 cell.setDesiredToOffered();

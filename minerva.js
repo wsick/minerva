@@ -6572,7 +6572,6 @@ var minerva;
                         for (var i = 0; i < rowdefs.length; i++) {
                             var rowdef = rowdefs[i];
                             var height = rowdef.Height || DEFAULT_GRID_LEN;
-                            rowdef.setActualHeight(Number.POSITIVE_INFINITY);
 
                             var cell = grid.Segment.init(rm[i][i], 0.0, rowdef.MinHeight, rowdef.MaxHeight, height.Type);
                             if (height.Type === 1 /* Pixel */) {
@@ -6581,6 +6580,7 @@ var minerva;
                             } else if (height.Type === 2 /* Star */) {
                                 cell.stars = height.Value;
                                 ts.height += height.Value;
+                                rowdef.setActualHeight(Number.POSITIVE_INFINITY);
                             } else if (height.Type === 0 /* Auto */) {
                                 cell.offered = cell.clamp(0);
                                 cell.setDesiredToOffered();
