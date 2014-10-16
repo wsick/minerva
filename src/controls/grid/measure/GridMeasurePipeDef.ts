@@ -24,7 +24,7 @@ module minerva.controls.grid.measure {
                 .addTapinBefore('doOverride', 'doOverrideAutoAuto', tapins.createDoOverridePass(OverridePass.AutoAuto))
                 .addTapinBefore('doOverride', 'doOverrideStarAuto', tapins.createDoOverridePass(OverridePass.StarAuto))
                 .addTapinBefore('doOverride', 'doOverrideAutoStar', tapins.createDoOverridePass(OverridePass.AutoStar))
-                .addTapinBefore('doOverride', 'doOverrideStarAutoAgain', tapins.createDoOverridePass(OverridePass.StarAutoAgain))
+                .addTapinBefore('doOverride', 'doOverrideStarAutoAgain', tapins.createDoOverridePass(OverridePass.StarAuto))
                 .addTapinBefore('doOverride', 'doOverrideNonStar', tapins.createDoOverridePass(OverridePass.NonStar))
                 .addTapinBefore('doOverride', 'doOverrideRemainingStar', tapins.createDoOverridePass(OverridePass.RemainingStar))
                 .replaceTapin('doOverride', tapins.doOverride)

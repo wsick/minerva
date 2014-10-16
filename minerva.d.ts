@@ -1471,9 +1471,8 @@ declare module minerva.controls.grid.measure {
         AutoAuto = 0,
         StarAuto = 1,
         AutoStar = 2,
-        StarAutoAgain = 3,
-        NonStar = 4,
-        RemainingStar = 5,
+        NonStar = 3,
+        RemainingStar = 4,
     }
     class GridChildShape {
         public starRow: boolean;

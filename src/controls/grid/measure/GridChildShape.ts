@@ -3,7 +3,7 @@ module minerva.controls.grid.measure {
         AutoAuto, //Child in auto row, auto col
         StarAuto, //Child in star row, auto col
         AutoStar, //Child in auto row, star col
-        StarAutoAgain, //Child in star row, auto col
+        //StarAuto is repeated here
         NonStar, //Child in auto/pixel row, auto/pixel col
         RemainingStar //Child in ?
     }
@@ -59,7 +59,7 @@ module minerva.controls.grid.measure {
             }
 
             if (this.starRow && this.autoCol && !this.starCol) {
-                if (!(pass === OverridePass.StarAuto || pass === OverridePass.StarAutoAgain))
+                if (pass !== OverridePass.StarAuto)
                     return false;
                 if (pass === OverridePass.AutoAuto && gridShape.hasAutoStar)
                     childSize.height = Number.POSITIVE_INFINITY;
