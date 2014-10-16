@@ -5803,13 +5803,13 @@ var minerva;
                         for (var i = 0; i < cm.length; i++) {
                             con.width += cm[i][i].setOfferedToDesired();
                         }
-                        if (con.width !== fs.width)
-                            grid.helpers.expandStarCols(cm, input.columnDefinitions, fs);
-
                         var rm = input.gridState.rowMatrix;
                         for (var i = 0; i < rm.length; i++) {
                             con.height += rm[i][i].setOfferedToDesired();
                         }
+
+                        if (con.width !== fs.width)
+                            grid.helpers.expandStarCols(cm, input.columnDefinitions, fs);
                         if (con.height !== fs.height)
                             grid.helpers.expandStarRows(rm, input.rowDefinitions, fs);
 

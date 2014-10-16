@@ -35,10 +35,27 @@ module minerva.controls.grid.arrange.tests {
                 rowDefinitions: []
             };
         },
-        segment: function (original?: number, offered?: number): Segment {
+        state: function (): IState {
+            return {
+                consumed: new Size(),
+
+                childRect: new Rect(),
+
+                arrangedSize: new Size(),
+                finalRect: new Rect(),
+                finalSize: new Size(),
+                framework: new Size(),
+                stretched: new Size(),
+                constrained: new Size(),
+                visualOffset: new Point(),
+                flipHorizontal: false
+            };
+        },
+        segment: function (original?: number, offered?: number, desired?: number): Segment {
             var segment = new Segment();
             segment.original = original || 0.0;
             segment.offered = offered || 0.0;
+            segment.desired = desired || 0.0;
             return segment;
         }
     };
@@ -72,8 +89,37 @@ module minerva.controls.grid.arrange.tests {
     });
 
     QUnit.test("calcConsumed", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
 
-        assert.ok(true);
+        var rm = input.gridState.rowMatrix;
+        rm.push([mock.segment(10, 0, 20)]);
+        rm.push([mock.segment(30, 0, 40), mock.segment(60, 0, 70)]);
+        rm.push([mock.segment(50, 0, 60), mock.segment(75, 0, 85), mock.segment(100, 0, 110)]);
+
+        var cm = input.gridState.colMatrix;
+        cm.push([mock.segment(10, 0, 20)]);
+        cm.push([mock.segment(30, 0, 40), mock.segment(60, 0, 70)]);
+        cm.push([mock.segment(50, 0, 60), mock.segment(75, 0, 85), mock.segment(100, 0, 110)]);
+
+        state.finalSize = new Size(200, 200);
+
+        assert.ok(tapins.calcConsumed(input, state, null, null, null));
+        assert.deepEqual(state.consumed, new Size(200, 200));
+        var erm: Segment[][] = [
+            [mock.segment(10, 20, 20)],
+            [mock.segment(30, 0, 40), mock.segment(60, 70, 70)],
+            [mock.segment(50, 0, 60), mock.segment(75, 0, 85), mock.segment(100, 110, 110)]
+        ];
+        var ecm: Segment[][] = [
+            [mock.segment(10, 20, 20)],
+            [mock.segment(30, 0, 40), mock.segment(60, 70, 70)],
+            [mock.segment(50, 0, 60), mock.segment(75, 0, 85), mock.segment(100, 110, 110)]
+        ];
+        assert.deepEqual(rm, erm);
+        assert.deepEqual(cm, ecm);
+
+        //TODO: Test expandStarRows, expandStarCols
     });
 
     QUnit.test("setActuals", (assert) => {
