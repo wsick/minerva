@@ -7,7 +7,8 @@ module minerva.controls.image.hittest {
     export class ImageHitTestPipeDef extends core.hittest.HitTestPipeDef {
         constructor () {
             super();
-            this.replaceTapin('canHitInside', tapins.canHitInside)
+            this.replaceTapin('insideChildren', tapins.insideChildren)
+                .replaceTapin('canHitInside', tapins.canHitInside)
                 .addTapinAfter('insideObject', 'insideStretch', tapins.insideStretch);
         }
 

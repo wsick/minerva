@@ -1656,6 +1656,9 @@ declare module minerva.controls.image.hittest.tapins {
     function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.controls.image.hittest.tapins {
+    function insideChildren(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.controls.image.hittest.tapins {
     function insideStretch(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.controls.image.measure {

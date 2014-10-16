@@ -7054,7 +7054,7 @@ var minerva;
                     __extends(ImageHitTestPipeDef, _super);
                     function ImageHitTestPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'insideStretch', hittest.tapins.insideStretch);
+                        this.replaceTapin('insideChildren', hittest.tapins.insideChildren).replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'insideStretch', hittest.tapins.insideStretch);
                     }
                     ImageHitTestPipeDef.prototype.prepare = function (data) {
                         data.imgRect = data.imgRect || new minerva.Rect();
@@ -7079,6 +7079,27 @@ var minerva;
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(image.hittest || (image.hittest = {}));
+            var hittest = image.hittest;
+        })(controls.image || (controls.image = {}));
+        var image = controls.image;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (image) {
+            (function (hittest) {
+                (function (tapins) {
+                    function insideChildren(data, pos, hitList, ctx) {
+                        hitList.unshift(data.updater);
+                        data.hitChildren = false;
+                        return true;
+                    }
+                    tapins.insideChildren = insideChildren;
                 })(hittest.tapins || (hittest.tapins = {}));
                 var tapins = hittest.tapins;
             })(image.hittest || (image.hittest = {}));
