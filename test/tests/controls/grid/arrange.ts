@@ -79,6 +79,14 @@ module minerva.controls.grid.arrange.tests {
                     this.ActualHeight = value;
                 }
             };
+        },
+        updater: function (row: number, rowspan: number, col: number, colspan: number): core.Updater {
+            var upd = new core.Updater();
+            upd.setAttachedValue("Grid.Row", row);
+            upd.setAttachedValue("Grid.RowSpan", rowspan);
+            upd.setAttachedValue("Grid.Column", col);
+            upd.setAttachedValue("Grid.ColumnSpan", colspan);
+            return upd;
         }
     };
 
@@ -174,7 +182,42 @@ module minerva.controls.grid.arrange.tests {
     });
 
     QUnit.test("doOverride", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
 
-        assert.ok(true);
+        input.gridState.rowMatrix = [
+            [mock.segment(10, 20, 20)],
+            [null, mock.segment(60, 70, 70)],
+            [null, null, mock.segment(100, 110, 110)]
+        ];
+
+        input.gridState.colMatrix = [
+            [mock.segment(10, 20, 20)],
+            [null, mock.segment(60, 70, 70)],
+            [null, null, mock.segment(100, 110, 110)]
+        ];
+
+        var arranged1 = new Rect();
+        var child1 = mock.updater(0, 2, 1, 1);
+        child1.arrange = function (cr: Rect) {
+            Rect.copyTo(cr, arranged1);
+            return true;
+        };
+        var arranged2 = new Rect();
+        var child2 = mock.updater(1, 2, 0, 3);
+        child2.arrange = function (cr: Rect) {
+            Rect.copyTo(cr, arranged2);
+            return true;
+        };
+
+        var updater = new GridUpdater();
+        var tree = updater.tree;
+        tree.children = [];
+        tree.children.push(child1);
+        tree.children.push(child2);
+
+        assert.ok(tapins.doOverride(input, state, null, tree, null));
+        assert.deepEqual(arranged1, new Rect(20, 0, 70, 90));
+        assert.deepEqual(arranged2, new Rect(0, 20, 200, 180));
     });
 }
