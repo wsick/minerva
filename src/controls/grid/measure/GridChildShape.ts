@@ -1,11 +1,11 @@
 module minerva.controls.grid.measure {
     export enum OverridePass {
-        AutoAuto,
-        StarAuto,
-        AutoStar,
-        StarAutoAgain,
-        NonStar,
-        RemainingStar
+        AutoAuto, //Child in auto row, auto col
+        StarAuto, //Child in star row, auto col
+        AutoStar, //Child in auto row, star col
+        StarAutoAgain, //Child in star row, auto col
+        NonStar, //Child in auto/pixel row, auto/pixel col
+        RemainingStar //Child in ?
     }
 
     export class GridChildShape {

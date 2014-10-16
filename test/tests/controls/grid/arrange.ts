@@ -80,12 +80,16 @@ module minerva.controls.grid.arrange.tests {
                 }
             };
         },
-        updater: function (row: number, rowspan: number, col: number, colspan: number): core.Updater {
+        updater: function (row?: number, rowspan?: number, col?: number, colspan?: number): core.Updater {
             var upd = new core.Updater();
-            upd.setAttachedValue("Grid.Row", row);
-            upd.setAttachedValue("Grid.RowSpan", rowspan);
-            upd.setAttachedValue("Grid.Column", col);
-            upd.setAttachedValue("Grid.ColumnSpan", colspan);
+            if (row != null)
+                upd.setAttachedValue("Grid.Row", row);
+            if (rowspan != null)
+                upd.setAttachedValue("Grid.RowSpan", rowspan);
+            if (col != null)
+                upd.setAttachedValue("Grid.Column", col);
+            if (colspan != null)
+                upd.setAttachedValue("Grid.ColumnSpan", colspan);
             return upd;
         }
     };
@@ -198,13 +202,13 @@ module minerva.controls.grid.arrange.tests {
         ];
 
         var arranged1 = new Rect();
-        var child1 = mock.updater(0, 2, 1, 1);
+        var child1 = mock.updater(null, 2, 1, 1);
         child1.arrange = function (cr: Rect) {
             Rect.copyTo(cr, arranged1);
             return true;
         };
         var arranged2 = new Rect();
-        var child2 = mock.updater(1, 2, 0, 3);
+        var child2 = mock.updater(1, 2, null, 3);
         child2.arrange = function (cr: Rect) {
             Rect.copyTo(cr, arranged2);
             return true;

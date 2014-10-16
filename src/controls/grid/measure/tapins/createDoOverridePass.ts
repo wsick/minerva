@@ -1,17 +1,18 @@
 module minerva.controls.grid.measure.tapins {
     export function createDoOverridePass (pass: OverridePass) {
         return function doOverridePass (input: IInput, state: IState, output: panel.measure.IOutput, tree: panel.PanelUpdaterTree, finalRect: Rect): boolean {
+            var rm = input.gridState.rowMatrix;
+            var cm = input.gridState.colMatrix;
+
             if (tree.children.length > 0) {
-                helpers.expandStarCols(input.gridState.colMatrix, input.columnDefinitions, state.availableSize);
-                helpers.expandStarRows(input.gridState.rowMatrix, input.rowDefinitions, state.availableSize);
+                helpers.expandStarCols(cm, input.columnDefinitions, state.availableSize);
+                helpers.expandStarRows(rm, input.rowDefinitions, state.availableSize);
             }
 
             var placements = state.placements;
             var placement: GridChildPlacement;
             var separator = placements[0];
 
-            var rm = input.gridState.rowMatrix;
-            var cm = input.gridState.colMatrix;
             var shapes = state.childShapes;
             var childSize = state.childSize;
             for (var walker = tree.walk(), i = 0; walker.step(); i++) {

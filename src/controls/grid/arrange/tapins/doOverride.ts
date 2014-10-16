@@ -9,9 +9,17 @@ module minerva.controls.grid.arrange.tapins {
             var child = walker.current;
 
             var col = Math.min(child.getAttachedValue("Grid.Column"), cm.length - 1);
+            if (isNaN(col))
+                col = 0;
             var row = Math.min(child.getAttachedValue("Grid.Row"), rm.length - 1);
+            if (isNaN(row))
+                row = 0;
             var colspan = Math.min(child.getAttachedValue("Grid.ColumnSpan"), cm.length - col);
+            if (isNaN(colspan))
+                colspan = 1;
             var rowspan = Math.min(child.getAttachedValue("Grid.RowSpan"), rm.length - row);
+            if (isNaN(rowspan))
+                rowspan = 1;
 
             cr.x = cr.y = cr.width = cr.height = 0;
             for (var i = 0; i < col; i++) {
