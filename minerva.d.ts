@@ -1591,6 +1591,7 @@ declare module minerva.controls.grid.render {
     }
     class GridRenderPipeDef extends panel.render.PanelRenderPipeDef {
         constructor();
+        public createState(): IState;
     }
     module tapins {
         function renderGridLines(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;

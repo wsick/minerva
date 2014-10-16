@@ -17,6 +17,12 @@ module minerva.controls.grid.render {
             super();
             this.addTapinAfter('doRender', 'renderGridLines', tapins.renderGridLines);
         }
+
+        createState() {
+            var state = <IState>super.createState();
+            state.framework = new Size();
+            return state;
+        }
     }
 
     export module tapins {

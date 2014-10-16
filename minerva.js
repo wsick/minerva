@@ -6809,6 +6809,11 @@ var minerva;
                         _super.call(this);
                         this.addTapinAfter('doRender', 'renderGridLines', tapins.renderGridLines);
                     }
+                    GridRenderPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.framework = new minerva.Size();
+                        return state;
+                    };
                     return GridRenderPipeDef;
                 })(controls.panel.render.PanelRenderPipeDef);
                 render.GridRenderPipeDef = GridRenderPipeDef;
