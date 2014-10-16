@@ -55,7 +55,7 @@ module minerva.controls.grid.measure.tests {
             return {
                 Width: { Value: width == null ? 1.0 : width, Type: type == null ? GridUnitType.Star : type },
                 MinWidth: min || 0,
-                MaxWidth: max == null ?  Number.POSITIVE_INFINITY : max,
+                MaxWidth: max == null ? Number.POSITIVE_INFINITY : max,
                 ActualWidth: NaN,
                 setActualWidth: function (value: number) {
                     this.ActualWidth = value;
@@ -73,13 +73,36 @@ module minerva.controls.grid.measure.tests {
                 }
             };
         },
-        updater: function (row: number, rowspan: number, col: number, colspan: number): core.Updater {
+        updater: function (row?: number, rowspan?: number, col?: number, colspan?: number): core.Updater {
             var upd = new core.Updater();
-            upd.setAttachedValue("Grid.Row", row);
-            upd.setAttachedValue("Grid.RowSpan", rowspan);
-            upd.setAttachedValue("Grid.Column", col);
-            upd.setAttachedValue("Grid.ColumnSpan", colspan);
+            if (row != null)
+                upd.setAttachedValue("Grid.Row", row);
+            if (rowspan != null)
+                upd.setAttachedValue("Grid.RowSpan", rowspan);
+            if (col != null)
+                upd.setAttachedValue("Grid.Column", col);
+            if (colspan != null)
+                upd.setAttachedValue("Grid.ColumnSpan", colspan);
             return upd;
+        },
+        shape: function (hasAutoAuto: boolean, hasAutoStar: boolean, hasStarAuto: boolean): GridShape {
+            var gs = new GridShape();
+            gs.hasAutoAuto = hasAutoAuto;
+            gs.hasAutoStar = hasAutoStar;
+            gs.hasStarAuto = hasStarAuto;
+            return gs;
+        },
+        childshape: function (row: number, rowspan: number, col: number, colspan: number, starRow: boolean, autoRow: boolean, starCol: boolean, autoCol: boolean): GridChildShape {
+            var gcs = new GridChildShape();
+            gcs.row = row;
+            gcs.rowspan = rowspan;
+            gcs.col = col;
+            gcs.colspan = colspan;
+            gcs.starRow = starRow;
+            gcs.autoRow = autoRow;
+            gcs.starCol = starCol;
+            gcs.autoCol = autoCol;
+            return gcs;
         }
     };
 
@@ -188,7 +211,35 @@ module minerva.controls.grid.measure.tests {
     });
 
     QUnit.test("buildShape", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
 
-        assert.ok(true);
+        var rm = input.gridState.rowMatrix = [
+            [mock.segment(10, 20, 20, 0, Number.POSITIVE_INFINITY, GridUnitType.Star)],
+            [null, mock.segment(60, 70, 70, 0, Number.POSITIVE_INFINITY, GridUnitType.Auto)]
+        ];
+        input.rowDefinitions.push(mock.rowdef());
+        input.rowDefinitions.push(mock.rowdef(GridUnitType.Auto));
+
+        var cm = input.gridState.colMatrix = [
+            [mock.segment(10, 20, 20, 0, Number.POSITIVE_INFINITY, GridUnitType.Star)],
+            [null, mock.segment(60, 70, 70, 0, Number.POSITIVE_INFINITY, GridUnitType.Star)]
+        ];
+        input.columnDefinitions.push(mock.coldef());
+        input.columnDefinitions.push(mock.coldef());
+
+        var updater = new GridUpdater();
+        var tree = updater.tree;
+        tree.children = [];
+        var child1 = mock.updater();
+        tree.children.push(child1);
+        var child2 = mock.updater(1, null, 0, 2);
+        tree.children.push(child2);
+
+        var cshapes = state.childShapes;
+        assert.ok(tapins.buildShape(input, state, null, tree, null));
+        assert.deepEqual(cshapes[0], mock.childshape(0, 1, 0, 1, true, false, true, false));
+        assert.deepEqual(cshapes[1], mock.childshape(1, 1, 0, 2, false, true, true, false));
+        assert.deepEqual(state.gridShape, mock.shape(false, true, false));
     });
 }

@@ -6138,9 +6138,17 @@ var minerva;
                     }
                     GridChildShape.prototype.init = function (child, rm, cm) {
                         var col = this.col = Math.min(child.getAttachedValue("Grid.Column"), cm.length - 1);
+                        if (isNaN(col))
+                            this.col = col = 0;
                         var row = this.row = Math.min(child.getAttachedValue("Grid.Row"), rm.length - 1);
+                        if (isNaN(row))
+                            this.row = row = 0;
                         var colspan = this.colspan = Math.min(child.getAttachedValue("Grid.ColumnSpan"), cm.length - col);
+                        if (isNaN(colspan))
+                            this.colspan = colspan = 1;
                         var rowspan = this.rowspan = Math.min(child.getAttachedValue("Grid.RowSpan"), rm.length - row);
+                        if (isNaN(rowspan))
+                            this.rowspan = rowspan = 1;
 
                         this.starRow = this.autoRow = this.starCol = this.autoCol = false;
 
@@ -6516,7 +6524,6 @@ var minerva;
                         for (var i = 0; i < coldefs.length; i++) {
                             var coldef = coldefs[i];
                             var width = coldef.Width || DEFAULT_GRID_LEN;
-                            coldef.setActualWidth(Number.POSITIVE_INFINITY);
 
                             var cell = grid.Segment.init(cm[i][i], 0.0, coldef.MinWidth, coldef.MaxWidth, width.Type);
                             if (width.Type === 1 /* Pixel */) {
@@ -6525,6 +6532,7 @@ var minerva;
                             } else if (width.Type === 2 /* Star */) {
                                 cell.stars = width.Value;
                                 ts.width += width.Value;
+                                coldef.setActualWidth(Number.POSITIVE_INFINITY);
                             } else if (width.Type === 0 /* Auto */) {
                                 cell.offered = cell.clamp(0);
                                 cell.setDesiredToOffered();
