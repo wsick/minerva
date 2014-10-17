@@ -2217,6 +2217,9 @@ declare module minerva.shapes.shape.hittest.tapins {
     function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.shapes.shape.hittest.tapins {
+    function canHitShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.shapes.shape.hittest.tapins {
     function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.shapes.shape.processup {

@@ -9537,7 +9537,7 @@ var minerva;
                     __extends(ShapeHitTestPipeDef, _super);
                     function ShapeHitTestPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'insideShape', hittest.tapins.insideShape);
+                        this.replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'canHitShape', hittest.tapins.canHitShape).addTapinAfter('canHitShape', 'insideShape', hittest.tapins.insideShape);
                     }
                     return ShapeHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
@@ -9564,6 +9564,30 @@ var minerva;
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(shape.hittest || (shape.hittest = {}));
+            var hittest = shape.hittest;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (hittest) {
+                (function (tapins) {
+                    function canHitShape(data, pos, hitList, ctx) {
+                        if ((data.assets.shapeFlags & 1 /* Empty */) === 0) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        return true;
+                    }
+                    tapins.canHitShape = canHitShape;
                 })(hittest.tapins || (hittest.tapins = {}));
                 var tapins = hittest.tapins;
             })(shape.hittest || (shape.hittest = {}));

@@ -1,11 +1,7 @@
 module minerva.shapes.shape.hittest.tapins {
     export function insideShape (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
-        //TODO: Implement insideShape
+        //TODO: Implement insideShape for each implementation
         /*
-         if ((data.assets.shapeFlags & ShapeFlags.Empty) === 0)
-         return false;
-         if (!this.Fill && !this.Stroke)
-         return false;
          ctx.save();
          ctx.pretransformMatrix(this.StretchXform);
          this.Draw(ctx);
