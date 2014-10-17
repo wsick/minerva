@@ -1,10 +1,4 @@
 module minerva.core {
-    var NO_VO: IVisualOwner = {
-        updateBounds: function () {
-        },
-        invalidate: function (region: Rect) {
-        }
-    };
 
     export class Updater {
         private $$measure: IMeasurePipe = null;
@@ -382,7 +376,7 @@ module minerva.core {
                 return true;
 
             var pipe = this.$$processup;
-            var success = pipe.def.run(this.assets, pipe.state, pipe.output, Updater.getVisualOwner(this), this.tree);
+            var success = pipe.def.run(this.assets, pipe.state, pipe.output, this.tree);
             this.$$inUpDirty = false;
             return success;
         }
@@ -474,15 +468,6 @@ module minerva.core {
             while ((vpu = vpu.tree.visualParent) != null && (vpu.assets.uiFlags & flags) === 0) {
                 vpu.assets.uiFlags |= flags;
             }
-        }
-
-        static getVisualOwner (updater: Updater): IVisualOwner {
-            var tree = updater.tree;
-            if (tree.visualParent)
-                return tree.visualParent;
-            if (tree.isTop && tree.surface)
-                return tree.surface;
-            return NO_VO;
         }
 
         static transformToVisual (fromUpdater: Updater, toUpdater?: Updater): number[] {

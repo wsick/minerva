@@ -16,8 +16,6 @@ module minerva.core {
         data: hittest.IHitTestData;
     }
 
-    export interface IVisualOwner extends processup.IProcessVisualOwner {
-    }
     export interface ISurface extends IVisualOwner {
         width: number;
         height: number;
