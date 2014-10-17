@@ -1,5 +1,34 @@
+interface CanvasRenderingContext2D {
+    isPointInStroke(x: number, y: number): boolean;
+}
+if (!CanvasRenderingContext2D.prototype.isPointInStroke) {
+    CanvasRenderingContext2D.prototype.isPointInStroke = function (x: number, y: number) {
+        return false;
+    };
+}
+
 module minerva.core.render {
+    export interface IStrokeParameters {
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeLineJoin: PenLineJoin;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeMiterLimit: number;
+    }
+
     var ARC_TO_BEZIER = 0.55228475;
+    var caps: string[] = [
+        "butt", //flat
+        "square", //square
+        "round", //round
+        "butt" //triangle
+    ];
+    var joins: string[] = [
+        "miter",
+        "bevel",
+        "round"
+    ];
     export class RenderContext {
         private $$transforms = [];
         currentTransform = mat3.identity();
@@ -153,6 +182,15 @@ module minerva.core.render {
                 extents.x, extents.y + tll - tll * ARC_TO_BEZIER,
                     extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y,
                     extents.x + tlt, extents.y);
+        }
+
+        isPointInStrokeEx (strokePars: IStrokeParameters, x: number, y: number): boolean {
+            var raw = this.raw;
+            raw.lineWidth = strokePars.strokeThickness;
+            raw.lineCap = caps[strokePars.strokeStartLineCap || strokePars.strokeEndLineCap || 0] || caps[0];
+            raw.lineJoin = joins[strokePars.strokeLineJoin || 0] || joins[0];
+            raw.miterLimit = strokePars.strokeMiterLimit;
+            return raw.isPointInStroke(x, y);
         }
     }
 

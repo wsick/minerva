@@ -1000,7 +1000,18 @@ declare module minerva.core.processup.tapins {
 declare module minerva.core.processup.tapins {
     var processNewBounds: IProcessUpTapin;
 }
+interface CanvasRenderingContext2D {
+    isPointInStroke(x: number, y: number): boolean;
+}
 declare module minerva.core.render {
+    interface IStrokeParameters {
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeLineJoin: PenLineJoin;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeMiterLimit: number;
+    }
     class RenderContext {
         private $$transforms;
         public currentTransform: number[];
@@ -1023,6 +1034,7 @@ declare module minerva.core.render {
         public clipRect(rect: Rect): void;
         public fillEx(brush: IBrush, region: Rect, fillRule?: FillRule): void;
         public drawRectEx(extents: Rect, cr?: ICornerRadius): void;
+        public isPointInStrokeEx(strokePars: IStrokeParameters, x: number, y: number): boolean;
     }
 }
 declare module minerva.core.render {
@@ -2138,11 +2150,35 @@ declare module minerva.shapes.shape {
 }
 declare module minerva.shapes.rectangle {
     interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput {
+        radiusX: number;
+        radiusY: number;
     }
     class RectangleUpdater extends shape.ShapeUpdater {
         public assets: IRectangleUpdaterAssets;
         public init(): void;
     }
+}
+declare module minerva.shapes.rectangle.helpers {
+    function draw(ctx: CanvasRenderingContext2D, left: number, top: number, right: number, bottom: number, radiusX: number, radiusY: number): void;
+}
+declare module minerva.shapes.shape.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IShapeUpdaterAssets;
+    }
+    class ShapeHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.rectangle.hittest {
+    interface IHitTestData extends shape.hittest.IHitTestData {
+        assets: IRectangleUpdaterAssets;
+    }
+    class RectangleHitTestPipeDef extends shape.hittest.ShapeHitTestPipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.rectangle.hittest.tapins {
+    function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.shapes.shape.measure {
     interface IInput extends core.measure.IInput, IShapeProperties {
@@ -2202,14 +2238,6 @@ declare module minerva.shapes.shape.arrange {
     interface IOutput extends core.arrange.IOutput {
     }
     class ShapeArrangePipeDef extends core.arrange.ArrangePipeDef {
-        constructor();
-    }
-}
-declare module minerva.shapes.shape.hittest {
-    interface IHitTestData extends core.hittest.IHitTestData {
-        assets: IShapeUpdaterAssets;
-    }
-    class ShapeHitTestPipeDef extends core.hittest.HitTestPipeDef {
         constructor();
     }
 }

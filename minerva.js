@@ -4231,11 +4231,28 @@ var minerva;
     })(minerva.core || (minerva.core = {}));
     var core = minerva.core;
 })(minerva || (minerva = {}));
+if (!CanvasRenderingContext2D.prototype.isPointInStroke) {
+    CanvasRenderingContext2D.prototype.isPointInStroke = function (x, y) {
+        return false;
+    };
+}
+
 var minerva;
 (function (minerva) {
     (function (core) {
         (function (render) {
             var ARC_TO_BEZIER = 0.55228475;
+            var caps = [
+                "butt",
+                "square",
+                "round",
+                "butt"
+            ];
+            var joins = [
+                "miter",
+                "bevel",
+                "round"
+            ];
             var RenderContext = (function () {
                 function RenderContext(ctx) {
                     this.$$transforms = [];
@@ -4377,6 +4394,15 @@ var minerva;
                     var tll = cr.topLeft - left_adj;
                     raw.lineTo(extents.x, extents.y + tll);
                     raw.bezierCurveTo(extents.x, extents.y + tll - tll * ARC_TO_BEZIER, extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y, extents.x + tlt, extents.y);
+                };
+
+                RenderContext.prototype.isPointInStrokeEx = function (strokePars, x, y) {
+                    var raw = this.raw;
+                    raw.lineWidth = strokePars.strokeThickness;
+                    raw.lineCap = caps[strokePars.strokeStartLineCap || strokePars.strokeEndLineCap || 0] || caps[0];
+                    raw.lineJoin = joins[strokePars.strokeLineJoin || 0] || joins[0];
+                    raw.miterLimit = strokePars.strokeMiterLimit;
+                    return raw.isPointInStroke(x, y);
                 };
                 return RenderContext;
             })();
@@ -9430,11 +9456,127 @@ var minerva;
                 RectangleUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(rectangle.measure.RectangleMeasurePipeDef));
 
+                    var assets = this.assets;
+                    assets.radiusX = 0;
+                    assets.radiusY = 0;
+
                     _super.prototype.init.call(this);
                 };
                 return RectangleUpdater;
             })(shapes.shape.ShapeUpdater);
             rectangle.RectangleUpdater = RectangleUpdater;
+        })(shapes.rectangle || (shapes.rectangle = {}));
+        var rectangle = shapes.rectangle;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (rectangle) {
+            (function (helpers) {
+                function draw(ctx, left, top, right, bottom, radiusX, radiusY) {
+                    if (!radiusX && !radiusY) {
+                        ctx.beginPath();
+                        ctx.rect(left, top, right - left, bottom - top);
+                        return;
+                    }
+                    ctx.beginPath();
+                    ctx.moveTo(left + radiusX, top);
+
+                    ctx.lineTo(right - radiusX, top);
+
+                    ctx.quadraticCurveTo(right, top, right, top + radiusY);
+
+                    ctx.lineTo(right, bottom - radiusY);
+
+                    ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
+
+                    ctx.lineTo(left + radiusX, bottom);
+
+                    ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
+
+                    ctx.lineTo(left, top + radiusY);
+
+                    ctx.quadraticCurveTo(left, top, left + radiusX, top);
+                    ctx.closePath();
+                }
+                helpers.draw = draw;
+            })(rectangle.helpers || (rectangle.helpers = {}));
+            var helpers = rectangle.helpers;
+        })(shapes.rectangle || (shapes.rectangle = {}));
+        var rectangle = shapes.rectangle;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (hittest) {
+                var ShapeHitTestPipeDef = (function (_super) {
+                    __extends(ShapeHitTestPipeDef, _super);
+                    function ShapeHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'canHitShape', hittest.tapins.canHitShape).addTapinAfter('canHitShape', 'insideShape', hittest.tapins.insideShape);
+                    }
+                    return ShapeHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.ShapeHitTestPipeDef = ShapeHitTestPipeDef;
+            })(shape.hittest || (shape.hittest = {}));
+            var hittest = shape.hittest;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (rectangle) {
+            (function (hittest) {
+                var RectangleHitTestPipeDef = (function (_super) {
+                    __extends(RectangleHitTestPipeDef, _super);
+                    function RectangleHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('insideShape', hittest.tapins.insideShape);
+                    }
+                    return RectangleHitTestPipeDef;
+                })(shapes.shape.hittest.ShapeHitTestPipeDef);
+                hittest.RectangleHitTestPipeDef = RectangleHitTestPipeDef;
+            })(rectangle.hittest || (rectangle.hittest = {}));
+            var hittest = rectangle.hittest;
+        })(shapes.rectangle || (shapes.rectangle = {}));
+        var rectangle = shapes.rectangle;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (rectangle) {
+            (function (hittest) {
+                (function (tapins) {
+                    function insideShape(data, pos, hitList, ctx) {
+                        var assets = data.assets;
+                        ctx.save();
+                        ctx.pretransformMatrix(assets.stretchXform);
+                        rectangle.helpers.draw(ctx.raw, 0, 0, assets.actualWidth, assets.actualHeight, assets.radiusX, assets.radiusY);
+                        var inside = (!!assets.fill && ctx.raw.isPointInPath(pos.x, pos.y)) || (!!assets.stroke && ctx.isPointInStrokeEx(assets, pos.x, pos.y));
+                        ctx.restore();
+
+                        if (!inside) {
+                            hitList.shift();
+                            return false;
+                        }
+
+                        return true;
+                    }
+                    tapins.insideShape = insideShape;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(rectangle.hittest || (rectangle.hittest = {}));
+            var hittest = rectangle.hittest;
         })(shapes.rectangle || (shapes.rectangle = {}));
         var rectangle = shapes.rectangle;
     })(minerva.shapes || (minerva.shapes = {}));
@@ -9523,27 +9665,6 @@ var minerva;
                 arrange.ShapeArrangePipeDef = ShapeArrangePipeDef;
             })(shape.arrange || (shape.arrange = {}));
             var arrange = shape.arrange;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
-            (function (hittest) {
-                var ShapeHitTestPipeDef = (function (_super) {
-                    __extends(ShapeHitTestPipeDef, _super);
-                    function ShapeHitTestPipeDef() {
-                        _super.call(this);
-                        this.replaceTapin('canHitInside', hittest.tapins.canHitInside).addTapinAfter('insideObject', 'canHitShape', hittest.tapins.canHitShape).addTapinAfter('canHitShape', 'insideShape', hittest.tapins.insideShape);
-                    }
-                    return ShapeHitTestPipeDef;
-                })(minerva.core.hittest.HitTestPipeDef);
-                hittest.ShapeHitTestPipeDef = ShapeHitTestPipeDef;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
