@@ -12,7 +12,7 @@ module minerva.controls.textblock.processup {
     }
 
     export module tapins {
-        export function calcActualSize(input: IInput, state: core.processup.IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: TextBlockUpdaterTree): boolean {
+        export function calcActualSize(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean {
             if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
                 return true;
 
@@ -28,7 +28,7 @@ module minerva.controls.textblock.processup {
             return true;
         }
 
-        export function calcExtents(input: IInput, state: core.processup.IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: TextBlockUpdaterTree): boolean {
+        export function calcExtents(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean {
             if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
                 return true;
 

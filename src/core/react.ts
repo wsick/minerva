@@ -1,7 +1,7 @@
 module minerva.core.reactTo {
     export module helpers {
         export function invalidateParent(updater: Updater) {
-            Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
+            updater.tree.visualOwner.invalidate(updater.assets.surfaceBoundsWithChildren);
         }
 
         export function sizeChanged(updater: Updater) {

@@ -1,5 +1,5 @@
 module minerva.controls.grid.processup.tapins {
-    export function calcExtents (input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean {
+    export function calcExtents (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 

@@ -1,5 +1,5 @@
 module minerva.core.processup.tapins {
-    export var calcActualSize: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: core.IUpdaterTree): boolean {
+    export var calcActualSize: IProcessUpTapin = function (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 

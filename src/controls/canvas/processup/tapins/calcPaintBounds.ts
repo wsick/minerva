@@ -1,5 +1,5 @@
 module minerva.controls.canvas.processup.tapins {
-    export var calcPaintBounds = function (input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean {
+    export var calcPaintBounds = function (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 

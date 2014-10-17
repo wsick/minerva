@@ -1,8 +1,20 @@
 module minerva.core {
+    export interface IVisualOwner {
+        updateBounds();
+        invalidate(region: Rect);
+    }
+    var NO_VO: IVisualOwner = {
+        updateBounds: function () {
+        },
+        invalidate: function (region: Rect) {
+        }
+    };
+
     export interface IUpdaterTree {
         isTop: boolean;
         surface: ISurface;
         visualParent: Updater;
+        visualOwner: IVisualOwner;
         isContainer: boolean;
         isLayoutContainer: boolean;
         walk(direction?: WalkDirection): IWalker<Updater>;
@@ -17,7 +29,15 @@ module minerva.core {
         isLayoutContainer = false;
         subtree = null;
 
-        walk(direction?: WalkDirection): IWalker<Updater> {
+        get visualOwner (): IVisualOwner {
+            if (this.visualParent)
+                return this.visualParent;
+            if (this.isTop && this.surface)
+                return this.surface;
+            return NO_VO;
+        }
+
+        walk (direction?: WalkDirection): IWalker<Updater> {
             var visited = false;
             var _this = this;
             return {
@@ -32,11 +52,11 @@ module minerva.core {
             };
         }
 
-        onChildAttached(child: core.Updater) {
+        onChildAttached (child: core.Updater) {
             this.subtree = child;
         }
 
-        onChildDetached(child: core.Updater) {
+        onChildDetached (child: core.Updater) {
             this.subtree = null;
         }
     }
