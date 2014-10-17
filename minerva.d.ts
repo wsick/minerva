@@ -438,8 +438,6 @@ declare module minerva.core {
         def: pipe.IPipeDef<hittest.IHitTestData>;
         data: hittest.IHitTestData;
     }
-    interface IVisualOwner extends processup.IProcessVisualOwner {
-    }
     interface ISurface extends IVisualOwner {
         width: number;
         height: number;
@@ -505,16 +503,20 @@ declare module minerva.core {
         static $$addUpDirty(updater: Updater): void;
         static $$addDownDirty(updater: Updater): void;
         static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags): void;
-        static getVisualOwner(updater: Updater): IVisualOwner;
         static transformToVisual(fromUpdater: Updater, toUpdater?: Updater): number[];
         static transformPoint(updater: Updater, p: Point): void;
     }
 }
 declare module minerva.core {
+    interface IVisualOwner {
+        updateBounds(): any;
+        invalidate(region: Rect): any;
+    }
     interface IUpdaterTree {
         isTop: boolean;
         surface: ISurface;
         visualParent: Updater;
+        visualOwner: IVisualOwner;
         isContainer: boolean;
         isLayoutContainer: boolean;
         walk(direction?: WalkDirection): IWalker<Updater>;
@@ -528,6 +530,7 @@ declare module minerva.core {
         public isContainer: boolean;
         public isLayoutContainer: boolean;
         public subtree: any;
+        public visualOwner : IVisualOwner;
         public walk(direction?: WalkDirection): IWalker<Updater>;
         public onChildAttached(child: Updater): void;
         public onChildDetached(child: Updater): void;
@@ -931,7 +934,7 @@ declare module minerva.core.processdown.tapins {
 }
 declare module minerva.core.processup {
     interface IProcessUpTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: IUpdaterTree): boolean;
+        (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): boolean;
     }
     interface IInput extends pipe.IPipeInput {
         width: number;
@@ -971,16 +974,12 @@ declare module minerva.core.processup {
         dirtyRegion: Rect;
         forceInvalidate: boolean;
     }
-    interface IProcessVisualOwner {
-        updateBounds(): any;
-        invalidate(region: Rect): any;
-    }
     class ProcessUpPipeDef extends pipe.TriPipeDef<IProcessUpTapin, IInput, IState, IOutput> {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: IUpdaterTree): void;
-        public flush(input: IInput, state: IState, output: IOutput, vo: IProcessVisualOwner, tree: IUpdaterTree): void;
+        public prepare(input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): void;
+        public flush(input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): void;
     }
 }
 declare module minerva.core.processup.tapins {
@@ -1312,7 +1311,7 @@ declare module minerva.controls.canvas.processup {
     }
 }
 declare module minerva.controls.canvas.processup.tapins {
-    var calcPaintBounds: (input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree) => boolean;
+    var calcPaintBounds: (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) => boolean;
 }
 declare module minerva.controls.contentpresenter {
     class ContentPresenterUpdaterTree extends core.UpdaterTree {
@@ -1564,10 +1563,10 @@ declare module minerva.controls.grid.processup {
     }
 }
 declare module minerva.controls.grid.processup.tapins {
-    function calcExtents(input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
+    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.grid.processup.tapins {
-    function preCalcExtents(input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
+    function preCalcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.panel.render {
     interface IInput extends core.render.IInput, core.helpers.ISized {
@@ -1761,7 +1760,7 @@ declare module minerva.controls.panel.hittest {
     }
 }
 declare module minerva.controls.panel.processup.tapins {
-    function preCalcExtents(input: IInput, state: IState, output: IOutput, vo: core.processup.IProcessVisualOwner, tree: core.IUpdaterTree): boolean;
+    function preCalcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.popup {
     interface IPopupUpdaterAssets extends core.IUpdaterAssets, processdown.IInput {
@@ -2024,8 +2023,8 @@ declare module minerva.controls.textblock.processup {
         constructor();
     }
     module tapins {
-        function calcActualSize(input: IInput, state: core.processup.IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: TextBlockUpdaterTree): boolean;
-        function calcExtents(input: IInput, state: core.processup.IState, output: core.processup.IOutput, vo: core.processup.IProcessVisualOwner, tree: TextBlockUpdaterTree): boolean;
+        function calcActualSize(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean;
+        function calcExtents(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean;
     }
 }
 declare module minerva.controls.textblock.render {
@@ -2148,6 +2147,20 @@ declare module minerva.shapes.rectangle {
 }
 declare module minerva.shapes.shape.measure {
     interface IInput extends core.measure.IInput {
+        fill: IBrush;
+        fillRule: FillRule;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+        naturalBounds: Rect;
+    }
+    interface IState extends core.measure.IState {
+    }
+    interface IOutput extends core.measure.IOutput {
+        naturalBounds: Rect;
     }
     class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();
@@ -2164,6 +2177,19 @@ declare module minerva.shapes.rectangle.measure {
 }
 declare module minerva.shapes.shape.arrange {
     interface IInput extends core.arrange.IInput {
+        fill: IBrush;
+        fillRule: FillRule;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+        naturalBounds: Rect;
+    }
+    interface IState extends core.arrange.IState {
+    }
+    interface IOutput extends core.arrange.IOutput {
     }
     class ShapeArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
@@ -2182,6 +2208,25 @@ declare module minerva.shapes.shape.hittest.tapins {
 }
 declare module minerva.shapes.shape.hittest.tapins {
     function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.shapes.shape.processup {
+    interface IInput extends core.processup.IInput {
+        naturalBounds: Rect;
+    }
+    interface IState extends core.processup.IState {
+        stretchBounds: Rect;
+    }
+    interface IOutput extends core.processup.IOutput {
+    }
+    class ShapeProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.shape.processup.tapins {
+    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.shape.processup.tapins {
+    function calcStretchBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.shapes.shape.render {
     interface IInput extends core.render.IInput {

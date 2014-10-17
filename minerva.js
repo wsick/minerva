@@ -1680,13 +1680,6 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (core) {
-        var NO_VO = {
-            updateBounds: function () {
-            },
-            invalidate: function (region) {
-            }
-        };
-
         var Updater = (function () {
             function Updater() {
                 this.$$measure = null;
@@ -2026,7 +2019,7 @@ var minerva;
                     return true;
 
                 var pipe = this.$$processup;
-                var success = pipe.def.run(this.assets, pipe.state, pipe.output, Updater.getVisualOwner(this), this.tree);
+                var success = pipe.def.run(this.assets, pipe.state, pipe.output, this.tree);
                 this.$$inUpDirty = false;
                 return success;
             };
@@ -2116,15 +2109,6 @@ var minerva;
                 }
             };
 
-            Updater.getVisualOwner = function (updater) {
-                var tree = updater.tree;
-                if (tree.visualParent)
-                    return tree.visualParent;
-                if (tree.isTop && tree.surface)
-                    return tree.surface;
-                return NO_VO;
-            };
-
             Updater.transformToVisual = function (fromUpdater, toUpdater) {
                 if (!fromUpdater.tree.surface || (toUpdater && !toUpdater.tree.surface))
                     return null;
@@ -2169,6 +2153,13 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (core) {
+        var NO_VO = {
+            updateBounds: function () {
+            },
+            invalidate: function (region) {
+            }
+        };
+
         var UpdaterTree = (function () {
             function UpdaterTree() {
                 this.isTop = false;
@@ -2178,6 +2169,18 @@ var minerva;
                 this.isLayoutContainer = false;
                 this.subtree = null;
             }
+            Object.defineProperty(UpdaterTree.prototype, "visualOwner", {
+                get: function () {
+                    if (this.visualParent)
+                        return this.visualParent;
+                    if (this.isTop && this.surface)
+                        return this.surface;
+                    return NO_VO;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
             UpdaterTree.prototype.walk = function (direction) {
                 var visited = false;
                 var _this = this;
@@ -2251,7 +2254,7 @@ var minerva;
         (function (reactTo) {
             (function (helpers) {
                 function invalidateParent(updater) {
-                    core.Updater.getVisualOwner(updater).invalidate(updater.assets.surfaceBoundsWithChildren);
+                    updater.tree.visualOwner.invalidate(updater.assets.surfaceBoundsWithChildren);
                 }
                 helpers.invalidateParent = invalidateParent;
 
@@ -4053,7 +4056,7 @@ var minerva;
                     };
                 };
 
-                ProcessUpPipeDef.prototype.prepare = function (input, state, output, vo, tree) {
+                ProcessUpPipeDef.prototype.prepare = function (input, state, output, tree) {
                     output.dirtyFlags = input.dirtyFlags;
                     minerva.Rect.copyTo(input.extents, output.extents);
                     minerva.Rect.copyTo(input.extentsWithChildren, output.extentsWithChildren);
@@ -4063,7 +4066,7 @@ var minerva;
                     output.forceInvalidate = input.forceInvalidate;
                 };
 
-                ProcessUpPipeDef.prototype.flush = function (input, state, output, vo, tree) {
+                ProcessUpPipeDef.prototype.flush = function (input, state, output, tree) {
                     input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.UpDirtyState;
                     minerva.Rect.copyTo(output.extents, input.extents);
                     minerva.Rect.copyTo(output.extentsWithChildren, input.extentsWithChildren);
@@ -4085,7 +4088,7 @@ var minerva;
     (function (core) {
         (function (processup) {
             (function (tapins) {
-                tapins.calcActualSize = function (input, state, output, vo, tree) {
+                tapins.calcActualSize = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
@@ -4112,7 +4115,7 @@ var minerva;
     (function (core) {
         (function (processup) {
             (function (tapins) {
-                tapins.calcExtents = function (input, state, output, vo, tree) {
+                tapins.calcExtents = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
@@ -4145,7 +4148,7 @@ var minerva;
     (function (core) {
         (function (processup) {
             (function (tapins) {
-                tapins.calcPaintBounds = function (input, state, output, vo, tree) {
+                tapins.calcPaintBounds = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
@@ -4166,11 +4169,12 @@ var minerva;
     (function (core) {
         (function (processup) {
             (function (tapins) {
-                tapins.processBounds = function (input, state, output, vo, tree) {
+                tapins.processBounds = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
                     state.hasNewBounds = false;
                     if (!minerva.Rect.isEqual(input.globalBoundsWithChildren, output.globalBoundsWithChildren)) {
+                        var vo = tree.visualOwner;
                         vo.updateBounds();
                         vo.invalidate(input.surfaceBoundsWithChildren);
                         state.hasNewBounds = true;
@@ -4192,11 +4196,11 @@ var minerva;
     (function (core) {
         (function (processup) {
             (function (tapins) {
-                tapins.processInvalidate = function (input, state, output, vo, tree) {
+                tapins.processInvalidate = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Invalidate) === 0 && !state.hasInvalidate)
                         return true;
                     var dirty = output.dirtyRegion;
-                    vo.invalidate(dirty);
+                    tree.visualOwner.invalidate(dirty);
                     dirty.x = dirty.y = dirty.width = dirty.height = 0;
                     return true;
                 };
@@ -4212,7 +4216,7 @@ var minerva;
     (function (core) {
         (function (processup) {
             (function (tapins) {
-                tapins.processNewBounds = function (input, state, output, vo, tree) {
+                tapins.processNewBounds = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.NewBounds) === 0 && !state.hasNewBounds)
                         return true;
                     output.dirtyFlags |= minerva.DirtyFlags.Invalidate;
@@ -5490,7 +5494,7 @@ var minerva;
         (function (canvas) {
             (function (processup) {
                 (function (tapins) {
-                    tapins.calcPaintBounds = function (input, state, output, vo, tree) {
+                    tapins.calcPaintBounds = function (input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
@@ -6695,7 +6699,7 @@ var minerva;
         (function (grid) {
             (function (processup) {
                 (function (tapins) {
-                    function calcExtents(input, state, output, vo, tree) {
+                    function calcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
@@ -6735,7 +6739,7 @@ var minerva;
         (function (grid) {
             (function (processup) {
                 (function (tapins) {
-                    function preCalcExtents(input, state, output, vo, tree) {
+                    function preCalcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
                         if (!input.background && !input.showGridLines) {
@@ -7677,7 +7681,7 @@ var minerva;
         (function (panel) {
             (function (processup) {
                 (function (tapins) {
-                    function preCalcExtents(input, state, output, vo, tree) {
+                    function preCalcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
                         if (!input.background) {
@@ -8843,7 +8847,7 @@ var minerva;
                 processup.TextBlockProcessUpPipeDef = TextBlockProcessUpPipeDef;
 
                 (function (tapins) {
-                    function calcActualSize(input, state, output, vo, tree) {
+                    function calcActualSize(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
@@ -8860,7 +8864,7 @@ var minerva;
                     }
                     tapins.calcActualSize = calcActualSize;
 
-                    function calcExtents(input, state, output, vo, tree) {
+                    function calcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
@@ -9551,6 +9555,74 @@ var minerva;
                 var tapins = hittest.tapins;
             })(shape.hittest || (shape.hittest = {}));
             var hittest = shape.hittest;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (processup) {
+                var ShapeProcessUpPipeDef = (function (_super) {
+                    __extends(ShapeProcessUpPipeDef, _super);
+                    function ShapeProcessUpPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('calcExtents', 'calcStretchBounds', processup.tapins.calcStretchBounds).replaceTapin('calcExtents', processup.tapins.calcExtents);
+                    }
+                    return ShapeProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.ShapeProcessUpPipeDef = ShapeProcessUpPipeDef;
+            })(shape.processup || (shape.processup = {}));
+            var processup = shape.processup;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (processup) {
+                (function (tapins) {
+                    function calcExtents(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+
+                        minerva.Rect.copyTo(state.stretchBounds, output.extents);
+                        minerva.Rect.copyTo(state.stretchBounds, output.extentsWithChildren);
+
+                        return true;
+                    }
+                    tapins.calcExtents = calcExtents;
+                })(processup.tapins || (processup.tapins = {}));
+                var tapins = processup.tapins;
+            })(shape.processup || (shape.processup = {}));
+            var processup = shape.processup;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (processup) {
+                (function (tapins) {
+                    function calcStretchBounds(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+
+                        return true;
+                    }
+                    tapins.calcStretchBounds = calcStretchBounds;
+                })(processup.tapins || (processup.tapins = {}));
+                var tapins = processup.tapins;
+            })(shape.processup || (shape.processup = {}));
+            var processup = shape.processup;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
