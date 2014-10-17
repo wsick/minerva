@@ -11,6 +11,8 @@ module minerva.shapes.shape.measure {
     export class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor () {
             super();
+            this.addTapinBefore('doOverride', 'calcNaturalBounds', tapins.calcNaturalBounds)
+                .replaceTapin('doOverride', tapins.doOverride);
         }
 
         createOutput () {
@@ -20,13 +22,50 @@ module minerva.shapes.shape.measure {
         }
 
         prepare (input: IInput, state: IState, output: IOutput) {
-            Rect.copyTo(output.naturalBounds, input.naturalBounds);
+            Rect.copyTo(input.naturalBounds, output.naturalBounds);
             super.prepare(input, state, output);
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
             super.flush(input, state, output);
-            Rect.copyTo(input.naturalBounds, output.naturalBounds);
+            Rect.copyTo(output.naturalBounds, input.naturalBounds);
+        }
+    }
+
+    export module tapins {
+        export function calcNaturalBounds (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
+            var nb = output.naturalBounds;
+            nb.x = nb.y = nb.width = nb.height = 0;
+            return true;
+        }
+
+        export function doOverride (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
+            if (input.stretch === Stretch.None) {
+                Size.copyTo(output.naturalBounds, output.desiredSize);
+                return true;
+            }
+
+            var factor: number;
+            var nb = output.naturalBounds;
+            var as = state.availableSize;
+            switch (input.stretch) {
+                default:
+                case Stretch.Fill:
+                    factor = 1;
+                    break;
+                case Stretch.Uniform:
+                    factor = Math.min(as.width / nb.width, as.height / nb.height);
+                    break;
+                case Stretch.UniformToFill:
+                    factor = Math.max(as.width / nb.width, as.height / nb.height);
+                    break;
+            }
+
+            var ds = output.desiredSize;
+            ds.width = (as.width * factor) || 0;
+            ds.height = (as.height * factor) || 0;
+
+            return true;
         }
     }
 }

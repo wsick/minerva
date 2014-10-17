@@ -7,16 +7,16 @@ module minerva.shapes.rectangle.measure {
     export class RectangleMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
         constructor () {
             super();
-            this.replaceTapin('doOverride', tapins.doOverride);
+            this.replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
         }
     }
 
     export module tapins {
-        export function doOverride (input: IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean {
+        export function calcNaturalBounds (input: IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean {
             var nb = output.naturalBounds;
-            nb.x = nb.y = nb.width = nb.height = 0;
-            Size.copyTo(state.availableSize, output.desiredSize);
-            //TODO: Account for Stretch
+            nb.x = nb.y = 0;
+            if (input.stretch !== Stretch.None)
+                nb.width = nb.height = 1;
             return true;
         }
     }

@@ -10,7 +10,8 @@ module minerva.shapes.rectangle {
         assets: IRectangleUpdaterAssets;
 
         init () {
-            this.setMeasurePipe(singleton(measure.RectangleMeasurePipeDef));
+            this.setMeasurePipe(singleton(measure.RectangleMeasurePipeDef))
+                .setHitTestPipe(singleton(hittest.RectangleHitTestPipeDef));
 
             var assets = this.assets;
             assets.radiusX = 0;

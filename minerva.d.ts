@@ -2176,9 +2176,9 @@ declare module minerva.shapes.rectangle.hittest {
     class RectangleHitTestPipeDef extends shape.hittest.ShapeHitTestPipeDef {
         constructor();
     }
-}
-declare module minerva.shapes.rectangle.hittest.tapins {
-    function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    module tapins {
+        function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
 }
 declare module minerva.shapes.shape.measure {
     interface IInput extends core.measure.IInput, IShapeProperties {
@@ -2195,6 +2195,10 @@ declare module minerva.shapes.shape.measure {
         public prepare(input: IInput, state: IState, output: IOutput): void;
         public flush(input: IInput, state: IState, output: IOutput): void;
     }
+    module tapins {
+        function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+        function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    }
 }
 declare module minerva.shapes.rectangle.measure {
     interface IInput extends shape.measure.IInput {
@@ -2203,7 +2207,7 @@ declare module minerva.shapes.rectangle.measure {
         constructor();
     }
     module tapins {
-        function doOverride(input: IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean;
+        function calcNaturalBounds(input: IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
 declare module minerva.shapes.shape {
@@ -2223,6 +2227,7 @@ declare module minerva.shapes.shape {
 }
 declare module minerva.shapes.shape.arrange {
     interface IInput extends core.arrange.IInput {
+        stretch: Stretch;
         fill: IBrush;
         fillRule: FillRule;
         stroke: IBrush;
@@ -2232,13 +2237,20 @@ declare module minerva.shapes.shape.arrange {
         strokeLineJoin: PenLineJoin;
         strokeMiterLimit: number;
         naturalBounds: Rect;
+        stretchXform: number[];
     }
     interface IState extends core.arrange.IState {
     }
     interface IOutput extends core.arrange.IOutput {
+        stretchXform: number[];
     }
     class ShapeArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
+    }
+    module tapins {
+        function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
 declare module minerva.shapes.shape.hittest.tapins {

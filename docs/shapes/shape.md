@@ -15,20 +15,16 @@
 * Rectangle (`Fill` by default)
 
     * `naturalBounds` <-- 0,0
-    * Measure
-        * `desiredSize` <-- `availableSize`
-    * Arrange
-        * `arrangedSize` <-- `finalSize`
     
 * Ellipse (`Fill` by default)
 
     * `naturalBounds` <-- 0,0
-    * Measure
-        * `desiredSize` <-- `availableSize`
-    * Arrange
-        * `arrangedSize` <-- `finalSize`
 
 * Line
+
+    * `naturalBounds` <-- (X1,Y1)-(X2,Y2)
+    * Measure
+        * `desiredSize` <-- `Stretch` `naturalBounds` to `availableSize`
 
 * Path
 
