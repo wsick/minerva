@@ -9711,25 +9711,29 @@ var minerva;
                             return true;
                         }
 
-                        var factor;
+                        var sx;
+                        var sy;
                         var nb = input.naturalBounds;
                         var fs = state.finalSize;
                         switch (input.stretch) {
                             default:
                             case 1 /* Fill */:
-                                factor = 1;
+                                sx = fs.width / nb.width;
+                                sy = fs.height / nb.height;
                                 break;
                             case 2 /* Uniform */:
-                                factor = Math.min(fs.width / nb.width, fs.height / nb.height);
+                                sx = sy = Math.min(fs.width / nb.width, fs.height / nb.height);
                                 break;
                             case 3 /* UniformToFill */:
-                                factor = Math.max(fs.width / nb.width, fs.height / nb.height);
+                                sx = sy = Math.max(fs.width / nb.width, fs.height / nb.height);
                                 break;
                         }
 
                         var as = state.arrangedSize;
-                        as.width = (fs.width * factor) || 0;
-                        as.height = (fs.height * factor) || 0;
+                        as.width = (fs.width * sx) || 0;
+                        as.height = (fs.height * sy) || 0;
+
+                        mat3.createScale(sx, sy, output.stretchXform);
 
                         return true;
                     }
