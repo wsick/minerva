@@ -1,6 +1,6 @@
 * Shape
     
-    `Stretch` causes `invalidateMeasure`. Any property affecting `naturalBounds` causes `invalidateMeasure`.
+    `Stretch` causes `invalidateNaturalBounds`. `invalidateNaturalBounds` --> `invalidateMeasure`, `updateBounds`.
     
     * Measure
         * Determine `desiredSize` by `Stretch`ing `naturalBounds` to `availableSize`

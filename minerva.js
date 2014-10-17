@@ -9391,6 +9391,18 @@ var minerva;
                     assets.naturalBounds = new minerva.Rect();
                     assets.shapeFlags = 0 /* None */;
                     assets.stretchXform = mat3.identity();
+
+                    assets.fill = null;
+                    assets.stretch = 0 /* None */;
+                    assets.stroke = null;
+                    assets.strokeThickness = 1.0;
+                    assets.strokeDashArray = [];
+                    assets.strokeDashCap = 0 /* Flat */;
+                    assets.strokeDashOffset = 0;
+                    assets.strokeStartLineCap = 0 /* Flat */;
+                    assets.strokeEndLineCap = 0 /* Flat */;
+                    assets.strokeLineJoin = 0 /* Miter */;
+                    assets.strokeMiterLimit = 10;
                 }
                 ShapeUpdater.prototype.invalidateNaturalBounds = function () {
                     var nb = this.assets.naturalBounds;
@@ -9443,6 +9455,16 @@ var minerva;
                         output.naturalBounds = new minerva.Rect();
                         return output;
                     };
+
+                    ShapeMeasurePipeDef.prototype.prepare = function (input, state, output) {
+                        minerva.Rect.copyTo(output.naturalBounds, input.naturalBounds);
+                        _super.prototype.prepare.call(this, input, state, output);
+                    };
+
+                    ShapeMeasurePipeDef.prototype.flush = function (input, state, output) {
+                        _super.prototype.flush.call(this, input, state, output);
+                        minerva.Rect.copyTo(input.naturalBounds, output.naturalBounds);
+                    };
                     return ShapeMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.ShapeMeasurePipeDef = ShapeMeasurePipeDef;
@@ -9462,10 +9484,23 @@ var minerva;
                     __extends(RectangleMeasurePipeDef, _super);
                     function RectangleMeasurePipeDef() {
                         _super.call(this);
+                        this.replaceTapin('doOverride', tapins.doOverride);
                     }
                     return RectangleMeasurePipeDef;
                 })(shapes.shape.measure.ShapeMeasurePipeDef);
                 measure.RectangleMeasurePipeDef = RectangleMeasurePipeDef;
+
+                (function (tapins) {
+                    function doOverride(input, state, output, tree) {
+                        var nb = output.naturalBounds;
+                        nb.x = nb.y = nb.width = nb.height = 0;
+                        minerva.Size.copyTo(state.availableSize, output.desiredSize);
+
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
             })(rectangle.measure || (rectangle.measure = {}));
             var measure = rectangle.measure;
         })(shapes.rectangle || (shapes.rectangle = {}));

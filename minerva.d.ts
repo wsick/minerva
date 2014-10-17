@@ -2145,15 +2145,7 @@ declare module minerva.shapes.rectangle {
     }
 }
 declare module minerva.shapes.shape.measure {
-    interface IInput extends core.measure.IInput {
-        fill: IBrush;
-        fillRule: FillRule;
-        stroke: IBrush;
-        strokeThickness: number;
-        strokeStartLineCap: PenLineCap;
-        strokeEndLineCap: PenLineCap;
-        strokeLineJoin: PenLineJoin;
-        strokeMiterLimit: number;
+    interface IInput extends core.measure.IInput, IShapeProperties {
         naturalBounds: Rect;
     }
     interface IState extends core.measure.IState {
@@ -2164,15 +2156,33 @@ declare module minerva.shapes.shape.measure {
     class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();
         public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.shapes.rectangle.measure {
     interface IInput extends shape.measure.IInput {
-        radiusX: number;
-        radiusY: number;
     }
     class RectangleMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
         constructor();
+    }
+    module tapins {
+        function doOverride(input: IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean;
+    }
+}
+declare module minerva.shapes.shape {
+    interface IShapeProperties {
+        fill: IBrush;
+        stretch: Stretch;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeDashArray: number[];
+        strokeDashCap: PenLineCap;
+        strokeDashOffset: number;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+        strokeStartLineCap: PenLineCap;
     }
 }
 declare module minerva.shapes.shape.arrange {

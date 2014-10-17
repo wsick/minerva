@@ -20,6 +20,18 @@ module minerva.shapes.shape {
             assets.naturalBounds = new Rect();
             assets.shapeFlags = ShapeFlags.None;
             assets.stretchXform = mat3.identity();
+
+            assets.fill = null;
+            assets.stretch = Stretch.None;
+            assets.stroke = null;
+            assets.strokeThickness = 1.0;
+            assets.strokeDashArray = [];
+            assets.strokeDashCap = PenLineCap.Flat;
+            assets.strokeDashOffset = 0;
+            assets.strokeStartLineCap = PenLineCap.Flat;
+            assets.strokeEndLineCap = PenLineCap.Flat
+            assets.strokeLineJoin = PenLineJoin.Miter;
+            assets.strokeMiterLimit = 10;
         }
 
         invalidateNaturalBounds () {
