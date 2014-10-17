@@ -14,5 +14,11 @@ module minerva.shapes.shape.processup {
             this.addTapinBefore('calcExtents', 'calcStretchBounds', tapins.calcStretchBounds)
                 .replaceTapin('calcExtents', tapins.calcExtents);
         }
+
+        createState () {
+            var state = <IState>super.createState();
+            state.stretchBounds = new Rect();
+            return state;
+        }
     }
 }

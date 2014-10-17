@@ -21,5 +21,11 @@ module minerva.shapes.shape.measure {
         constructor () {
             super();
         }
+
+        createOutput () {
+            var output = <IOutput>super.createOutput();
+            output.naturalBounds = new Rect();
+            return output;
+        }
     }
 }

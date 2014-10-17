@@ -1,7 +1,7 @@
 /// <reference path="../../core/Updater" />
 
 module minerva.shapes.shape {
-    export interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, render.IInput {
+    export interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, processup.IInput, render.IInput {
     }
 
     export class ShapeUpdater extends core.Updater {
@@ -13,8 +13,8 @@ module minerva.shapes.shape {
                 .setArrangePipe(singleton(arrange.ShapeArrangePipeDef))
                 .setRenderPipe(singleton(render.ShapeRenderPipeDef))
                 .setSizingPipe(singleton(sizing.ShapeSizingPipeDef))
-                //TODO: Process Up Pipe (compute extents)
-                .setHitTestPipe(singleton(hittest.ShapeHitTestPipeDef))
+                .setProcessUpPipe(singleton(processup.ShapeProcessUpPipeDef))
+                .setHitTestPipe(singleton(hittest.ShapeHitTestPipeDef));
 
             var assets = this.assets;
             assets.naturalBounds = new Rect();
@@ -22,21 +22,11 @@ module minerva.shapes.shape {
             assets.stretchXform = mat3.identity();
         }
 
-        invalidateStretch () {
-            var e = this.assets.extents;
-            e.x = e.y = e.width = e.height = 0;
-            var ewc = this.assets.extentsWithChildren;
-            ewc.x = ewc.y = ewc.width = ewc.height = 0;
-            mat3.identity(this.assets.stretchXform);
-            //TODO: Implement for PathUpdater
-            //this.InvalidatePathCache();
-        }
-
         invalidateNaturalBounds () {
             var nb = this.assets.naturalBounds;
             nb.x = nb.y = nb.width = nb.height = 0;
-            this.invalidateStretch();
-            this.invalidate();
+            this.invalidateMeasure();
+            this.updateBounds(true);
         }
     }
 }

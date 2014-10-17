@@ -2128,12 +2128,11 @@ declare module minerva.engine {
     function process(down: core.Updater[], up: core.Updater[]): boolean;
 }
 declare module minerva.shapes.shape {
-    interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, render.IInput {
+    interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, processup.IInput, render.IInput {
     }
     class ShapeUpdater extends core.Updater {
         public assets: IShapeUpdaterAssets;
         constructor();
-        public invalidateStretch(): void;
         public invalidateNaturalBounds(): void;
     }
 }
@@ -2164,6 +2163,7 @@ declare module minerva.shapes.shape.measure {
     }
     class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
         constructor();
+        public createOutput(): IOutput;
     }
 }
 declare module minerva.shapes.rectangle.measure {
@@ -2220,6 +2220,7 @@ declare module minerva.shapes.shape.processup {
     }
     class ShapeProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
         constructor();
+        public createState(): IState;
     }
 }
 declare module minerva.shapes.shape.processup.tapins {

@@ -9385,26 +9385,18 @@ var minerva;
                 __extends(ShapeUpdater, _super);
                 function ShapeUpdater() {
                     _super.call(this);
-                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef)).setHitTestPipe(minerva.singleton(shape.hittest.ShapeHitTestPipeDef));
+                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef)).setProcessUpPipe(minerva.singleton(shape.processup.ShapeProcessUpPipeDef)).setHitTestPipe(minerva.singleton(shape.hittest.ShapeHitTestPipeDef));
 
                     var assets = this.assets;
                     assets.naturalBounds = new minerva.Rect();
                     assets.shapeFlags = 0 /* None */;
                     assets.stretchXform = mat3.identity();
                 }
-                ShapeUpdater.prototype.invalidateStretch = function () {
-                    var e = this.assets.extents;
-                    e.x = e.y = e.width = e.height = 0;
-                    var ewc = this.assets.extentsWithChildren;
-                    ewc.x = ewc.y = ewc.width = ewc.height = 0;
-                    mat3.identity(this.assets.stretchXform);
-                };
-
                 ShapeUpdater.prototype.invalidateNaturalBounds = function () {
                     var nb = this.assets.naturalBounds;
                     nb.x = nb.y = nb.width = nb.height = 0;
-                    this.invalidateStretch();
-                    this.invalidate();
+                    this.invalidateMeasure();
+                    this.updateBounds(true);
                 };
                 return ShapeUpdater;
             })(minerva.core.Updater);
@@ -9446,6 +9438,11 @@ var minerva;
                     function ShapeMeasurePipeDef() {
                         _super.call(this);
                     }
+                    ShapeMeasurePipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.naturalBounds = new minerva.Rect();
+                        return output;
+                    };
                     return ShapeMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.ShapeMeasurePipeDef = ShapeMeasurePipeDef;
@@ -9571,6 +9568,11 @@ var minerva;
                         _super.call(this);
                         this.addTapinBefore('calcExtents', 'calcStretchBounds', processup.tapins.calcStretchBounds).replaceTapin('calcExtents', processup.tapins.calcExtents);
                     }
+                    ShapeProcessUpPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.stretchBounds = new minerva.Rect();
+                        return state;
+                    };
                     return ShapeProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.ShapeProcessUpPipeDef = ShapeProcessUpPipeDef;

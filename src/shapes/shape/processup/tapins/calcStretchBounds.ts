@@ -3,6 +3,7 @@ module minerva.shapes.shape.processup.tapins {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 
+        //TODO: Implement stretchBounds
 
         return true;
     }
