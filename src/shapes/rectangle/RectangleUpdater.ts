@@ -1,9 +1,7 @@
 /// <reference path="../shape/ShapeUpdater" />
 
 module minerva.shapes.rectangle {
-    export interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput {
-        radiusX: number;
-        radiusY: number;
+    export interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, render.IInput {
     }
 
     export class RectangleUpdater extends shape.ShapeUpdater {
@@ -11,6 +9,7 @@ module minerva.shapes.rectangle {
 
         init () {
             this.setMeasurePipe(singleton(measure.RectangleMeasurePipeDef))
+                .setRenderPipe(singleton(render.RectangleRenderPipeDef))
                 .setHitTestPipe(singleton(hittest.RectangleHitTestPipeDef));
 
             var assets = this.assets;

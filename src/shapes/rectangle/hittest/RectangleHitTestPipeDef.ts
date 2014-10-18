@@ -17,7 +17,17 @@ module minerva.shapes.rectangle.hittest {
             var assets = data.assets;
             ctx.save();
             ctx.pretransformMatrix(assets.stretchXform);
-            helpers.draw(ctx.raw, 0, 0, assets.actualWidth, assets.actualHeight, assets.radiusX, assets.radiusY);
+
+            var width = assets.actualWidth;
+            var height = assets.actualHeight;
+            var rx = Math.min(Math.abs(assets.radiusX), width / 2.0);
+            if (isNaN(rx))
+                rx = 0;
+            var ry = Math.min(Math.abs(assets.radiusY), height / 2.0);
+            if (isNaN(ry))
+                ry = 0;
+
+            helpers.draw(ctx.raw, 0, 0, width, height, rx, ry);
             var inside = (!!assets.fill && ctx.raw.isPointInPath(pos.x, pos.y))
                 || (!!assets.stroke && ctx.isPointInStrokeEx(assets, pos.x, pos.y));
             ctx.restore();
