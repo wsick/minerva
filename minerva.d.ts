@@ -2213,7 +2213,7 @@ declare module minerva.shapes.ellipse.render {
         constructor();
     }
     module tapins {
-        function draw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+        function doRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
     }
 }
 declare module minerva.shapes.rectangle {
@@ -2252,7 +2252,7 @@ declare module minerva.shapes.rectangle.render {
         constructor();
     }
     module tapins {
-        function draw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+        function doRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
     }
 }
 declare module minerva.shapes.shape {
@@ -2359,7 +2359,7 @@ declare module minerva.shapes.shape.render.tapins {
     function calcShouldDraw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.render.tapins {
-    function draw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+    function doRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.render.tapins {
     function fill(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;

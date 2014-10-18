@@ -9572,7 +9572,7 @@ var minerva;
                     __extends(ShapeRenderPipeDef, _super);
                     function ShapeRenderPipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.draw).addTapinAfter('doRender', 'fill', render.tapins.fill).addTapinAfter('fill', 'stroke', render.tapins.stroke).addTapinAfter('stroke', 'finishDraw', render.tapins.finishDraw);
+                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.doRender).addTapinAfter('doRender', 'fill', render.tapins.fill).addTapinAfter('fill', 'stroke', render.tapins.stroke).addTapinAfter('stroke', 'finishDraw', render.tapins.finishDraw);
                     }
                     ShapeRenderPipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
@@ -9598,14 +9598,14 @@ var minerva;
                     __extends(EllipseRenderPipeDef, _super);
                     function EllipseRenderPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('draw', tapins.draw);
+                        this.replaceTapin('doRender', tapins.doRender);
                     }
                     return EllipseRenderPipeDef;
                 })(shapes.shape.render.ShapeRenderPipeDef);
                 render.EllipseRenderPipeDef = EllipseRenderPipeDef;
 
                 (function (tapins) {
-                    function draw(input, state, output, ctx, region) {
+                    function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
 
@@ -9614,7 +9614,7 @@ var minerva;
 
                         return true;
                     }
-                    tapins.draw = draw;
+                    tapins.doRender = doRender;
                 })(render.tapins || (render.tapins = {}));
                 var tapins = render.tapins;
             })(ellipse.render || (ellipse.render = {}));
@@ -9739,14 +9739,14 @@ var minerva;
                     __extends(RectangleRenderPipeDef, _super);
                     function RectangleRenderPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('draw', tapins.draw);
+                        this.replaceTapin('doRender', tapins.doRender);
                     }
                     return RectangleRenderPipeDef;
                 })(shapes.shape.render.ShapeRenderPipeDef);
                 render.RectangleRenderPipeDef = RectangleRenderPipeDef;
 
                 (function (tapins) {
-                    function draw(input, state, output, ctx, region) {
+                    function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
 
@@ -9762,7 +9762,7 @@ var minerva;
 
                         return true;
                     }
-                    tapins.draw = draw;
+                    tapins.doRender = doRender;
                 })(render.tapins || (render.tapins = {}));
                 var tapins = render.tapins;
             })(rectangle.render || (rectangle.render = {}));
@@ -10159,13 +10159,13 @@ var minerva;
         (function (shape) {
             (function (render) {
                 (function (tapins) {
-                    function draw(input, state, output, ctx, region) {
+                    function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
 
                         return true;
                     }
-                    tapins.draw = draw;
+                    tapins.doRender = doRender;
                 })(render.tapins || (render.tapins = {}));
                 var tapins = render.tapins;
             })(shape.render || (shape.render = {}));

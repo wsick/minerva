@@ -23,7 +23,7 @@ module minerva.shapes.shape.render {
             super();
             this.addTapinBefore('doRender', 'calcShouldDraw', tapins.calcShouldDraw)
                 .addTapinBefore('doRender', 'prepareDraw', tapins.prepareDraw)
-                .replaceTapin('doRender', tapins.draw)
+                .replaceTapin('doRender', tapins.doRender)
                 .addTapinAfter('doRender', 'fill', tapins.fill)
                 .addTapinAfter('fill', 'stroke', tapins.stroke)
                 .addTapinAfter('stroke', 'finishDraw', tapins.finishDraw);

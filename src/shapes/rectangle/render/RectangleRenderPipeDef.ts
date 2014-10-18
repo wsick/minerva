@@ -14,12 +14,12 @@ module minerva.shapes.rectangle.render {
     export class RectangleRenderPipeDef extends shape.render.ShapeRenderPipeDef {
         constructor () {
             super();
-            this.replaceTapin('draw', tapins.draw);
+            this.replaceTapin('doRender', tapins.doRender);
         }
     }
 
     export module tapins {
-        export function draw (input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean {
+        export function doRender (input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean {
             if (!state.shouldDraw)
                 return true;
 
