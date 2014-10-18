@@ -9615,25 +9615,27 @@ var minerva;
                             return true;
                         }
 
-                        var factor;
+                        var sx;
+                        var sy;
                         var nb = output.naturalBounds;
                         var as = state.availableSize;
                         switch (input.stretch) {
                             default:
                             case 1 /* Fill */:
-                                factor = 1;
+                                sx = as.width / nb.width;
+                                sy = as.height / nb.height;
                                 break;
                             case 2 /* Uniform */:
-                                factor = Math.min(as.width / nb.width, as.height / nb.height);
+                                sx = sy = Math.min(as.width / nb.width, as.height / nb.height);
                                 break;
                             case 3 /* UniformToFill */:
-                                factor = Math.max(as.width / nb.width, as.height / nb.height);
+                                sx = sy = Math.max(as.width / nb.width, as.height / nb.height);
                                 break;
                         }
 
                         var ds = output.desiredSize;
-                        ds.width = (nb.width * factor) || 0;
-                        ds.height = (nb.height * factor) || 0;
+                        ds.width = (nb.width * sx) || 0;
+                        ds.height = (nb.height * sy) || 0;
 
                         return true;
                     }
