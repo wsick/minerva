@@ -8,7 +8,9 @@ module minerva.shapes.shape.hittest {
             super();
             this.replaceTapin('canHitInside', tapins.canHitInside)
                 .addTapinAfter('insideObject', 'canHitShape', tapins.canHitShape)
-                .addTapinAfter('canHitShape', 'insideShape', tapins.insideShape);
+                .addTapinAfter('canHitShape', 'prepareShape', tapins.prepareShape)
+                .addTapinAfter('prepareShape', 'drawShape', tapins.drawShape)
+                .addTapinAfter('drawShape', 'finishShape', tapins.finishShape);
         }
     }
 }

@@ -2,11 +2,9 @@
 
 module minerva.shapes.rectangle.render {
     export interface IInput extends shape.render.IInput {
-        actualWidth: number;
-        actualHeight: number;
-
         radiusX: number;
         radiusY: number;
+        shapeRect: Rect;
     }
     export interface IState extends shape.render.IState {
     }
@@ -25,15 +23,15 @@ module minerva.shapes.rectangle.render {
             if (!state.shouldDraw)
                 return true;
 
-            var width = input.actualWidth;
-            var height = input.actualHeight;
-            var rx = Math.min(Math.abs(input.radiusX), width / 2.0);
+            var sr = input.shapeRect;
+            var rx = Math.min(Math.abs(input.radiusX), sr.width / 2.0);
             if (isNaN(rx))
                 rx = 0;
-            var ry = Math.min(Math.abs(input.radiusY), height / 2.0);
+            var ry = Math.min(Math.abs(input.radiusY), sr.height / 2.0);
             if (isNaN(ry))
                 ry = 0;
-            helpers.draw(ctx.raw, 0, 0, width, height, rx, ry);
+
+            helpers.draw(ctx.raw, sr.x, sr.y, sr.width, sr.height, rx, ry);
 
             return true;
         }

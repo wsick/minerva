@@ -25,7 +25,7 @@ module minerva.shapes.shape.render.tapins {
         raw.lineJoin = joins[input.strokeLineJoin || 0] || joins[0];
         raw.miterLimit = input.strokeMiterLimit;
 
-        stroke.setupBrush(raw, region);
+        stroke.setupBrush(raw, input.shapeRect);
         raw.strokeStyle = stroke.toHtml5Object();
         raw.stroke();
 

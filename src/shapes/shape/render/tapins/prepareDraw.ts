@@ -3,6 +3,5 @@ module minerva.shapes.shape.render.tapins {
         if (!state.shouldDraw)
             return true;
         ctx.save();
-        ctx.pretransformMatrix(input.stretchXform);
     }
 }

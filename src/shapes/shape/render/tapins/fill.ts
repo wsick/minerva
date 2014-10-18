@@ -3,7 +3,7 @@ module minerva.shapes.shape.render.tapins {
         if (!state.shouldDraw)
             return true;
         if (input.fill)
-            ctx.fillEx(input.fill, input.extents, input.fillRule);
+            ctx.fillEx(input.fill, input.shapeRect, input.fillRule);
         return true;
     }
 }

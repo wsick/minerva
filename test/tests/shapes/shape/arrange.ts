@@ -37,19 +37,10 @@ module minerva.shapes.shape.arrange.tests {
                 strokeLineJoin: PenLineJoin.Miter,
                 strokeMiterLimit: 10,
 
-                naturalBounds: new Rect(),
-                stretchXform: mat3.identity()
+                naturalBounds: new Rect()
             };
         }
     };
-
-    function typedToArray (typed) {
-        var arr = [];
-        for (var i = 0; i < typed.length; i++) {
-            arr.push(typed[i]);
-        }
-        return arr;
-    }
 
     QUnit.test("doOverride", (assert) => {
         var pipedef = new ShapeArrangePipeDef();
@@ -57,27 +48,22 @@ module minerva.shapes.shape.arrange.tests {
         var state = pipedef.createState();
         var output = pipedef.createOutput();
 
-        mat3.create(output.stretchXform);
         state.finalSize = new Size(100, 150);
         input.naturalBounds = new Rect(0, 0, 50, 50);
         input.stretch = Stretch.None;
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(state.arrangedSize, new Size(50, 50));
-        assert.deepEqual(typedToArray(output.stretchXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+        assert.deepEqual(state.arrangedSize, new Size(0, 0));
 
         input.stretch = Stretch.Fill;
         assert.ok(tapins.doOverride(input, state, output, null));
         assert.deepEqual(state.arrangedSize, new Size(100, 150));
-        assert.deepEqual(typedToArray(output.stretchXform), [2, 0, 0, 0, 3, 0, 0, 0, 1]);
 
         input.stretch = Stretch.Uniform;
         assert.ok(tapins.doOverride(input, state, output, null));
         assert.deepEqual(state.arrangedSize, new Size(100, 100));
-        assert.deepEqual(typedToArray(output.stretchXform), [2, 0, 0, 0, 2, 0, 0, 0, 1]);
 
         input.stretch = Stretch.UniformToFill;
         assert.ok(tapins.doOverride(input, state, output, null));
         assert.deepEqual(state.arrangedSize, new Size(150, 150));
-        assert.deepEqual(typedToArray(output.stretchXform), [3, 0, 0, 0, 3, 0, 0, 0, 1]);
     });
 }

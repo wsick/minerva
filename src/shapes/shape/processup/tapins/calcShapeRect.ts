@@ -1,0 +1,25 @@
+module minerva.shapes.shape.processup.tapins {
+    export function calcShapeRect (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean {
+        if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
+            return true;
+
+        var sr = output.shapeRect;
+        Rect.copyTo(output.extents, sr);
+
+        var t = !!input.stroke ? input.strokeThickness : 0.0;
+        if (t >= sr.width || t >= sr.height) {
+            sr.width = Math.max(sr.width, t + t * 0.001);
+            sr.height = Math.max(sr.height, t + t * 0.001);
+            output.shapeFlags = ShapeFlags.Degenerate;
+        } else if (Rect.isEmpty(sr)) {
+            output.shapeFlags = ShapeFlags.Empty;
+        } else {
+            output.shapeFlags = ShapeFlags.Normal;
+        }
+
+        var ht = t / 2;
+        Rect.shrink(sr, ht, ht, ht, ht);
+
+        return true;
+    }
+}

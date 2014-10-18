@@ -9,47 +9,46 @@ module minerva.shapes.shape.measure {
     }
 
     export class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
-        constructor() {
+        constructor () {
             super();
             this.addTapinBefore('doOverride', 'calcNaturalBounds', tapins.calcNaturalBounds)
                 .replaceTapin('doOverride', tapins.doOverride);
         }
 
-        createOutput() {
+        createOutput () {
             var output = <IOutput>super.createOutput();
             output.naturalBounds = new Rect();
             return output;
         }
 
-        prepare(input: IInput, state: IState, output: IOutput) {
+        prepare (input: IInput, state: IState, output: IOutput) {
             Rect.copyTo(input.naturalBounds, output.naturalBounds);
             super.prepare(input, state, output);
         }
 
-        flush(input: IInput, state: IState, output: IOutput) {
+        flush (input: IInput, state: IState, output: IOutput) {
             super.flush(input, state, output);
             Rect.copyTo(output.naturalBounds, input.naturalBounds);
         }
     }
 
     export module tapins {
-        export function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
+        export function calcNaturalBounds (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
             var nb = output.naturalBounds;
-            nb.x = nb.y = nb.width = nb.height = 0;
+            nb.x = nb.y = 0;
+            nb.width = nb.height = 1;
             return true;
         }
 
-        export function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
-            if (input.stretch === Stretch.None) {
-                Size.copyTo(output.naturalBounds, output.desiredSize);
-                return true;
-            }
-
+        export function doOverride (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
             var sx: number;
             var sy: number;
             var nb = output.naturalBounds;
             var as = state.availableSize;
             switch (input.stretch) {
+                case Stretch.None:
+                    sx = sy = 0;
+                    break;
                 default:
                 case Stretch.Fill:
                     sx = as.width / nb.width;

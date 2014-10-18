@@ -18,7 +18,7 @@ module minerva.shapes.shape {
             var assets = this.assets;
             assets.naturalBounds = new Rect();
             assets.shapeFlags = ShapeFlags.None;
-            assets.stretchXform = mat3.identity();
+            assets.shapeRect = new Rect();
 
             assets.fill = null;
             assets.stretch = Stretch.None;

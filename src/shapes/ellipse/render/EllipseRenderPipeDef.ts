@@ -2,8 +2,7 @@
 
 module minerva.shapes.ellipse.render {
     export interface IInput extends shape.render.IInput {
-        actualWidth: number;
-        actualHeight: number;
+        shapeRect: Rect;
     }
     export interface IState extends shape.render.IState {
     }
@@ -22,7 +21,8 @@ module minerva.shapes.ellipse.render {
             if (!state.shouldDraw)
                 return true;
 
-            helpers.draw(ctx.raw, 0, 0, input.actualWidth, input.actualHeight);
+            var sr = input.shapeRect;
+            helpers.draw(ctx.raw, sr.x, sr.y, sr.width, sr.height);
 
             return true;
         }

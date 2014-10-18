@@ -9,9 +9,8 @@ module minerva.shapes.shape.render {
         strokeLineJoin: PenLineJoin;
         strokeMiterLimit: number;
 
-        extents: Rect;
         shapeFlags: ShapeFlags;
-        stretchXform: number[];
+        shapeRect: Rect;
     }
     export interface IState extends core.render.IState {
         shouldDraw: boolean;

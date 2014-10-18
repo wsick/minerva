@@ -46,7 +46,7 @@ module minerva.shapes.shape.measure.tests {
         var output = pipedef.createOutput();
 
         assert.ok(tapins.calcNaturalBounds(input, state, output, null));
-        assert.deepEqual(output.naturalBounds, new Rect(0, 0, 0, 0));
+        assert.deepEqual(output.naturalBounds, new Rect(0, 0, 1, 1));
     });
 
     QUnit.test("doOverride", (assert) => {
@@ -58,7 +58,7 @@ module minerva.shapes.shape.measure.tests {
         input.stretch = Stretch.None;
         output.naturalBounds = new Rect(0, 0, 50, 50);
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(50, 50));
+        assert.deepEqual(output.desiredSize, new Size(0, 0));
 
         input.stretch = Stretch.Fill;
         state.availableSize = new Size(100, 150);
