@@ -2144,7 +2144,7 @@ declare module minerva.shapes.shape {
     }
     class ShapeUpdater extends core.Updater {
         public assets: IShapeUpdaterAssets;
-        constructor();
+        public init(): void;
         public invalidateNaturalBounds(): void;
     }
 }

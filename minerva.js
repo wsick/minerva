@@ -9196,9 +9196,9 @@ var minerva;
                 else
                     this.$$layers.push(layer);
                 layer.tree.isTop = true;
-                layer.setSurface(this);
-                layer.fullInvalidate();
                 layer.invalidateMeasure();
+                layer.fullInvalidate();
+                layer.setSurface(this);
             };
 
             Surface.prototype.detachLayer = function (layer) {
@@ -9410,7 +9410,9 @@ var minerva;
             var ShapeUpdater = (function (_super) {
                 __extends(ShapeUpdater, _super);
                 function ShapeUpdater() {
-                    _super.call(this);
+                    _super.apply(this, arguments);
+                }
+                ShapeUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setProcessUpPipe(minerva.singleton(shape.processup.ShapeProcessUpPipeDef)).setHitTestPipe(minerva.singleton(shape.hittest.ShapeHitTestPipeDef));
 
                     var assets = this.assets;
@@ -9429,7 +9431,10 @@ var minerva;
                     assets.strokeEndLineCap = 0 /* Flat */;
                     assets.strokeLineJoin = 0 /* Miter */;
                     assets.strokeMiterLimit = 10;
-                }
+
+                    _super.prototype.init.call(this);
+                };
+
                 ShapeUpdater.prototype.invalidateNaturalBounds = function () {
                     var nb = this.assets.naturalBounds;
                     nb.x = nb.y = nb.width = nb.height = 0;

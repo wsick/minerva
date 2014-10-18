@@ -7,8 +7,7 @@ module minerva.shapes.shape {
     export class ShapeUpdater extends core.Updater {
         assets: IShapeUpdaterAssets;
 
-        constructor () {
-            super();
+        init () {
             this.setMeasurePipe(singleton(measure.ShapeMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.ShapeArrangePipeDef))
                 .setRenderPipe(singleton(render.ShapeRenderPipeDef))
@@ -31,6 +30,8 @@ module minerva.shapes.shape {
             assets.strokeEndLineCap = PenLineCap.Flat;
             assets.strokeLineJoin = PenLineJoin.Miter;
             assets.strokeMiterLimit = 10;
+
+            super.init();
         }
 
         invalidateNaturalBounds () {

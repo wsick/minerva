@@ -44,9 +44,9 @@ module minerva.engine {
             else
                 this.$$layers.push(layer);
             layer.tree.isTop = true;
-            layer.setSurface(this);
-            layer.fullInvalidate();
             layer.invalidateMeasure();
+            layer.fullInvalidate();
+            layer.setSurface(this);
         }
 
         detachLayer (layer: core.Updater) {
