@@ -22,6 +22,17 @@ module minerva.shapes.shape.processup.tapins {
                 break;
         }
 
+        var t = !!input.stroke ? input.strokeThickness : 0.0;
+        if (t >= sb.width || t >= sb.height) {
+            sb.width = Math.max(sb.width, t + t * 0.001);
+            sb.height = Math.max(sb.height, t + t * 0.001);
+            output.shapeFlags = ShapeFlags.Degenerate;
+        } else if (Rect.isEmpty(sb)) {
+            output.shapeFlags = ShapeFlags.Empty;
+        } else {
+            output.shapeFlags = ShapeFlags.Normal;
+        }
+
         return true;
     }
 }

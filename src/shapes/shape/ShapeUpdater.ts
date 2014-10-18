@@ -28,7 +28,7 @@ module minerva.shapes.shape {
             assets.strokeDashCap = PenLineCap.Flat;
             assets.strokeDashOffset = 0;
             assets.strokeStartLineCap = PenLineCap.Flat;
-            assets.strokeEndLineCap = PenLineCap.Flat
+            assets.strokeEndLineCap = PenLineCap.Flat;
             assets.strokeLineJoin = PenLineJoin.Miter;
             assets.strokeMiterLimit = 10;
         }

@@ -1,6 +1,9 @@
 module minerva.shapes.shape.processup {
     export interface IInput extends core.processup.IInput {
         stretch: Stretch;
+        stroke: IBrush;
+        strokeThickness: number;
+
         naturalBounds: Rect;
         shapeFlags: ShapeFlags;
     }
