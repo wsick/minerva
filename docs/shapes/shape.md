@@ -9,19 +9,15 @@
     * Process Up
         * `extents` (`stretchBounds`)
         * `extentsWithChildren`
-        * `stretchXform`
-       
+        * `stretchXform` 
         
 * Rectangle (`Fill` by default)
-
     * `naturalBounds` <-- 0,0
     
 * Ellipse (`Fill` by default)
-
     * `naturalBounds` <-- 0,0
 
 * Line
-
     * `naturalBounds` <-- (X1,Y1)-(X2,Y2)
     * Measure
         * `desiredSize` <-- `Stretch` `naturalBounds` to `availableSize`

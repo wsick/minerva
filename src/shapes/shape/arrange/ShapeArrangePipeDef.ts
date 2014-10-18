@@ -63,8 +63,8 @@ module minerva.shapes.shape.arrange {
 
 
             var as = state.arrangedSize;
-            as.width = (fs.width * sx) || 0;
-            as.height = (fs.height * sy) || 0;
+            as.width = (nb.width * sx) || 0;
+            as.height = (nb.height * sy) || 0;
 
             mat3.createScale(sx, sy, output.stretchXform);
 

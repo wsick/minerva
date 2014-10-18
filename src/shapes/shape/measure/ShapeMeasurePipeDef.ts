@@ -62,8 +62,8 @@ module minerva.shapes.shape.measure {
             }
 
             var ds = output.desiredSize;
-            ds.width = (as.width * factor) || 0;
-            ds.height = (as.height * factor) || 0;
+            ds.width = (nb.width * factor) || 0;
+            ds.height = (nb.height * factor) || 0;
 
             return true;
         }

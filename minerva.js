@@ -9632,8 +9632,8 @@ var minerva;
                         }
 
                         var ds = output.desiredSize;
-                        ds.width = (as.width * factor) || 0;
-                        ds.height = (as.height * factor) || 0;
+                        ds.width = (nb.width * factor) || 0;
+                        ds.height = (nb.height * factor) || 0;
 
                         return true;
                     }
@@ -9730,8 +9730,8 @@ var minerva;
                         }
 
                         var as = state.arrangedSize;
-                        as.width = (fs.width * sx) || 0;
-                        as.height = (fs.height * sy) || 0;
+                        as.width = (nb.width * sx) || 0;
+                        as.height = (nb.height * sy) || 0;
 
                         mat3.createScale(sx, sy, output.stretchXform);
 
