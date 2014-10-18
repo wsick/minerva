@@ -2246,6 +2246,7 @@ declare module minerva.shapes.shape.arrange {
     }
     class ShapeArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
+        public createOutput(): IOutput;
         public prepare(input: IInput, state: IState, output: IOutput): void;
         public flush(input: IInput, state: IState, output: IOutput): void;
     }

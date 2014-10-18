@@ -9693,6 +9693,12 @@ var minerva;
                         _super.call(this);
                         this.replaceTapin('doOverride', tapins.doOverride);
                     }
+                    ShapeArrangePipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.stretchXform = mat3.identity();
+                        return output;
+                    };
+
                     ShapeArrangePipeDef.prototype.prepare = function (input, state, output) {
                         mat3.set(input.stretchXform, output.stretchXform);
                         _super.prototype.prepare.call(this, input, state, output);
@@ -9709,6 +9715,7 @@ var minerva;
                 (function (tapins) {
                     function doOverride(input, state, output, tree) {
                         if (input.stretch === 0 /* None */) {
+                            mat3.identity(output.stretchXform);
                             minerva.Size.copyTo(input.naturalBounds, state.arrangedSize);
                             return true;
                         }

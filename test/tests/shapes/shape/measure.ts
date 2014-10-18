@@ -36,42 +36,24 @@ module minerva.shapes.shape.measure.tests {
 
                 naturalBounds: new Rect()
             };
-        },
-        state: function (): IState {
-            return {
-                availableSize: new Size()
-            };
-        },
-        output: function (): IOutput {
-            return {
-                error: null,
-                previousConstraint: new Size(),
-                desiredSize: new Size(),
-                hiddenDesire: new Size(),
-                dirtyFlags: 0,
-                uiFlags: UIFlags.None,
-                newUpDirty: 0,
-                newDownDirty: 0,
-                newUiFlags: UIFlags.None,
-
-                naturalBounds: new Rect()
-            };
         }
     };
 
     QUnit.test("calcNaturalBounds", (assert) => {
+        var pipedef = new ShapeMeasurePipeDef();
         var input = mock.input();
-        var state = mock.state();
-        var output = mock.output();
+        var state = pipedef.createState();
+        var output = pipedef.createOutput();
 
         assert.ok(tapins.calcNaturalBounds(input, state, output, null));
         assert.deepEqual(output.naturalBounds, new Rect(0, 0, 0, 0));
     });
 
     QUnit.test("doOverride", (assert) => {
+        var pipedef = new ShapeMeasurePipeDef();
         var input = mock.input();
-        var state = mock.state();
-        var output = mock.output();
+        var state = pipedef.createState();
+        var output = pipedef.createOutput();
 
         input.stretch = Stretch.None;
         output.naturalBounds = new Rect(0, 0, 50, 50);

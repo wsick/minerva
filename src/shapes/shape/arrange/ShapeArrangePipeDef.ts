@@ -25,6 +25,12 @@ module minerva.shapes.shape.arrange {
             this.replaceTapin('doOverride', tapins.doOverride);
         }
 
+        createOutput() {
+            var output = <IOutput>super.createOutput();
+            output.stretchXform = mat3.identity();
+            return output;
+        }
+
         prepare (input: IInput, state: IState, output: IOutput) {
             mat3.set(input.stretchXform, output.stretchXform);
             super.prepare(input, state, output);
@@ -39,6 +45,7 @@ module minerva.shapes.shape.arrange {
     export module tapins {
         export function doOverride (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
             if (input.stretch === Stretch.None) {
+                mat3.identity(output.stretchXform);
                 Size.copyTo(input.naturalBounds, state.arrangedSize);
                 return true;
             }
