@@ -978,8 +978,8 @@ declare module minerva.core.processup {
         constructor();
         public createState(): IState;
         public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): void;
-        public flush(input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): void;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.core.processup.tapins {
@@ -2140,7 +2140,7 @@ declare module minerva.engine {
     function process(down: core.Updater[], up: core.Updater[]): boolean;
 }
 declare module minerva.shapes.shape {
-    interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, processup.IInput, render.IInput {
+    interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processup.IInput, render.IInput {
     }
     class ShapeUpdater extends core.Updater {
         public assets: IShapeUpdaterAssets;
@@ -2148,16 +2148,16 @@ declare module minerva.shapes.shape {
         public invalidateNaturalBounds(): void;
     }
 }
-declare module minerva.shapes.rectangle {
-    interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, render.IInput {
+declare module minerva.shapes.ellipse {
+    interface IEllipseUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, render.IInput {
     }
-    class RectangleUpdater extends shape.ShapeUpdater {
-        public assets: IRectangleUpdaterAssets;
+    class EllipseUpdater extends shape.ShapeUpdater {
+        public assets: IEllipseUpdaterAssets;
         public init(): void;
     }
 }
-declare module minerva.shapes.rectangle.helpers {
-    function draw(ctx: CanvasRenderingContext2D, left: number, top: number, right: number, bottom: number, radiusX: number, radiusY: number): void;
+declare module minerva.shapes.ellipse.helpers {
+    function draw(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
 }
 declare module minerva.shapes.shape.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
@@ -2167,11 +2167,11 @@ declare module minerva.shapes.shape.hittest {
         constructor();
     }
 }
-declare module minerva.shapes.rectangle.hittest {
+declare module minerva.shapes.ellipse.hittest {
     interface IHitTestData extends shape.hittest.IHitTestData {
-        assets: IRectangleUpdaterAssets;
+        assets: IEllipseUpdaterAssets;
     }
-    class RectangleHitTestPipeDef extends shape.hittest.ShapeHitTestPipeDef {
+    class EllipseHitTestPipeDef extends shape.hittest.ShapeHitTestPipeDef {
         constructor();
     }
     module tapins {
@@ -2198,10 +2198,10 @@ declare module minerva.shapes.shape.measure {
         function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
-declare module minerva.shapes.rectangle.measure {
+declare module minerva.shapes.ellipse.measure {
     interface IInput extends shape.measure.IInput {
     }
-    class RectangleMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+    class EllipseMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
         constructor();
     }
     module tapins {
@@ -2230,6 +2230,54 @@ declare module minerva.shapes.shape.render {
     class ShapeRenderPipeDef extends core.render.RenderPipeDef {
         constructor();
         public createState(): IState;
+    }
+}
+declare module minerva.shapes.ellipse.render {
+    interface IInput extends shape.render.IInput {
+        actualWidth: number;
+        actualHeight: number;
+    }
+    interface IState extends shape.render.IState {
+    }
+    interface IOutput extends shape.render.IOutput {
+    }
+    class EllipseRenderPipeDef extends shape.render.ShapeRenderPipeDef {
+        constructor();
+    }
+    module tapins {
+        function draw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+    }
+}
+declare module minerva.shapes.rectangle {
+    interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, render.IInput {
+    }
+    class RectangleUpdater extends shape.ShapeUpdater {
+        public assets: IRectangleUpdaterAssets;
+        public init(): void;
+    }
+}
+declare module minerva.shapes.rectangle.helpers {
+    function draw(ctx: CanvasRenderingContext2D, left: number, top: number, right: number, bottom: number, radiusX: number, radiusY: number): void;
+}
+declare module minerva.shapes.rectangle.hittest {
+    interface IHitTestData extends shape.hittest.IHitTestData {
+        assets: IRectangleUpdaterAssets;
+    }
+    class RectangleHitTestPipeDef extends shape.hittest.ShapeHitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function insideShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
+declare module minerva.shapes.rectangle.measure {
+    interface IInput extends shape.measure.IInput {
+    }
+    class RectangleMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+        constructor();
+    }
+    module tapins {
+        function calcNaturalBounds(input: IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
 declare module minerva.shapes.rectangle.render {
@@ -2305,16 +2353,22 @@ declare module minerva.shapes.shape.hittest.tapins {
 }
 declare module minerva.shapes.shape.processup {
     interface IInput extends core.processup.IInput {
+        stretch: Stretch;
         naturalBounds: Rect;
+        shapeFlags: ShapeFlags;
     }
     interface IState extends core.processup.IState {
         stretchBounds: Rect;
     }
     interface IOutput extends core.processup.IOutput {
+        shapeFlags: ShapeFlags;
     }
     class ShapeProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
         constructor();
         public createState(): IState;
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.shapes.shape.processup.tapins {
@@ -2340,27 +2394,6 @@ declare module minerva.shapes.shape.render.tapins {
 }
 declare module minerva.shapes.shape.render.tapins {
     function stroke(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
-}
-declare module minerva.shapes.shape.sizing {
-    interface IInput extends core.sizing.IInput {
-        naturalBounds: Rect;
-        stretch: Stretch;
-    }
-    interface IState extends core.sizing.IState {
-        shouldStretch: boolean;
-    }
-    interface IOutput extends core.sizing.IOutput {
-    }
-    class ShapeSizingPipeDef extends core.sizing.SizingPipeDef {
-        constructor();
-        public createState(): IState;
-    }
-}
-declare module minerva.shapes.shape.sizing.tapins {
-    function calcShouldStretch(input: IInput, state: IState, output: core.sizing.IOutput, tree: core.IUpdaterTree): boolean;
-}
-declare module minerva.shapes.shape.sizing.tapins {
-    function stretchActual(input: IInput, state: IState, output: core.sizing.IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.text {
     interface IDocumentContext {

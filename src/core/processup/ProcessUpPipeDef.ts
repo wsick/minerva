@@ -74,7 +74,7 @@ module minerva.core.processup {
             };
         }
 
-        prepare (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
+        prepare (input: IInput, state: IState, output: IOutput) {
             output.dirtyFlags = input.dirtyFlags;
             Rect.copyTo(input.extents, output.extents);
             Rect.copyTo(input.extentsWithChildren, output.extentsWithChildren);
@@ -84,7 +84,7 @@ module minerva.core.processup {
             output.forceInvalidate = input.forceInvalidate;
         }
 
-        flush (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
+        flush (input: IInput, state: IState, output: IOutput) {
             input.dirtyFlags = output.dirtyFlags & ~DirtyFlags.UpDirtyState;
             Rect.copyTo(output.extents, input.extents);
             Rect.copyTo(output.extentsWithChildren, input.extentsWithChildren);

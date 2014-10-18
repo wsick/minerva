@@ -1,7 +1,7 @@
 /// <reference path="../../core/Updater" />
 
 module minerva.shapes.shape {
-    export interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, sizing.IInput, processup.IInput, render.IInput {
+    export interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processup.IInput, render.IInput {
     }
 
     export class ShapeUpdater extends core.Updater {
@@ -12,7 +12,6 @@ module minerva.shapes.shape {
             this.setMeasurePipe(singleton(measure.ShapeMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.ShapeArrangePipeDef))
                 .setRenderPipe(singleton(render.ShapeRenderPipeDef))
-                .setSizingPipe(singleton(sizing.ShapeSizingPipeDef))
                 .setProcessUpPipe(singleton(processup.ShapeProcessUpPipeDef))
                 .setHitTestPipe(singleton(hittest.ShapeHitTestPipeDef));
 

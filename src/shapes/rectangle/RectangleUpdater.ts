@@ -13,6 +13,7 @@ module minerva.shapes.rectangle {
                 .setHitTestPipe(singleton(hittest.RectangleHitTestPipeDef));
 
             var assets = this.assets;
+            assets.stretch = Stretch.Fill;
             assets.radiusX = 0;
             assets.radiusY = 0;
 

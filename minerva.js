@@ -4056,7 +4056,7 @@ var minerva;
                     };
                 };
 
-                ProcessUpPipeDef.prototype.prepare = function (input, state, output, tree) {
+                ProcessUpPipeDef.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
                     minerva.Rect.copyTo(input.extents, output.extents);
                     minerva.Rect.copyTo(input.extentsWithChildren, output.extentsWithChildren);
@@ -4066,7 +4066,7 @@ var minerva;
                     output.forceInvalidate = input.forceInvalidate;
                 };
 
-                ProcessUpPipeDef.prototype.flush = function (input, state, output, tree) {
+                ProcessUpPipeDef.prototype.flush = function (input, state, output) {
                     input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.UpDirtyState;
                     minerva.Rect.copyTo(output.extents, input.extents);
                     minerva.Rect.copyTo(output.extentsWithChildren, input.extentsWithChildren);
@@ -9411,7 +9411,7 @@ var minerva;
                 __extends(ShapeUpdater, _super);
                 function ShapeUpdater() {
                     _super.call(this);
-                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setSizingPipe(minerva.singleton(shape.sizing.ShapeSizingPipeDef)).setProcessUpPipe(minerva.singleton(shape.processup.ShapeProcessUpPipeDef)).setHitTestPipe(minerva.singleton(shape.hittest.ShapeHitTestPipeDef));
+                    this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setProcessUpPipe(minerva.singleton(shape.processup.ShapeProcessUpPipeDef)).setHitTestPipe(minerva.singleton(shape.hittest.ShapeHitTestPipeDef));
 
                     var assets = this.assets;
                     assets.naturalBounds = new minerva.Rect();
@@ -9447,65 +9447,67 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (shapes) {
-        (function (rectangle) {
-            var RectangleUpdater = (function (_super) {
-                __extends(RectangleUpdater, _super);
-                function RectangleUpdater() {
+        (function (ellipse) {
+            var EllipseUpdater = (function (_super) {
+                __extends(EllipseUpdater, _super);
+                function EllipseUpdater() {
                     _super.apply(this, arguments);
                 }
-                RectangleUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(rectangle.measure.RectangleMeasurePipeDef)).setRenderPipe(minerva.singleton(rectangle.render.RectangleRenderPipeDef)).setHitTestPipe(minerva.singleton(rectangle.hittest.RectangleHitTestPipeDef));
+                EllipseUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(ellipse.measure.EllipseMeasurePipeDef)).setRenderPipe(minerva.singleton(ellipse.render.EllipseRenderPipeDef)).setHitTestPipe(minerva.singleton(ellipse.hittest.EllipseHitTestPipeDef));
 
                     var assets = this.assets;
-                    assets.radiusX = 0;
-                    assets.radiusY = 0;
+                    assets.stretch = 1 /* Fill */;
 
                     _super.prototype.init.call(this);
                 };
-                return RectangleUpdater;
+                return EllipseUpdater;
             })(shapes.shape.ShapeUpdater);
-            rectangle.RectangleUpdater = RectangleUpdater;
-        })(shapes.rectangle || (shapes.rectangle = {}));
-        var rectangle = shapes.rectangle;
+            ellipse.EllipseUpdater = EllipseUpdater;
+        })(shapes.ellipse || (shapes.ellipse = {}));
+        var ellipse = shapes.ellipse;
     })(minerva.shapes || (minerva.shapes = {}));
     var shapes = minerva.shapes;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (shapes) {
-        (function (rectangle) {
+        (function (ellipse) {
             (function (helpers) {
-                function draw(ctx, left, top, right, bottom, radiusX, radiusY) {
-                    if (!radiusX && !radiusY) {
-                        ctx.beginPath();
-                        ctx.rect(left, top, right - left, bottom - top);
+                function draw(ctx, x, y, width, height) {
+                    var radiusX = width / 2;
+                    var radiusY = height / 2;
+                    var right = x + width;
+                    var bottom = y + height;
+                    var centerX = x + radiusX;
+                    var centerY = y + radiusY;
+
+                    ctx.beginPath();
+                    if (width === height) {
+                        ctx.arc(centerX, centerY, radiusX, 0, Math.PI * 2, false);
                         return;
                     }
-                    ctx.beginPath();
-                    ctx.moveTo(left + radiusX, top);
 
-                    ctx.lineTo(right - radiusX, top);
+                    var kappa = .5522848;
+                    var ox = radiusX * kappa;
+                    var oy = radiusY * kappa;
 
-                    ctx.quadraticCurveTo(right, top, right, top + radiusY);
+                    ctx.moveTo(x, centerY);
 
-                    ctx.lineTo(right, bottom - radiusY);
+                    ctx.bezierCurveTo(x, centerY - oy, centerX - ox, y, centerX, y);
 
-                    ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
+                    ctx.bezierCurveTo(centerX + ox, y, right, centerY - oy, right, centerY);
 
-                    ctx.lineTo(left + radiusX, bottom);
+                    ctx.bezierCurveTo(right, centerY + oy, centerX + ox, bottom, centerX, bottom);
 
-                    ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
-
-                    ctx.lineTo(left, top + radiusY);
-
-                    ctx.quadraticCurveTo(left, top, left + radiusX, top);
+                    ctx.bezierCurveTo(centerX - ox, bottom, x, centerY + oy, x, centerY);
                     ctx.closePath();
                 }
                 helpers.draw = draw;
-            })(rectangle.helpers || (rectangle.helpers = {}));
-            var helpers = rectangle.helpers;
-        })(shapes.rectangle || (shapes.rectangle = {}));
-        var rectangle = shapes.rectangle;
+            })(ellipse.helpers || (ellipse.helpers = {}));
+            var helpers = ellipse.helpers;
+        })(shapes.ellipse || (shapes.ellipse = {}));
+        var ellipse = shapes.ellipse;
     })(minerva.shapes || (minerva.shapes = {}));
     var shapes = minerva.shapes;
 })(minerva || (minerva = {}));
@@ -9533,17 +9535,17 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (shapes) {
-        (function (rectangle) {
+        (function (ellipse) {
             (function (hittest) {
-                var RectangleHitTestPipeDef = (function (_super) {
-                    __extends(RectangleHitTestPipeDef, _super);
-                    function RectangleHitTestPipeDef() {
+                var EllipseHitTestPipeDef = (function (_super) {
+                    __extends(EllipseHitTestPipeDef, _super);
+                    function EllipseHitTestPipeDef() {
                         _super.call(this);
                         this.replaceTapin('insideShape', tapins.insideShape);
                     }
-                    return RectangleHitTestPipeDef;
+                    return EllipseHitTestPipeDef;
                 })(shapes.shape.hittest.ShapeHitTestPipeDef);
-                hittest.RectangleHitTestPipeDef = RectangleHitTestPipeDef;
+                hittest.EllipseHitTestPipeDef = EllipseHitTestPipeDef;
 
                 (function (tapins) {
                     function insideShape(data, pos, hitList, ctx) {
@@ -9551,16 +9553,7 @@ var minerva;
                         ctx.save();
                         ctx.pretransformMatrix(assets.stretchXform);
 
-                        var width = assets.actualWidth;
-                        var height = assets.actualHeight;
-                        var rx = Math.min(Math.abs(assets.radiusX), width / 2.0);
-                        if (isNaN(rx))
-                            rx = 0;
-                        var ry = Math.min(Math.abs(assets.radiusY), height / 2.0);
-                        if (isNaN(ry))
-                            ry = 0;
-
-                        rectangle.helpers.draw(ctx.raw, 0, 0, width, height, rx, ry);
+                        ellipse.helpers.draw(ctx.raw, 0, 0, assets.actualWidth, assets.actualHeight);
                         var inside = (!!assets.fill && ctx.raw.isPointInPath(pos.x, pos.y)) || (!!assets.stroke && ctx.isPointInStrokeEx(assets, pos.x, pos.y));
                         ctx.restore();
 
@@ -9574,10 +9567,10 @@ var minerva;
                     tapins.insideShape = insideShape;
                 })(hittest.tapins || (hittest.tapins = {}));
                 var tapins = hittest.tapins;
-            })(rectangle.hittest || (rectangle.hittest = {}));
-            var hittest = rectangle.hittest;
-        })(shapes.rectangle || (shapes.rectangle = {}));
-        var rectangle = shapes.rectangle;
+            })(ellipse.hittest || (ellipse.hittest = {}));
+            var hittest = ellipse.hittest;
+        })(shapes.ellipse || (shapes.ellipse = {}));
+        var ellipse = shapes.ellipse;
     })(minerva.shapes || (minerva.shapes = {}));
     var shapes = minerva.shapes;
 })(minerva || (minerva = {}));
@@ -9662,6 +9655,216 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (shapes) {
+        (function (ellipse) {
+            (function (measure) {
+                var EllipseMeasurePipeDef = (function (_super) {
+                    __extends(EllipseMeasurePipeDef, _super);
+                    function EllipseMeasurePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
+                    }
+                    return EllipseMeasurePipeDef;
+                })(shapes.shape.measure.ShapeMeasurePipeDef);
+                measure.EllipseMeasurePipeDef = EllipseMeasurePipeDef;
+
+                (function (tapins) {
+                    function calcNaturalBounds(input, state, output, tree) {
+                        var nb = output.naturalBounds;
+                        nb.x = nb.y = 0;
+                        if (input.stretch !== 0 /* None */)
+                            nb.width = nb.height = 1;
+                        return true;
+                    }
+                    tapins.calcNaturalBounds = calcNaturalBounds;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(ellipse.measure || (ellipse.measure = {}));
+            var measure = ellipse.measure;
+        })(shapes.ellipse || (shapes.ellipse = {}));
+        var ellipse = shapes.ellipse;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (shape) {
+            (function (render) {
+                var ShapeRenderPipeDef = (function (_super) {
+                    __extends(ShapeRenderPipeDef, _super);
+                    function ShapeRenderPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.draw).addTapinAfter('doRender', 'fill', render.tapins.fill).addTapinAfter('fill', 'stroke', render.tapins.stroke).addTapinAfter('stroke', 'finishDraw', render.tapins.finishDraw);
+                    }
+                    ShapeRenderPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.shouldDraw = false;
+                        return state;
+                    };
+                    return ShapeRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.ShapeRenderPipeDef = ShapeRenderPipeDef;
+            })(shape.render || (shape.render = {}));
+            var render = shape.render;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (ellipse) {
+            (function (render) {
+                var EllipseRenderPipeDef = (function (_super) {
+                    __extends(EllipseRenderPipeDef, _super);
+                    function EllipseRenderPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('draw', tapins.draw);
+                    }
+                    return EllipseRenderPipeDef;
+                })(shapes.shape.render.ShapeRenderPipeDef);
+                render.EllipseRenderPipeDef = EllipseRenderPipeDef;
+
+                (function (tapins) {
+                    function draw(input, state, output, ctx, region) {
+                        if (!state.shouldDraw)
+                            return true;
+
+                        ellipse.helpers.draw(ctx.raw, 0, 0, input.actualWidth, input.actualHeight);
+
+                        return true;
+                    }
+                    tapins.draw = draw;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(ellipse.render || (ellipse.render = {}));
+            var render = ellipse.render;
+        })(shapes.ellipse || (shapes.ellipse = {}));
+        var ellipse = shapes.ellipse;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (rectangle) {
+            var RectangleUpdater = (function (_super) {
+                __extends(RectangleUpdater, _super);
+                function RectangleUpdater() {
+                    _super.apply(this, arguments);
+                }
+                RectangleUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(rectangle.measure.RectangleMeasurePipeDef)).setRenderPipe(minerva.singleton(rectangle.render.RectangleRenderPipeDef)).setHitTestPipe(minerva.singleton(rectangle.hittest.RectangleHitTestPipeDef));
+
+                    var assets = this.assets;
+                    assets.stretch = 1 /* Fill */;
+                    assets.radiusX = 0;
+                    assets.radiusY = 0;
+
+                    _super.prototype.init.call(this);
+                };
+                return RectangleUpdater;
+            })(shapes.shape.ShapeUpdater);
+            rectangle.RectangleUpdater = RectangleUpdater;
+        })(shapes.rectangle || (shapes.rectangle = {}));
+        var rectangle = shapes.rectangle;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (rectangle) {
+            (function (helpers) {
+                function draw(ctx, left, top, right, bottom, radiusX, radiusY) {
+                    if (!radiusX && !radiusY) {
+                        ctx.beginPath();
+                        ctx.rect(left, top, right - left, bottom - top);
+                        return;
+                    }
+                    ctx.beginPath();
+                    ctx.moveTo(left + radiusX, top);
+
+                    ctx.lineTo(right - radiusX, top);
+
+                    ctx.quadraticCurveTo(right, top, right, top + radiusY);
+
+                    ctx.lineTo(right, bottom - radiusY);
+
+                    ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
+
+                    ctx.lineTo(left + radiusX, bottom);
+
+                    ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
+
+                    ctx.lineTo(left, top + radiusY);
+
+                    ctx.quadraticCurveTo(left, top, left + radiusX, top);
+                    ctx.closePath();
+                }
+                helpers.draw = draw;
+            })(rectangle.helpers || (rectangle.helpers = {}));
+            var helpers = rectangle.helpers;
+        })(shapes.rectangle || (shapes.rectangle = {}));
+        var rectangle = shapes.rectangle;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (rectangle) {
+            (function (hittest) {
+                var RectangleHitTestPipeDef = (function (_super) {
+                    __extends(RectangleHitTestPipeDef, _super);
+                    function RectangleHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('insideShape', tapins.insideShape);
+                    }
+                    return RectangleHitTestPipeDef;
+                })(shapes.shape.hittest.ShapeHitTestPipeDef);
+                hittest.RectangleHitTestPipeDef = RectangleHitTestPipeDef;
+
+                (function (tapins) {
+                    function insideShape(data, pos, hitList, ctx) {
+                        var assets = data.assets;
+                        ctx.save();
+                        ctx.pretransformMatrix(assets.stretchXform);
+
+                        var width = assets.actualWidth;
+                        var height = assets.actualHeight;
+                        var rx = Math.min(Math.abs(assets.radiusX), width / 2.0);
+                        if (isNaN(rx))
+                            rx = 0;
+                        var ry = Math.min(Math.abs(assets.radiusY), height / 2.0);
+                        if (isNaN(ry))
+                            ry = 0;
+
+                        rectangle.helpers.draw(ctx.raw, 0, 0, width, height, rx, ry);
+                        var inside = (!!assets.fill && ctx.raw.isPointInPath(pos.x, pos.y)) || (!!assets.stroke && ctx.isPointInStrokeEx(assets, pos.x, pos.y));
+                        ctx.restore();
+
+                        if (!inside) {
+                            hitList.shift();
+                            return false;
+                        }
+
+                        return true;
+                    }
+                    tapins.insideShape = insideShape;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(rectangle.hittest || (rectangle.hittest = {}));
+            var hittest = rectangle.hittest;
+        })(shapes.rectangle || (shapes.rectangle = {}));
+        var rectangle = shapes.rectangle;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
         (function (rectangle) {
             (function (measure) {
                 var RectangleMeasurePipeDef = (function (_super) {
@@ -9689,32 +9892,6 @@ var minerva;
             var measure = rectangle.measure;
         })(shapes.rectangle || (shapes.rectangle = {}));
         var rectangle = shapes.rectangle;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
-            (function (render) {
-                var ShapeRenderPipeDef = (function (_super) {
-                    __extends(ShapeRenderPipeDef, _super);
-                    function ShapeRenderPipeDef() {
-                        _super.call(this);
-                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.draw).addTapinAfter('doRender', 'fill', render.tapins.fill).addTapinAfter('fill', 'stroke', render.tapins.stroke).addTapinAfter('stroke', 'finishDraw', render.tapins.finishDraw);
-                    }
-                    ShapeRenderPipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.shouldDraw = false;
-                        return state;
-                    };
-                    return ShapeRenderPipeDef;
-                })(minerva.core.render.RenderPipeDef);
-                render.ShapeRenderPipeDef = ShapeRenderPipeDef;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
     var shapes = minerva.shapes;
 })(minerva || (minerva = {}));
@@ -9917,6 +10094,22 @@ var minerva;
                         state.stretchBounds = new minerva.Rect();
                         return state;
                     };
+
+                    ShapeProcessUpPipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.shapeFlags = 0 /* None */;
+                        return output;
+                    };
+
+                    ShapeProcessUpPipeDef.prototype.prepare = function (input, state, output) {
+                        output.shapeFlags = input.shapeFlags;
+                        _super.prototype.prepare.call(this, input, state, output);
+                    };
+
+                    ShapeProcessUpPipeDef.prototype.flush = function (input, state, output) {
+                        _super.prototype.flush.call(this, input, state, output);
+                        input.shapeFlags = output.shapeFlags;
+                    };
                     return ShapeProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.ShapeProcessUpPipeDef = ShapeProcessUpPipeDef;
@@ -9961,6 +10154,25 @@ var minerva;
                     function calcStretchBounds(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
+
+                        var sb = state.stretchBounds;
+                        sb.x = sb.y = 0;
+                        sb.width = input.actualWidth;
+                        sb.height = input.actualHeight;
+
+                        switch (input.stretch) {
+                            case 0 /* None */:
+                                sb.width = sb.height = 0;
+                                break;
+                            case 1 /* Fill */:
+                                break;
+                            case 2 /* Uniform */:
+                                sb.width = sb.height = Math.min(sb.width, sb.height);
+                                break;
+                            case 3 /* UniformToFill */:
+                                sb.width = sb.height = Math.max(sb.width, sb.height);
+                                break;
+                        }
 
                         return true;
                     }
@@ -10130,114 +10342,6 @@ var minerva;
                 var tapins = render.tapins;
             })(shape.render || (shape.render = {}));
             var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
-            (function (sizing) {
-                var ShapeSizingPipeDef = (function (_super) {
-                    __extends(ShapeSizingPipeDef, _super);
-                    function ShapeSizingPipeDef() {
-                        _super.call(this);
-                        this.addTapinAfter('computeActual', 'calcShouldStretch', sizing.tapins.calcShouldStretch).addTapinAfter('calcShouldStretch', 'stretchActual', sizing.tapins.stretchActual);
-                    }
-                    ShapeSizingPipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.shouldStretch = false;
-                        return state;
-                    };
-                    return ShapeSizingPipeDef;
-                })(minerva.core.sizing.SizingPipeDef);
-                sizing.ShapeSizingPipeDef = ShapeSizingPipeDef;
-            })(shape.sizing || (shape.sizing = {}));
-            var sizing = shape.sizing;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
-            (function (sizing) {
-                (function (tapins) {
-                    function calcShouldStretch(input, state, output, tree) {
-                        state.shouldStretch = false;
-
-                        if (!tree.surface)
-                            return true;
-
-                        var nb = input.naturalBounds;
-                        if (nb.width <= 0 && nb.height <= 0)
-                            return true;
-
-                        if (input.stretch === 0 /* None */ && !minerva.Rect.isEmpty(nb)) {
-                            minerva.Size.copyTo(nb, output.actualSize);
-                            return true;
-                        }
-
-                        state.shouldStretch = true;
-                        return true;
-                    }
-                    tapins.calcShouldStretch = calcShouldStretch;
-                })(sizing.tapins || (sizing.tapins = {}));
-                var tapins = sizing.tapins;
-            })(shape.sizing || (shape.sizing = {}));
-            var sizing = shape.sizing;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
-            (function (sizing) {
-                (function (tapins) {
-                    function stretchActual(input, state, output, tree) {
-                        if (!state.shouldStretch)
-                            return true;
-
-                        var nb = input.naturalBounds;
-                        var as = output.actualSize;
-                        if (!isFinite(as.width))
-                            as.width = nb.width;
-                        if (!isFinite(as.height))
-                            as.height = nb.height;
-
-                        var sx = 1.0;
-                        var sy = 1.0;
-                        if (nb.width > 0)
-                            sx = as.width / nb.width;
-                        if (nb.height > 0)
-                            sy = as.height / nb.height;
-
-                        switch (input.stretch) {
-                            case 2 /* Uniform */:
-                                sx = sy = Math.min(sx, sy);
-                                break;
-                            case 3 /* UniformToFill */:
-                                sx = sy = Math.max(sx, sy);
-                                break;
-                            default:
-                                break;
-                        }
-
-                        as.width = Math.min(as.width, nb.width * sx);
-                        as.height = Math.min(as.height, nb.height * sy);
-                    }
-                    tapins.stretchActual = stretchActual;
-                })(sizing.tapins || (sizing.tapins = {}));
-                var tapins = sizing.tapins;
-            })(shape.sizing || (shape.sizing = {}));
-            var sizing = shape.sizing;
         })(shapes.shape || (shapes.shape = {}));
         var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
