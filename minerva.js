@@ -10100,13 +10100,15 @@ var minerva;
                         var sr = output.shapeRect;
                         minerva.Rect.copyTo(output.extents, sr);
 
+                        output.shapeFlags = 1 /* Empty */;
+                        if (minerva.Rect.isEmpty(sr))
+                            return true;
+
                         var t = !!input.stroke ? input.strokeThickness : 0.0;
                         if (t >= sr.width || t >= sr.height) {
                             sr.width = Math.max(sr.width, t + t * 0.001);
                             sr.height = Math.max(sr.height, t + t * 0.001);
                             output.shapeFlags = 4 /* Degenerate */;
-                        } else if (minerva.Rect.isEmpty(sr)) {
-                            output.shapeFlags = 1 /* Empty */;
                         } else {
                             output.shapeFlags = 2 /* Normal */;
                         }

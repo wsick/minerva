@@ -6,13 +6,15 @@ module minerva.shapes.shape.processup.tapins {
         var sr = output.shapeRect;
         Rect.copyTo(output.extents, sr);
 
+        output.shapeFlags = ShapeFlags.Empty;
+        if (Rect.isEmpty(sr))
+            return true;
+
         var t = !!input.stroke ? input.strokeThickness : 0.0;
         if (t >= sr.width || t >= sr.height) {
             sr.width = Math.max(sr.width, t + t * 0.001);
             sr.height = Math.max(sr.height, t + t * 0.001);
             output.shapeFlags = ShapeFlags.Degenerate;
-        } else if (Rect.isEmpty(sr)) {
-            output.shapeFlags = ShapeFlags.Empty;
         } else {
             output.shapeFlags = ShapeFlags.Normal;
         }
