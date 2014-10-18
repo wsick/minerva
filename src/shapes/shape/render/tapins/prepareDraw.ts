@@ -3,5 +3,6 @@ module minerva.shapes.shape.render.tapins {
         if (!state.shouldDraw)
             return true;
         ctx.save();
+        return true;
     }
 }

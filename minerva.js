@@ -10162,7 +10162,7 @@ var minerva;
                 (function (tapins) {
                     function calcShouldDraw(input, state, output, ctx, region) {
                         state.shouldDraw = false;
-                        if ((input.shapeFlags & 1 /* Empty */) === 0)
+                        if (input.shapeFlags === 1 /* Empty */)
                             return true;
                         if (!input.fill && !input.stroke)
                             return true;
@@ -10234,6 +10234,7 @@ var minerva;
                         if (!state.shouldDraw)
                             return true;
                         ctx.restore();
+                        return true;
                     }
                     tapins.finishDraw = finishDraw;
                 })(render.tapins || (render.tapins = {}));
@@ -10255,6 +10256,7 @@ var minerva;
                         if (!state.shouldDraw)
                             return true;
                         ctx.save();
+                        return true;
                     }
                     tapins.prepareDraw = prepareDraw;
                 })(render.tapins || (render.tapins = {}));
