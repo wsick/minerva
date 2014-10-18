@@ -7,6 +7,7 @@ module minerva.shapes.shape.hittest {
         constructor () {
             super();
             this.replaceTapin('canHitInside', tapins.canHitInside)
+                .replaceTapin('insideChildren', tapins.insideChildren)
                 .addTapinAfter('insideObject', 'canHitShape', tapins.canHitShape)
                 .addTapinAfter('canHitShape', 'prepareShape', tapins.prepareShape)
                 .addTapinAfter('prepareShape', 'drawShape', tapins.drawShape)

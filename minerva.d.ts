@@ -2307,6 +2307,9 @@ declare module minerva.shapes.shape.hittest.tapins {
     function finishShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.shapes.shape.hittest.tapins {
+    function insideChildren(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.shapes.shape.hittest.tapins {
     function prepareShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
 declare module minerva.shapes.shape.measure {
