@@ -73,4 +73,9 @@ module minerva {
         Black = 900,
         ExtraBlack = 950,
     }
+
+    export enum SweepDirection {
+        Counterclockwise = 0,
+        Clockwise = 1,
+    }
 }

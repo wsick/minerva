@@ -138,6 +138,12 @@ var minerva;
         FontWeight[FontWeight["ExtraBlack"] = 950] = "ExtraBlack";
     })(minerva.FontWeight || (minerva.FontWeight = {}));
     var FontWeight = minerva.FontWeight;
+
+    (function (SweepDirection) {
+        SweepDirection[SweepDirection["Counterclockwise"] = 0] = "Counterclockwise";
+        SweepDirection[SweepDirection["Clockwise"] = 1] = "Clockwise";
+    })(minerva.SweepDirection || (minerva.SweepDirection = {}));
+    var SweepDirection = minerva.SweepDirection;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -1421,6 +1427,93 @@ var minerva;
         return Thickness;
     })();
     minerva.Thickness = Thickness;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (Vector) {
+        var EPSILON = 1e-10;
+
+        function create(x, y) {
+            return [x, y];
+        }
+        Vector.create = create;
+
+        function reverse(v) {
+            v[0] = -v[0];
+            v[1] = -v[1];
+            return v;
+        }
+        Vector.reverse = reverse;
+
+        function orthogonal(v) {
+            var x = v[0], y = v[1];
+            v[0] = -y;
+            v[1] = x;
+            return v;
+        }
+        Vector.orthogonal = orthogonal;
+
+        function normalize(v) {
+            var x = v[0], y = v[1];
+            var len = Math.sqrt(x * x + y * y);
+            v[0] = x / len;
+            v[1] = y / len;
+            return v;
+        }
+        Vector.normalize = normalize;
+
+        function rotate(v, theta) {
+            var c = Math.cos(theta);
+            var s = Math.sin(theta);
+            var x = v[0];
+            var y = v[1];
+            v[0] = x * c - y * s;
+            v[1] = x * s + y * c;
+            return v;
+        }
+        Vector.rotate = rotate;
+
+        function angleBetween(u, v) {
+            var ux = u[0], uy = u[1], vx = v[0], vy = v[1];
+            var num = ux * vx + uy * vy;
+            var den = Math.sqrt(ux * ux + uy * uy) * Math.sqrt(vx * vx + vy * vy);
+            return Math.acos(num / den);
+        }
+        Vector.angleBetween = angleBetween;
+
+        function isClockwiseTo(v1, v2) {
+            var theta = angleBetween(v1, v2);
+            var nv1 = normalize(v1.slice(0));
+            var nv2 = normalize(v2.slice(0));
+            rotate(nv1, theta);
+            var nx = Math.abs(nv1[0] - nv2[0]);
+            var ny = Math.abs(nv1[1] - nv2[1]);
+            return nx < EPSILON && ny < EPSILON;
+        }
+        Vector.isClockwiseTo = isClockwiseTo;
+
+        function intersection(s1, d1, s2, d2) {
+            var x1 = s1[0];
+            var y1 = s1[1];
+            var x2 = x1 + d1[0];
+            var y2 = y1 + d1[1];
+
+            var x3 = s2[0];
+            var y3 = s2[1];
+            var x4 = x3 + d2[0];
+            var y4 = y3 + d2[1];
+
+            var det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+            if (det === 0)
+                return null;
+
+            var xn = ((x1 * y2 - y1 * x2) * (x3 - x4)) - ((x1 - x2) * (x3 * y4 - y3 * x4));
+            var yn = ((x1 * y2 - y1 * x2) * (y3 - y4)) - ((y1 - y2) * (x3 * y4 - y3 * x4));
+            return [xn / det, yn / det];
+        }
+        Vector.intersection = intersection;
+    })(minerva.Vector || (minerva.Vector = {}));
+    var Vector = minerva.Vector;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -9405,6 +9498,1057 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (_path) {
+        var Path = (function () {
+            function Path() {
+                this.$$entries = [];
+                this.$$endX = 0.0;
+                this.$$endY = 0.0;
+            }
+            Path.prototype.move = function (x, y) {
+                this.$$entries.push(_path.entries.move(x, y));
+                this.$$endX = x;
+                this.$$endY = y;
+            };
+
+            Path.prototype.line = function (x, y) {
+                this.$$entries.push(_path.entries.line(x, y));
+                this.$$endX = x;
+                this.$$endY = y;
+            };
+
+            Path.prototype.quadraticBezier = function (cpx, cpy, x, y) {
+                this.$$entries.push(_path.entries.quadraticBezier(cpx, cpy, x, y));
+                this.$$endX = x;
+                this.$$endY = y;
+            };
+
+            Path.prototype.cubicBezier = function (cp1x, cp1y, cp2x, cp2y, x, y) {
+                this.$$entries.push(_path.entries.cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y));
+                this.$$endX = x;
+                this.$$endY = y;
+            };
+
+            Path.prototype.ellipticalArc = function (width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
+                this.$$entries.push(_path.entries.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
+            };
+
+            Path.prototype.arc = function (x, y, r, sAngle, eAngle, aClockwise) {
+                this.$$entries.push(_path.entries.arc(x, y, r, sAngle, eAngle, aClockwise));
+            };
+
+            Path.prototype.arcTo = function (cpx, cpy, x, y, radius) {
+                var arcto = _path.entries.arcTo(cpx, cpy, x, y, radius);
+                this.$$entries.push(arcto);
+                this.$$endX = arcto.ex;
+                this.$$endY = arcto.ey;
+            };
+
+            Path.prototype.close = function () {
+                this.$$entries.push(_path.entries.close());
+            };
+
+            Path.prototype.draw = function (ctx) {
+                ctx.beginPath();
+                var path = this.$$entries;
+                var len = path.length;
+                for (var i = 0; i < len; i++) {
+                    path[i].draw(ctx);
+                }
+            };
+
+            Path.prototype.calcBounds = function (pars) {
+                var box = pars && pars.strokeThickness > 1 ? this.$$calcStrokeBox(pars) : this.$$calcFillBox();
+                return new minerva.Rect(box.l, box.t, Math.max(0, box.r - box.l), Math.max(0, box.b - box.t));
+            };
+
+            Path.prototype.$$calcFillBox = function () {
+                var path = this.$$entries;
+                var len = path.length;
+                var box = {
+                    l: Number.POSITIVE_INFINITY,
+                    r: Number.NEGATIVE_INFINITY,
+                    t: Number.POSITIVE_INFINITY,
+                    b: Number.NEGATIVE_INFINITY
+                };
+                var curx = null;
+                var cury = null;
+                var entry;
+                for (var i = 0; i < len; i++) {
+                    entry = path[i];
+                    entry.sx = curx;
+                    entry.sy = cury;
+
+                    entry.extendFillBox(box);
+
+                    curx = entry.ex || 0;
+                    cury = entry.ey || 0;
+                }
+                return box;
+            };
+
+            Path.prototype.$$calcStrokeBox = function (pars) {
+                var box = {
+                    l: Number.POSITIVE_INFINITY,
+                    r: Number.NEGATIVE_INFINITY,
+                    t: Number.POSITIVE_INFINITY,
+                    b: Number.NEGATIVE_INFINITY
+                };
+                processStrokedBounds(box, this.$$entries, pars);
+                return box;
+            };
+
+            Path.Merge = function (path1, path2) {
+                path1.$$entries.push.apply(path1.$$entries, path2.$$entries);
+                path1.$$endX += path2.$$endX;
+                path1.$$endY += path2.$$endY;
+            };
+
+            Path.prototype.Serialize = function () {
+                var path = this.$$entries;
+                var len = path.length;
+                var s = "";
+                for (var i = 0; i < len; i++) {
+                    if (i > 0)
+                        s += " ";
+                    s += path[i].toString();
+                }
+                return s;
+            };
+            return Path;
+        })();
+        _path.Path = Path;
+        function expandStartCap(box, entry, pars) {
+            var v;
+            var hs = pars.strokeThickness / 2.0;
+            var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0;
+            switch (cap) {
+                case 2 /* Round */:
+                    box.l = Math.min(box.l, entry.sx - hs);
+                    box.r = Math.max(box.r, entry.sx + hs);
+                    box.t = Math.min(box.t, entry.sy - hs);
+                    box.b = Math.max(box.b, entry.sy + hs);
+                    break;
+                case 1 /* Square */:
+                    if (!(v = entry.getStartVector()))
+                        return;
+                    if (!v[0] || !v[1])
+                        return;
+                    var sd = minerva.Vector.reverse(minerva.Vector.normalize(v.slice(0)));
+                    var sdo = minerva.Vector.orthogonal(sd.slice(0));
+
+                    var x1 = entry.sx + hs * (sd[0] + sdo[0]);
+                    var x2 = entry.sx + hs * (sd[0] - sdo[0]);
+                    var y1 = entry.sy + hs * (sd[1] + sdo[1]);
+                    var y2 = entry.sy + hs * (sd[1] - sdo[1]);
+
+                    box.l = Math.min(box.l, x1, x2);
+                    box.r = Math.max(box.r, x1, x2);
+                    box.t = Math.min(box.t, y1, y2);
+                    box.b = Math.max(box.b, y1, y2);
+                    break;
+                case 0 /* Flat */:
+                default:
+                    if (!(v = entry.getStartVector()))
+                        return;
+                    if (!v[0] || !v[1])
+                        return;
+                    var sdo = minerva.Vector.orthogonal(minerva.Vector.normalize(v.slice(0)));
+
+                    var x1 = entry.sx + hs * sdo[0];
+                    var x2 = entry.sx + hs * -sdo[0];
+                    var y1 = entry.sy + hs * sdo[1];
+                    var y2 = entry.sy + hs * -sdo[1];
+
+                    box.l = Math.min(box.l, x1, x2);
+                    box.r = Math.max(box.r, x1, x2);
+                    box.t = Math.min(box.t, y1, y2);
+                    box.b = Math.max(box.b, y1, y2);
+                    break;
+            }
+        }
+
+        function expandEndCap(box, entry, pars) {
+            var ex = entry.ex;
+            var ey = entry.ey;
+
+            var v;
+            var hs = pars.strokeThickness / 2.0;
+            var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0;
+            switch (cap) {
+                case 2 /* Round */:
+                    box.l = Math.min(box.l, ex - hs);
+                    box.r = Math.max(box.r, ex + hs);
+                    box.t = Math.min(box.t, ey - hs);
+                    box.b = Math.max(box.b, ey + hs);
+                    break;
+                case 1 /* Square */:
+                    if (!(v = entry.getEndVector()))
+                        return;
+                    var ed = minerva.Vector.normalize(v.slice(0));
+                    var edo = minerva.Vector.orthogonal(ed.slice(0));
+
+                    var x1 = ex + hs * (ed[0] + edo[0]);
+                    var x2 = ex + hs * (ed[0] - edo[0]);
+                    var y1 = ey + hs * (ed[1] + edo[1]);
+                    var y2 = ey + hs * (ed[1] - edo[1]);
+
+                    box.l = Math.min(box.l, x1, x2);
+                    box.r = Math.max(box.r, x1, x2);
+                    box.t = Math.min(box.t, y1, y2);
+                    box.b = Math.max(box.b, y1, y2);
+                    break;
+                case 0 /* Flat */:
+                default:
+                    if (!(v = entry.getEndVector()))
+                        return;
+                    var edo = minerva.Vector.orthogonal(minerva.Vector.normalize(v.slice(0)));
+
+                    var x1 = ex + hs * edo[0];
+                    var x2 = ex + hs * -edo[0];
+                    var y1 = ey + hs * edo[1];
+                    var y2 = ey + hs * -edo[1];
+
+                    box.l = Math.min(box.l, x1, x2);
+                    box.r = Math.max(box.r, x1, x2);
+                    box.t = Math.min(box.t, y1, y2);
+                    box.b = Math.max(box.b, y1, y2);
+                    break;
+            }
+        }
+
+        function expandLineJoin(box, previous, entry, pars) {
+            var hs = pars.strokeThickness / 2.0;
+            if (pars.strokeLineJoin === 2 /* Round */) {
+                box.l = Math.min(box.l, entry.sx - hs);
+                box.r = Math.max(box.r, entry.sx + hs);
+                box.t = Math.min(box.t, entry.sy - hs);
+                box.b = Math.max(box.b, entry.sy + hs);
+            }
+            var tips = (pars.strokeLineJoin === 0 /* Miter */) ? findMiterTips(previous, entry, hs, pars.strokeMiterLimit) : findBevelTips(previous, entry, hs);
+            if (!tips)
+                return;
+            var x1 = tips[0].x;
+            var x2 = tips[1].x;
+            var y1 = tips[0].y;
+            var y2 = tips[1].y;
+            box.l = Math.min(box.l, x1, x2);
+            box.r = Math.max(box.r, x1, x2);
+            box.t = Math.min(box.t, y1, y2);
+            box.b = Math.max(box.b, y1, y2);
+        }
+
+        function processStrokedBounds(box, entries, pars) {
+            var len = entries.length;
+            var last = null;
+            var curx = null;
+            var cury = null;
+            var sx = null;
+            var sy = null;
+
+            var isLastEntryMove = false;
+
+            function processEntry(entry, i) {
+                entry.sx = curx;
+                entry.sy = cury;
+
+                if (!entry.isSingle) {
+                    if (!entry.isMove && isLastEntryMove) {
+                        sx = entry.sx;
+                        sy = entry.sy;
+                        expandStartCap(box, entry, pars);
+                    }
+                    if (!isLastEntryMove && i > 0)
+                        expandLineJoin(box, last, entry, pars);
+                }
+
+                entry.extendStrokeBox(box, pars);
+
+                curx = entry.ex || 0;
+                cury = entry.ey || 0;
+                isLastEntryMove = !!entry.isMove;
+                last = entry;
+            }
+
+            for (var i = 0; i < len; i++) {
+                processEntry(entries[i], i);
+            }
+            var end = entries[len - 1];
+            if (end && !end.isSingle)
+                expandEndCap(box, end, pars);
+        }
+
+        function findMiterTips(previous, entry, hs, miterLimit) {
+            var x = entry.sx;
+            var y = entry.sy;
+
+            var av = previous.getEndVector();
+            var bv = entry.getStartVector();
+            if (!av || !bv)
+                return null;
+            minerva.Vector.reverse(av);
+            var tau = minerva.Vector.angleBetween(av, bv) / 2;
+            if (isNaN(tau))
+                return null;
+
+            var miterRatio = 1 / Math.sin(tau);
+            if (miterRatio > miterLimit)
+                return findBevelTips(previous, entry, hs);
+
+            var cv = minerva.Vector.isClockwiseTo(av, bv) ? av.slice(0) : bv.slice(0);
+            minerva.Vector.normalize(minerva.Vector.reverse(minerva.Vector.rotate(cv, tau)));
+
+            var miterLen = hs * miterRatio;
+
+            var tip = { x: x + miterLen * cv[0], y: y + miterLen * cv[1] };
+            return [
+                tip,
+                tip
+            ];
+        }
+        _path.findMiterTips = findMiterTips;
+
+        function findBevelTips(previous, entry, hs) {
+            var x = entry.sx;
+            var y = entry.sy;
+
+            var av = previous.getEndVector();
+            var bv = entry.getStartVector();
+            if (!av || !bv)
+                return;
+            minerva.Vector.normalize(minerva.Vector.reverse(av));
+            minerva.Vector.normalize(bv);
+            var avo, bvo;
+            if (minerva.Vector.isClockwiseTo(av, bv)) {
+                avo = minerva.Vector.orthogonal(av.slice(0));
+                bvo = minerva.Vector.reverse(minerva.Vector.orthogonal(bv.slice(0)));
+            } else {
+                avo = minerva.Vector.reverse(minerva.Vector.orthogonal(av.slice(0)));
+                bvo = minerva.Vector.orthogonal(bv.slice(0));
+            }
+
+            return [
+                { x: x - hs * avo[0], y: y - hs * avo[1] },
+                { x: x - hs * bvo[0], y: y - hs * bvo[1] }
+            ];
+        }
+        _path.findBevelTips = findBevelTips;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            function arc(x, y, radius, sa, ea, cc) {
+                var inited = false;
+
+                var sx;
+                var sy;
+
+                var ex;
+                var ey;
+
+                var l;
+                var r;
+                var t;
+                var b;
+
+                var cl;
+                var cr;
+                var ct;
+                var cb;
+
+                function init() {
+                    if (inited)
+                        return;
+                    sx = x + (radius * Math.cos(sa));
+                    sy = y + (radius * Math.sin(sa));
+                    ex = x + (radius * Math.cos(ea));
+                    ey = y + (radius * Math.sin(ea));
+
+                    l = x - radius;
+                    cl = arcContainsPoint(sx, sy, ex, ey, l, y, cc);
+
+                    r = x + radius;
+                    cr = arcContainsPoint(sx, sy, ex, ey, r, y, cc);
+
+                    t = y - radius;
+                    ct = arcContainsPoint(sx, sy, ex, ey, x, t, cc);
+
+                    b = y + radius;
+                    cb = arcContainsPoint(sx, sy, ex, ey, x, b, cc);
+
+                    inited = true;
+                }
+
+                return {
+                    sx: null,
+                    sy: null,
+                    isSingle: true,
+                    x: x,
+                    y: y,
+                    ex: x,
+                    ey: y,
+                    radius: radius,
+                    sAngle: sa,
+                    eAngle: ea,
+                    aClockwise: cc,
+                    draw: function (ctx) {
+                        ctx.arc(x, y, radius, sa, ea, cc);
+                    },
+                    extendFillBox: function (box) {
+                        if (ea === sa)
+                            return;
+                        init();
+                        this.ex = ex;
+                        this.ey = ey;
+
+                        box.l = Math.min(box.l, sx, ex);
+                        box.r = Math.max(box.r, sx, ex);
+                        box.t = Math.min(box.t, sy, ey);
+                        box.b = Math.max(box.b, sy, ey);
+
+                        if (cl)
+                            box.l = Math.min(box.l, l);
+                        if (cr)
+                            box.r = Math.max(box.r, r);
+                        if (ct)
+                            box.t = Math.min(box.t, t);
+                        if (cb)
+                            box.b = Math.max(box.b, b);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        if (ea === sa)
+                            return;
+                        init();
+                        this.ex = ex;
+                        this.ey = ey;
+
+                        box.l = Math.min(box.l, sx, ex);
+                        box.r = Math.max(box.r, sx, ex);
+                        box.t = Math.min(box.t, sy, ey);
+                        box.b = Math.max(box.b, sy, ey);
+
+                        var hs = pars.strokeThickness / 2.0;
+                        if (cl)
+                            box.l = Math.min(box.l, l - hs);
+                        if (cr)
+                            box.r = Math.max(box.r, r + hs);
+                        if (ct)
+                            box.t = Math.min(box.t, t - hs);
+                        if (cb)
+                            box.b = Math.max(box.b, b + hs);
+
+                        var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0;
+                        var sv = this.getStartVector();
+                        sv[0] = -sv[0];
+                        sv[1] = -sv[1];
+                        var ss = getCapSpread(sx, sy, pars.strokeThickness, cap, sv);
+                        var ev = this.getEndVector();
+                        var es = getCapSpread(ex, ey, pars.strokeThickness, cap, ev);
+
+                        box.l = Math.min(box.l, ss.x1, ss.x2, es.x1, es.x2);
+                        box.r = Math.max(box.r, ss.x1, ss.x2, es.x1, es.x2);
+                        box.t = Math.min(box.t, ss.y1, ss.y2, es.y1, es.y2);
+                        box.b = Math.max(box.b, ss.y1, ss.y2, es.y1, es.y2);
+                    },
+                    toString: function () {
+                        return "";
+                    },
+                    getStartVector: function () {
+                        var rv = [
+                            sx - x,
+                            sy - y
+                        ];
+                        if (cc)
+                            return [rv[1], -rv[0]];
+                        return [-rv[1], rv[0]];
+                    },
+                    getEndVector: function () {
+                        var rv = [
+                            ex - x,
+                            ey - y
+                        ];
+                        if (cc)
+                            return [rv[1], -rv[0]];
+                        return [-rv[1], rv[0]];
+                    }
+                };
+            }
+            entries.arc = arc;
+
+            function arcContainsPoint(sx, sy, ex, ey, cpx, cpy, cc) {
+                var n = (ex - sx) * (cpy - sy) - (cpx - sx) * (ey - sy);
+                if (n === 0)
+                    return true;
+                if (n > 0 && cc)
+                    return true;
+                if (n < 0 && !cc)
+                    return true;
+                return false;
+            }
+
+            function getCapSpread(x, y, thickness, cap, vector) {
+                var hs = thickness / 2.0;
+                switch (cap) {
+                    case 2 /* Round */:
+                        return {
+                            x1: x - hs,
+                            x2: x + hs,
+                            y1: y - hs,
+                            y2: y + hs
+                        };
+                        break;
+                    case 1 /* Square */:
+                        var ed = normalizeVector(vector);
+                        var edo = perpendicularVector(ed);
+                        return {
+                            x1: x + hs * (ed[0] + edo[0]),
+                            x2: x + hs * (ed[0] - edo[0]),
+                            y1: y + hs * (ed[1] + edo[1]),
+                            y2: y + hs * (ed[1] - edo[1])
+                        };
+                        break;
+                    case 0 /* Flat */:
+                    default:
+                        var ed = normalizeVector(vector);
+                        var edo = perpendicularVector(ed);
+                        return {
+                            x1: x + hs * edo[0],
+                            x2: x + hs * -edo[0],
+                            y1: y + hs * edo[1],
+                            y2: y + hs * -edo[1]
+                        };
+                        break;
+                }
+            }
+
+            function normalizeVector(v) {
+                var len = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+                return [
+                    v[0] / len,
+                    v[1] / len
+                ];
+            }
+
+            function perpendicularVector(v) {
+                return [
+                    -v[1],
+                    v[0]
+                ];
+            }
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+function radToDegrees(rad) {
+    return rad * 180 / Math.PI;
+}
+
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            var EPSILON = 1e-10;
+
+            function arcTo(cpx, cpy, x, y, radius) {
+                var line;
+                var arc;
+                var inited = false;
+
+                function init(prevX, prevY) {
+                    if (inited)
+                        return;
+                    if (line && arc)
+                        return arc;
+                    var v1 = [cpx - prevX, cpy - prevY];
+                    var v2 = [x - cpx, y - cpy];
+                    var inner_theta = Math.PI - minerva.Vector.angleBetween(v1, v2);
+
+                    var a = getTangentPoint(inner_theta, radius, [prevX, prevY], v1, true);
+                    var b = getTangentPoint(inner_theta, radius, [cpx, cpy], v2, false);
+
+                    var c = getPerpendicularIntersections(a, v1, b, v2);
+
+                    var cc = !minerva.Vector.isClockwiseTo(v1, v2);
+
+                    var sa = Math.atan2(a[1] - c[1], a[0] - c[0]);
+                    if (sa < 0)
+                        sa = (2 * Math.PI) + sa;
+                    var ea = Math.atan2(b[1] - c[1], b[0] - c[0]);
+                    if (ea < 0)
+                        ea = (2 * Math.PI) + ea;
+
+                    line = entries.line(a[0], a[1]);
+                    line.sx = prevX;
+                    line.sy = prevY;
+                    arc = entries.arc(c[0], c[1], radius, sa, ea, cc);
+                    inited = true;
+                }
+
+                return {
+                    sx: null,
+                    sy: null,
+                    isSingle: false,
+                    cpx: cpx,
+                    cpy: cpy,
+                    x: x,
+                    y: y,
+                    ex: x,
+                    ey: y,
+                    radius: radius,
+                    draw: function (ctx) {
+                        ctx.arcTo(cpx, cpy, x, y, radius);
+                    },
+                    extendFillBox: function (box) {
+                        init(this.sx, this.sy);
+                        this.ex = arc.ex;
+                        this.ey = arc.ey;
+
+                        box.l = Math.min(box.l, this.sx);
+                        box.r = Math.max(box.r, this.sx);
+                        box.t = Math.min(box.t, this.sy);
+                        box.b = Math.max(box.b, this.sy);
+
+                        line.extendFillBox(box);
+                        arc.extendFillBox(box);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        init(this.sx, this.sy);
+                        this.ex = arc.ex;
+                        this.ey = arc.ey;
+
+                        var hs = pars.strokeThickness / 2;
+                        box.l = Math.min(box.l, this.sx - hs);
+                        box.r = Math.max(box.r, this.sx + hs);
+                        box.t = Math.min(box.t, this.sy - hs);
+                        box.b = Math.max(box.b, this.sy + hs);
+
+                        line.extendStrokeBox(box, pars);
+                        arc.extendStrokeBox(box, pars);
+                    },
+                    toString: function () {
+                        return "";
+                    },
+                    getStartVector: function () {
+                        init(this.sx, this.sy);
+                        return line.getStartVector();
+                    },
+                    getEndVector: function () {
+                        return arc.getEndVector();
+                    }
+                };
+            }
+            entries.arcTo = arcTo;
+
+            function getTangentPoint(theta, radius, s, d, invert) {
+                var len = Math.sqrt(d[0] * d[0] + d[1] * d[1]);
+                var f = radius / Math.tan(theta / 2);
+                var t = f / len;
+                if (invert)
+                    t = 1 - t;
+                return [s[0] + t * d[0], s[1] + t * d[1]];
+            }
+
+            function getPerpendicularIntersections(s1, d1, s2, d2) {
+                return minerva.Vector.intersection(s1, minerva.Vector.orthogonal(d1.slice(0)), s2, minerva.Vector.orthogonal(d2.slice(0)));
+            }
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            function close() {
+                return {
+                    sx: null,
+                    sy: null,
+                    ex: null,
+                    ey: null,
+                    isSingle: false,
+                    isClose: true,
+                    draw: function (ctx) {
+                        ctx.closePath();
+                    },
+                    extendFillBox: function (box) {
+                    },
+                    extendStrokeBox: function (box, pars) {
+                    },
+                    toString: function () {
+                        return "Z";
+                    },
+                    getStartVector: function () {
+                        return null;
+                    },
+                    getEndVector: function () {
+                        return null;
+                    }
+                };
+            }
+            entries.close = close;
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            function cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y) {
+                return {
+                    sx: null,
+                    sy: null,
+                    ex: x,
+                    ey: y,
+                    isSingle: false,
+                    cp1x: cp1x,
+                    cp1y: cp1y,
+                    cp2x: cp2x,
+                    cp2y: cp2y,
+                    x: x,
+                    y: y,
+                    draw: function (ctx) {
+                        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
+                    },
+                    extendFillBox: function (box) {
+                        var m = getMaxima(this.sx, cp1x, cp2x, x, this.sy, cp1y, cp2y, y);
+                        if (m.x[0] != null) {
+                            box.l = Math.min(box.l, m.x[0]);
+                            box.r = Math.max(box.r, m.x[0]);
+                        }
+                        if (m.x[1] != null) {
+                            box.l = Math.min(box.l, m.x[1]);
+                            box.r = Math.max(box.r, m.x[1]);
+                        }
+                        if (m.y[0] != null) {
+                            box.t = Math.min(box.t, m.y[0]);
+                            box.b = Math.max(box.b, m.y[0]);
+                        }
+                        if (m.y[1] != null) {
+                            box.t = Math.min(box.t, m.y[1]);
+                            box.b = Math.max(box.b, m.y[1]);
+                        }
+
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        var hs = pars.strokeThickness / 2.0;
+
+                        var m = getMaxima(this.sx, cp1x, cp2x, x, this.sy, cp1y, cp2y, y);
+                        if (m.x[0] != null) {
+                            box.l = Math.min(box.l, m.x[0] - hs);
+                            box.r = Math.max(box.r, m.x[0] + hs);
+                        }
+                        if (m.x[1] != null) {
+                            box.l = Math.min(box.l, m.x[1] - hs);
+                            box.r = Math.max(box.r, m.x[1] + hs);
+                        }
+                        if (m.y[0] != null) {
+                            box.t = Math.min(box.t, m.y[0] - hs);
+                            box.b = Math.max(box.b, m.y[0] + hs);
+                        }
+                        if (m.y[1] != null) {
+                            box.t = Math.min(box.t, m.y[1] - hs);
+                            box.b = Math.max(box.b, m.y[1] + hs);
+                        }
+
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y);
+                    },
+                    toString: function () {
+                        return "C" + cp1x.toString() + "," + cp1y.toString() + " " + cp2x.toString() + "," + cp2y.toString() + " " + x.toString() + "," + y.toString();
+                    },
+                    getStartVector: function () {
+                        return [
+                            3 * (cp1x - this.sx),
+                            3 * (cp1y - this.sy)
+                        ];
+                    },
+                    getEndVector: function () {
+                        return [
+                            3 * (x - cp2x),
+                            3 * (y - cp2y)
+                        ];
+                    }
+                };
+            }
+            entries.cubicBezier = cubicBezier;
+
+            
+            function getMaxima(x1, x2, x3, x4, y1, y2, y3, y4) {
+                return {
+                    x: cod(x1, x2, x3, x4),
+                    y: cod(y1, y2, y3, y4)
+                };
+            }
+
+            function cod(a, b, c, d) {
+                var u = 2 * a - 4 * b + 2 * c;
+                var v = b - a;
+                var w = -a + 3 * b + d - 3 * c;
+                var rt = Math.sqrt(u * u - 4 * v * w);
+
+                var cods = [null, null];
+                if (isNaN(rt))
+                    return cods;
+
+                var t, ot;
+
+                t = (-u + rt) / (2 * w);
+                if (t >= 0 && t <= 1) {
+                    ot = 1 - t;
+                    cods[0] = (a * ot * ot * ot) + (3 * b * t * ot * ot) + (3 * c * ot * t * t) + (d * t * t * t);
+                }
+
+                t = (-u - rt) / (2 * w);
+                if (t >= 0 && t <= 1) {
+                    ot = 1 - t;
+                    cods[1] = (a * ot * ot * ot) + (3 * b * t * ot * ot) + (3 * c * ot * t * t) + (d * t * t * t);
+                }
+
+                return cods;
+            }
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            function ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
+                return {
+                    sx: null,
+                    sy: null,
+                    isSingle: false,
+                    width: width,
+                    height: height,
+                    rotationAngle: rotationAngle,
+                    isLargeArcFlag: isLargeArcFlag,
+                    sweepDirectionFlag: sweepDirectionFlag,
+                    ex: ex,
+                    ey: ey,
+                    draw: function (ctx) {
+                        console.warn("[NOT IMPLEMENTED] Draw Elliptical Arc");
+                    },
+                    extendFillBox: function (box) {
+                        console.warn("[NOT IMPLEMENTED] Measure Elliptical Arc");
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        console.warn("[NOT IMPLEMENTED] Measure Elliptical Arc (with stroke)");
+                    },
+                    toString: function () {
+                        return "A" + width.toString() + "," + height.toString() + " " + rotationAngle.toString() + " " + isLargeArcFlag.toString() + " " + sweepDirectionFlag.toString() + " " + ex.toString() + "," + ey.toString();
+                    },
+                    getStartVector: function () {
+                        return null;
+                    },
+                    getEndVector: function () {
+                        return null;
+                    }
+                };
+            }
+            entries.ellipticalArc = ellipticalArc;
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            function line(x, y) {
+                return {
+                    isSingle: false,
+                    sx: null,
+                    sy: null,
+                    x: x,
+                    y: y,
+                    ex: x,
+                    ey: y,
+                    draw: function (ctx) {
+                        ctx.lineTo(x, y);
+                    },
+                    extendFillBox: function (box) {
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        this.extendFillBox(box);
+                    },
+                    toString: function () {
+                        return "L" + x.toString() + "," + y.toString();
+                    },
+                    getStartVector: function () {
+                        return [
+                            x - this.sx,
+                            y - this.sy
+                        ];
+                    },
+                    getEndVector: function () {
+                        return [
+                            x - this.sx,
+                            y - this.sy
+                        ];
+                    }
+                };
+            }
+            entries.line = line;
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            function move(x, y) {
+                return {
+                    sx: null,
+                    sy: null,
+                    ex: x,
+                    ey: y,
+                    isSingle: false,
+                    isMove: true,
+                    x: x,
+                    y: y,
+                    draw: function (ctx) {
+                        ctx.moveTo(x, y);
+                    },
+                    extendFillBox: function (box) {
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        this.extendFillBox(box);
+                    },
+                    toString: function () {
+                        return "M" + x.toString() + "," + y.toString();
+                    },
+                    getStartVector: function () {
+                        return null;
+                    },
+                    getEndVector: function () {
+                        return null;
+                    }
+                };
+            }
+            entries.move = move;
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (entries) {
+            function quadraticBezier(cpx, cpy, x, y) {
+                return {
+                    sx: null,
+                    sy: null,
+                    ex: x,
+                    ey: y,
+                    isSingle: false,
+                    cpx: cpx,
+                    cpy: cpy,
+                    x: x,
+                    y: y,
+                    draw: function (ctx) {
+                        ctx.quadraticCurveTo(cpx, cpy, x, y);
+                    },
+                    extendFillBox: function (box) {
+                        var m = getMaxima(this.sx, cpx, x, this.sy, cpy, y);
+                        if (m.x != null) {
+                            box.l = Math.min(box.l, m.x);
+                            box.r = Math.max(box.r, m.x);
+                        }
+                        if (m.y != null) {
+                            box.t = Math.min(box.t, m.y);
+                            box.b = Math.max(box.b, m.y);
+                        }
+
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        var hs = pars.strokeThickness / 2.0;
+
+                        var m = getMaxima(this.sx, cpx, x, this.sy, cpy, y);
+                        if (m.x) {
+                            box.l = Math.min(box.l, m.x - hs);
+                            box.r = Math.max(box.r, m.x + hs);
+                        }
+                        if (m.y) {
+                            box.t = Math.min(box.t, m.y - hs);
+                            box.b = Math.max(box.b, m.y + hs);
+                        }
+
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y);
+                    },
+                    toString: function () {
+                        return "Q" + cpx.toString() + "," + cpy.toString() + " " + x.toString() + "," + y.toString();
+                    },
+                    getStartVector: function () {
+                        return [
+                            2 * (cpx - this.sx),
+                            2 * (cpy - this.sy)
+                        ];
+                    },
+                    getEndVector: function () {
+                        return [
+                            2 * (x - cpx),
+                            2 * (y - cpy)
+                        ];
+                    }
+                };
+            }
+            entries.quadraticBezier = quadraticBezier;
+
+            
+            function getMaxima(x1, x2, x3, y1, y2, y3) {
+                return {
+                    x: cod(x1, x2, x3),
+                    y: cod(y1, y2, y3)
+                };
+            }
+
+            function cod(a, b, c) {
+                var t = (a - b) / (a - 2 * b + c);
+                if (t < 0 || t > 1)
+                    return null;
+                return (a * Math.pow(1 - t, 2)) + (2 * b * (1 - t) * t) + (c * Math.pow(t, 2));
+            }
+        })(path.entries || (path.entries = {}));
+        var entries = path.entries;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (shapes) {
         (function (shape) {
             var ShapeUpdater = (function (_super) {
@@ -9626,6 +10770,29 @@ var minerva;
             var render = ellipse.render;
         })(shapes.ellipse || (shapes.ellipse = {}));
         var ellipse = shapes.ellipse;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (path) {
+            var PathUpdater = (function (_super) {
+                __extends(PathUpdater, _super);
+                function PathUpdater() {
+                    _super.apply(this, arguments);
+                }
+                PathUpdater.prototype.init = function () {
+                    var assets = this.assets;
+                    assets.path = new minerva.path.Path();
+
+                    _super.prototype.init.call(this);
+                };
+                return PathUpdater;
+            })(shapes.shape.ShapeUpdater);
+            path.PathUpdater = PathUpdater;
+        })(shapes.path || (shapes.path = {}));
+        var path = shapes.path;
     })(minerva.shapes || (minerva.shapes = {}));
     var shapes = minerva.shapes;
 })(minerva || (minerva = {}));

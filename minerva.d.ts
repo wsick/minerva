@@ -98,6 +98,10 @@ declare module minerva {
         Black = 900,
         ExtraBlack = 950,
     }
+    enum SweepDirection {
+        Counterclockwise = 0,
+        Clockwise = 1,
+    }
 }
 declare module minerva {
     enum DirtyFlags {
@@ -314,6 +318,16 @@ declare module minerva {
         static growRect(thickness: Thickness, dest: Rect): void;
         static growCornerRadius(thickness: Thickness, dest: ICornerRadius): void;
     }
+}
+declare module minerva.Vector {
+    function create(x: number, y: number): number[];
+    function reverse(v: number[]): number[];
+    function orthogonal(v: number[]): number[];
+    function normalize(v: number[]): number[];
+    function rotate(v: number[], theta: number): number[];
+    function angleBetween(u: number[], v: number[]): number;
+    function isClockwiseTo(v1: number[], v2: number[]): boolean;
+    function intersection(s1: number[], d1: number[], s2: number[], d2: number[]): number[];
 }
 declare module minerva {
     enum Visibility {
@@ -2139,6 +2153,140 @@ declare module minerva.engine {
 declare module minerva.engine {
     function process(down: core.Updater[], up: core.Updater[]): boolean;
 }
+declare module minerva.path {
+    interface IBoundingBox {
+        l: number;
+        r: number;
+        t: number;
+        b: number;
+    }
+    interface IStrokeParameters {
+        strokeThickness: number;
+        strokeDashArray: number[];
+        strokeDashCap: PenLineCap;
+        strokeDashOffset: number;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+        strokeStartLineCap: PenLineCap;
+    }
+    interface IPathEntry {
+        sx: number;
+        sy: number;
+        ex: number;
+        ey: number;
+        isSingle: boolean;
+        draw: (canvasCtx: CanvasRenderingContext2D) => void;
+        extendFillBox: (box: IBoundingBox) => void;
+        extendStrokeBox: (box: IBoundingBox, pars: IStrokeParameters) => void;
+        getStartVector(): number[];
+        getEndVector(): number[];
+    }
+}
+declare module minerva.path {
+    class Path {
+        private $$entries;
+        private $$endX;
+        private $$endY;
+        public move(x: number, y: number): void;
+        public line(x: number, y: number): void;
+        public quadraticBezier(cpx: number, cpy: number, x: number, y: number): void;
+        public cubicBezier(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
+        public ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): void;
+        public arc(x: number, y: number, r: number, sAngle: number, eAngle: number, aClockwise: boolean): void;
+        public arcTo(cpx: number, cpy: number, x: number, y: number, radius: number): void;
+        public close(): void;
+        public draw(ctx: CanvasRenderingContext2D): void;
+        public calcBounds(pars?: IStrokeParameters): Rect;
+        private $$calcFillBox();
+        private $$calcStrokeBox(pars);
+        static Merge(path1: Path, path2: Path): void;
+        public Serialize(): string;
+    }
+    function findMiterTips(previous: IPathEntry, entry: IPathEntry, hs: number, miterLimit: number): {
+        x: number;
+        y: number;
+    }[];
+    function findBevelTips(previous: IPathEntry, entry: IPathEntry, hs: number): {
+        x: number;
+        y: number;
+    }[];
+}
+declare module minerva.path.entries {
+    interface IArc extends IPathEntry {
+        x: number;
+        y: number;
+        radius: number;
+        sAngle: number;
+        eAngle: number;
+        aClockwise: boolean;
+    }
+    function arc(x: number, y: number, radius: number, sa: number, ea: number, cc: boolean): IArc;
+}
+declare function radToDegrees(rad: any): number;
+declare module minerva.path.entries {
+    interface IArcTo extends IPathEntry {
+        cpx: number;
+        cpy: number;
+        x: number;
+        y: number;
+        radius: number;
+    }
+    function arcTo(cpx: number, cpy: number, x: number, y: number, radius: number): IArcTo;
+}
+declare module minerva.path.entries {
+    interface IClose extends IPathEntry {
+        isClose: boolean;
+    }
+    function close(): IClose;
+}
+declare module minerva.path.entries {
+    interface ICubicBezier extends IPathEntry {
+        cp1x: number;
+        cp1y: number;
+        cp2x: number;
+        cp2y: number;
+        x: number;
+        y: number;
+    }
+    function cubicBezier(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): ICubicBezier;
+}
+declare module minerva.path.entries {
+    interface IEllipticalArc extends IPathEntry {
+        width: number;
+        height: number;
+        rotationAngle: number;
+        isLargeArcFlag: boolean;
+        sweepDirectionFlag: SweepDirection;
+        ex: number;
+        ey: number;
+    }
+    function ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): IEllipticalArc;
+}
+declare module minerva.path.entries {
+    interface ILine extends IPathEntry {
+        x: number;
+        y: number;
+    }
+    function line(x: number, y: number): ILine;
+}
+declare module minerva.path.entries {
+    interface IMove extends IPathEntry {
+        x: number;
+        y: number;
+        isMove: boolean;
+    }
+    function move(x: number, y: number): IMove;
+}
+declare module minerva.path.entries {
+    interface IQuadraticBezier extends IPathEntry {
+        cpx: number;
+        cpy: number;
+        x: number;
+        y: number;
+    }
+    function quadraticBezier(cpx: number, cpy: number, x: number, y: number): IQuadraticBezier;
+}
 declare module minerva.shapes.shape {
     interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processup.IInput, render.IInput {
     }
@@ -2214,6 +2362,15 @@ declare module minerva.shapes.ellipse.render {
     }
     module tapins {
         function doRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+    }
+}
+declare module minerva.shapes.path {
+    interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets {
+        path: minerva.path.Path;
+    }
+    class PathUpdater extends shape.ShapeUpdater {
+        public assets: IPathUpdaterAssets;
+        public init(): void;
     }
 }
 declare module minerva.shapes.rectangle {
