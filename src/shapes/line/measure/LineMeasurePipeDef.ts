@@ -12,7 +12,7 @@ module minerva.shapes.line.measure {
     export interface IOutput extends path.measure.IOutput {
     }
 
-    export class LineMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+    export class LineMeasurePipeDef extends path.measure.PathMeasurePipeDef {
         constructor () {
             super();
             this.replaceTapin('buildPath', tapins.buildPath);

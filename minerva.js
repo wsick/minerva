@@ -11013,7 +11013,6 @@ var minerva;
                     this.setMeasurePipe(minerva.singleton(path.measure.PathMeasurePipeDef)).setRenderPipe(minerva.singleton(path.render.PathRenderPipeDef));
 
                     var assets = this.assets;
-                    assets.data = null;
                     assets.stretch = 0 /* None */;
 
                     _super.prototype.init.call(this);
@@ -11191,7 +11190,7 @@ var minerva;
                         this.replaceTapin('buildPath', tapins.buildPath);
                     }
                     return LineMeasurePipeDef;
-                })(shapes.shape.measure.ShapeMeasurePipeDef);
+                })(shapes.path.measure.PathMeasurePipeDef);
                 measure.LineMeasurePipeDef = LineMeasurePipeDef;
 
                 (function (tapins) {

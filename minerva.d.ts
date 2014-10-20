@@ -2458,7 +2458,7 @@ declare module minerva.shapes.line.measure {
     }
     interface IOutput extends path.measure.IOutput {
     }
-    class LineMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+    class LineMeasurePipeDef extends path.measure.PathMeasurePipeDef {
         constructor();
     }
     module tapins {

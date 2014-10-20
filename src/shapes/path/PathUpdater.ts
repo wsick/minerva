@@ -10,7 +10,6 @@ module minerva.shapes.path {
                 .setRenderPipe(singleton(render.PathRenderPipeDef));
 
             var assets = this.assets;
-            assets.data = null;
             assets.stretch = Stretch.None;
 
             super.init();
