@@ -2197,6 +2197,8 @@ declare module minerva.path {
         public ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): void;
         public arc(x: number, y: number, r: number, sAngle: number, eAngle: number, aClockwise: boolean): void;
         public arcTo(cpx: number, cpy: number, x: number, y: number, radius: number): void;
+        public rect(x: number, y: number, width: number, height: number): void;
+        public roundedRect(x: number, y: number, width: number, height: number, radiusX: number, radiusY: number): void;
         public close(): void;
         public draw(ctx: CanvasRenderingContext2D): void;
         public calcBounds(pars?: IStrokeParameters): Rect;
@@ -2288,6 +2290,18 @@ declare module minerva.path.segments {
         y: number;
     }
     function quadraticBezier(cpx: number, cpy: number, x: number, y: number): IQuadraticBezier;
+}
+declare module minerva.path.segments {
+    interface IRect extends IPathSegment {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    }
+    function rect(x: number, y: number, width: number, height: number): IRect;
+}
+declare module minerva.path.segments {
+    function roundedRect(x: number, y: number, width: number, height: number, radiusX: number, radiusY: number): IRect;
 }
 declare module minerva.shapes.shape {
     interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processup.IInput, render.IInput {

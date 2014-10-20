@@ -5,53 +5,68 @@ module minerva.path {
         private $$endX = 0.0;
         private $$endY = 0.0;
 
-        get endX(): number { return this.$$endX; }
-        get endY(): number { return this.$$endY; }
+        get endX (): number {
+            return this.$$endX;
+        }
 
-        move(x: number, y: number) {
+        get endY (): number {
+            return this.$$endY;
+        }
+
+        move (x: number, y: number) {
             this.$$entries.push(segments.move(x, y));
             this.$$endX = x;
             this.$$endY = y;
         }
 
-        line(x: number, y: number) {
+        line (x: number, y: number) {
             this.$$entries.push(segments.line(x, y));
             this.$$endX = x;
             this.$$endY = y;
         }
 
-        quadraticBezier(cpx: number, cpy: number, x: number, y: number) {
+        quadraticBezier (cpx: number, cpy: number, x: number, y: number) {
             this.$$entries.push(segments.quadraticBezier(cpx, cpy, x, y));
             this.$$endX = x;
             this.$$endY = y;
         }
 
-        cubicBezier(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number) {
+        cubicBezier (cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number) {
             this.$$entries.push(segments.cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y));
             this.$$endX = x;
             this.$$endY = y;
         }
 
-        ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number) {
+        ellipticalArc (width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number) {
             this.$$entries.push(segments.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
         }
 
-        arc(x: number, y: number, r: number, sAngle: number, eAngle: number, aClockwise: boolean) {
+        arc (x: number, y: number, r: number, sAngle: number, eAngle: number, aClockwise: boolean) {
             this.$$entries.push(segments.arc(x, y, r, sAngle, eAngle, aClockwise));
         }
 
-        arcTo(cpx: number, cpy: number, x: number, y: number, radius: number) {
+        arcTo (cpx: number, cpy: number, x: number, y: number, radius: number) {
             var arcto = segments.arcTo(cpx, cpy, x, y, radius);
             this.$$entries.push(arcto);
             this.$$endX = arcto.ex;
             this.$$endY = arcto.ey;
         }
 
-        close() {
+        rect (x: number, y: number, width: number, height: number) {
+            this.$$entries.push(segments.rect(x, y, width, height));
+        }
+
+        roundedRect (x: number, y: number, width: number, height: number, radiusX: number, radiusY: number) {
+            this.$$entries.push(segments.roundedRect(x, y, width, height, radiusX, radiusY));
+            this.$$endX = x;
+            this.$$endY = y;
+        }
+
+        close () {
             this.$$entries.push(segments.close());
         }
 
-        draw(ctx: CanvasRenderingContext2D) {
+        draw (ctx: CanvasRenderingContext2D) {
             ctx.beginPath();
             var path = this.$$entries;
             var len = path.length;
@@ -60,12 +75,12 @@ module minerva.path {
             }
         }
 
-        calcBounds(pars?: IStrokeParameters): Rect {
+        calcBounds (pars?: IStrokeParameters): Rect {
             var box = pars && pars.strokeThickness > 1 ? this.$$calcStrokeBox(pars) : this.$$calcFillBox();
             return new minerva.Rect(box.l, box.t, Math.max(0, box.r - box.l), Math.max(0, box.b - box.t));
         }
 
-        private $$calcFillBox(): IBoundingBox {
+        private $$calcFillBox (): IBoundingBox {
             var path = this.$$entries;
             var len = path.length;
             var box: IBoundingBox = {
@@ -90,7 +105,7 @@ module minerva.path {
             return box;
         }
 
-        private $$calcStrokeBox(pars: IStrokeParameters): IBoundingBox {
+        private $$calcStrokeBox (pars: IStrokeParameters): IBoundingBox {
             var box: IBoundingBox = {
                 l: Number.POSITIVE_INFINITY,
                 r: Number.NEGATIVE_INFINITY,
@@ -101,13 +116,13 @@ module minerva.path {
             return box;
         }
 
-        static Merge(path1: Path, path2: Path) {
+        static Merge (path1: Path, path2: Path) {
             path1.$$entries.push.apply(path1.$$entries, path2.$$entries);
             path1.$$endX += path2.$$endX;
             path1.$$endY += path2.$$endY;
         }
 
-        Serialize(): string {
+        Serialize (): string {
             var path = this.$$entries;
             var len = path.length;
             var s = "";
@@ -118,7 +133,7 @@ module minerva.path {
             return s;
         }
     }
-    function expandStartCap(box: IBoundingBox, entry: IPathSegment, pars: IStrokeParameters) {
+    function expandStartCap (box: IBoundingBox, entry: IPathSegment, pars: IStrokeParameters) {
         var v: number[];
         var hs = pars.strokeThickness / 2.0;
         var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0; //HTML5 doesn't support start and end cap
@@ -164,7 +179,7 @@ module minerva.path {
         }
     }
 
-    function expandEndCap(box: IBoundingBox, entry: IPathSegment, pars: IStrokeParameters) {
+    function expandEndCap (box: IBoundingBox, entry: IPathSegment, pars: IStrokeParameters) {
         var ex = entry.ex;
         var ey = entry.ey;
 
@@ -211,7 +226,7 @@ module minerva.path {
         }
     }
 
-    function expandLineJoin(box: IBoundingBox, previous: IPathSegment, entry: IPathSegment, pars: IStrokeParameters) {
+    function expandLineJoin (box: IBoundingBox, previous: IPathSegment, entry: IPathSegment, pars: IStrokeParameters) {
         var hs = pars.strokeThickness / 2.0;
         if (pars.strokeLineJoin === PenLineJoin.Round) {
             box.l = Math.min(box.l, entry.sx - hs);
@@ -232,7 +247,7 @@ module minerva.path {
         box.b = Math.max(box.b, y1, y2);
     }
 
-    function processStrokedBounds(box: IBoundingBox, segs: IPathSegment[], pars: IStrokeParameters) {
+    function processStrokedBounds (box: IBoundingBox, segs: IPathSegment[], pars: IStrokeParameters) {
         var len = segs.length;
         var last: IPathSegment = null;
         var curx: number = null;
@@ -242,7 +257,7 @@ module minerva.path {
 
         var isLastEntryMove = false;
 
-        function processEntry(entry: IPathSegment, i: number) {
+        function processEntry (entry: IPathSegment, i: number) {
             entry.sx = curx;
             entry.sy = cury;
 
@@ -272,7 +287,7 @@ module minerva.path {
             expandEndCap(box, end, pars);
     }
 
-    export function findMiterTips(previous: IPathSegment, entry: IPathSegment, hs: number, miterLimit: number) {
+    export function findMiterTips (previous: IPathSegment, entry: IPathSegment, hs: number, miterLimit: number) {
         var x = entry.sx;
         var y = entry.sy;
 
@@ -303,7 +318,7 @@ module minerva.path {
         ];
     }
 
-    export function findBevelTips(previous: IPathSegment, entry: IPathSegment, hs: number) {
+    export function findBevelTips (previous: IPathSegment, entry: IPathSegment, hs: number) {
         var x = entry.sx;
         var y = entry.sy;
 

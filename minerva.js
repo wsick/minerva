@@ -9512,6 +9512,7 @@ var minerva;
                 enumerable: true,
                 configurable: true
             });
+
             Object.defineProperty(Path.prototype, "endY", {
                 get: function () {
                     return this.$$endY;
@@ -9557,6 +9558,16 @@ var minerva;
                 this.$$entries.push(arcto);
                 this.$$endX = arcto.ex;
                 this.$$endY = arcto.ey;
+            };
+
+            Path.prototype.rect = function (x, y, width, height) {
+                this.$$entries.push(_path.segments.rect(x, y, width, height));
+            };
+
+            Path.prototype.roundedRect = function (x, y, width, height, radiusX, radiusY) {
+                this.$$entries.push(_path.segments.roundedRect(x, y, width, height, radiusX, radiusY));
+                this.$$endX = x;
+                this.$$endY = y;
             };
 
             Path.prototype.close = function () {
@@ -10557,6 +10568,124 @@ var minerva;
                     return null;
                 return (a * Math.pow(1 - t, 2)) + (2 * b * (1 - t) * t) + (c * Math.pow(t, 2));
             }
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (segments) {
+            function rect(x, y, width, height) {
+                return {
+                    sx: null,
+                    sy: null,
+                    isSingle: true,
+                    x: x,
+                    y: y,
+                    ex: x,
+                    ey: y,
+                    width: width,
+                    height: height,
+                    draw: function (ctx) {
+                        ctx.rect(x, y, width, height);
+                    },
+                    extendFillBox: function (box) {
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x + width);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y + height);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        var hs = pars.strokeThickness / 2.0;
+                        box.l = Math.min(box.l, x - hs);
+                        box.r = Math.max(box.r, x + width + hs);
+                        box.t = Math.min(box.t, y - hs);
+                        box.b = Math.max(box.b, y + height + hs);
+                    },
+                    getStartVector: function () {
+                        return null;
+                    },
+                    getEndVector: function () {
+                        return null;
+                    }
+                };
+            }
+            segments.rect = rect;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (segments) {
+            function roundedRect(x, y, width, height, radiusX, radiusY) {
+                if (radiusX === 0.0 && radiusY === 0.0)
+                    return segments.rect(x, y, width, height);
+
+                var left = x;
+                var top = y;
+                var right = x + width;
+                var bottom = y + height;
+
+                return {
+                    sx: null,
+                    sy: null,
+                    ex: x,
+                    ey: y,
+                    isSingle: true,
+                    x: x,
+                    y: y,
+                    width: width,
+                    height: height,
+                    radiusX: radiusX,
+                    radiusY: radiusY,
+                    draw: function (ctx) {
+                        ctx.beginPath();
+                        ctx.moveTo(left + radiusX, top);
+
+                        ctx.lineTo(right - radiusX, top);
+
+                        ctx.quadraticCurveTo(right, top, right, top + radiusY);
+
+                        ctx.lineTo(right, bottom - radiusY);
+
+                        ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
+
+                        ctx.lineTo(left + radiusX, bottom);
+
+                        ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
+
+                        ctx.lineTo(left, top + radiusY);
+
+                        ctx.quadraticCurveTo(left, top, left + radiusX, top);
+                        ctx.closePath();
+                    },
+                    extendFillBox: function (box) {
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x + width);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y + height);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        var hs = pars.strokeThickness / 2.0;
+                        box.l = Math.min(box.l, x - hs);
+                        box.r = Math.max(box.r, x + width + hs);
+                        box.t = Math.min(box.t, y - hs);
+                        box.b = Math.max(box.b, y + height + hs);
+                    },
+                    getStartVector: function () {
+                        return null;
+                    },
+                    getEndVector: function () {
+                        return null;
+                    }
+                };
+            }
+            segments.roundedRect = roundedRect;
         })(path.segments || (path.segments = {}));
         var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
