@@ -1,5 +1,5 @@
-module minerva.path.entries {
-    export interface IQuadraticBezier extends IPathEntry {
+module minerva.path.segments {
+    export interface IQuadraticBezier extends IPathSegment {
         cpx: number;
         cpy: number;
         x: number;

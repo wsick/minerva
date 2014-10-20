@@ -2170,7 +2170,7 @@ declare module minerva.path {
         strokeMiterLimit: number;
         strokeStartLineCap: PenLineCap;
     }
-    interface IPathEntry {
+    interface IPathSegment {
         sx: number;
         sy: number;
         ex: number;
@@ -2188,6 +2188,8 @@ declare module minerva.path {
         private $$entries;
         private $$endX;
         private $$endY;
+        public endX : number;
+        public endY : number;
         public move(x: number, y: number): void;
         public line(x: number, y: number): void;
         public quadraticBezier(cpx: number, cpy: number, x: number, y: number): void;
@@ -2203,17 +2205,17 @@ declare module minerva.path {
         static Merge(path1: Path, path2: Path): void;
         public Serialize(): string;
     }
-    function findMiterTips(previous: IPathEntry, entry: IPathEntry, hs: number, miterLimit: number): {
+    function findMiterTips(previous: IPathSegment, entry: IPathSegment, hs: number, miterLimit: number): {
         x: number;
         y: number;
     }[];
-    function findBevelTips(previous: IPathEntry, entry: IPathEntry, hs: number): {
+    function findBevelTips(previous: IPathSegment, entry: IPathSegment, hs: number): {
         x: number;
         y: number;
     }[];
 }
-declare module minerva.path.entries {
-    interface IArc extends IPathEntry {
+declare module minerva.path.segments {
+    interface IArc extends IPathSegment {
         x: number;
         y: number;
         radius: number;
@@ -2224,8 +2226,8 @@ declare module minerva.path.entries {
     function arc(x: number, y: number, radius: number, sa: number, ea: number, cc: boolean): IArc;
 }
 declare function radToDegrees(rad: any): number;
-declare module minerva.path.entries {
-    interface IArcTo extends IPathEntry {
+declare module minerva.path.segments {
+    interface IArcTo extends IPathSegment {
         cpx: number;
         cpy: number;
         x: number;
@@ -2234,14 +2236,14 @@ declare module minerva.path.entries {
     }
     function arcTo(cpx: number, cpy: number, x: number, y: number, radius: number): IArcTo;
 }
-declare module minerva.path.entries {
-    interface IClose extends IPathEntry {
+declare module minerva.path.segments {
+    interface IClose extends IPathSegment {
         isClose: boolean;
     }
     function close(): IClose;
 }
-declare module minerva.path.entries {
-    interface ICubicBezier extends IPathEntry {
+declare module minerva.path.segments {
+    interface ICubicBezier extends IPathSegment {
         cp1x: number;
         cp1y: number;
         cp2x: number;
@@ -2251,8 +2253,8 @@ declare module minerva.path.entries {
     }
     function cubicBezier(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): ICubicBezier;
 }
-declare module minerva.path.entries {
-    interface IEllipticalArc extends IPathEntry {
+declare module minerva.path.segments {
+    interface IEllipticalArc extends IPathSegment {
         width: number;
         height: number;
         rotationAngle: number;
@@ -2263,23 +2265,23 @@ declare module minerva.path.entries {
     }
     function ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): IEllipticalArc;
 }
-declare module minerva.path.entries {
-    interface ILine extends IPathEntry {
+declare module minerva.path.segments {
+    interface ILine extends IPathSegment {
         x: number;
         y: number;
     }
     function line(x: number, y: number): ILine;
 }
-declare module minerva.path.entries {
-    interface IMove extends IPathEntry {
+declare module minerva.path.segments {
+    interface IMove extends IPathSegment {
         x: number;
         y: number;
         isMove: boolean;
     }
     function move(x: number, y: number): IMove;
 }
-declare module minerva.path.entries {
-    interface IQuadraticBezier extends IPathEntry {
+declare module minerva.path.segments {
+    interface IQuadraticBezier extends IPathSegment {
         cpx: number;
         cpy: number;
         x: number;

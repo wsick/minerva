@@ -15,7 +15,7 @@ module minerva.path {
         strokeMiterLimit: number;
         strokeStartLineCap: PenLineCap;
     }
-    export interface IPathEntry {
+    export interface IPathSegment {
         sx: number;
         sy: number;
         ex: number;

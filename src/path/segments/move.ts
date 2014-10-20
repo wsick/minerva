@@ -1,5 +1,5 @@
-module minerva.path.entries {
-    export interface IMove extends IPathEntry {
+module minerva.path.segments {
+    export interface IMove extends IPathSegment {
         x: number;
         y: number;
         isMove: boolean;

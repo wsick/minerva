@@ -9505,47 +9505,62 @@ var minerva;
                 this.$$endX = 0.0;
                 this.$$endY = 0.0;
             }
+            Object.defineProperty(Path.prototype, "endX", {
+                get: function () {
+                    return this.$$endX;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(Path.prototype, "endY", {
+                get: function () {
+                    return this.$$endY;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
             Path.prototype.move = function (x, y) {
-                this.$$entries.push(_path.entries.move(x, y));
+                this.$$entries.push(_path.segments.move(x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
 
             Path.prototype.line = function (x, y) {
-                this.$$entries.push(_path.entries.line(x, y));
+                this.$$entries.push(_path.segments.line(x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
 
             Path.prototype.quadraticBezier = function (cpx, cpy, x, y) {
-                this.$$entries.push(_path.entries.quadraticBezier(cpx, cpy, x, y));
+                this.$$entries.push(_path.segments.quadraticBezier(cpx, cpy, x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
 
             Path.prototype.cubicBezier = function (cp1x, cp1y, cp2x, cp2y, x, y) {
-                this.$$entries.push(_path.entries.cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y));
+                this.$$entries.push(_path.segments.cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
 
             Path.prototype.ellipticalArc = function (width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
-                this.$$entries.push(_path.entries.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
+                this.$$entries.push(_path.segments.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
             };
 
             Path.prototype.arc = function (x, y, r, sAngle, eAngle, aClockwise) {
-                this.$$entries.push(_path.entries.arc(x, y, r, sAngle, eAngle, aClockwise));
+                this.$$entries.push(_path.segments.arc(x, y, r, sAngle, eAngle, aClockwise));
             };
 
             Path.prototype.arcTo = function (cpx, cpy, x, y, radius) {
-                var arcto = _path.entries.arcTo(cpx, cpy, x, y, radius);
+                var arcto = _path.segments.arcTo(cpx, cpy, x, y, radius);
                 this.$$entries.push(arcto);
                 this.$$endX = arcto.ex;
                 this.$$endY = arcto.ey;
             };
 
             Path.prototype.close = function () {
-                this.$$entries.push(_path.entries.close());
+                this.$$entries.push(_path.segments.close());
             };
 
             Path.prototype.draw = function (ctx) {
@@ -9738,8 +9753,8 @@ var minerva;
             box.b = Math.max(box.b, y1, y2);
         }
 
-        function processStrokedBounds(box, entries, pars) {
-            var len = entries.length;
+        function processStrokedBounds(box, segs, pars) {
+            var len = segs.length;
             var last = null;
             var curx = null;
             var cury = null;
@@ -9771,9 +9786,9 @@ var minerva;
             }
 
             for (var i = 0; i < len; i++) {
-                processEntry(entries[i], i);
+                processEntry(segs[i], i);
             }
-            var end = entries[len - 1];
+            var end = segs[len - 1];
             if (end && !end.isSingle)
                 expandEndCap(box, end, pars);
         }
@@ -9839,7 +9854,7 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             function arc(x, y, radius, sa, ea, cc) {
                 var inited = false;
 
@@ -9976,7 +9991,7 @@ var minerva;
                     }
                 };
             }
-            entries.arc = arc;
+            segments.arc = arc;
 
             function arcContainsPoint(sx, sy, ex, ey, cpx, cpy, cc) {
                 var n = (ex - sx) * (cpy - sy) - (cpx - sx) * (ey - sy);
@@ -10038,8 +10053,8 @@ var minerva;
                     v[0]
                 ];
             }
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
@@ -10050,7 +10065,7 @@ function radToDegrees(rad) {
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             var EPSILON = 1e-10;
 
             function arcTo(cpx, cpy, x, y, radius) {
@@ -10081,10 +10096,10 @@ var minerva;
                     if (ea < 0)
                         ea = (2 * Math.PI) + ea;
 
-                    line = entries.line(a[0], a[1]);
+                    line = segments.line(a[0], a[1]);
                     line.sx = prevX;
                     line.sy = prevY;
-                    arc = entries.arc(c[0], c[1], radius, sa, ea, cc);
+                    arc = segments.arc(c[0], c[1], radius, sa, ea, cc);
                     inited = true;
                 }
 
@@ -10141,7 +10156,7 @@ var minerva;
                     }
                 };
             }
-            entries.arcTo = arcTo;
+            segments.arcTo = arcTo;
 
             function getTangentPoint(theta, radius, s, d, invert) {
                 var len = Math.sqrt(d[0] * d[0] + d[1] * d[1]);
@@ -10155,15 +10170,15 @@ var minerva;
             function getPerpendicularIntersections(s1, d1, s2, d2) {
                 return minerva.Vector.intersection(s1, minerva.Vector.orthogonal(d1.slice(0)), s2, minerva.Vector.orthogonal(d2.slice(0)));
             }
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             function close() {
                 return {
                     sx: null,
@@ -10190,16 +10205,16 @@ var minerva;
                     }
                 };
             }
-            entries.close = close;
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+            segments.close = close;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             function cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y) {
                 return {
                     sx: null,
@@ -10283,7 +10298,7 @@ var minerva;
                     }
                 };
             }
-            entries.cubicBezier = cubicBezier;
+            segments.cubicBezier = cubicBezier;
 
             
             function getMaxima(x1, x2, x3, x4, y1, y2, y3, y4) {
@@ -10319,15 +10334,15 @@ var minerva;
 
                 return cods;
             }
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             function ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
                 return {
                     sx: null,
@@ -10360,16 +10375,16 @@ var minerva;
                     }
                 };
             }
-            entries.ellipticalArc = ellipticalArc;
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+            segments.ellipticalArc = ellipticalArc;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             function line(x, y) {
                 return {
                     isSingle: false,
@@ -10408,16 +10423,16 @@ var minerva;
                     }
                 };
             }
-            entries.line = line;
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+            segments.line = line;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             function move(x, y) {
                 return {
                     sx: null,
@@ -10451,16 +10466,16 @@ var minerva;
                     }
                 };
             }
-            entries.move = move;
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+            segments.move = move;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (entries) {
+        (function (segments) {
             function quadraticBezier(cpx, cpy, x, y) {
                 return {
                     sx: null,
@@ -10526,7 +10541,7 @@ var minerva;
                     }
                 };
             }
-            entries.quadraticBezier = quadraticBezier;
+            segments.quadraticBezier = quadraticBezier;
 
             
             function getMaxima(x1, x2, x3, y1, y2, y3) {
@@ -10542,8 +10557,8 @@ var minerva;
                     return null;
                 return (a * Math.pow(1 - t, 2)) + (2 * b * (1 - t) * t) + (c * Math.pow(t, 2));
             }
-        })(path.entries || (path.entries = {}));
-        var entries = path.entries;
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));

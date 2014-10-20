@@ -1,5 +1,5 @@
-module minerva.path.entries {
-    export interface ICubicBezier extends IPathEntry {
+module minerva.path.segments {
+    export interface ICubicBezier extends IPathSegment {
         cp1x: number;
         cp1y: number;
         cp2x: number;

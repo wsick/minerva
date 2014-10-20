@@ -1,5 +1,5 @@
-module minerva.path.entries {
-    export interface ILine extends IPathEntry {
+module minerva.path.segments {
+    export interface ILine extends IPathSegment {
         x: number;
         y: number;
     }

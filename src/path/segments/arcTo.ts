@@ -2,10 +2,10 @@ function radToDegrees(rad) {
     return rad * 180 / Math.PI;
 }
 
-module minerva.path.entries {
+module minerva.path.segments {
     var EPSILON = 1e-10;
 
-    export interface IArcTo extends IPathEntry {
+    export interface IArcTo extends IPathSegment {
         cpx: number;
         cpy: number;
         x: number;
@@ -38,10 +38,10 @@ module minerva.path.entries {
             if (ea < 0)
                 ea = (2 * Math.PI) + ea;
 
-            line = entries.line(a[0], a[1]);
+            line = segments.line(a[0], a[1]);
             line.sx = prevX;
             line.sy = prevY;
-            arc = entries.arc(c[0], c[1], radius, sa, ea, cc);
+            arc = segments.arc(c[0], c[1], radius, sa, ea, cc);
             inited = true;
         }
 

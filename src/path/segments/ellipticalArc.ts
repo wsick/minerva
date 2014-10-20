@@ -1,5 +1,5 @@
-module minerva.path.entries {
-    export interface IEllipticalArc extends IPathEntry {
+module minerva.path.segments {
+    export interface IEllipticalArc extends IPathSegment {
         width: number;
         height: number;
         rotationAngle: number;

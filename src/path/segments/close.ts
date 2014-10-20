@@ -1,5 +1,5 @@
-module minerva.path.entries {
-    export interface IClose extends IPathEntry {
+module minerva.path.segments {
+    export interface IClose extends IPathSegment {
         isClose: boolean;
     }
     export function close(): IClose {

@@ -1,5 +1,5 @@
-module minerva.path.entries {
-    export interface IArc extends IPathEntry {
+module minerva.path.segments {
+    export interface IArc extends IPathSegment {
         x: number;
         y: number;
         radius: number;
