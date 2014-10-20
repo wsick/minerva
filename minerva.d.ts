@@ -2499,6 +2499,37 @@ declare module minerva.shapes.path.render.tapins {
 declare module minerva.shapes.path.render.tapins {
     function fill(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
+declare module minerva.shapes.polyline {
+    interface IPolylineUpdaterAssets extends path.IPathUpdaterAssets, measure.IInput {
+    }
+    class PolylineUpdater extends path.PathUpdater {
+        public assets: IPolylineUpdaterAssets;
+        public init(): void;
+        public invalidateFillRule(): void;
+        public invalidatePath(): void;
+    }
+}
+declare module minerva.shapes.polygon {
+    class PolygonUpdater extends polyline.PolylineUpdater {
+        public init(): void;
+    }
+}
+declare module minerva.shapes.polyline.measure {
+    interface IInput extends path.measure.IInput {
+        isClosed: boolean;
+        points: IPoint[];
+    }
+    interface IState extends path.measure.IState {
+    }
+    interface IOutput extends path.measure.IOutput {
+    }
+    class PolylineMeasurePipeDef extends path.measure.PathMeasurePipeDef {
+        constructor();
+    }
+    module tapins {
+        function buildPath(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    }
+}
 declare module minerva.shapes.rectangle {
     interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, render.IInput {
     }

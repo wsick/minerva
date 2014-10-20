@@ -11309,6 +11309,162 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (shapes) {
+        (function (polyline) {
+            var PolylineUpdater = (function (_super) {
+                __extends(PolylineUpdater, _super);
+                function PolylineUpdater() {
+                    _super.apply(this, arguments);
+                }
+                PolylineUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(polyline.measure.PolylineMeasurePipeDef));
+
+                    var assets = this.assets;
+                    assets.data = new shapes.path.AnonPathGeometry();
+                    assets.isClosed = false;
+
+                    _super.prototype.init.call(this);
+                };
+
+                PolylineUpdater.prototype.invalidateFillRule = function () {
+                    this.assets.data.fillRule = this.assets.fillRule;
+                    this.invalidate();
+                };
+
+                PolylineUpdater.prototype.invalidatePath = function () {
+                    this.assets.data.old = true;
+                    this.invalidateNaturalBounds();
+                };
+                return PolylineUpdater;
+            })(shapes.path.PathUpdater);
+            polyline.PolylineUpdater = PolylineUpdater;
+        })(shapes.polyline || (shapes.polyline = {}));
+        var polyline = shapes.polyline;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (polygon) {
+            var PolygonUpdater = (function (_super) {
+                __extends(PolygonUpdater, _super);
+                function PolygonUpdater() {
+                    _super.apply(this, arguments);
+                }
+                PolygonUpdater.prototype.init = function () {
+                    _super.prototype.init.call(this);
+                    this.assets.isClosed = true;
+                };
+                return PolygonUpdater;
+            })(shapes.polyline.PolylineUpdater);
+            polygon.PolygonUpdater = PolygonUpdater;
+        })(shapes.polygon || (shapes.polygon = {}));
+        var polygon = shapes.polygon;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (polyline) {
+            (function (measure) {
+                var PolylineMeasurePipeDef = (function (_super) {
+                    __extends(PolylineMeasurePipeDef, _super);
+                    function PolylineMeasurePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('buildPath', tapins.buildPath);
+                    }
+                    return PolylineMeasurePipeDef;
+                })(shapes.path.measure.PathMeasurePipeDef);
+                measure.PolylineMeasurePipeDef = PolylineMeasurePipeDef;
+
+                (function (tapins) {
+                    function buildPath(input, state, output, tree) {
+                        if (!input.data.old)
+                            return true;
+
+                        var path = input.data.path;
+                        path.reset();
+
+                        var points = input.points;
+                        if (points.length < 2)
+                            return true;
+
+                        var p0 = points[0];
+                        var p = points[1];
+                        if (points.length === 2) {
+                            extendLine(p0, p, input.strokeThickness);
+                            path.move(p0.x, p0.y);
+                            path.line(p.x, p.y);
+                        } else {
+                            path.move(p0.x, p0.y);
+                            for (var i = 1; i < points.length; i++) {
+                                var p = points[i];
+                                path.line(p.x, p.y);
+                            }
+                        }
+                        if (input.isClosed)
+                            path.close();
+
+                        return true;
+                    }
+                    tapins.buildPath = buildPath;
+
+                    function extendLine(p1, p2, thickness) {
+                        var t5 = thickness * 5.0;
+                        var dx = p1.x - p2.x;
+                        var dy = p1.y - p2.y;
+
+                        if (dy === 0.0) {
+                            t5 -= thickness / 2.0;
+                            if (dx > 0.0) {
+                                p1.x += t5;
+                                p2.x -= t5;
+                            } else {
+                                p1.x -= t5;
+                                p2.x += t5;
+                            }
+                        } else if (dx === 0.0) {
+                            t5 -= thickness / 2.0;
+                            if (dy > 0.0) {
+                                p1.y += t5;
+                                p2.y -= t5;
+                            } else {
+                                p1.y -= t5;
+                                p2.y += t5;
+                            }
+                        } else {
+                            var angle = Math.atan2(dy, dx);
+                            var ax = Math.abs(Math.sin(angle) * t5);
+                            if (dx > 0.0) {
+                                p1.x += ax;
+                                p2.x -= ax;
+                            } else {
+                                p1.x -= ax;
+                                p2.x += ax;
+                            }
+                            var ay = Math.abs(Math.sin(Math.PI / 2 - angle)) * t5;
+                            if (dy > 0.0) {
+                                p1.y += ay;
+                                p2.y -= ay;
+                            } else {
+                                p1.y -= ay;
+                                p2.y += ay;
+                            }
+                        }
+                    }
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(polyline.measure || (polyline.measure = {}));
+            var measure = polyline.measure;
+        })(shapes.polyline || (shapes.polyline = {}));
+        var polyline = shapes.polyline;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
         (function (rectangle) {
             var RectangleUpdater = (function (_super) {
                 __extends(RectangleUpdater, _super);
