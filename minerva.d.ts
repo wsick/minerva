@@ -173,6 +173,19 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IEffect {
+        PreRender(ctx: core.render.RenderContext): any;
+        PostRender(ctx: core.render.RenderContext): any;
+        GetPadding(thickness: Thickness): boolean;
+    }
+}
+declare module minerva {
+    interface IGeometry {
+        Draw(ctx: core.render.RenderContext): any;
+        GetBounds(): Rect;
+    }
+}
+declare module minerva {
     interface IProjection {
         setObjectSize(objectWidth: number, objectHeight: number): any;
         getDistanceFromXYPlane(): number;
@@ -333,17 +346,6 @@ declare module minerva {
     enum Visibility {
         Visible = 0,
         Collapsed = 1,
-    }
-}
-declare module minerva {
-    interface IEffect {
-        PreRender(ctx: core.render.RenderContext): any;
-        PostRender(ctx: core.render.RenderContext): any;
-        GetPadding(thickness: Thickness): boolean;
-    }
-    interface IGeometry {
-        Draw(ctx: core.render.RenderContext): any;
-        GetBounds(): Rect;
     }
 }
 declare module minerva {
