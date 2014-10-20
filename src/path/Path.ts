@@ -13,6 +13,12 @@ module minerva.path {
             return this.$$endY;
         }
 
+        reset () {
+            this.$$entries.length = 0;
+            this.$$endX = 0;
+            this.$$endY = 0;
+        }
+
         move (x: number, y: number) {
             this.$$entries.push(segments.move(x, y));
             this.$$endX = x;

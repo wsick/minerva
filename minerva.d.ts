@@ -2192,6 +2192,7 @@ declare module minerva.path {
         private $$endY;
         public endX : number;
         public endY : number;
+        public reset(): void;
         public move(x: number, y: number): void;
         public line(x: number, y: number): void;
         public quadraticBezier(cpx: number, cpy: number, x: number, y: number): void;
@@ -2394,18 +2395,20 @@ declare module minerva.shapes.ellipse.render {
     }
 }
 declare module minerva.shapes.path {
-    interface IPathGeometry {
-        fillRule: FillRule;
-        Draw(ctx: core.render.RenderContext): any;
-        GetBounds(pars?: minerva.path.IStrokeParameters): Rect;
-    }
-}
-declare module minerva.shapes.path {
     interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, render.IInput {
     }
     class PathUpdater extends shape.ShapeUpdater {
         public assets: IPathUpdaterAssets;
         public init(): void;
+    }
+}
+declare module minerva.shapes.line {
+    interface ILineUpdaterAssets extends path.IPathUpdaterAssets, measure.IInput {
+    }
+    class LineUpdater extends path.PathUpdater {
+        public assets: ILineUpdaterAssets;
+        public init(): void;
+        public invalidatePath(): void;
     }
 }
 declare module minerva.shapes.shape.measure {
@@ -2430,7 +2433,7 @@ declare module minerva.shapes.shape.measure {
 }
 declare module minerva.shapes.path.measure {
     interface IInput extends shape.measure.IInput {
-        data: IPathGeometry;
+        data: AnonPathGeometry;
     }
     interface IState extends shape.measure.IState {
     }
@@ -2440,12 +2443,47 @@ declare module minerva.shapes.path.measure {
         constructor();
     }
     module tapins {
+        function buildPath(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
         function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    }
+}
+declare module minerva.shapes.line.measure {
+    interface IInput extends path.measure.IInput {
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+    }
+    interface IState extends path.measure.IState {
+    }
+    interface IOutput extends path.measure.IOutput {
+    }
+    class LineMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+        constructor();
+    }
+    module tapins {
+        function buildPath(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    }
+}
+declare module minerva.shapes.path {
+    class AnonPathGeometry implements IPathGeometry {
+        public old: boolean;
+        public path: minerva.path.Path;
+        public fillRule: FillRule;
+        public Draw(ctx: core.render.RenderContext): void;
+        public GetBounds(pars?: minerva.path.IStrokeParameters): Rect;
+    }
+}
+declare module minerva.shapes.path {
+    interface IPathGeometry {
+        fillRule: FillRule;
+        Draw(ctx: core.render.RenderContext): any;
+        GetBounds(pars?: minerva.path.IStrokeParameters): Rect;
     }
 }
 declare module minerva.shapes.path.render {
     interface IInput extends shape.render.IInput {
-        data: IPathGeometry;
+        data: AnonPathGeometry;
     }
     interface IState extends shape.render.IState {
     }

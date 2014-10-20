@@ -2,7 +2,7 @@
 
 module minerva.shapes.path.measure {
     export interface IInput extends shape.measure.IInput {
-        data: IPathGeometry;
+        data: AnonPathGeometry;
     }
     export interface IState extends shape.measure.IState {
     }
@@ -12,11 +12,16 @@ module minerva.shapes.path.measure {
     export class PathMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
         constructor () {
             super();
-            this.replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
+            this.addTapinBefore('calcNaturalBounds', 'buildPath', tapins.buildPath)
+                .replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
         }
     }
 
     export module tapins {
+        export function buildPath (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
+            return true;
+        }
+
         export function calcNaturalBounds (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
             var nb = output.naturalBounds;
             nb.x = nb.y = nb.width = nb.height = 0;

@@ -9521,6 +9521,12 @@ var minerva;
                 configurable: true
             });
 
+            Path.prototype.reset = function () {
+                this.$$entries.length = 0;
+                this.$$endX = 0;
+                this.$$endY = 0;
+            };
+
             Path.prototype.move = function (x, y) {
                 this.$$entries.push(_path.segments.move(x, y));
                 this.$$endX = x;
@@ -11023,6 +11029,41 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (shapes) {
+        (function (line) {
+            var LineUpdater = (function (_super) {
+                __extends(LineUpdater, _super);
+                function LineUpdater() {
+                    _super.apply(this, arguments);
+                }
+                LineUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(line.measure.LineMeasurePipeDef));
+
+                    var assets = this.assets;
+                    assets.x1 = 0;
+                    assets.y1 = 0;
+                    assets.x2 = 0;
+                    assets.y2 = 0;
+
+                    assets.data = new shapes.path.AnonPathGeometry();
+
+                    _super.prototype.init.call(this);
+                };
+
+                LineUpdater.prototype.invalidatePath = function () {
+                    this.assets.data.old = true;
+                    this.invalidateNaturalBounds();
+                };
+                return LineUpdater;
+            })(shapes.path.PathUpdater);
+            line.LineUpdater = LineUpdater;
+        })(shapes.line || (shapes.line = {}));
+        var line = shapes.line;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
         (function (shape) {
             (function (measure) {
                 var ShapeMeasurePipeDef = (function (_super) {
@@ -11106,13 +11147,18 @@ var minerva;
                     __extends(PathMeasurePipeDef, _super);
                     function PathMeasurePipeDef() {
                         _super.call(this);
-                        this.replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
+                        this.addTapinBefore('calcNaturalBounds', 'buildPath', tapins.buildPath).replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
                     }
                     return PathMeasurePipeDef;
                 })(shapes.shape.measure.ShapeMeasurePipeDef);
                 measure.PathMeasurePipeDef = PathMeasurePipeDef;
 
                 (function (tapins) {
+                    function buildPath(input, state, output, tree) {
+                        return true;
+                    }
+                    tapins.buildPath = buildPath;
+
                     function calcNaturalBounds(input, state, output, tree) {
                         var nb = output.naturalBounds;
                         nb.x = nb.y = nb.width = nb.height = 0;
@@ -11128,6 +11174,66 @@ var minerva;
                 var tapins = measure.tapins;
             })(path.measure || (path.measure = {}));
             var measure = path.measure;
+        })(shapes.path || (shapes.path = {}));
+        var path = shapes.path;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (line) {
+            (function (measure) {
+                var LineMeasurePipeDef = (function (_super) {
+                    __extends(LineMeasurePipeDef, _super);
+                    function LineMeasurePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('buildPath', tapins.buildPath);
+                    }
+                    return LineMeasurePipeDef;
+                })(shapes.shape.measure.ShapeMeasurePipeDef);
+                measure.LineMeasurePipeDef = LineMeasurePipeDef;
+
+                (function (tapins) {
+                    function buildPath(input, state, output, tree) {
+                        if (!input.data.old)
+                            return true;
+                        var path = input.data.path;
+                        path.reset();
+                        path.move(input.x1, input.y1);
+                        path.line(input.x2, input.y2);
+                        return true;
+                    }
+                    tapins.buildPath = buildPath;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(line.measure || (line.measure = {}));
+            var measure = line.measure;
+        })(shapes.line || (shapes.line = {}));
+        var line = shapes.line;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (path) {
+            var AnonPathGeometry = (function () {
+                function AnonPathGeometry() {
+                    this.old = false;
+                    this.path = new minerva.path.Path();
+                    this.fillRule = 0 /* EvenOdd */;
+                }
+                AnonPathGeometry.prototype.Draw = function (ctx) {
+                    this.path.draw(ctx.raw);
+                };
+
+                AnonPathGeometry.prototype.GetBounds = function (pars) {
+                    return this.path.calcBounds(pars);
+                };
+                return AnonPathGeometry;
+            })();
+            path.AnonPathGeometry = AnonPathGeometry;
         })(shapes.path || (shapes.path = {}));
         var path = shapes.path;
     })(minerva.shapes || (minerva.shapes = {}));
