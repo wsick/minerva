@@ -11004,6 +11004,8 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 PathUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(path.measure.PathMeasurePipeDef)).setRenderPipe(minerva.singleton(path.render.PathRenderPipeDef));
+
                     var assets = this.assets;
                     assets.data = null;
                     assets.stretch = 0 /* None */;
@@ -11161,6 +11163,8 @@ var minerva;
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
+                        var nb = input.naturalBounds;
+                        ctx.translate(-nb.x, -nb.y);
                         input.data.Draw(ctx);
                         return true;
                     }

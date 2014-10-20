@@ -11,6 +11,7 @@ module minerva.shapes.shape.render {
 
         shapeFlags: ShapeFlags;
         shapeRect: Rect;
+        naturalBounds: Rect;
     }
     export interface IState extends core.render.IState {
         shouldDraw: boolean;

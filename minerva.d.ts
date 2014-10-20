@@ -2366,6 +2366,7 @@ declare module minerva.shapes.shape.render {
         strokeMiterLimit: number;
         shapeFlags: ShapeFlags;
         shapeRect: Rect;
+        naturalBounds: Rect;
     }
     interface IState extends core.render.IState {
         shouldDraw: boolean;

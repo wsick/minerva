@@ -6,6 +6,9 @@ module minerva.shapes.path {
         assets: IPathUpdaterAssets;
 
         init () {
+            this.setMeasurePipe(singleton(measure.PathMeasurePipeDef))
+                .setRenderPipe(singleton(render.PathRenderPipeDef));
+
             var assets = this.assets;
             assets.data = null;
             assets.stretch = Stretch.None;
