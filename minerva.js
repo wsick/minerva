@@ -9545,6 +9545,12 @@ var minerva;
                 this.$$endY = y;
             };
 
+            Path.prototype.ellipse = function (x, y, width, height) {
+                this.$$entries.push(_path.segments.ellipse(x, y, width, height));
+                this.$$endX = x;
+                this.$$endY = y;
+            };
+
             Path.prototype.ellipticalArc = function (width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
                 this.$$entries.push(_path.segments.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
             };
@@ -10345,6 +10351,77 @@ var minerva;
 
                 return cods;
             }
+        })(path.segments || (path.segments = {}));
+        var segments = path.segments;
+    })(minerva.path || (minerva.path = {}));
+    var path = minerva.path;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (path) {
+        (function (segments) {
+            function ellipse(x, y, width, height) {
+                var radiusX = width / 2;
+                var radiusY = height / 2;
+                var right = x + width;
+                var bottom = y + height;
+                var centerX = x + radiusX;
+                var centerY = y + radiusY;
+
+                return {
+                    sx: null,
+                    sy: null,
+                    ex: x,
+                    ey: y,
+                    isSingle: true,
+                    x: x,
+                    y: y,
+                    width: width,
+                    height: height,
+                    draw: function (ctx) {
+                        ctx.beginPath();
+                        if (width === height) {
+                            ctx.arc(centerX, centerY, radiusX, 0, Math.PI * 2, false);
+                            return;
+                        }
+
+                        var kappa = .5522848;
+                        var ox = radiusX * kappa;
+                        var oy = radiusY * kappa;
+
+                        ctx.moveTo(x, centerY);
+
+                        ctx.bezierCurveTo(x, centerY - oy, centerX - ox, y, centerX, y);
+
+                        ctx.bezierCurveTo(centerX + ox, y, right, centerY - oy, right, centerY);
+
+                        ctx.bezierCurveTo(right, centerY + oy, centerX + ox, bottom, centerX, bottom);
+
+                        ctx.bezierCurveTo(centerX - ox, bottom, x, centerY + oy, x, centerY);
+                        ctx.closePath();
+                    },
+                    extendFillBox: function (box) {
+                        box.l = Math.min(box.l, x);
+                        box.r = Math.max(box.r, x + width);
+                        box.t = Math.min(box.t, y);
+                        box.b = Math.max(box.b, y + height);
+                    },
+                    extendStrokeBox: function (box, pars) {
+                        var hs = pars.strokeThickness / 2.0;
+                        box.l = Math.min(box.l, x - hs);
+                        box.r = Math.max(box.r, x + width + hs);
+                        box.t = Math.min(box.t, y - hs);
+                        box.b = Math.max(box.b, y + height + hs);
+                    },
+                    getStartVector: function () {
+                        return null;
+                    },
+                    getEndVector: function () {
+                        return null;
+                    }
+                };
+            }
+            segments.ellipse = ellipse;
         })(path.segments || (path.segments = {}));
         var segments = path.segments;
     })(minerva.path || (minerva.path = {}));

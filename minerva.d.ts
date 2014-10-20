@@ -2194,6 +2194,7 @@ declare module minerva.path {
         public line(x: number, y: number): void;
         public quadraticBezier(cpx: number, cpy: number, x: number, y: number): void;
         public cubicBezier(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
+        public ellipse(x: number, y: number, width: number, height: number): void;
         public ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): void;
         public arc(x: number, y: number, r: number, sAngle: number, eAngle: number, aClockwise: boolean): void;
         public arcTo(cpx: number, cpy: number, x: number, y: number, radius: number): void;
@@ -2254,6 +2255,15 @@ declare module minerva.path.segments {
         y: number;
     }
     function cubicBezier(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): ICubicBezier;
+}
+declare module minerva.path.segments {
+    interface IEllipse extends IPathSegment {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    }
+    function ellipse(x: number, y: number, width: number, height: number): IEllipse;
 }
 declare module minerva.path.segments {
     interface IEllipticalArc extends IPathSegment {

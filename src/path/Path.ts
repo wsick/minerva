@@ -37,6 +37,12 @@ module minerva.path {
             this.$$endY = y;
         }
 
+        ellipse (x: number, y: number, width: number, height: number) {
+            this.$$entries.push(segments.ellipse(x, y, width, height));
+            this.$$endX = x;
+            this.$$endY = y;
+        }
+
         ellipticalArc (width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number) {
             this.$$entries.push(segments.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
         }
