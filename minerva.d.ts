@@ -2393,13 +2393,72 @@ declare module minerva.shapes.ellipse.render {
     }
 }
 declare module minerva.shapes.path {
-    interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets {
-        path: minerva.path.Path;
+    interface IPathGeometry {
+        fillRule: FillRule;
+        Draw(ctx: core.render.RenderContext): any;
+        GetBounds(pars?: minerva.path.IStrokeParameters): Rect;
+    }
+}
+declare module minerva.shapes.path {
+    interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, render.IInput {
     }
     class PathUpdater extends shape.ShapeUpdater {
         public assets: IPathUpdaterAssets;
         public init(): void;
     }
+}
+declare module minerva.shapes.shape.measure {
+    interface IInput extends core.measure.IInput, IShapeProperties {
+        naturalBounds: Rect;
+    }
+    interface IState extends core.measure.IState {
+    }
+    interface IOutput extends core.measure.IOutput {
+        naturalBounds: Rect;
+    }
+    class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
+    }
+    module tapins {
+        function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+        function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    }
+}
+declare module minerva.shapes.path.measure {
+    interface IInput extends shape.measure.IInput {
+        data: IPathGeometry;
+    }
+    interface IState extends shape.measure.IState {
+    }
+    interface IOutput extends shape.measure.IOutput {
+    }
+    class PathMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+        constructor();
+    }
+    module tapins {
+        function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    }
+}
+declare module minerva.shapes.path.render {
+    interface IInput extends shape.render.IInput {
+        data: IPathGeometry;
+    }
+    interface IState extends shape.render.IState {
+    }
+    interface IOutput extends shape.render.IOutput {
+    }
+    class PathRenderPipeDef extends shape.render.ShapeRenderPipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.path.render.tapins {
+    function doRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+}
+declare module minerva.shapes.path.render.tapins {
+    function fill(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.rectangle {
     interface IRectangleUpdaterAssets extends shape.IShapeUpdaterAssets, render.IInput {
@@ -2496,26 +2555,6 @@ declare module minerva.shapes.shape.hittest.tapins {
 }
 declare module minerva.shapes.shape.hittest.tapins {
     function prepareShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
-}
-declare module minerva.shapes.shape.measure {
-    interface IInput extends core.measure.IInput, IShapeProperties {
-        naturalBounds: Rect;
-    }
-    interface IState extends core.measure.IState {
-    }
-    interface IOutput extends core.measure.IOutput {
-        naturalBounds: Rect;
-    }
-    class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
-        constructor();
-        public createOutput(): IOutput;
-        public prepare(input: IInput, state: IState, output: IOutput): void;
-        public flush(input: IInput, state: IState, output: IOutput): void;
-    }
-    module tapins {
-        function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-        function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-    }
 }
 declare module minerva.shapes.shape.processup {
     interface IInput extends core.processup.IInput {
