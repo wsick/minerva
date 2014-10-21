@@ -8,7 +8,7 @@ module minerva.controls.grid.measure {
         }
 
         static col (matrix: Segment[][], childShape: GridChildShape, child: core.Updater): GridChildPlacement {
-            return new GridChildPlacement(matrix, childShape.col + childShape.colspan - 1, childShape.col, child.assets.desiredSize.height);
+            return new GridChildPlacement(matrix, childShape.col + childShape.colspan - 1, childShape.col, child.assets.desiredSize.width);
         }
     }
 }

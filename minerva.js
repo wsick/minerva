@@ -6229,7 +6229,7 @@ var minerva;
                     };
 
                     GridChildPlacement.col = function (matrix, childShape, child) {
-                        return new GridChildPlacement(matrix, childShape.col + childShape.colspan - 1, childShape.col, child.assets.desiredSize.height);
+                        return new GridChildPlacement(matrix, childShape.col + childShape.colspan - 1, childShape.col, child.assets.desiredSize.width);
                     };
                     return GridChildPlacement;
                 })();
