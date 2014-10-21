@@ -1,5 +1,5 @@
 module minerva.shapes.path {
-    export interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, render.IInput {
+    export interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
 
     export class PathUpdater extends shape.ShapeUpdater {
@@ -7,6 +7,7 @@ module minerva.shapes.path {
 
         init () {
             this.setMeasurePipe(singleton(measure.PathMeasurePipeDef))
+                .setArrangePipe(singleton(arrange.PathArrangePipeDef))
                 .setRenderPipe(singleton(render.PathRenderPipeDef));
 
             var assets = this.assets;

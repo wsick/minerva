@@ -11010,7 +11010,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 PathUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(path.measure.PathMeasurePipeDef)).setRenderPipe(minerva.singleton(path.render.PathRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(path.measure.PathMeasurePipeDef)).setArrangePipe(minerva.singleton(path.arrange.PathArrangePipeDef)).setRenderPipe(minerva.singleton(path.render.PathRenderPipeDef));
 
                     var assets = this.assets;
                     assets.stretch = 0 /* None */;
@@ -11146,7 +11146,7 @@ var minerva;
                     __extends(PathMeasurePipeDef, _super);
                     function PathMeasurePipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('calcNaturalBounds', 'buildPath', tapins.buildPath).replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
+                        this.addTapinBefore('calcNaturalBounds', 'buildPath', tapins.buildPath).replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds).addTapinAfter('doOverride', 'adjustNoStretchDesired', tapins.adjustNoStretchDesired);
                     }
                     return PathMeasurePipeDef;
                 })(shapes.shape.measure.ShapeMeasurePipeDef);
@@ -11169,6 +11169,18 @@ var minerva;
                         return true;
                     }
                     tapins.calcNaturalBounds = calcNaturalBounds;
+
+                    function adjustNoStretchDesired(input, state, output, tree) {
+                        if (input.stretch === 0 /* None */) {
+                            var nb = output.naturalBounds;
+                            var ds = output.desiredSize;
+                            ds.width = nb.width + Math.max(0, nb.x);
+                            ds.height = nb.height + Math.max(0, nb.y);
+                        }
+
+                        return true;
+                    }
+                    tapins.adjustNoStretchDesired = adjustNoStretchDesired;
                 })(measure.tapins || (measure.tapins = {}));
                 var tapins = measure.tapins;
             })(path.measure || (path.measure = {}));
@@ -11241,6 +11253,96 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (shapes) {
+        (function (shape) {
+            (function (arrange) {
+                var ShapeArrangePipeDef = (function (_super) {
+                    __extends(ShapeArrangePipeDef, _super);
+                    function ShapeArrangePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', tapins.doOverride);
+                    }
+                    return ShapeArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.ShapeArrangePipeDef = ShapeArrangePipeDef;
+
+                (function (tapins) {
+                    function doOverride(input, state, output, tree) {
+                        var sx;
+                        var sy;
+                        var nb = input.naturalBounds;
+                        var fs = state.finalSize;
+                        switch (input.stretch) {
+                            case 0 /* None */:
+                                sx = sy = 0;
+                                break;
+                            default:
+                            case 1 /* Fill */:
+                                sx = fs.width / nb.width;
+                                sy = fs.height / nb.height;
+                                break;
+                            case 2 /* Uniform */:
+                                sx = sy = Math.min(fs.width / nb.width, fs.height / nb.height);
+                                break;
+                            case 3 /* UniformToFill */:
+                                sx = sy = Math.max(fs.width / nb.width, fs.height / nb.height);
+                                break;
+                        }
+
+                        var as = state.arrangedSize;
+                        as.width = (nb.width * sx) || 0;
+                        as.height = (nb.height * sy) || 0;
+
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(shape.arrange || (shape.arrange = {}));
+            var arrange = shape.arrange;
+        })(shapes.shape || (shapes.shape = {}));
+        var shape = shapes.shape;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (path) {
+            (function (arrange) {
+                var PathArrangePipeDef = (function (_super) {
+                    __extends(PathArrangePipeDef, _super);
+                    function PathArrangePipeDef() {
+                        _super.call(this);
+                        this.addTapinAfter('doOverride', 'adjustNoStretchArranged', tapins.adjustNoStretchArranged);
+                    }
+                    return PathArrangePipeDef;
+                })(shapes.shape.arrange.ShapeArrangePipeDef);
+                arrange.PathArrangePipeDef = PathArrangePipeDef;
+
+                (function (tapins) {
+                    function adjustNoStretchArranged(input, state, output, tree) {
+                        if (input.stretch === 0 /* None */) {
+                            var nb = input.naturalBounds;
+                            var as = state.arrangedSize;
+                            as.width = nb.width + Math.max(0, nb.x);
+                            as.height = nb.height + Math.max(0, nb.y);
+                        }
+
+                        return true;
+                    }
+                    tapins.adjustNoStretchArranged = adjustNoStretchArranged;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(path.arrange || (path.arrange = {}));
+            var arrange = path.arrange;
+        })(shapes.path || (shapes.path = {}));
+        var path = shapes.path;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
         (function (path) {
             (function (render) {
                 var PathRenderPipeDef = (function (_super) {
@@ -11268,8 +11370,6 @@ var minerva;
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-                        var nb = input.naturalBounds;
-                        ctx.translate(-nb.x, -nb.y);
                         input.data.Draw(ctx);
                         return true;
                     }
@@ -11607,60 +11707,6 @@ var minerva;
             var render = rectangle.render;
         })(shapes.rectangle || (shapes.rectangle = {}));
         var rectangle = shapes.rectangle;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (shapes) {
-        (function (shape) {
-            (function (arrange) {
-                var ShapeArrangePipeDef = (function (_super) {
-                    __extends(ShapeArrangePipeDef, _super);
-                    function ShapeArrangePipeDef() {
-                        _super.call(this);
-                        this.replaceTapin('doOverride', tapins.doOverride);
-                    }
-                    return ShapeArrangePipeDef;
-                })(minerva.core.arrange.ArrangePipeDef);
-                arrange.ShapeArrangePipeDef = ShapeArrangePipeDef;
-
-                (function (tapins) {
-                    function doOverride(input, state, output, tree) {
-                        var sx;
-                        var sy;
-                        var nb = input.naturalBounds;
-                        var fs = state.finalSize;
-                        switch (input.stretch) {
-                            case 0 /* None */:
-                                sx = sy = 0;
-                                break;
-                            default:
-                            case 1 /* Fill */:
-                                sx = fs.width / nb.width;
-                                sy = fs.height / nb.height;
-                                break;
-                            case 2 /* Uniform */:
-                                sx = sy = Math.min(fs.width / nb.width, fs.height / nb.height);
-                                break;
-                            case 3 /* UniformToFill */:
-                                sx = sy = Math.max(fs.width / nb.width, fs.height / nb.height);
-                                break;
-                        }
-
-                        var as = state.arrangedSize;
-                        as.width = (nb.width * sx) || 0;
-                        as.height = (nb.height * sy) || 0;
-
-                        return true;
-                    }
-                    tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(shape.arrange || (shape.arrange = {}));
-            var arrange = shape.arrange;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
     })(minerva.shapes || (minerva.shapes = {}));
     var shapes = minerva.shapes;
 })(minerva || (minerva = {}));
