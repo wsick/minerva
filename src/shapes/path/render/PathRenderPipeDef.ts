@@ -3,6 +3,7 @@
 module minerva.shapes.path.render {
     export interface IInput extends shape.render.IInput {
         data: AnonPathGeometry;
+        stretchXform: number[];
     }
     export interface IState extends shape.render.IState {
     }

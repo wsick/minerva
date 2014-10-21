@@ -2523,6 +2523,7 @@ declare module minerva.shapes.path.arrange {
 declare module minerva.shapes.path.render {
     interface IInput extends shape.render.IInput {
         data: AnonPathGeometry;
+        stretchXform: number[];
     }
     interface IState extends shape.render.IState {
     }

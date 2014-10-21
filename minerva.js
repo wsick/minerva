@@ -11004,6 +11004,7 @@ var minerva;
 
                     var assets = this.assets;
                     assets.stretch = 0 /* None */;
+                    assets.stretchXform = mat3.identity();
 
                     _super.prototype.init.call(this);
                 };
@@ -11360,6 +11361,7 @@ var minerva;
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
+                        ctx.pretransformMatrix(input.stretchXform);
                         input.data.Draw(ctx);
                         return true;
                     }

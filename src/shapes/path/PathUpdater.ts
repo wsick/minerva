@@ -12,6 +12,7 @@ module minerva.shapes.path {
 
             var assets = this.assets;
             assets.stretch = Stretch.None;
+            assets.stretchXform = mat3.identity();
 
             super.init();
         }
