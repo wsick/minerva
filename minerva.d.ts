@@ -1437,8 +1437,6 @@ declare module minerva.controls.grid {
         public stars: number;
         public type: GridUnitType;
         public clamp(value: number): number;
-        public setOfferedToDesired(): number;
-        public setDesiredToOffered(): number;
         static init(segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType): Segment;
     }
 }

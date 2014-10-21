@@ -16,14 +16,6 @@ module minerva.controls.grid {
             return value;
         }
 
-        setOfferedToDesired (): number {
-            return this.offered = this.desired;
-        }
-
-        setDesiredToOffered (): number {
-            return this.desired = this.offered;
-        }
-
         static init (segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType): Segment {
             segment.offered = offered || 0.0;
             segment.min = min || 0.0;

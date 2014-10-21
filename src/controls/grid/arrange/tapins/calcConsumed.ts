@@ -6,11 +6,11 @@ module minerva.controls.grid.arrange.tapins {
 
         var cm = input.gridState.colMatrix;
         for (var i = 0; i < cm.length; i++) {
-            con.width += cm[i][i].setOfferedToDesired();
+            con.width += (cm[i][i].offered = cm[i][i].desired);
         }
         var rm = input.gridState.rowMatrix;
         for (var i = 0; i < rm.length; i++) {
-            con.height += rm[i][i].setOfferedToDesired();
+            con.height += (rm[i][i].offered = rm[i][i].desired);
         }
 
         if (con.width !== fs.width)

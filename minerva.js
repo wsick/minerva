@@ -5857,14 +5857,6 @@ var minerva;
                     return value;
                 };
 
-                Segment.prototype.setOfferedToDesired = function () {
-                    return this.offered = this.desired;
-                };
-
-                Segment.prototype.setDesiredToOffered = function () {
-                    return this.desired = this.offered;
-                };
-
                 Segment.init = function (segment, offered, min, max, unitType) {
                     segment.offered = offered || 0.0;
                     segment.min = min || 0.0;
@@ -5925,11 +5917,11 @@ var minerva;
 
                         var cm = input.gridState.colMatrix;
                         for (var i = 0; i < cm.length; i++) {
-                            con.width += cm[i][i].setOfferedToDesired();
+                            con.width += (cm[i][i].offered = cm[i][i].desired);
                         }
                         var rm = input.gridState.rowMatrix;
                         for (var i = 0; i < rm.length; i++) {
-                            con.height += rm[i][i].setOfferedToDesired();
+                            con.height += (rm[i][i].offered = rm[i][i].desired);
                         }
 
                         if (con.width !== fs.width)
