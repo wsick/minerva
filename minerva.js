@@ -6250,9 +6250,9 @@ var minerva;
                     OverridePass[OverridePass["AutoAuto"] = 0] = "AutoAuto";
                     OverridePass[OverridePass["StarAuto"] = 1] = "StarAuto";
                     OverridePass[OverridePass["AutoStar"] = 2] = "AutoStar";
-
-                    OverridePass[OverridePass["NonStar"] = 3] = "NonStar";
-                    OverridePass[OverridePass["RemainingStar"] = 4] = "RemainingStar";
+                    OverridePass[OverridePass["StarAutoAgain"] = 3] = "StarAutoAgain";
+                    OverridePass[OverridePass["NonStar"] = 4] = "NonStar";
+                    OverridePass[OverridePass["RemainingStar"] = 5] = "RemainingStar";
                 })(measure.OverridePass || (measure.OverridePass = {}));
                 var OverridePass = measure.OverridePass;
 
@@ -6299,7 +6299,7 @@ var minerva;
                         }
 
                         if (this.starRow && this.autoCol && !this.starCol) {
-                            if (pass !== 1 /* StarAuto */)
+                            if (pass !== 1 /* StarAuto */ && pass !== 3 /* StarAutoAgain */)
                                 return false;
                             if (pass === 0 /* AutoAuto */ && gridShape.hasAutoStar)
                                 childSize.height = Number.POSITIVE_INFINITY;
@@ -6315,7 +6315,7 @@ var minerva;
                         }
 
                         if ((this.autoRow || this.autoCol) && !(this.starRow || this.starCol)) {
-                            if (pass !== 3 /* NonStar */)
+                            if (pass !== 4 /* NonStar */)
                                 return false;
                             if (this.autoRow)
                                 childSize.height = Number.POSITIVE_INFINITY;
@@ -6325,9 +6325,9 @@ var minerva;
                         }
 
                         if (!(this.starRow || this.starCol))
-                            return pass === 3 /* NonStar */;
+                            return pass === 4 /* NonStar */;
 
-                        return pass === 4 /* RemainingStar */;
+                        return pass === 5 /* RemainingStar */;
                     };
 
                     GridChildShape.prototype.size = function (childSize, rm, cm) {
@@ -6357,7 +6357,7 @@ var minerva;
                     __extends(GridMeasurePipeDef, _super);
                     function GridMeasurePipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('doOverride', 'ensureRowMatrix', measure.tapins.ensureRowMatrix).addTapinBefore('doOverride', 'prepareRowMatrix', measure.tapins.prepareRowMatrix).addTapinBefore('doOverride', 'ensureColMatrix', measure.tapins.ensureColMatrix).addTapinBefore('doOverride', 'prepareColMatrix', measure.tapins.prepareColMatrix).addTapinBefore('doOverride', 'buildShape', measure.tapins.buildShape).addTapinBefore('doOverride', 'doOverrideAutoAuto', measure.tapins.createDoOverridePass(0 /* AutoAuto */)).addTapinBefore('doOverride', 'doOverrideStarAuto', measure.tapins.createDoOverridePass(1 /* StarAuto */)).addTapinBefore('doOverride', 'doOverrideAutoStar', measure.tapins.createDoOverridePass(2 /* AutoStar */)).addTapinBefore('doOverride', 'doOverrideStarAutoAgain', measure.tapins.createDoOverridePass(1 /* StarAuto */)).addTapinBefore('doOverride', 'doOverrideNonStar', measure.tapins.createDoOverridePass(3 /* NonStar */)).addTapinBefore('doOverride', 'doOverrideRemainingStar', measure.tapins.createDoOverridePass(4 /* RemainingStar */)).replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'saveMeasureResults', measure.tapins.saveMeasureResults);
+                        this.addTapinBefore('doOverride', 'ensureRowMatrix', measure.tapins.ensureRowMatrix).addTapinBefore('doOverride', 'prepareRowMatrix', measure.tapins.prepareRowMatrix).addTapinBefore('doOverride', 'ensureColMatrix', measure.tapins.ensureColMatrix).addTapinBefore('doOverride', 'prepareColMatrix', measure.tapins.prepareColMatrix).addTapinBefore('doOverride', 'buildShape', measure.tapins.buildShape).addTapinBefore('doOverride', 'doOverrideAutoAuto', measure.tapins.createDoOverridePass(0 /* AutoAuto */)).addTapinBefore('doOverride', 'doOverrideStarAuto', measure.tapins.createDoOverridePass(1 /* StarAuto */)).addTapinBefore('doOverride', 'doOverrideAutoStar', measure.tapins.createDoOverridePass(2 /* AutoStar */)).addTapinBefore('doOverride', 'doOverrideStarAutoAgain', measure.tapins.createDoOverridePass(3 /* StarAutoAgain */)).addTapinBefore('doOverride', 'doOverrideNonStar', measure.tapins.createDoOverridePass(4 /* NonStar */)).addTapinBefore('doOverride', 'doOverrideRemainingStar', measure.tapins.createDoOverridePass(5 /* RemainingStar */)).replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'saveMeasureResults', measure.tapins.saveMeasureResults);
                     }
                     GridMeasurePipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
