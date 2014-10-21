@@ -2296,6 +2296,14 @@ var minerva;
             UpdaterTree.prototype.onChildDetached = function (child) {
                 this.subtree = null;
             };
+
+            UpdaterTree.prototype.setTemplateApplier = function (applier) {
+                this.applyTemplate = applier;
+            };
+
+            UpdaterTree.prototype.applyTemplate = function () {
+                return false;
+            };
             return UpdaterTree;
         })();
         core.UpdaterTree = UpdaterTree;
@@ -2860,8 +2868,13 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, finalRect) {
-                    state.arrangedSize.width = 0;
-                    state.arrangedSize.height = 0;
+                    var as = state.arrangedSize;
+                    as.width = as.height = 0;
+                    for (var walker = tree.walk(); walker.step();) {
+                        var child = walker.current;
+                        child.measure(state.finalSize);
+                        minerva.Size.copyTo(child.assets.desiredSize, as);
+                    }
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
@@ -3569,6 +3582,7 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.applyTemplate = function (input, state, output, tree, availableSize) {
+                    tree.applyTemplate();
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));
@@ -3623,8 +3637,13 @@ var minerva;
         (function (measure) {
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, availableSize) {
-                    output.desiredSize.width = 0;
-                    output.desiredSize.height = 0;
+                    var ds = output.desiredSize;
+                    ds.width = ds.height = 0;
+                    for (var walker = tree.walk(); walker.step();) {
+                        var child = walker.current;
+                        child.measure(state.availableSize);
+                        minerva.Size.copyTo(child.assets.desiredSize, ds);
+                    }
                     return true;
                 };
             })(measure.tapins || (measure.tapins = {}));

@@ -538,6 +538,8 @@ declare module minerva.core {
         walk(direction?: WalkDirection): IWalker<Updater>;
         onChildAttached(child: Updater): any;
         onChildDetached(child: Updater): any;
+        applyTemplate(): boolean;
+        setTemplateApplier(applier: () => boolean): any;
     }
     class UpdaterTree implements IUpdaterTree {
         public isTop: boolean;
@@ -550,6 +552,8 @@ declare module minerva.core {
         public walk(direction?: WalkDirection): IWalker<Updater>;
         public onChildAttached(child: Updater): void;
         public onChildDetached(child: Updater): void;
+        public setTemplateApplier(applier: () => boolean): void;
+        public applyTemplate(): boolean;
     }
 }
 declare module minerva.core.helpers {

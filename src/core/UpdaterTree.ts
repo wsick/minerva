@@ -20,6 +20,8 @@ module minerva.core {
         walk(direction?: WalkDirection): IWalker<Updater>;
         onChildAttached(child: Updater);
         onChildDetached(child: Updater);
+        applyTemplate (): boolean;
+        setTemplateApplier(applier: () => boolean);
     }
     export class UpdaterTree implements IUpdaterTree {
         isTop = false;
@@ -58,6 +60,14 @@ module minerva.core {
 
         onChildDetached (child: core.Updater) {
             this.subtree = null;
+        }
+
+        setTemplateApplier (applier: () => boolean) {
+            this.applyTemplate = applier;
+        }
+
+        applyTemplate (): boolean {
+            return false;
         }
     }
 }
