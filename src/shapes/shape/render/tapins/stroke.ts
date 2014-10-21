@@ -12,7 +12,7 @@ module minerva.shapes.shape.render.tapins {
     ];
 
     export function stroke (input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean {
-        if (!state.shouldDraw || !input.stroke)
+        if (!state.shouldDraw)
             return true;
 
         var stroke = input.stroke;

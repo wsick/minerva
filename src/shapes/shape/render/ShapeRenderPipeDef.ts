@@ -26,8 +26,8 @@ module minerva.shapes.shape.render {
                 .addTapinBefore('doRender', 'prepareDraw', tapins.prepareDraw)
                 .replaceTapin('doRender', tapins.doRender)
                 .addTapinAfter('doRender', 'fill', tapins.fill)
-                .addTapinAfter('fill', 'stroke', tapins.stroke)
-                .addTapinAfter('stroke', 'finishDraw', tapins.finishDraw);
+                .addTapinAfter('fill', 'finishDraw', tapins.finishDraw)
+                .addTapinAfter('finishDraw', 'stroke', tapins.stroke);
         }
 
         createState (): IState {

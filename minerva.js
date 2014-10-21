@@ -10938,7 +10938,7 @@ var minerva;
                     __extends(ShapeRenderPipeDef, _super);
                     function ShapeRenderPipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.doRender).addTapinAfter('doRender', 'fill', render.tapins.fill).addTapinAfter('fill', 'stroke', render.tapins.stroke).addTapinAfter('stroke', 'finishDraw', render.tapins.finishDraw);
+                        this.addTapinBefore('doRender', 'calcShouldDraw', render.tapins.calcShouldDraw).addTapinBefore('doRender', 'prepareDraw', render.tapins.prepareDraw).replaceTapin('doRender', render.tapins.doRender).addTapinAfter('doRender', 'fill', render.tapins.fill).addTapinAfter('fill', 'finishDraw', render.tapins.finishDraw).addTapinAfter('finishDraw', 'stroke', render.tapins.stroke);
                     }
                     ShapeRenderPipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
@@ -12081,7 +12081,7 @@ var minerva;
                     ];
 
                     function stroke(input, state, output, ctx, region) {
-                        if (!state.shouldDraw || !input.stroke)
+                        if (!state.shouldDraw)
                             return true;
 
                         var stroke = input.stroke;
