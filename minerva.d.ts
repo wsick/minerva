@@ -2578,7 +2578,7 @@ declare module minerva.shapes.rectangle {
     }
 }
 declare module minerva.shapes.rectangle.helpers {
-    function draw(ctx: CanvasRenderingContext2D, left: number, top: number, right: number, bottom: number, radiusX: number, radiusY: number): void;
+    function draw(ctx: CanvasRenderingContext2D, left: number, top: number, width: number, height: number, radiusX: number, radiusY: number): void;
 }
 declare module minerva.shapes.rectangle.hittest {
     interface IHitTestData extends shape.hittest.IHitTestData {

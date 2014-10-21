@@ -11584,7 +11584,9 @@ var minerva;
     (function (shapes) {
         (function (rectangle) {
             (function (helpers) {
-                function draw(ctx, left, top, right, bottom, radiusX, radiusY) {
+                function draw(ctx, left, top, width, height, radiusX, radiusY) {
+                    var right = left + width;
+                    var bottom = top + height;
                     if (!radiusX && !radiusY) {
                         ctx.beginPath();
                         ctx.rect(left, top, right - left, bottom - top);
