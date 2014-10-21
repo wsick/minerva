@@ -11304,8 +11304,23 @@ var minerva;
                     __extends(PathArrangePipeDef, _super);
                     function PathArrangePipeDef() {
                         _super.call(this);
-                        this.addTapinAfter('doOverride', 'adjustNoStretchArranged', tapins.adjustNoStretchArranged);
+                        this.addTapinAfter('doOverride', 'adjustNoStretchArranged', tapins.adjustNoStretchArranged).addTapinAfter('buildRenderSize', 'buildStretchXform', tapins.buildStretchXform);
                     }
+                    PathArrangePipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.stretchXform = mat3.identity();
+                        return output;
+                    };
+
+                    PathArrangePipeDef.prototype.prepare = function (input, state, output) {
+                        mat3.set(input.stretchXform, output.stretchXform);
+                        _super.prototype.prepare.call(this, input, state, output);
+                    };
+
+                    PathArrangePipeDef.prototype.flush = function (input, state, output) {
+                        _super.prototype.flush.call(this, input, state, output);
+                        mat3.set(output.stretchXform, input.stretchXform);
+                    };
                     return PathArrangePipeDef;
                 })(shapes.shape.arrange.ShapeArrangePipeDef);
                 arrange.PathArrangePipeDef = PathArrangePipeDef;
@@ -11322,6 +11337,20 @@ var minerva;
                         return true;
                     }
                     tapins.adjustNoStretchArranged = adjustNoStretchArranged;
+
+                    function buildStretchXform(input, state, output, tree) {
+                        if (input.stretch === 0 /* None */)
+                            return true;
+
+                        var xform = output.stretchXform;
+                        var nb = input.naturalBounds;
+                        var rs = output.renderSize;
+                        mat3.createTranslate(-nb.x, -nb.y, xform);
+                        mat3.scale(xform, rs.width / nb.width, rs.height / nb.height);
+
+                        return true;
+                    }
+                    tapins.buildStretchXform = buildStretchXform;
                 })(arrange.tapins || (arrange.tapins = {}));
                 var tapins = arrange.tapins;
             })(path.arrange || (path.arrange = {}));

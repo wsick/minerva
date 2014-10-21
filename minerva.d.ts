@@ -2508,16 +2508,22 @@ declare module minerva.shapes.shape.arrange {
 declare module minerva.shapes.path.arrange {
     interface IInput extends shape.arrange.IInput {
         data: AnonPathGeometry;
+        stretchXform: number[];
     }
     interface IState extends shape.arrange.IState {
     }
     interface IOutput extends shape.arrange.IOutput {
+        stretchXform: number[];
     }
     class PathArrangePipeDef extends shape.arrange.ShapeArrangePipeDef {
         constructor();
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
     }
     module tapins {
         function adjustNoStretchArranged(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+        function buildStretchXform(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
 declare module minerva.shapes.path.render {
