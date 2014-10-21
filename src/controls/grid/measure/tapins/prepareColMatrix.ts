@@ -22,18 +22,17 @@ module minerva.controls.grid.measure.tapins {
         for (var i = 0; i < coldefs.length; i++) {
             var coldef = coldefs[i];
             var width = coldef.Width || DEFAULT_GRID_LEN;
+            coldef.setActualWidth(Number.POSITIVE_INFINITY);
 
             var cell = Segment.init(cm[i][i], 0.0, coldef.MinWidth, coldef.MaxWidth, width.Type);
             if (width.Type === GridUnitType.Pixel) {
-                cell.offered = cell.clamp(width.Value);
-                coldef.setActualWidth(cell.setDesiredToOffered());
+                cell.desired = cell.offered = cell.clamp(width.Value);
+                coldef.setActualWidth(cell.desired);
             } else if (width.Type === GridUnitType.Star) {
                 cell.stars = width.Value;
                 ts.width += width.Value;
-                coldef.setActualWidth(Number.POSITIVE_INFINITY);
             } else if (width.Type === GridUnitType.Auto) {
-                cell.offered = cell.clamp(0);
-                cell.setDesiredToOffered();
+                cell.desired = cell.offered = cell.clamp(0);
             }
         }
 

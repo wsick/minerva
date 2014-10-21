@@ -6656,18 +6656,17 @@ var minerva;
                         for (var i = 0; i < coldefs.length; i++) {
                             var coldef = coldefs[i];
                             var width = coldef.Width || DEFAULT_GRID_LEN;
+                            coldef.setActualWidth(Number.POSITIVE_INFINITY);
 
                             var cell = grid.Segment.init(cm[i][i], 0.0, coldef.MinWidth, coldef.MaxWidth, width.Type);
                             if (width.Type === 1 /* Pixel */) {
-                                cell.offered = cell.clamp(width.Value);
-                                coldef.setActualWidth(cell.setDesiredToOffered());
+                                cell.desired = cell.offered = cell.clamp(width.Value);
+                                coldef.setActualWidth(cell.desired);
                             } else if (width.Type === 2 /* Star */) {
                                 cell.stars = width.Value;
                                 ts.width += width.Value;
-                                coldef.setActualWidth(Number.POSITIVE_INFINITY);
                             } else if (width.Type === 0 /* Auto */) {
-                                cell.offered = cell.clamp(0);
-                                cell.setDesiredToOffered();
+                                cell.desired = cell.offered = cell.clamp(0);
                             }
                         }
 
@@ -6712,18 +6711,17 @@ var minerva;
                         for (var i = 0; i < rowdefs.length; i++) {
                             var rowdef = rowdefs[i];
                             var height = rowdef.Height || DEFAULT_GRID_LEN;
+                            rowdef.setActualHeight(Number.POSITIVE_INFINITY);
 
                             var cell = grid.Segment.init(rm[i][i], 0.0, rowdef.MinHeight, rowdef.MaxHeight, height.Type);
                             if (height.Type === 1 /* Pixel */) {
-                                cell.offered = cell.clamp(height.Value);
-                                rowdef.setActualHeight(cell.setDesiredToOffered());
+                                cell.desired = cell.offered = cell.clamp(height.Value);
+                                rowdef.setActualHeight(cell.desired);
                             } else if (height.Type === 2 /* Star */) {
                                 cell.stars = height.Value;
                                 ts.height += height.Value;
-                                rowdef.setActualHeight(Number.POSITIVE_INFINITY);
                             } else if (height.Type === 0 /* Auto */) {
-                                cell.offered = cell.clamp(0);
-                                cell.setDesiredToOffered();
+                                cell.desired = cell.offered = cell.clamp(0);
                             }
                         }
 
