@@ -11160,6 +11160,11 @@ var minerva;
                         ds.width = (nb.width * sx) || 0;
                         ds.height = (nb.height * sy) || 0;
 
+                        if (!isFinite(ds.width))
+                            ds.width = 0;
+                        if (!isFinite(ds.height))
+                            ds.height = 0;
+
                         return true;
                     }
                     tapins.doOverride = doOverride;
