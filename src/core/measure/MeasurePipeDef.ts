@@ -15,7 +15,6 @@ module minerva.core.measure {
         availableSize: Size;
     }
     export interface IOutput extends pipe.IPipeOutput {
-        error: string;
         previousConstraint: Size;
         desiredSize: Size;
         hiddenDesire: Size;
@@ -49,8 +48,6 @@ module minerva.core.measure {
 
         createOutput (): IOutput {
             return {
-                error: null,
-
                 previousConstraint: new Size(),
                 desiredSize: new Size(),
                 hiddenDesire: new Size(),

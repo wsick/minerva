@@ -1525,6 +1525,19 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    minerva.errors = [];
+
+    function layoutError(tree, pipedef, message) {
+        minerva.errors.push({
+            tree: tree,
+            pipedef: pipedef,
+            message: message
+        });
+    }
+    minerva.layoutError = layoutError;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     function singleton(type) {
         var x = type;
         if (!x.$$instance)
@@ -2551,7 +2564,6 @@ var minerva;
 
                 ArrangePipeDef.prototype.createOutput = function () {
                     return {
-                        error: null,
                         dirtyFlags: 0,
                         uiFlags: 0,
                         layoutSlot: new minerva.Rect(),
@@ -2943,7 +2955,7 @@ var minerva;
                 tapins.validateFinalRect = function (input, state, output, tree, finalRect) {
                     var fr = state.finalRect;
                     if (fr.width < 0 || fr.height < 0 || !isFinite(fr.width) || !isFinite(fr.height) || isNaN(fr.width) || isNaN(fr.height)) {
-                        output.error = "Invalid arguments to Arrange.";
+                        minerva.layoutError(tree, this, "Invalid arguments to Arrange.");
                         return false;
                     }
                     return true;
@@ -3537,7 +3549,6 @@ var minerva;
 
                 MeasurePipeDef.prototype.createOutput = function () {
                     return {
-                        error: null,
                         previousConstraint: new minerva.Size(),
                         desiredSize: new minerva.Size(),
                         hiddenDesire: new minerva.Size(),
@@ -3720,7 +3731,7 @@ var minerva;
             (function (tapins) {
                 tapins.validate = function (input, state, output, tree, availableSize) {
                     if (isNaN(availableSize.width) || isNaN(availableSize.height)) {
-                        output.error = "Cannot call Measure using a size with NaN values.";
+                        minerva.layoutError(tree, this, "Cannot call Measure using a size with NaN values.");
                         return false;
                     }
                     return true;

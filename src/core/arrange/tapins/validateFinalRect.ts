@@ -4,7 +4,7 @@ module minerva.core.arrange.tapins {
         if (fr.width < 0 || fr.height < 0
             || !isFinite(fr.width) || !isFinite(fr.height)
             || isNaN(fr.width) || isNaN(fr.height)) {
-            output.error = "Invalid arguments to Arrange.";
+            minerva.layoutError(tree, this, "Invalid arguments to Arrange.");
             return false;
         }
         return true;

@@ -349,6 +349,10 @@ declare module minerva {
     }
 }
 declare module minerva {
+    var errors: any[];
+    function layoutError(tree: core.IUpdaterTree, pipedef: any, message: string): void;
+}
+declare module minerva {
     function singleton(type: Function): any;
 }
 declare module minerva.pipe {
@@ -634,7 +638,6 @@ declare module minerva.core.arrange {
         flipHorizontal: boolean;
     }
     interface IOutput extends pipe.IPipeOutput {
-        error: string;
         dirtyFlags: DirtyFlags;
         layoutSlot: Rect;
         layoutXform: number[];
@@ -814,7 +817,6 @@ declare module minerva.core.measure {
         availableSize: Size;
     }
     interface IOutput extends pipe.IPipeOutput {
-        error: string;
         previousConstraint: Size;
         desiredSize: Size;
         hiddenDesire: Size;

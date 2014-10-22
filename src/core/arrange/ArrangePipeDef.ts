@@ -27,7 +27,6 @@ module minerva.core.arrange {
         flipHorizontal: boolean;
     }
     export interface IOutput extends pipe.IPipeOutput {
-        error: string;
         dirtyFlags: DirtyFlags;
         layoutSlot: Rect;
         layoutXform: number[];
@@ -75,7 +74,6 @@ module minerva.core.arrange {
 
         createOutput (): IOutput {
             return {
-                error: null,
                 dirtyFlags: 0,
                 uiFlags: 0,
                 layoutSlot: new Rect(),

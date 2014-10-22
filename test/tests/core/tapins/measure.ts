@@ -58,10 +58,10 @@ module minerva.core.measure.tapins.tests {
         var tree = mock.tree();
 
         assert.ok(tapins.validate(input, state, output, tree, new Size()));
-        assert.ok(!output.error);
+        assert.strictEqual(minerva.errors.length, 0);
 
         assert.ok(!tapins.validate(input, state, output, tree, new Size(NaN, NaN)));
-        assert.ok(!!output.error);
+        assert.strictEqual(minerva.errors.length, 1);
     });
 
     QUnit.test("validateVisibility", (assert) => {
