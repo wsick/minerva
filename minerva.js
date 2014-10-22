@@ -364,6 +364,7 @@ var vec4;
 var mat3;
 (function (mat3) {
     var arrayType = (typeof Float32Array !== "undefined") ? Float32Array : Array;
+    var FLOAT_EPSILON = 0.000001;
 
     function create(mat) {
         var dest = new arrayType(9);
@@ -447,6 +448,11 @@ var mat3;
         return dest;
     }
     mat3.set = set;
+
+    function equal(a, b) {
+        return a === b || (Math.abs(a[0] - b[0]) < FLOAT_EPSILON && Math.abs(a[1] - b[1]) < FLOAT_EPSILON && Math.abs(a[2] - b[2]) < FLOAT_EPSILON && Math.abs(a[3] - b[3]) < FLOAT_EPSILON && Math.abs(a[4] - b[4]) < FLOAT_EPSILON && Math.abs(a[5] - b[5]) < FLOAT_EPSILON && Math.abs(a[6] - b[6]) < FLOAT_EPSILON && Math.abs(a[7] - b[7]) < FLOAT_EPSILON && Math.abs(a[8] - b[8]) < FLOAT_EPSILON);
+    }
+    mat3.equal = equal;
 
     function identity(dest) {
         if (!dest) {
@@ -2695,6 +2701,8 @@ var minerva;
                         mat3.translate(layoutXform, state.arrangedSize.width, 0);
                         mat3.scale(layoutXform, -1, 1);
                     }
+                    if (!mat3.equal(input.layoutXform, output.layoutXform))
+                        output.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
@@ -11160,10 +11168,8 @@ var minerva;
                         ds.width = (nb.width * sx) || 0;
                         ds.height = (nb.height * sy) || 0;
 
-                        if (!isFinite(ds.width))
-                            ds.width = 0;
-                        if (!isFinite(ds.height))
-                            ds.height = 0;
+                        if (!isFinite(ds.width) || !isFinite(ds.height))
+                            ds.width = ds.height = 0;
 
                         return true;
                     }

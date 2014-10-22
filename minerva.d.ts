@@ -234,6 +234,7 @@ declare module mat3 {
     function inverse(mat: number[], dest?: number[]): number[];
     function multiply(mat: number[], mat2: number[], dest?: number[]): number[];
     function set(mat: number[], dest: number[]): number[];
+    function equal(a: number[], b: number[]): boolean;
     function identity(dest?: number[]): number[];
     function str(mat: number[]): string;
     function clone(mat: number[]): number[];
