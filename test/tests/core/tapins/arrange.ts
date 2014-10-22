@@ -286,13 +286,16 @@ module minerva.core.arrange.tapins.tests {
         var tree = mock.tree();
 
         state.visualOffset = new Point(150, 200);
+        input.layoutXform = mat3.identity();
         assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
         assert.deepEqual(typedToArray(output.layoutXform), [1, 0, 150, 0, 1, 200, 0, 0, 1]);
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.LocalTransform, DirtyFlags.LocalTransform);
 
         state.arrangedSize.width = 100;
         state.flipHorizontal = true;
         assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
         assert.deepEqual(typedToArray(output.layoutXform), [-1, 0, -250, 0, 1, 200, 0, 0, 1]);
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.LocalTransform, DirtyFlags.LocalTransform);
     });
 
     QUnit.test("buildRenderSize", (assert) => {

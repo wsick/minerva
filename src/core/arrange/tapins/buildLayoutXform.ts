@@ -6,6 +6,8 @@ module minerva.core.arrange.tapins {
             mat3.translate(layoutXform, state.arrangedSize.width, 0);
             mat3.scale(layoutXform, -1, 1);
         }
+        if (!mat3.equal(input.layoutXform, output.layoutXform))
+            output.dirtyFlags |= DirtyFlags.LocalTransform;
         return true;
     };
 }

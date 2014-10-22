@@ -48,6 +48,7 @@ module mat3 {
         new (length: number): number[];
     }
     var arrayType: IArray = (typeof Float32Array !== "undefined") ? <any>Float32Array : <any>Array;
+    var FLOAT_EPSILON = 0.000001;
 
     export function create (mat?: number[]): number[] {
         var dest = new arrayType(9);
@@ -147,6 +148,20 @@ module mat3 {
         dest[7] = mat[7];
         dest[8] = mat[8];
         return dest;
+    }
+
+    export function equal (a: number[], b: number[]): boolean {
+        return a === b || (
+            Math.abs(a[0] - b[0]) < FLOAT_EPSILON &&
+            Math.abs(a[1] - b[1]) < FLOAT_EPSILON &&
+            Math.abs(a[2] - b[2]) < FLOAT_EPSILON &&
+            Math.abs(a[3] - b[3]) < FLOAT_EPSILON &&
+            Math.abs(a[4] - b[4]) < FLOAT_EPSILON &&
+            Math.abs(a[5] - b[5]) < FLOAT_EPSILON &&
+            Math.abs(a[6] - b[6]) < FLOAT_EPSILON &&
+            Math.abs(a[7] - b[7]) < FLOAT_EPSILON &&
+            Math.abs(a[8] - b[8]) < FLOAT_EPSILON
+            );
     }
 
     export function identity (dest?: number[]): number[] {
