@@ -893,6 +893,7 @@ declare module minerva.core.processdown {
         xformOrigin: Point;
         localXform: number[];
         renderAsProjection: number[];
+        subtreeDownDirty: DirtyFlags;
     }
     interface IOutput extends pipe.IPipeOutput {
         totalIsRenderVisible: boolean;

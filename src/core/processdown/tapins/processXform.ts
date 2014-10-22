@@ -7,6 +7,9 @@ module minerva.core.processdown.tapins {
             //NOTE: Removing visual parent (or surface) `Invalidate`
             //      In our down pass, we should only be invalidating self and children
             output.dirtyFlags |= DirtyFlags.NewBounds;
+            state.subtreeDownDirty |= DirtyFlags.Transform;
+        } else if (!mat4.equal(input.absoluteProjection, output.absoluteProjection)) {
+            state.subtreeDownDirty |= DirtyFlags.Transform;
         }
 
         //TODO: We can optimize to shift bounds rather than going through an UpdateBounds invalidation

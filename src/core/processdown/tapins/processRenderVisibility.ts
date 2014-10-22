@@ -17,14 +17,11 @@ module minerva.core.processdown.tapins {
             output.totalIsRenderVisible = input.visibility === Visibility.Visible;
         }
 
-        /*
-         if (!output.totalIsRenderVisible)
-         this._CacheInvalidateHint();
-         */
-
-        //Update new bounds
-        if (input.totalIsRenderVisible !== output.totalIsRenderVisible)
+        //Update bounds, propagate render visibility
+        if (input.totalIsRenderVisible !== output.totalIsRenderVisible) {
             output.dirtyFlags |= DirtyFlags.NewBounds;
+            state.subtreeDownDirty |= DirtyFlags.RenderVisibility;
+        }
 
         return true;
     };

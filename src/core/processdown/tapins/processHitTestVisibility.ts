@@ -9,6 +9,9 @@ module minerva.core.processdown.tapins {
             output.totalIsHitTestVisible = input.isHitTestVisible;
         }
 
+        if (output.totalIsHitTestVisible !== input.totalIsHitTestVisible)
+            state.subtreeDownDirty |= DirtyFlags.HitTestVisibility;
+
         return true;
     };
 }

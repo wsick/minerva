@@ -3765,7 +3765,8 @@ var minerva;
                     return {
                         xformOrigin: new minerva.Point(),
                         localXform: mat3.identity(),
-                        renderAsProjection: mat4.identity()
+                        renderAsProjection: mat4.identity(),
+                        subtreeDownDirty: 0
                     };
                 };
 
@@ -3801,6 +3802,7 @@ var minerva;
                     mat4.set(input.localProjection, output.localProjection);
                     mat4.set(input.absoluteProjection, output.absoluteProjection);
                     output.totalHasRenderProjection = input.totalHasRenderProjection;
+                    state.subtreeDownDirty = 0;
                 };
 
                 ProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
@@ -3971,6 +3973,9 @@ var minerva;
                         output.totalIsHitTestVisible = input.isHitTestVisible;
                     }
 
+                    if (output.totalIsHitTestVisible !== input.totalIsHitTestVisible)
+                        state.subtreeDownDirty |= minerva.DirtyFlags.HitTestVisibility;
+
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
@@ -3993,12 +3998,14 @@ var minerva;
                     var clc = output.compositeLayoutClip;
                     if (!vpinput || minerva.Rect.isEmpty(vpinput.compositeLayoutClip)) {
                         minerva.Rect.copyTo(lc, clc);
-                        return true;
+                    } else {
+                        minerva.Rect.copyTo(vpinput.compositeLayoutClip, clc);
+                        if (!minerva.Rect.isEmpty(lc))
+                            minerva.Rect.intersection(clc, lc);
                     }
 
-                    minerva.Rect.copyTo(vpinput.compositeLayoutClip, clc);
-                    if (!minerva.Rect.isEmpty(lc))
-                        minerva.Rect.intersection(clc, lc);
+                    if (!minerva.Rect.isEqual(input.compositeLayoutClip, output.compositeLayoutClip))
+                        state.subtreeDownDirty |= minerva.DirtyFlags.LayoutClip;
 
                     return true;
                 };
@@ -4081,8 +4088,10 @@ var minerva;
                         output.totalIsRenderVisible = input.visibility === 0 /* Visible */;
                     }
 
-                    if (input.totalIsRenderVisible !== output.totalIsRenderVisible)
+                    if (input.totalIsRenderVisible !== output.totalIsRenderVisible) {
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
+                        state.subtreeDownDirty |= minerva.DirtyFlags.RenderVisibility;
+                    }
 
                     return true;
                 };
@@ -4104,6 +4113,9 @@ var minerva;
 
                     if (!mat4.equal(input.localProjection, output.localProjection)) {
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
+                        state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
+                    } else if (!mat4.equal(input.absoluteProjection, output.absoluteProjection)) {
+                        state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
                     }
 
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
@@ -4123,7 +4135,9 @@ var minerva;
         (function (processdown) {
             (function (tapins) {
                 tapins.propagateDirtyToChildren = function (input, state, output, vpinput, tree) {
-                    var newDownDirty = (output.dirtyFlags & ~input.dirtyFlags) & minerva.DirtyFlags.PropagateDown;
+                    var newDownDirty = state.subtreeDownDirty & minerva.DirtyFlags.PropagateDown;
+                    if (newDownDirty === 0)
+                        return true;
                     for (var walker = tree.walk(); walker.step();) {
                         walker.current.assets.dirtyFlags |= newDownDirty;
                         core.Updater.$$addDownDirty(walker.current);

@@ -44,7 +44,8 @@ module minerva.core.processdown.tapins.tests {
             return {
                 xformOrigin: new Point(),
                 localXform: mat3.identity(),
-                renderAsProjection: mat4.identity()
+                renderAsProjection: mat4.identity(),
+                subtreeDownDirty: 0
             };
         },
         output: function (): processdown.IOutput {
@@ -62,6 +63,21 @@ module minerva.core.processdown.tapins.tests {
                 dirtyFlags: 0,
                 newUpDirty: 0
             };
+        },
+        tree: function(children: Updater[]): IUpdaterTree {
+            var tree = new UpdaterTree();
+            tree.walk = function(): IWalker<Updater> {
+                var i = -1;
+                return {
+                    current: undefined,
+                    step: function(): boolean {
+                        i++;
+                        this.current = children[i];
+                        return this.current !== undefined;
+                    }
+                };
+            };
+            return tree;
         }
     };
 
@@ -94,6 +110,8 @@ module minerva.core.processdown.tapins.tests {
         assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
         assert.notStrictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
 
+        input.totalIsRenderVisible = true;
+        state.subtreeDownDirty = 0;
         input.opacity = 1.0;
         vpinput.totalOpacity = 1.0;
         vpinput.totalIsRenderVisible = false;
@@ -102,6 +120,7 @@ module minerva.core.processdown.tapins.tests {
         assert.strictEqual(output.totalIsRenderVisible, false);
         assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
         assert.strictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
+        assert.strictEqual(state.subtreeDownDirty, DirtyFlags.RenderVisibility);
     });
 
     QUnit.test("processHitTestVisibility", (assert) => {
@@ -122,9 +141,12 @@ module minerva.core.processdown.tapins.tests {
         assert.ok(tapins.processHitTestVisibility(input, state, output, vpinput));
         assert.ok(output.totalIsHitTestVisible);
 
+        input.totalIsHitTestVisible = true;
+        state.subtreeDownDirty = 0;
         vpinput.totalIsHitTestVisible = false;
         assert.ok(tapins.processHitTestVisibility(input, state, output, vpinput));
         assert.ok(!output.totalIsHitTestVisible);
+        assert.strictEqual(state.subtreeDownDirty, DirtyFlags.HitTestVisibility);
     });
 
     QUnit.test("calcXformOrigin", (assert) => {
@@ -295,10 +317,13 @@ module minerva.core.processdown.tapins.tests {
         assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
         assert.notStrictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
 
+        state.subtreeDownDirty = 0;
+        input.absoluteProjection = mat3.create();
         mat4.createScale(3, 2, 1, output.localProjection);
         assert.ok(tapins.processXform(input, state, output, vpinput));
         assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
         assert.strictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
+        assert.strictEqual(state.subtreeDownDirty, DirtyFlags.Transform);
     });
 
     QUnit.test("processLayoutClip", (assert) => {
@@ -323,12 +348,40 @@ module minerva.core.processdown.tapins.tests {
         assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
         assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 70));
 
+        state.subtreeDownDirty = 0;
         input.layoutClip = new Rect();
         assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
         assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 100));
+        assert.strictEqual(state.subtreeDownDirty, DirtyFlags.LayoutClip);
     });
 
-    QUnit.test("processZIndices", (assert) => {
-        assert.ok(true);
+    QUnit.test("propagateDirtyToChildren", (assert) => {
+        var input = mock.input();
+        var state = mock.state();
+        var output = mock.output();
+        var vpinput = mock.input();
+
+        var added: Updater[] = [];
+        var oldAddDownDirty = Updater.$$addDownDirty;
+        Updater.$$addDownDirty = function(updater: Updater) {
+            added.push(updater);
+        };
+
+        var children: Updater[] = [];
+        children.push(new Updater());
+        children.push(new Updater());
+        var tree = mock.tree(children);
+
+        assert.ok(tapins.propagateDirtyToChildren(input, state, output, vpinput, tree));
+        assert.strictEqual(added.length, 0);
+
+        state.subtreeDownDirty = DirtyFlags.RenderVisibility;
+        assert.ok(tapins.propagateDirtyToChildren(input, state, output, vpinput, tree));
+        assert.strictEqual(added[0], children[0]);
+        assert.strictEqual(children[0].assets.dirtyFlags & DirtyFlags.RenderVisibility, DirtyFlags.RenderVisibility);
+        assert.strictEqual(added[1], children[1]);
+        assert.strictEqual(children[1].assets.dirtyFlags & DirtyFlags.RenderVisibility, DirtyFlags.RenderVisibility);
+
+        Updater.$$addDownDirty = oldAddDownDirty;
     });
 }

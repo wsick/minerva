@@ -1,5 +1,4 @@
 module minerva.core {
-
     export class Updater {
         private $$measure: IMeasurePipe = null;
         private $$measureBinder: measure.IMeasureBinder = null;
