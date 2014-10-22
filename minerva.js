@@ -1946,8 +1946,14 @@ var minerva;
                         continue;
                     }
                     cur.tree.surface = surface;
-                    if (surface && (cur.assets.dirtyFlags & minerva.DirtyFlags.UpDirtyState) > 0)
-                        newUps.push(cur);
+                    if (surface) {
+                        if ((cur.assets.dirtyFlags & minerva.DirtyFlags.DownDirtyState) > 0) {
+                            cur.$$inDownDirty = true;
+                            surface.addDownDirty(cur);
+                        }
+                        if ((cur.assets.dirtyFlags & minerva.DirtyFlags.UpDirtyState) > 0)
+                            newUps.push(cur);
+                    }
                 }
 
                 while ((cur = newUps.pop()) != null) {

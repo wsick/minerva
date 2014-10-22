@@ -185,8 +185,14 @@ module minerva.core {
                     continue;
                 }
                 cur.tree.surface = surface;
-                if (surface && (cur.assets.dirtyFlags & DirtyFlags.UpDirtyState) > 0)
-                    newUps.push(cur);
+                if (surface) {
+                    if ((cur.assets.dirtyFlags & DirtyFlags.DownDirtyState) > 0) {
+                        cur.$$inDownDirty = true;
+                        surface.addDownDirty(cur);
+                    }
+                    if ((cur.assets.dirtyFlags & DirtyFlags.UpDirtyState) > 0)
+                        newUps.push(cur);
+                }
             }
             //NOTE: Adding Updaters to surface in reverse deep walk order for process up pass
             while ((cur = newUps.pop()) != null) {
