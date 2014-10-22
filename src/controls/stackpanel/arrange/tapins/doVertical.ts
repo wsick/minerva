@@ -3,6 +3,7 @@ module minerva.controls.stackpanel.arrange.tapins {
         if (input.orientation !== Orientation.Vertical)
             return true;
 
+        var fs = state.finalSize;
         var arranged = state.arrangedSize;
         arranged.height = 0;
         var childRect = state.childRect;
@@ -12,6 +13,7 @@ module minerva.controls.stackpanel.arrange.tapins {
         for (var walker = tree.walk(); walker.step();) {
             child = walker.current;
             childDesired = child.assets.desiredSize;
+            childDesired.width = fs.width;
             Size.copyTo(childDesired, childRect);
             childRect.y = arranged.height;
 

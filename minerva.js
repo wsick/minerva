@@ -8541,6 +8541,7 @@ var minerva;
                         if (input.orientation !== 0 /* Horizontal */)
                             return true;
 
+                        var fs = state.finalSize;
                         var arranged = state.arrangedSize;
                         arranged.width = 0;
                         var childRect = state.childRect;
@@ -8550,6 +8551,7 @@ var minerva;
                         for (var walker = tree.walk(); walker.step();) {
                             child = walker.current;
                             childDesired = child.assets.desiredSize;
+                            childDesired.height = fs.height;
                             minerva.Size.copyTo(childDesired, childRect);
                             childRect.x = arranged.width;
 
@@ -8608,6 +8610,7 @@ var minerva;
                         if (input.orientation !== 1 /* Vertical */)
                             return true;
 
+                        var fs = state.finalSize;
                         var arranged = state.arrangedSize;
                         arranged.height = 0;
                         var childRect = state.childRect;
@@ -8617,6 +8620,7 @@ var minerva;
                         for (var walker = tree.walk(); walker.step();) {
                             child = walker.current;
                             childDesired = child.assets.desiredSize;
+                            childDesired.width = fs.width;
                             minerva.Size.copyTo(childDesired, childRect);
                             childRect.y = arranged.height;
 
