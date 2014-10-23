@@ -11065,7 +11065,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 PathUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(path.measure.PathMeasurePipeDef)).setArrangePipe(minerva.singleton(path.arrange.PathArrangePipeDef)).setRenderPipe(minerva.singleton(path.render.PathRenderPipeDef));
+                    this.setMeasurePipe(minerva.singleton(path.measure.PathMeasurePipeDef)).setArrangePipe(minerva.singleton(path.arrange.PathArrangePipeDef)).setRenderPipe(minerva.singleton(path.render.PathRenderPipeDef)).setHitTestPipe(minerva.singleton(path.hittest.PathHitTestPipeDef));
 
                     var assets = this.assets;
                     assets.stretch = 0 /* None */;
@@ -11423,6 +11423,38 @@ var minerva;
                 var tapins = arrange.tapins;
             })(path.arrange || (path.arrange = {}));
             var arrange = path.arrange;
+        })(shapes.path || (shapes.path = {}));
+        var path = shapes.path;
+    })(minerva.shapes || (minerva.shapes = {}));
+    var shapes = minerva.shapes;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (shapes) {
+        (function (path) {
+            (function (hittest) {
+                var PathHitTestPipeDef = (function (_super) {
+                    __extends(PathHitTestPipeDef, _super);
+                    function PathHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('drawShape', tapins.drawShape);
+                    }
+                    return PathHitTestPipeDef;
+                })(shapes.shape.hittest.ShapeHitTestPipeDef);
+                hittest.PathHitTestPipeDef = PathHitTestPipeDef;
+
+                (function (tapins) {
+                    function drawShape(data, pos, hitList, ctx) {
+                        var assets = data.assets;
+                        ctx.pretransformMatrix(assets.stretchXform);
+                        assets.data.Draw(ctx);
+                        return true;
+                    }
+                    tapins.drawShape = drawShape;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(path.hittest || (path.hittest = {}));
+            var hittest = path.hittest;
         })(shapes.path || (shapes.path = {}));
         var path = shapes.path;
     })(minerva.shapes || (minerva.shapes = {}));

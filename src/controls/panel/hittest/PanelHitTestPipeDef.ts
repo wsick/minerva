@@ -14,7 +14,7 @@ module minerva.controls.panel.hittest {
         export function canHitInside (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
             if (data.hitChildren)
                 return true;
-            
+
             if (!data.assets.background) {
                 hitList.shift();
                 ctx.restore();

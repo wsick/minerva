@@ -2534,6 +2534,17 @@ declare module minerva.shapes.path.arrange {
         function buildStretchXform(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
+declare module minerva.shapes.path.hittest {
+    interface IHitTestData extends shape.hittest.IHitTestData {
+        assets: IPathUpdaterAssets;
+    }
+    class PathHitTestPipeDef extends shape.hittest.ShapeHitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function drawShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
 declare module minerva.shapes.path.render {
     interface IInput extends shape.render.IInput {
         data: AnonPathGeometry;

@@ -8,7 +8,8 @@ module minerva.shapes.path {
         init () {
             this.setMeasurePipe(singleton(measure.PathMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.PathArrangePipeDef))
-                .setRenderPipe(singleton(render.PathRenderPipeDef));
+                .setRenderPipe(singleton(render.PathRenderPipeDef))
+                .setHitTestPipe(singleton(hittest.PathHitTestPipeDef));
 
             var assets = this.assets;
             assets.stretch = Stretch.None;
