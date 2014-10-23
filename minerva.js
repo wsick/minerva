@@ -3321,7 +3321,8 @@ var minerva;
         (function (hittest) {
             (function (tapins) {
                 function canHit(data, pos, hitList, ctx) {
-                    return data.assets.totalIsRenderVisible && data.assets.totalIsHitTestVisible;
+                    var assets = data.assets;
+                    return !!assets.totalIsRenderVisible && !!assets.totalIsHitTestVisible && ((assets.totalOpacity * 255) >= 0.5);
                 }
                 tapins.canHit = canHit;
             })(hittest.tapins || (hittest.tapins = {}));
@@ -4728,11 +4729,7 @@ var minerva;
         (function (render) {
             (function (tapins) {
                 tapins.validate = function (input, state, output, ctx, region, tree) {
-                    if (!input.totalIsRenderVisible)
-                        return false;
-                    if ((input.totalOpacity * 255) < 0.5)
-                        return false;
-                    return true;
+                    return !!input.totalIsRenderVisible && ((input.totalOpacity * 255) >= 0.5);
                 };
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
