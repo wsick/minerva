@@ -43,7 +43,7 @@ module minerva.text {
                 usedText = text.slice(0, end);
             }
             //NOTE: Move backward if still need to clip
-            while (end > -1 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
+            while (end > 0 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                 end--;
                 usedText = text.slice(0, end);
             }

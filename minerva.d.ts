@@ -573,6 +573,10 @@ declare module minerva.core.helpers {
     }
     function coerceSize(size: ISize, assets: ISized): void;
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
+    interface IClipAssets {
+        layoutClip: Rect;
+    }
+    function renderLayoutClip(ctx: CanvasRenderingContext2D, assets: IClipAssets): void;
 }
 declare module minerva.core.reactTo {
     module helpers {
@@ -2074,15 +2078,38 @@ declare module minerva.controls.textblock.render {
     }
 }
 declare module minerva.controls.textboxview {
+    class Blinker {
+        public isEnabled: boolean;
+        public isVisible: boolean;
+        private $$blink_delay;
+        private $$timeout;
+        private $$onChange;
+        constructor(onChange: (isVisible: boolean) => void);
+        public delay(): void;
+        public begin(): void;
+        public end(): void;
+        private $connect(multiplier);
+        private $disconnect();
+        private $blink();
+        private $show();
+        private $hide();
+    }
+}
+declare module minerva.controls.textboxview {
     interface ITextBoxViewUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput, text.IDocumentContext {
+        isReadOnly: boolean;
+        isFocused: boolean;
     }
     class TextBoxViewUpdater extends core.Updater {
         public assets: ITextBoxViewUpdaterAssets;
         public tree: TextBoxViewUpdaterTree;
+        public blinker: Blinker;
         public init(): void;
         public setDocument(docdef?: text.IDocumentLayoutDef): TextBoxViewUpdater;
         public invalidateFont(full?: boolean): void;
         public invalidateTextMetrics(): void;
+        public invalidateCaret(): void;
+        public resetCaretBlinker(shouldDelay: boolean): void;
     }
 }
 declare module minerva.controls.textboxview {
@@ -2153,13 +2180,16 @@ declare module minerva.controls.textboxview.processup {
 }
 declare module minerva.controls.textboxview.render {
     interface IInput extends core.render.IInput, text.IDocumentContext {
+        isCaretVisible: boolean;
+        caretRegion: Rect;
+        caretBrush: IBrush;
     }
     class TextBoxViewRenderPipeDef extends core.render.RenderPipeDef {
         constructor();
     }
     module tapins {
-        function renderCursor(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
         function doRender(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
+        function renderCaret(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
     }
 }
 declare module minerva.controls.usercontrol {
@@ -2822,12 +2852,14 @@ declare module minerva.text {
         createAssets(): IDocumentAssets;
         layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
+        getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
         getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
     }
     class DocumentLayoutDef implements IDocumentLayoutDef {
         public createAssets(): IDocumentAssets;
         public layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         public render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
+        public getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
         public splitSelection(docctx: IDocumentContext, assets: IDocumentAssets): void;
         public getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
         public measureTextWidth(text: string, font: Font): number;
@@ -2910,7 +2942,6 @@ declare module minerva.text.layout {
         public pre: Cluster;
         public sel: Cluster;
         public post: Cluster;
-        static getCursorFromX(runs: Run[], x: number): number;
         static splitSelection(run: Run, start: number, end: number, measureWidth: (text: string, assets: ITextAssets) => number): void;
     }
 }

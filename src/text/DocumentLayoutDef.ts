@@ -21,6 +21,7 @@ module minerva.text {
         createAssets (): IDocumentAssets;
         layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render (ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets);
+        getCursorFromPoint (point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
         getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
     }
 
@@ -75,6 +76,49 @@ module minerva.text {
                 ctx.translate(-line.width - halign, line.height);
             });
             ctx.restore();
+        }
+
+        getCursorFromPoint (point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number {
+            var advance = 0;
+            var line: layout.Line;
+            for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
+                line = lines[i];
+                if (point.y <= (cury + line.height))
+                    break;
+                advance += line.runs.reduce<number>((agg, r) => agg + r.length, 0);
+                cury += line.height;
+            }
+            if (!line)
+                return advance;
+
+            var px = point.x - this.getHorizontalAlignmentX(docctx, docassets, line.width);
+            var curx = 0;
+            for (var runs = line.runs, i = 0, len = runs.length; i < len; i++) {
+                var run = runs[i];
+                if (px <= (curx + run.width))
+                    break;
+                advance += run.length;
+                curx += run.width;
+            }
+            if (!run)
+                return advance;
+
+            //NOTE: Guess at cursor
+            var end = Math.max(0, Math.ceil(px / run.width));
+            var usedText = run.text.slice(0, end);
+            //NOTE: Move backward if width is right of point
+            var width: number;
+            while (end > 0 && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
+                end--;
+                usedText = run.text.slice(0, end);
+            }
+            //NOTE: Move forward if width is left of point
+            while (end < run.text.length && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
+                end++;
+                usedText = run.text.slice(0, end);
+            }
+
+            return advance + end;
         }
 
         splitSelection (docctx: IDocumentContext, assets: IDocumentAssets) {

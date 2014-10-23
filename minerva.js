@@ -2369,6 +2369,16 @@ var minerva;
                     minerva.Rect.transform4(dest, projection);
             }
             helpers.copyGrowTransform4 = copyGrowTransform4;
+
+            function renderLayoutClip(ctx, assets) {
+                var lc = assets.layoutClip;
+                if (!minerva.Rect.isEmpty(lc)) {
+                    ctx.beginPath();
+                    ctx.rect(lc.x, lc.y, lc.width, lc.height);
+                    ctx.clip();
+                }
+            }
+            helpers.renderLayoutClip = renderLayoutClip;
         })(core.helpers || (core.helpers = {}));
         var helpers = core.helpers;
     })(minerva.core || (minerva.core = {}));
@@ -2674,8 +2684,8 @@ var minerva;
                     testRect.y = 0;
                     minerva.Size.copyTo(state.arrangedSize, testRect);
                     if (!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, state.arrangedSize)) {
-                        fwClip.width = Number.POSITIVE_INFINITY;
-                        fwClip.height = Number.POSITIVE_INFINITY;
+                        fwClip.x = fwClip.y = 0;
+                        fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
                         core.helpers.coerceSize(fwClip, input);
                         minerva.Rect.intersection(layoutClip, fwClip);
                     } else {
@@ -9098,12 +9108,95 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (textboxview) {
+            var CURSOR_BLINK_DIVIDER = 3;
+            var CURSOR_BLINK_OFF_MULTIPLIER = 2;
+            var CURSOR_BLINK_DELAY_MULTIPLIER = 3;
+            var CURSOR_BLINK_ON_MULTIPLIER = 4;
+            var CURSOR_BLINK_TIMEOUT_DEFAULT = 900;
+
+            var Blinker = (function () {
+                function Blinker(onChange) {
+                    this.isEnabled = true;
+                    this.isVisible = false;
+                    this.$$blink_delay = CURSOR_BLINK_TIMEOUT_DEFAULT;
+                    this.$$timeout = 0;
+                    this.$$onChange = onChange;
+                }
+                Blinker.prototype.delay = function () {
+                    this.$disconnect();
+                    this.$connect(CURSOR_BLINK_DELAY_MULTIPLIER);
+                    this.$show();
+                };
+
+                Blinker.prototype.begin = function () {
+                    if (this.$$timeout === 0) {
+                        this.$connect(CURSOR_BLINK_ON_MULTIPLIER);
+                        this.$show();
+                    }
+                };
+
+                Blinker.prototype.end = function () {
+                    this.$disconnect();
+                    this.$hide();
+                };
+
+                Blinker.prototype.$connect = function (multiplier) {
+                    var _this = this;
+                    var delay = this.$$blink_delay * multiplier / CURSOR_BLINK_DIVIDER;
+                    this.$$timeout = window.setTimeout(function () {
+                        return _this.$blink();
+                    }, delay);
+                };
+
+                Blinker.prototype.$disconnect = function () {
+                    if (this.$$timeout !== 0) {
+                        window.clearTimeout(this.$$timeout);
+                        this.$$timeout = 0;
+                    }
+                };
+
+                Blinker.prototype.$blink = function () {
+                    if (this.isVisible) {
+                        this.$hide();
+                        this.$connect(CURSOR_BLINK_OFF_MULTIPLIER);
+                    } else {
+                        this.$show();
+                        this.$connect(CURSOR_BLINK_ON_MULTIPLIER);
+                    }
+                };
+
+                Blinker.prototype.$show = function () {
+                    if (this.isVisible)
+                        return;
+                    this.isVisible = true;
+                    this.$$onChange && this.$$onChange(true);
+                };
+
+                Blinker.prototype.$hide = function () {
+                    if (!this.isVisible)
+                        return;
+                    this.isVisible = false;
+                    this.$$onChange && this.$$onChange(false);
+                };
+                return Blinker;
+            })();
+            textboxview.Blinker = Blinker;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textboxview) {
             var TextBoxViewUpdater = (function (_super) {
                 __extends(TextBoxViewUpdater, _super);
                 function TextBoxViewUpdater() {
                     _super.apply(this, arguments);
                 }
                 TextBoxViewUpdater.prototype.init = function () {
+                    var _this = this;
                     this.setTree(new textboxview.TextBoxViewUpdaterTree()).setMeasurePipe(minerva.singleton(textboxview.measure.TextBoxViewMeasurePipeDef)).setArrangePipe(minerva.singleton(textboxview.arrange.TextBoxViewArrangePipeDef)).setProcessUpPipe(minerva.singleton(textboxview.processup.TextBoxViewProcessUpPipeDef)).setRenderPipe(minerva.singleton(textboxview.render.TextBoxViewRenderPipeDef)).setHitTestPipe(minerva.singleton(textboxview.hittest.TextBoxViewHitTestPipeDef));
 
                     this.setDocument();
@@ -9115,6 +9208,16 @@ var minerva;
                     assets.textAlignment = 0 /* Left */;
                     assets.lineStackingStrategy = 0 /* MaxHeight */;
                     assets.lineHeight = NaN;
+
+                    assets.isCaretVisible = false;
+                    assets.caretBrush = null;
+                    assets.caretRegion = new minerva.Rect();
+                    assets.isReadOnly = false;
+
+                    this.blinker = new textboxview.Blinker(function (isVisible) {
+                        _this.assets.isCaretVisible = isVisible;
+                        _this.invalidateCaret();
+                    });
 
                     _super.prototype.init.call(this);
                 };
@@ -9143,6 +9246,25 @@ var minerva;
                     var docassets = this.tree.doc.assets;
                     docassets.actualWidth = NaN;
                     docassets.actualHeight = NaN;
+                };
+
+                TextBoxViewUpdater.prototype.invalidateCaret = function () {
+                    var assets = this.assets;
+                    var region = new minerva.Rect();
+                    minerva.Rect.copyTo(assets.caretRegion, region);
+                    minerva.Rect.transform(region, assets.absoluteXform);
+                    this.invalidate(region);
+                };
+
+                TextBoxViewUpdater.prototype.resetCaretBlinker = function (shouldDelay) {
+                    var assets = this.assets;
+                    var blinker = this.blinker;
+
+                    if (assets.selectionLength > 0 || assets.isReadOnly || assets.isFocused)
+                        return blinker.end();
+                    if (shouldDelay)
+                        return blinker.delay();
+                    return blinker.begin();
                 };
                 return TextBoxViewUpdater;
             })(minerva.core.Updater);
@@ -9382,24 +9504,45 @@ var minerva;
                     __extends(TextBoxViewRenderPipeDef, _super);
                     function TextBoxViewRenderPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('doRender', tapins.doRender);
+                        this.replaceTapin('doRender', tapins.doRender).addTapinAfter('doRender', 'renderCaret', tapins.renderCaret);
                     }
                     return TextBoxViewRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.TextBoxViewRenderPipeDef = TextBoxViewRenderPipeDef;
 
                 (function (tapins) {
-                    function renderCursor(input, state, output, ctx, region, tree) {
-                        return true;
-                    }
-                    tapins.renderCursor = renderCursor;
-
                     function doRender(input, state, output, ctx, region, tree) {
-                        tree.render(ctx, input);
+                        ctx.save();
 
+                        tree.render(ctx, input);
+                        ctx.restore();
                         return true;
                     }
                     tapins.doRender = doRender;
+
+                    function renderCaret(input, state, output, ctx, region, tree) {
+                        if (!input.isCaretVisible)
+                            return true;
+
+                        var region = input.caretRegion;
+                        var brush = input.caretBrush;
+                        var raw = ctx.raw;
+
+                        raw.beginPath();
+                        raw.moveTo(region.x + 0.5, region.y);
+                        raw.lineTo(region.x + 0.5, region.y + region.height);
+                        raw.lineWidth = 1.0;
+                        if (brush) {
+                            brush.setupBrush(raw, region);
+                            raw.strokeStyle = brush.toHtml5Object();
+                        } else {
+                            raw.strokeStyle = "#000000";
+                        }
+                        raw.stroke();
+
+                        return true;
+                    }
+                    tapins.renderCaret = renderCaret;
                 })(render.tapins || (render.tapins = {}));
                 var tapins = render.tapins;
             })(textboxview.render || (textboxview.render = {}));
@@ -12615,6 +12758,50 @@ var minerva;
                 ctx.restore();
             };
 
+            DocumentLayoutDef.prototype.getCursorFromPoint = function (point, docctx, docassets) {
+                var advance = 0;
+                var line;
+                for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
+                    line = lines[i];
+                    if (point.y <= (cury + line.height))
+                        break;
+                    advance += line.runs.reduce(function (agg, r) {
+                        return agg + r.length;
+                    }, 0);
+                    cury += line.height;
+                }
+                if (!line)
+                    return advance;
+
+                var px = point.x - this.getHorizontalAlignmentX(docctx, docassets, line.width);
+                var curx = 0;
+                for (var runs = line.runs, i = 0, len = runs.length; i < len; i++) {
+                    var run = runs[i];
+                    if (px <= (curx + run.width))
+                        break;
+                    advance += run.length;
+                    curx += run.width;
+                }
+                if (!run)
+                    return advance;
+
+                var end = Math.max(0, Math.ceil(px / run.width));
+                var usedText = run.text.slice(0, end);
+
+                var width;
+                while (end > 0 && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
+                    end--;
+                    usedText = run.text.slice(0, end);
+                }
+
+                while (end < run.text.length && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
+                    end++;
+                    usedText = run.text.slice(0, end);
+                }
+
+                return advance + end;
+            };
+
             DocumentLayoutDef.prototype.splitSelection = function (docctx, assets) {
                 var _this = this;
                 if (assets.selCached)
@@ -12704,7 +12891,7 @@ var minerva;
                     usedText = text.slice(0, end);
                 }
 
-                while (end > -1 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
+                while (end > 0 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                     end--;
                     usedText = text.slice(0, end);
                 }
@@ -12987,10 +13174,6 @@ var minerva;
                     this.length = 0;
                     this.width = 0;
                 }
-                Run.getCursorFromX = function (runs, x) {
-                    return 0;
-                };
-
                 Run.splitSelection = function (run, start, end, measureWidth) {
                     run.pre = run.sel = run.post = null;
 
