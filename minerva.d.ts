@@ -2073,6 +2073,95 @@ declare module minerva.controls.textblock.render {
         function doRender(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBlockUpdaterTree): boolean;
     }
 }
+declare module minerva.controls.textboxview {
+    interface ITextBoxViewUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput, text.IDocumentContext {
+    }
+    class TextBoxViewUpdater extends core.Updater {
+        public assets: ITextBoxViewUpdaterAssets;
+        public tree: TextBoxViewUpdaterTree;
+        public init(): void;
+        public setDocument(docdef?: text.IDocumentLayoutDef): TextBoxViewUpdater;
+        public invalidateFont(full?: boolean): void;
+        public invalidateTextMetrics(): void;
+    }
+}
+declare module minerva.controls.textboxview {
+    interface ITextBoxViewUpdaterTree {
+        doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
+        layout(constraint: Size, docctx: text.IDocumentContext): Size;
+        render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): any;
+        setAvailableWidth(width: number): any;
+        getHorizontalOffset(docctx: text.IDocumentContext): number;
+        walkText(): IWalker<text.TextUpdater>;
+        onTextAttached(child: text.TextUpdater): any;
+        onTextDetached(child: text.TextUpdater): any;
+    }
+    class TextBoxViewUpdaterTree extends core.UpdaterTree implements ITextBoxViewUpdaterTree {
+        public doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
+        public children: text.TextUpdater[];
+        public layout(constraint: Size, docctx: text.IDocumentContext): Size;
+        public render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): void;
+        public setAvailableWidth(width: number): void;
+        public getHorizontalOffset(docctx: text.IDocumentContext): number;
+        public clearText(): void;
+        public walkText(): IWalker<text.TextUpdater>;
+        public onTextAttached(child: text.TextUpdater, index?: number): void;
+        public onTextDetached(child: text.TextUpdater): void;
+    }
+}
+declare module minerva.controls.textboxview.arrange {
+    interface IInput extends core.arrange.IInput, text.IDocumentContext {
+    }
+    class TextBoxViewArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+    }
+    module tapins {
+        function doOverride(input: IInput, state: core.arrange.IState, output: core.arrange.IOutput, tree: TextBoxViewUpdaterTree, finalRect: Rect): boolean;
+    }
+}
+declare module minerva.controls.textboxview.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: ITextBoxViewUpdaterAssets;
+    }
+    class TextBoxViewHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
+declare module minerva.controls.textboxview.measure {
+    interface IInput extends core.measure.IInput, text.IDocumentContext {
+    }
+    class TextBoxViewMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+    }
+    module tapins {
+        function doOverride(input: IInput, state: core.measure.IState, output: core.measure.IOutput, tree: TextBoxViewUpdaterTree, availableSize: Size): boolean;
+    }
+}
+declare module minerva.controls.textboxview.processup {
+    interface IInput extends core.processup.IInput, text.IDocumentContext {
+    }
+    class TextBoxViewProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+    module tapins {
+        function calcActualSize(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBoxViewUpdaterTree): boolean;
+        function calcExtents(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBoxViewUpdaterTree): boolean;
+    }
+}
+declare module minerva.controls.textboxview.render {
+    interface IInput extends core.render.IInput, text.IDocumentContext {
+    }
+    class TextBoxViewRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+    }
+    module tapins {
+        function renderCursor(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
+        function doRender(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
+    }
+}
 declare module minerva.controls.usercontrol {
     interface IUserControlUpdaterAssets extends control.IControlUpdaterAssets, measure.IInput, arrange.IInput {
     }

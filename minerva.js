@@ -9097,6 +9097,321 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (controls) {
+        (function (textboxview) {
+            var TextBoxViewUpdater = (function (_super) {
+                __extends(TextBoxViewUpdater, _super);
+                function TextBoxViewUpdater() {
+                    _super.apply(this, arguments);
+                }
+                TextBoxViewUpdater.prototype.init = function () {
+                    this.setTree(new textboxview.TextBoxViewUpdaterTree()).setMeasurePipe(minerva.singleton(textboxview.measure.TextBoxViewMeasurePipeDef)).setArrangePipe(minerva.singleton(textboxview.arrange.TextBoxViewArrangePipeDef)).setProcessUpPipe(minerva.singleton(textboxview.processup.TextBoxViewProcessUpPipeDef)).setRenderPipe(minerva.singleton(textboxview.render.TextBoxViewRenderPipeDef)).setHitTestPipe(minerva.singleton(textboxview.hittest.TextBoxViewHitTestPipeDef));
+
+                    this.setDocument();
+
+                    var assets = this.assets;
+                    assets.selectionStart = 0;
+                    assets.selectionLength = 0;
+                    assets.textWrapping = 0 /* NoWrap */;
+                    assets.textAlignment = 0 /* Left */;
+                    assets.lineStackingStrategy = 0 /* MaxHeight */;
+                    assets.lineHeight = NaN;
+
+                    _super.prototype.init.call(this);
+                };
+
+                TextBoxViewUpdater.prototype.setDocument = function (docdef) {
+                    if (this.tree.doc)
+                        return this;
+                    this.tree.doc = minerva.text.createDocumentLayout(docdef || new minerva.text.DocumentLayoutDef());
+                    return this;
+                };
+
+                TextBoxViewUpdater.prototype.invalidateFont = function (full) {
+                    if (full === true) {
+                        this.invalidateMeasure();
+                        this.invalidateArrange();
+                        this.updateBounds(true);
+                    }
+                    this.invalidate();
+                };
+
+                TextBoxViewUpdater.prototype.invalidateTextMetrics = function () {
+                    this.invalidateMeasure();
+                    this.invalidateArrange();
+                    this.updateBounds(true);
+                    this.invalidate();
+                    var docassets = this.tree.doc.assets;
+                    docassets.actualWidth = NaN;
+                    docassets.actualHeight = NaN;
+                };
+                return TextBoxViewUpdater;
+            })(minerva.core.Updater);
+            textboxview.TextBoxViewUpdater = TextBoxViewUpdater;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textboxview) {
+            var TextBoxViewUpdaterTree = (function (_super) {
+                __extends(TextBoxViewUpdaterTree, _super);
+                function TextBoxViewUpdaterTree() {
+                    _super.apply(this, arguments);
+                    this.children = [];
+                }
+                TextBoxViewUpdaterTree.prototype.layout = function (constraint, docctx) {
+                    var doc = this.doc;
+                    doc.def.layout(docctx, doc.assets, constraint, this.walkText());
+                    return new minerva.Size(doc.assets.actualWidth, doc.assets.actualHeight);
+                };
+
+                TextBoxViewUpdaterTree.prototype.render = function (ctx, docctx) {
+                    var doc = this.doc;
+                    doc.def.render(ctx, docctx, doc.assets);
+                };
+
+                TextBoxViewUpdaterTree.prototype.setAvailableWidth = function (width) {
+                    this.doc.assets.availableWidth = width;
+                };
+
+                TextBoxViewUpdaterTree.prototype.getHorizontalOffset = function (docctx) {
+                    var doc = this.doc;
+                    return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
+                };
+
+                TextBoxViewUpdaterTree.prototype.clearText = function () {
+                    this.children.length = 0;
+                };
+
+                TextBoxViewUpdaterTree.prototype.walkText = function () {
+                    var i = -1;
+                    var children = this.children;
+                    return {
+                        current: undefined,
+                        step: function () {
+                            i++;
+                            this.current = children[i];
+                            return this.current !== undefined;
+                        }
+                    };
+                };
+
+                TextBoxViewUpdaterTree.prototype.onTextAttached = function (child, index) {
+                    if (index == null || index < 0 || index >= this.children.length)
+                        this.children.push(child);
+                    else
+                        this.children.splice(index, 0, child);
+                };
+
+                TextBoxViewUpdaterTree.prototype.onTextDetached = function (child) {
+                    var index = this.children.indexOf(child);
+                    if (index > -1)
+                        this.children.splice(index, 1);
+                };
+                return TextBoxViewUpdaterTree;
+            })(minerva.core.UpdaterTree);
+            textboxview.TextBoxViewUpdaterTree = TextBoxViewUpdaterTree;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textboxview) {
+            (function (arrange) {
+                var TextBoxViewArrangePipeDef = (function (_super) {
+                    __extends(TextBoxViewArrangePipeDef, _super);
+                    function TextBoxViewArrangePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', tapins.doOverride);
+                    }
+                    return TextBoxViewArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.TextBoxViewArrangePipeDef = TextBoxViewArrangePipeDef;
+
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        var fs = state.finalSize;
+                        var as = state.arrangedSize;
+
+                        minerva.Size.copyTo(tree.layout(fs, input), as);
+                        as.width = Math.max(as.width, fs.width);
+                        as.height = Math.max(as.height, fs.height);
+                        tree.setAvailableWidth(fs.width);
+
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(textboxview.arrange || (textboxview.arrange = {}));
+            var arrange = textboxview.arrange;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textboxview) {
+            (function (hittest) {
+                var TextBoxViewHitTestPipeDef = (function (_super) {
+                    __extends(TextBoxViewHitTestPipeDef, _super);
+                    function TextBoxViewHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return TextBoxViewHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.TextBoxViewHitTestPipeDef = TextBoxViewHitTestPipeDef;
+
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(hittest.tapins || (hittest.tapins = {}));
+                var tapins = hittest.tapins;
+            })(textboxview.hittest || (textboxview.hittest = {}));
+            var hittest = textboxview.hittest;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textboxview) {
+            (function (measure) {
+                var TextBoxViewMeasurePipeDef = (function (_super) {
+                    __extends(TextBoxViewMeasurePipeDef, _super);
+                    function TextBoxViewMeasurePipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doOverride', tapins.doOverride);
+                    }
+                    return TextBoxViewMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.TextBoxViewMeasurePipeDef = TextBoxViewMeasurePipeDef;
+
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+                        var as = state.availableSize;
+                        minerva.Size.copyTo(tree.layout(as, input), ds);
+                        if (!isFinite(as.width))
+                            ds.width = Math.max(ds.width, 11);
+                        ds.width = Math.min(ds.width, as.width);
+                        ds.height = Math.min(ds.height, as.height);
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(textboxview.measure || (textboxview.measure = {}));
+            var measure = textboxview.measure;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textboxview) {
+            (function (processup) {
+                var TextBoxViewProcessUpPipeDef = (function (_super) {
+                    __extends(TextBoxViewProcessUpPipeDef, _super);
+                    function TextBoxViewProcessUpPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('calcActualSize', tapins.calcActualSize).replaceTapin('calcExtents', tapins.calcExtents);
+                    }
+                    return TextBoxViewProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.TextBoxViewProcessUpPipeDef = TextBoxViewProcessUpPipeDef;
+
+                (function (tapins) {
+                    function calcActualSize(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+
+                        var as = state.actualSize;
+                        as.width = Number.POSITIVE_INFINITY;
+                        as.height = Number.POSITIVE_INFINITY;
+                        minerva.core.helpers.coerceSize(as, input);
+
+                        minerva.Size.copyTo(tree.layout(as, input), as);
+
+                        return true;
+                    }
+                    tapins.calcActualSize = calcActualSize;
+
+                    function calcExtents(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+
+                        var e = output.extents;
+                        e.x = e.y = 0;
+                        minerva.Size.copyTo(state.actualSize, e);
+                        minerva.Rect.copyTo(e, output.extentsWithChildren);
+
+                        return true;
+                    }
+                    tapins.calcExtents = calcExtents;
+                })(processup.tapins || (processup.tapins = {}));
+                var tapins = processup.tapins;
+            })(textboxview.processup || (textboxview.processup = {}));
+            var processup = textboxview.processup;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (textboxview) {
+            (function (render) {
+                var TextBoxViewRenderPipeDef = (function (_super) {
+                    __extends(TextBoxViewRenderPipeDef, _super);
+                    function TextBoxViewRenderPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doRender', tapins.doRender);
+                    }
+                    return TextBoxViewRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.TextBoxViewRenderPipeDef = TextBoxViewRenderPipeDef;
+
+                (function (tapins) {
+                    function renderCursor(input, state, output, ctx, region, tree) {
+                        return true;
+                    }
+                    tapins.renderCursor = renderCursor;
+
+                    function doRender(input, state, output, ctx, region, tree) {
+                        tree.render(ctx, input);
+
+                        return true;
+                    }
+                    tapins.doRender = doRender;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(textboxview.render || (textboxview.render = {}));
+            var render = textboxview.render;
+        })(controls.textboxview || (controls.textboxview = {}));
+        var textboxview = controls.textboxview;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
         (function (usercontrol) {
             var UserControlUpdater = (function (_super) {
                 __extends(UserControlUpdater, _super);
