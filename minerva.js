@@ -7825,6 +7825,9 @@ var minerva;
 
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
+                        if (data.hitChildren)
+                            return true;
+
                         if (!data.assets.background) {
                             hitList.shift();
                             ctx.restore();
