@@ -9648,6 +9648,8 @@ var minerva;
             };
 
             Path.prototype.calcBounds = function (pars) {
+                if (this.$$entries.length <= 0)
+                    return new minerva.Rect();
                 var box = pars && pars.strokeThickness > 1 ? this.$$calcStrokeBox(pars) : this.$$calcFillBox();
                 return new minerva.Rect(box.l, box.t, Math.max(0, box.r - box.l), Math.max(0, box.b - box.t));
             };

@@ -88,8 +88,10 @@ module minerva.path {
         }
 
         calcBounds (pars?: IStrokeParameters): Rect {
+            if (this.$$entries.length <= 0)
+                return new Rect();
             var box = pars && pars.strokeThickness > 1 ? this.$$calcStrokeBox(pars) : this.$$calcFillBox();
-            return new minerva.Rect(box.l, box.t, Math.max(0, box.r - box.l), Math.max(0, box.b - box.t));
+            return new Rect(box.l, box.t, Math.max(0, box.r - box.l), Math.max(0, box.b - box.t));
         }
 
         private $$calcFillBox (): IBoundingBox {
