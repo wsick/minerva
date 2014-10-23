@@ -11829,7 +11829,7 @@ var minerva;
             (function (hittest) {
                 (function (tapins) {
                     function canHitShape(data, pos, hitList, ctx) {
-                        if ((data.assets.shapeFlags & 1 /* Empty */) === 0) {
+                        if ((data.assets.shapeFlags & 1 /* Empty */) === 1 /* Empty */) {
                             hitList.shift();
                             ctx.restore();
                             return false;
