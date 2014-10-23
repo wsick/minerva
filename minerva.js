@@ -9039,7 +9039,7 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
-                        var e = input.extents;
+                        var e = output.extents;
                         e.x = tree.getHorizontalOffset(input);
                         e.y = 0;
                         minerva.Size.copyTo(state.actualSize, e);

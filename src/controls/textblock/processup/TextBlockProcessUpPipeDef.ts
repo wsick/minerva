@@ -4,7 +4,7 @@ module minerva.controls.textblock.processup {
     }
 
     export class TextBlockProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
-        constructor() {
+        constructor () {
             super();
             this.replaceTapin('calcActualSize', tapins.calcActualSize)
                 .replaceTapin('calcExtents', tapins.calcExtents);
@@ -12,7 +12,7 @@ module minerva.controls.textblock.processup {
     }
 
     export module tapins {
-        export function calcActualSize(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean {
+        export function calcActualSize (input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean {
             if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
                 return true;
 
@@ -28,11 +28,11 @@ module minerva.controls.textblock.processup {
             return true;
         }
 
-        export function calcExtents(input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean {
+        export function calcExtents (input: IInput, state: core.processup.IState, output: core.processup.IOutput, tree: TextBlockUpdaterTree): boolean {
             if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
                 return true;
 
-            var e = input.extents;
+            var e = output.extents;
             e.x = tree.getHorizontalOffset(input);
             e.y = 0;
             Size.copyTo(state.actualSize, e);
