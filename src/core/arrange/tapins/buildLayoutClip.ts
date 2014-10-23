@@ -22,8 +22,8 @@ module minerva.core.arrange.tapins {
         testRect.y = 0;
         Size.copyTo(state.arrangedSize, testRect);
         if (!Rect.isContainedIn(testRect, layoutClip) || !Size.isEqual(state.constrained, state.arrangedSize)) {
-            fwClip.width = Number.POSITIVE_INFINITY;
-            fwClip.height = Number.POSITIVE_INFINITY;
+            fwClip.x = fwClip.y = 0;
+            fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
             helpers.coerceSize(fwClip, input);
             Rect.intersection(layoutClip, fwClip);
         } else {

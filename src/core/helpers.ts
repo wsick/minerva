@@ -36,4 +36,17 @@ module minerva.core.helpers {
         if (projection)
             Rect.transform4(dest, projection);
     }
+
+    export interface IClipAssets {
+        layoutClip: Rect;
+    }
+    export function renderLayoutClip (ctx: CanvasRenderingContext2D, assets: IClipAssets) {
+        var lc = assets.layoutClip;
+        if (!Rect.isEmpty(lc)) {
+            //Are we in the correct coordinate space to render
+            ctx.beginPath();
+            ctx.rect(lc.x, lc.y, lc.width, lc.height);
+            ctx.clip();
+        }
+    }
 }
