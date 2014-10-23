@@ -11878,6 +11878,7 @@ var minerva;
 
                         if (!inside) {
                             hitList.shift();
+                            ctx.restore();
                             return false;
                         }
 

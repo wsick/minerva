@@ -7,6 +7,7 @@ module minerva.shapes.shape.hittest.tapins {
 
         if (!inside) {
             hitList.shift();
+            ctx.restore();
             return false;
         }
 
