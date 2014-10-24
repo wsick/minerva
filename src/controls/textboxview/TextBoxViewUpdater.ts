@@ -47,6 +47,11 @@ module minerva.controls.textboxview {
             return this;
         }
 
+        getCursorFromPoint (point: IPoint): number {
+            var doc = this.tree.doc;
+            return doc.def.getCursorFromPoint(point, this.assets, doc.assets);
+        }
+
         invalidateFont (full?: boolean) {
             if (full === true) {
                 this.invalidateMeasure();
@@ -72,6 +77,11 @@ module minerva.controls.textboxview {
             Rect.copyTo(assets.caretRegion, region);
             Rect.transform(region, assets.absoluteXform);
             this.invalidate(region)
+        }
+
+        invalidateCaretRegion () {
+            var cr = this.assets.caretRegion;
+            cr.x = cr.y = cr.width = cr.height = 0;
         }
 
         resetCaretBlinker (shouldDelay: boolean) {

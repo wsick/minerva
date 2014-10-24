@@ -9229,6 +9229,11 @@ var minerva;
                     return this;
                 };
 
+                TextBoxViewUpdater.prototype.getCursorFromPoint = function (point) {
+                    var doc = this.tree.doc;
+                    return doc.def.getCursorFromPoint(point, this.assets, doc.assets);
+                };
+
                 TextBoxViewUpdater.prototype.invalidateFont = function (full) {
                     if (full === true) {
                         this.invalidateMeasure();
@@ -9254,6 +9259,11 @@ var minerva;
                     minerva.Rect.copyTo(assets.caretRegion, region);
                     minerva.Rect.transform(region, assets.absoluteXform);
                     this.invalidate(region);
+                };
+
+                TextBoxViewUpdater.prototype.invalidateCaretRegion = function () {
+                    var cr = this.assets.caretRegion;
+                    cr.x = cr.y = cr.width = cr.height = 0;
                 };
 
                 TextBoxViewUpdater.prototype.resetCaretBlinker = function (shouldDelay) {

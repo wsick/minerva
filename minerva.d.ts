@@ -2106,9 +2106,11 @@ declare module minerva.controls.textboxview {
         public blinker: Blinker;
         public init(): void;
         public setDocument(docdef?: text.IDocumentLayoutDef): TextBoxViewUpdater;
+        public getCursorFromPoint(point: IPoint): number;
         public invalidateFont(full?: boolean): void;
         public invalidateTextMetrics(): void;
         public invalidateCaret(): void;
+        public invalidateCaretRegion(): void;
         public resetCaretBlinker(shouldDelay: boolean): void;
     }
 }
