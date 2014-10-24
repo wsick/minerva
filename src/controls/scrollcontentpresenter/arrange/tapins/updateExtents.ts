@@ -1,5 +1,5 @@
 module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    export function updateExtents (input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean {
+    export function updateExtents (input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean {
         var sd = input.scrollData;
         var viewport = state.finalSize;
 

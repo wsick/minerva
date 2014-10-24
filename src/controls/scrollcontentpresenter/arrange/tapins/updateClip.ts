@@ -1,5 +1,5 @@
 module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    export function updateClip (input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean {
+    export function updateClip (input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean {
         //TODO: Implement
         /*
          if (!this._IsClipPropertySet) {

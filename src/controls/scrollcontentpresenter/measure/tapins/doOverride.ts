@@ -1,9 +1,9 @@
 module minerva.controls.scrollcontentpresenter.measure.tapins {
-    export var doOverride = function (input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean {
+    export var doOverride = function (input: IInput, state: IState, output: core.measure.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean {
         var ds = output.desiredSize;
         ds.width = ds.height = 0;
 
-        if (!tree.content || !tree.templateOwner)
+        if (!tree.subtree)
             return true;
 
         var sd = input.scrollData;
@@ -14,7 +14,7 @@ module minerva.controls.scrollcontentpresenter.measure.tapins {
         if (!sd.canVerticallyScroll)
             ideal.height = availableSize.height;
 
-        tree.content.measure(ideal);
+        tree.subtree.measure(ideal);
 
         return true;
     };

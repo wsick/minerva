@@ -1353,12 +1353,6 @@ declare module minerva.controls.canvas.processup {
 declare module minerva.controls.canvas.processup.tapins {
     var calcPaintBounds: (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) => boolean;
 }
-declare module minerva.controls.contentpresenter {
-    class ContentPresenterUpdaterTree extends core.UpdaterTree {
-        public content: core.Updater;
-        public templateOwner: core.Updater;
-    }
-}
 declare module minerva.controls.control {
     interface IControlUpdaterAssets extends core.IUpdaterAssets {
         isEnabled: boolean;
@@ -1877,11 +1871,8 @@ declare module minerva.controls.scrollcontentpresenter {
 declare module minerva.controls.scrollcontentpresenter {
     interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
     }
-    class ScrollContentPresenterUpdaterTree extends contentpresenter.ContentPresenterUpdaterTree {
-    }
     class ScrollContentPresenterUpdater extends core.Updater {
         public assets: IScrollContentPresenterUpdaterAssets;
-        public tree: contentpresenter.ContentPresenterUpdaterTree;
         public init(): void;
     }
 }
@@ -1899,13 +1890,13 @@ declare module minerva.controls.scrollcontentpresenter.arrange {
     }
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    var doOverride: (input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, finalRect: Rect) => boolean;
+    var doOverride: (input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, finalRect: Rect) => boolean;
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    function updateClip(input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
+    function updateClip(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    function updateExtents(input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
+    function updateExtents(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.scrollcontentpresenter {
     module helpers {
@@ -1925,13 +1916,13 @@ declare module minerva.controls.scrollcontentpresenter.measure {
     }
 }
 declare module minerva.controls.scrollcontentpresenter.measure.tapins {
-    var doOverride: (input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size) => boolean;
+    var doOverride: (input: IInput, state: IState, output: core.measure.IOutput, tree: core.UpdaterTree, availableSize: Size) => boolean;
 }
 declare module minerva.controls.scrollcontentpresenter.measure.tapins {
-    function finishDoOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
+    function finishDoOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.scrollcontentpresenter.measure.tapins {
-    function updateExtents(input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean;
+    function updateExtents(input: IInput, state: IState, output: core.measure.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.stackpanel {
     interface IStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {

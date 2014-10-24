@@ -1,7 +1,7 @@
 module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    export var doOverride = function (input: IInput, state: IState, output: core.arrange.IOutput, tree: ScrollContentPresenterUpdaterTree, finalRect: Rect): boolean {
+    export var doOverride = function (input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, finalRect: Rect): boolean {
         var as = state.arrangedSize;
-        if (!tree.content || !tree.templateOwner) {
+        if (!tree.subtree) {
             as.width = as.height = 0;
             return true;
         }
@@ -20,7 +20,7 @@ module minerva.controls.scrollcontentpresenter.arrange.tapins {
         cr.width = Math.max(state.finalSize.width, desired.width);
         cr.height = Math.max(state.finalSize.height, desired.height);
 
-        tree.content.arrange(cr);
+        tree.subtree.arrange(cr);
 
         return true;
     };

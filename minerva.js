@@ -5707,25 +5707,6 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (controls) {
-        (function (contentpresenter) {
-            var ContentPresenterUpdaterTree = (function (_super) {
-                __extends(ContentPresenterUpdaterTree, _super);
-                function ContentPresenterUpdaterTree() {
-                    _super.apply(this, arguments);
-                    this.content = null;
-                    this.templateOwner = null;
-                }
-                return ContentPresenterUpdaterTree;
-            })(minerva.core.UpdaterTree);
-            contentpresenter.ContentPresenterUpdaterTree = ContentPresenterUpdaterTree;
-        })(controls.contentpresenter || (controls.contentpresenter = {}));
-        var contentpresenter = controls.contentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (controls) {
         (function (control) {
             var ControlUpdater = (function (_super) {
                 __extends(ControlUpdater, _super);
@@ -8170,22 +8151,13 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (scrollcontentpresenter) {
-            var ScrollContentPresenterUpdaterTree = (function (_super) {
-                __extends(ScrollContentPresenterUpdaterTree, _super);
-                function ScrollContentPresenterUpdaterTree() {
-                    _super.apply(this, arguments);
-                }
-                return ScrollContentPresenterUpdaterTree;
-            })(controls.contentpresenter.ContentPresenterUpdaterTree);
-            scrollcontentpresenter.ScrollContentPresenterUpdaterTree = ScrollContentPresenterUpdaterTree;
-
             var ScrollContentPresenterUpdater = (function (_super) {
                 __extends(ScrollContentPresenterUpdater, _super);
                 function ScrollContentPresenterUpdater() {
                     _super.apply(this, arguments);
                 }
                 ScrollContentPresenterUpdater.prototype.init = function () {
-                    this.setTree(new ScrollContentPresenterUpdaterTree()).setMeasurePipe(minerva.singleton(scrollcontentpresenter.measure.ScrollContentPresenterMeasurePipeDef)).setArrangePipe(minerva.singleton(scrollcontentpresenter.arrange.ScrollContentPresenterArrangePipeDef));
+                    this.setMeasurePipe(minerva.singleton(scrollcontentpresenter.measure.ScrollContentPresenterMeasurePipeDef)).setArrangePipe(minerva.singleton(scrollcontentpresenter.arrange.ScrollContentPresenterArrangePipeDef));
 
                     var assets = this.assets;
                     assets.scrollData = {
@@ -8247,7 +8219,7 @@ var minerva;
                 (function (tapins) {
                     tapins.doOverride = function (input, state, output, tree, finalRect) {
                         var as = state.arrangedSize;
-                        if (!tree.content || !tree.templateOwner) {
+                        if (!tree.subtree) {
                             as.width = as.height = 0;
                             return true;
                         }
@@ -8264,7 +8236,7 @@ var minerva;
                         cr.width = Math.max(state.finalSize.width, desired.width);
                         cr.height = Math.max(state.finalSize.height, desired.height);
 
-                        tree.content.arrange(cr);
+                        tree.subtree.arrange(cr);
 
                         return true;
                     };
@@ -8414,7 +8386,7 @@ var minerva;
                         var ds = output.desiredSize;
                         ds.width = ds.height = 0;
 
-                        if (!tree.content || !tree.templateOwner)
+                        if (!tree.subtree)
                             return true;
 
                         var sd = input.scrollData;
@@ -8425,7 +8397,7 @@ var minerva;
                         if (!sd.canVerticallyScroll)
                             ideal.height = availableSize.height;
 
-                        tree.content.measure(ideal);
+                        tree.subtree.measure(ideal);
 
                         return true;
                     };
@@ -8473,7 +8445,7 @@ var minerva;
                     function updateExtents(input, state, output, tree, availableSize) {
                         var sd = input.scrollData;
                         var viewport = state.availableSize;
-                        var extent = tree.content.assets.desiredSize;
+                        var extent = tree.subtree.assets.desiredSize;
 
                         var changed = sd.viewportWidth !== viewport.width || sd.viewportHeight !== viewport.height || sd.extentWidth !== extent.width || sd.extentHeight !== extent.height;
                         sd.viewportWidth = viewport.width;

@@ -1,18 +1,12 @@
 module minerva.controls.scrollcontentpresenter {
     export interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
-
-    }
-
-    export class ScrollContentPresenterUpdaterTree extends contentpresenter.ContentPresenterUpdaterTree {
     }
 
     export class ScrollContentPresenterUpdater extends core.Updater {
         assets: IScrollContentPresenterUpdaterAssets;
-        tree: contentpresenter.ContentPresenterUpdaterTree;
 
         init () {
-            this.setTree(new ScrollContentPresenterUpdaterTree())
-                .setMeasurePipe(singleton(measure.ScrollContentPresenterMeasurePipeDef))
+            this.setMeasurePipe(singleton(measure.ScrollContentPresenterMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.ScrollContentPresenterArrangePipeDef));
 
             var assets = this.assets;

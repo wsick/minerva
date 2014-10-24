@@ -1,5 +1,5 @@
 module minerva.controls.scrollcontentpresenter.measure.tapins {
-    export function finishDoOverride (input: IInput, state: IState, output: core.measure.IOutput, tree: ScrollContentPresenterUpdaterTree, availableSize: Size): boolean {
+    export function finishDoOverride (input: IInput, state: IState, output: core.measure.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean {
         var ds = output.desiredSize;
         var sd = input.scrollData;
 
