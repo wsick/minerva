@@ -9290,6 +9290,11 @@ var minerva;
                     return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
                 };
 
+                TextBoxViewUpdaterTree.prototype.getCaretRegion = function (docctx) {
+                    var doc = this.doc;
+                    return doc.def.getCaretFromCursor(docctx, doc.assets);
+                };
+
                 TextBoxViewUpdaterTree.prototype.clearText = function () {
                     this.children.length = 0;
                 };
@@ -9524,8 +9529,7 @@ var minerva;
                     function calcCaretRegion(input, state, output, ctx, region, tree) {
                         if (!minerva.Rect.isEmpty(output.caretRegion) || input.selectionLength > 0)
                             return true;
-                        var caret = tree.doc.def.getCaretFromCursor(input.selectionStart, input, tree.doc.assets);
-                        minerva.Rect.copyTo(caret, output.caretRegion);
+                        minerva.Rect.copyTo(tree.getCaretRegion(input), output.caretRegion);
                         return true;
                     }
                     tapins.calcCaretRegion = calcCaretRegion;
@@ -12818,20 +12822,28 @@ var minerva;
                 return advance + lastEnd;
             };
 
-            DocumentLayoutDef.prototype.getCaretFromCursor = function (cursor, docctx, docassets) {
+            DocumentLayoutDef.prototype.getCaretFromCursor = function (docctx, docassets) {
+                var cursor = docctx.selectionStart;
                 var advance = 0;
-                for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
+                var cr = new minerva.Rect(0, 0, 1, 0);
+                var lastLineHeight = 0;
+                for (var lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
                     var line = lines[i];
-                    for (var curx = this.getHorizontalAlignmentX(docctx, docassets, line.width), runs = line.runs, j = 0, len2 = runs.length; j < len2; j++) {
+                    cr.x = this.getHorizontalAlignmentX(docctx, docassets, line.width);
+                    cr.height = line.height;
+                    for (var runs = line.runs, j = 0, len2 = runs.length; j < len2; j++) {
                         var run = runs[j];
                         if ((advance + run.length) > cursor) {
-                            curx += this.measureTextWidth(run.text.substr(0, cursor - advance), run.attrs.font);
-                            return new minerva.Rect(curx, cury, 1.0, line.height);
+                            cr.x += this.measureTextWidth(run.text.substr(0, cursor - advance), run.attrs.font);
+                            return cr;
                         }
-                        curx += line.width;
+                        cr.x += line.width;
                     }
-                    cury += line.height;
+                    cr.y += line.height;
+                    lastLineHeight = line.height;
                 }
+                cr.y -= lastLineHeight;
+                return cr;
             };
 
             DocumentLayoutDef.prototype.splitSelection = function (docctx, assets) {
@@ -12899,8 +12911,12 @@ var minerva;
             }
             TextLayoutDef.prototype.layout = function (docctx, docassets, assets) {
                 var text = assets.text;
-                if (!text)
+                if (!text) {
+                    var line = new _text.layout.Line();
+                    line.height = assets.font.getHeight();
+                    docassets.lines.push(line);
                     return false;
+                }
 
                 if (docctx.textWrapping === 0 /* NoWrap */)
                     this.doLayoutNoWrap(docctx, docassets, assets);

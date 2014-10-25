@@ -19,8 +19,12 @@ module minerva.text {
         layout (docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): boolean {
             //TODO: Implement lineStackingStrategy, lineHeight
             var text = assets.text;
-            if (!text)
+            if (!text) {
+                var line = new layout.Line();
+                line.height = assets.font.getHeight();
+                docassets.lines.push(line);
                 return false;
+            }
 
             if (docctx.textWrapping === TextWrapping.NoWrap)
                 this.doLayoutNoWrap(docctx, docassets, assets);

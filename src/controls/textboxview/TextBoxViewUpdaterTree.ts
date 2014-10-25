@@ -3,6 +3,7 @@ module minerva.controls.textboxview {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext);
+        getCaretRegion (docctx: text.IDocumentContext): Rect;
         setAvailableWidth(width: number);
         getHorizontalOffset(docctx: text.IDocumentContext): number;
         walkText(): IWalker<text.TextUpdater>;
@@ -31,6 +32,11 @@ module minerva.controls.textboxview {
         getHorizontalOffset (docctx: text.IDocumentContext): number {
             var doc = this.doc;
             return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
+        }
+
+        getCaretRegion (docctx: text.IDocumentContext): Rect {
+            var doc = this.doc;
+            return doc.def.getCaretFromCursor(docctx, doc.assets);
         }
 
         clearText () {

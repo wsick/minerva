@@ -2111,6 +2111,7 @@ declare module minerva.controls.textboxview {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): any;
+        getCaretRegion(docctx: text.IDocumentContext): Rect;
         setAvailableWidth(width: number): any;
         getHorizontalOffset(docctx: text.IDocumentContext): number;
         walkText(): IWalker<text.TextUpdater>;
@@ -2124,6 +2125,7 @@ declare module minerva.controls.textboxview {
         public render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): void;
         public setAvailableWidth(width: number): void;
         public getHorizontalOffset(docctx: text.IDocumentContext): number;
+        public getCaretRegion(docctx: text.IDocumentContext): Rect;
         public clearText(): void;
         public walkText(): IWalker<text.TextUpdater>;
         public onTextAttached(child: text.TextUpdater, index?: number): void;
@@ -2854,7 +2856,7 @@ declare module minerva.text {
         layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
         getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
-        getCaretFromCursor(cursor: number, docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
+        getCaretFromCursor(docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
         getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
     }
     class DocumentLayoutDef implements IDocumentLayoutDef {
@@ -2862,7 +2864,7 @@ declare module minerva.text {
         public layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         public render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
         public getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
-        public getCaretFromCursor(cursor: number, docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
+        public getCaretFromCursor(docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
         public splitSelection(docctx: IDocumentContext, assets: IDocumentAssets): void;
         public getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
         public measureTextWidth(text: string, font: Font): number;

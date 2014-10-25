@@ -45,8 +45,7 @@ module minerva.controls.textboxview.render {
         export function calcCaretRegion (input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean {
             if (!Rect.isEmpty(output.caretRegion) || input.selectionLength > 0)
                 return true;
-            var caret = tree.doc.def.getCaretFromCursor(input.selectionStart, input, tree.doc.assets);
-            Rect.copyTo(caret, output.caretRegion);
+            Rect.copyTo(tree.getCaretRegion(input), output.caretRegion);
             return true;
         }
 
