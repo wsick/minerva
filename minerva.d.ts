@@ -171,6 +171,13 @@ declare module minerva {
         setupBrush(ctx: CanvasRenderingContext2D, region: Rect): any;
         toHtml5Object(): any;
     }
+    class FakeBrush implements IBrush {
+        public raw: any;
+        constructor(raw: any);
+        public isTransparent(): boolean;
+        public setupBrush(ctx: CanvasRenderingContext2D, region: Rect): any;
+        public toHtml5Object(): any;
+    }
 }
 declare module minerva {
     interface IEffect {
@@ -2928,6 +2935,8 @@ declare module minerva.text.layout {
         public isSelected: boolean;
         public text: string;
         public width: number;
+        static DEFAULT_SELECTION_BG: FakeBrush;
+        static DEFAULT_SELECTION_FG: FakeBrush;
         static render(cluster: Cluster, assets: ITextAssets, ctx: core.render.RenderContext): void;
     }
 }

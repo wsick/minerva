@@ -6,6 +6,9 @@ module minerva.text.layout {
         text: string = null;
         width: number = 0;
 
+        static DEFAULT_SELECTION_BG = new FakeBrush("#444444");
+        static DEFAULT_SELECTION_FG = new FakeBrush("#FFFFFF");
+
         static render (cluster: Cluster, assets: ITextAssets, ctx: core.render.RenderContext) {
             var fontHeight = assets.font.getHeight();
             var area = new Rect(0, 0, cluster.width, fontHeight);
@@ -13,14 +16,14 @@ module minerva.text.layout {
             var raw = ctx.raw;
 
             //Background
-            var bg = cluster.isSelected ? assets.selectionBackground : assets.background;
+            var bg = cluster.isSelected ? (assets.selectionBackground || Cluster.DEFAULT_SELECTION_BG) : assets.background;
             if (bg) {
                 raw.rect(area.x, area.y, area.width, area.height);
                 ctx.fillEx(bg, area);
             }
 
             //Text
-            var fg = cluster.isSelected ? assets.selectionForeground : assets.foreground;
+            var fg = cluster.isSelected ? (assets.selectionForeground || Cluster.DEFAULT_SELECTION_FG) : assets.foreground;
             var fg5 = "#000000";
             if (fg) {
                 fg.setupBrush(raw, area);

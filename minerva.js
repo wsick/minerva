@@ -290,6 +290,26 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var FakeBrush = (function () {
+        function FakeBrush(raw) {
+            this.raw = raw;
+        }
+        FakeBrush.prototype.isTransparent = function () {
+            return false;
+        };
+
+        FakeBrush.prototype.setupBrush = function (ctx, region) {
+        };
+
+        FakeBrush.prototype.toHtml5Object = function () {
+            return this.raw;
+        };
+        return FakeBrush;
+    })();
+    minerva.FakeBrush = FakeBrush;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (WalkDirection) {
         WalkDirection[WalkDirection["Forward"] = 0] = "Forward";
         WalkDirection[WalkDirection["Reverse"] = 1] = "Reverse";
@@ -13157,13 +13177,13 @@ var minerva;
 
                     var raw = ctx.raw;
 
-                    var bg = cluster.isSelected ? assets.selectionBackground : assets.background;
+                    var bg = cluster.isSelected ? (assets.selectionBackground || Cluster.DEFAULT_SELECTION_BG) : assets.background;
                     if (bg) {
                         raw.rect(area.x, area.y, area.width, area.height);
                         ctx.fillEx(bg, area);
                     }
 
-                    var fg = cluster.isSelected ? assets.selectionForeground : assets.foreground;
+                    var fg = cluster.isSelected ? (assets.selectionForeground || Cluster.DEFAULT_SELECTION_FG) : assets.foreground;
                     var fg5 = "#000000";
                     if (fg) {
                         fg.setupBrush(raw, area);
@@ -13189,6 +13209,8 @@ var minerva;
                         raw.stroke();
                     }
                 };
+                Cluster.DEFAULT_SELECTION_BG = new minerva.FakeBrush("#444444");
+                Cluster.DEFAULT_SELECTION_FG = new minerva.FakeBrush("#FFFFFF");
                 return Cluster;
             })();
             layout.Cluster = Cluster;

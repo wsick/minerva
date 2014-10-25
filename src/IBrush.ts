@@ -22,4 +22,20 @@ module minerva {
      return true;
      }
      */
+
+    export class FakeBrush implements IBrush {
+        constructor (public raw: any) {
+        }
+
+        isTransparent (): boolean {
+            return false;
+        }
+
+        setupBrush (ctx: CanvasRenderingContext2D, region: Rect): any {
+        }
+
+        toHtml5Object (): any {
+            return this.raw;
+        }
+    }
 }
