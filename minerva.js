@@ -9236,6 +9236,20 @@ var minerva;
                     this.invalidate(region);
                 };
 
+                TextBoxViewUpdater.prototype.invalidateSelectionStart = function () {
+                    this.tree.doc.assets.selCached = false;
+                    this.invalidateCaretRegion();
+                    this.resetCaretBlinker(true);
+                };
+
+                TextBoxViewUpdater.prototype.invalidateSelectionLength = function (switching) {
+                    this.tree.doc.assets.selCached = false;
+                    this.invalidate();
+                    this.resetCaretBlinker(switching);
+                    if (switching)
+                        this.invalidateCaretRegion();
+                };
+
                 TextBoxViewUpdater.prototype.invalidateCaretRegion = function () {
                     this.invalidateCaret();
                     var cr = this.assets.caretRegion;

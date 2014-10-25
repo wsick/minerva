@@ -2102,6 +2102,8 @@ declare module minerva.controls.textboxview {
         public invalidateTextMetrics(): TextBoxViewUpdater;
         public invalidateMeasure(): TextBoxViewUpdater;
         public invalidateCaret(): void;
+        public invalidateSelectionStart(): void;
+        public invalidateSelectionLength(switching: boolean): void;
         public invalidateCaretRegion(): void;
         public resetCaretBlinker(shouldDelay: boolean): void;
     }

@@ -85,6 +85,20 @@ module minerva.controls.textboxview {
             this.invalidate(region)
         }
 
+        invalidateSelectionStart () {
+            this.tree.doc.assets.selCached = false;
+            this.invalidateCaretRegion();
+            this.resetCaretBlinker(true);
+        }
+
+        invalidateSelectionLength (switching: boolean) {
+            this.tree.doc.assets.selCached = false;
+            this.invalidate();
+            this.resetCaretBlinker(switching);
+            if (switching)
+                this.invalidateCaretRegion();
+        }
+
         invalidateCaretRegion () {
             this.invalidateCaret();
             var cr = this.assets.caretRegion;
