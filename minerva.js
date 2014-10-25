@@ -9234,6 +9234,7 @@ var minerva;
                 };
 
                 TextBoxViewUpdater.prototype.invalidateCaretRegion = function () {
+                    this.invalidateCaret();
                     var cr = this.assets.caretRegion;
                     cr.x = cr.y = cr.width = cr.height = 0;
                 };
@@ -9242,7 +9243,7 @@ var minerva;
                     var assets = this.assets;
                     var blinker = this.blinker;
 
-                    if (assets.selectionLength > 0 || assets.isReadOnly || assets.isFocused)
+                    if (assets.selectionLength > 0 || assets.isReadOnly || !assets.isFocused)
                         return blinker.end();
                     if (shouldDelay)
                         return blinker.delay();
@@ -9486,8 +9487,23 @@ var minerva;
                     __extends(TextBoxViewRenderPipeDef, _super);
                     function TextBoxViewRenderPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('doRender', tapins.doRender).addTapinAfter('doRender', 'renderCaret', tapins.renderCaret);
+                        this.replaceTapin('doRender', tapins.doRender).addTapinAfter('doRender', 'calcCaretRegion', tapins.calcCaretRegion).addTapinAfter('doRender', 'renderCaret', tapins.renderCaret);
                     }
+                    TextBoxViewRenderPipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.caretRegion = new minerva.Rect();
+                        return output;
+                    };
+
+                    TextBoxViewRenderPipeDef.prototype.prepare = function (input, state, output) {
+                        minerva.Rect.copyTo(input.caretRegion, output.caretRegion);
+                        _super.prototype.prepare.call(this, input, state, output);
+                    };
+
+                    TextBoxViewRenderPipeDef.prototype.flush = function (input, state, output) {
+                        _super.prototype.flush.call(this, input, state, output);
+                        minerva.Rect.copyTo(output.caretRegion, input.caretRegion);
+                    };
                     return TextBoxViewRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.TextBoxViewRenderPipeDef = TextBoxViewRenderPipeDef;
@@ -9502,11 +9518,20 @@ var minerva;
                     }
                     tapins.doRender = doRender;
 
+                    function calcCaretRegion(input, state, output, ctx, region, tree) {
+                        if (!minerva.Rect.isEmpty(output.caretRegion) || input.selectionLength > 0)
+                            return true;
+                        var caret = tree.doc.def.getCaretFromCursor(input.selectionStart, input, tree.doc.assets);
+                        minerva.Rect.copyTo(caret, output.caretRegion);
+                        return true;
+                    }
+                    tapins.calcCaretRegion = calcCaretRegion;
+
                     function renderCaret(input, state, output, ctx, region, tree) {
-                        if (!input.isCaretVisible)
+                        if (!input.isCaretVisible || input.selectionLength > 0)
                             return true;
 
-                        var region = input.caretRegion;
+                        var region = output.caretRegion;
                         var brush = input.caretBrush;
                         var raw = ctx.raw;
 
@@ -12782,6 +12807,22 @@ var minerva;
                 }
 
                 return advance + end;
+            };
+
+            DocumentLayoutDef.prototype.getCaretFromCursor = function (cursor, docctx, docassets) {
+                var advance = 0;
+                for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
+                    var line = lines[i];
+                    for (var curx = this.getHorizontalAlignmentX(docctx, docassets, line.width), runs = line.runs, j = 0, len2 = runs.length; j < len2; j++) {
+                        var run = runs[j];
+                        if ((advance + run.length) > cursor) {
+                            curx += this.measureTextWidth(run.text.substr(0, cursor - advance), run.attrs.font);
+                            return new minerva.Rect(curx, cury, 1.0, line.height);
+                        }
+                        curx += line.width;
+                    }
+                    cury += line.height;
+                }
             };
 
             DocumentLayoutDef.prototype.splitSelection = function (docctx, assets) {

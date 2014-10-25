@@ -2177,12 +2177,19 @@ declare module minerva.controls.textboxview.render {
         caretRegion: Rect;
         caretBrush: IBrush;
     }
+    interface IOutput extends core.render.IOutput {
+        caretRegion: Rect;
+    }
     class TextBoxViewRenderPipeDef extends core.render.RenderPipeDef {
         constructor();
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: core.render.IState, output: IOutput): void;
+        public flush(input: IInput, state: core.render.IState, output: IOutput): void;
     }
     module tapins {
-        function doRender(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
-        function renderCaret(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
+        function doRender(input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
+        function calcCaretRegion(input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
+        function renderCaret(input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean;
     }
 }
 declare module minerva.controls.usercontrol {
@@ -2846,6 +2853,7 @@ declare module minerva.text {
         layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
         getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
+        getCaretFromCursor(cursor: number, docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
         getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
     }
     class DocumentLayoutDef implements IDocumentLayoutDef {
@@ -2853,6 +2861,7 @@ declare module minerva.text {
         public layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
         public render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
         public getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
+        public getCaretFromCursor(cursor: number, docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
         public splitSelection(docctx: IDocumentContext, assets: IDocumentAssets): void;
         public getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
         public measureTextWidth(text: string, font: Font): number;

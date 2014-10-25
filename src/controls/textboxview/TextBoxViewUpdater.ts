@@ -80,6 +80,7 @@ module minerva.controls.textboxview {
         }
 
         invalidateCaretRegion () {
+            this.invalidateCaret();
             var cr = this.assets.caretRegion;
             cr.x = cr.y = cr.width = cr.height = 0;
         }
@@ -88,7 +89,7 @@ module minerva.controls.textboxview {
             var assets = this.assets;
             var blinker = this.blinker;
 
-            if (assets.selectionLength > 0 || assets.isReadOnly || assets.isFocused)
+            if (assets.selectionLength > 0 || assets.isReadOnly || !assets.isFocused)
                 return blinker.end();
             if (shouldDelay)
                 return blinker.delay();

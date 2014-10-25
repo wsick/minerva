@@ -22,6 +22,7 @@ module minerva.text {
         layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render (ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets);
         getCursorFromPoint (point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
+        getCaretFromCursor(cursor: number, docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
         getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number;
     }
 
@@ -119,6 +120,22 @@ module minerva.text {
             }
 
             return advance + end;
+        }
+
+        getCaretFromCursor (cursor: number, docctx: IDocumentContext, docassets: IDocumentAssets): Rect {
+            var advance = 0;
+            for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
+                var line = lines[i];
+                for (var curx = this.getHorizontalAlignmentX(docctx, docassets, line.width), runs = line.runs, j = 0, len2 = runs.length; j < len2; j++) {
+                    var run = runs[j];
+                    if ((advance + run.length) > cursor) {
+                        curx += this.measureTextWidth(run.text.substr(0, cursor - advance), run.attrs.font);
+                        return new Rect(curx, cury, 1.0, line.height);
+                    }
+                    curx += line.width;
+                }
+                cury += line.height;
+            }
         }
 
         splitSelection (docctx: IDocumentContext, assets: IDocumentAssets) {

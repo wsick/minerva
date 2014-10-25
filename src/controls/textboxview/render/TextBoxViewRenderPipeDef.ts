@@ -4,17 +4,37 @@ module minerva.controls.textboxview.render {
         caretRegion: Rect;
         caretBrush: IBrush;
     }
+    export interface IOutput extends core.render.IOutput {
+        caretRegion: Rect;
+    }
 
     export class TextBoxViewRenderPipeDef extends core.render.RenderPipeDef {
         constructor () {
             super();
             this.replaceTapin('doRender', tapins.doRender)
+                .addTapinAfter('doRender', 'calcCaretRegion', tapins.calcCaretRegion)
                 .addTapinAfter('doRender', 'renderCaret', tapins.renderCaret);
+        }
+
+        createOutput () {
+            var output = <IOutput>super.createOutput();
+            output.caretRegion = new Rect();
+            return output;
+        }
+
+        prepare (input: IInput, state: core.render.IState, output: IOutput) {
+            Rect.copyTo(input.caretRegion, output.caretRegion);
+            super.prepare(input, state, output);
+        }
+
+        flush (input: IInput, state: core.render.IState, output: IOutput) {
+            super.flush(input, state, output);
+            Rect.copyTo(output.caretRegion, input.caretRegion);
         }
     }
 
     export module tapins {
-        export function doRender (input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean {
+        export function doRender (input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean {
             ctx.save();
             //TODO: Render layout clip
             tree.render(ctx, input);
@@ -22,11 +42,19 @@ module minerva.controls.textboxview.render {
             return true;
         }
 
-        export function renderCaret (input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean {
-            if (!input.isCaretVisible)
+        export function calcCaretRegion (input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean {
+            if (!Rect.isEmpty(output.caretRegion) || input.selectionLength > 0)
+                return true;
+            var caret = tree.doc.def.getCaretFromCursor(input.selectionStart, input, tree.doc.assets);
+            Rect.copyTo(caret, output.caretRegion);
+            return true;
+        }
+
+        export function renderCaret (input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean {
+            if (!input.isCaretVisible || input.selectionLength > 0)
                 return true;
 
-            var region = input.caretRegion;
+            var region = output.caretRegion;
             var brush = input.caretBrush;
             var raw = ctx.raw;
 
