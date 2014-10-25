@@ -9495,7 +9495,7 @@ var minerva;
                     __extends(TextBoxViewRenderPipeDef, _super);
                     function TextBoxViewRenderPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('doRender', tapins.doRender).addTapinAfter('doRender', 'calcCaretRegion', tapins.calcCaretRegion).addTapinAfter('doRender', 'renderCaret', tapins.renderCaret);
+                        this.replaceTapin('doRender', tapins.doRender).addTapinAfter('doRender', 'calcCaretRegion', tapins.calcCaretRegion).addTapinAfter('calcCaretRegion', 'renderCaret', tapins.renderCaret);
                     }
                     TextBoxViewRenderPipeDef.prototype.createOutput = function () {
                         var output = _super.prototype.createOutput.call(this);

@@ -13,7 +13,7 @@ module minerva.controls.textboxview.render {
             super();
             this.replaceTapin('doRender', tapins.doRender)
                 .addTapinAfter('doRender', 'calcCaretRegion', tapins.calcCaretRegion)
-                .addTapinAfter('doRender', 'renderCaret', tapins.renderCaret);
+                .addTapinAfter('calcCaretRegion', 'renderCaret', tapins.renderCaret);
         }
 
         createOutput () {
