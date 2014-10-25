@@ -9216,13 +9216,16 @@ var minerva;
                 };
 
                 TextBoxViewUpdater.prototype.invalidateTextMetrics = function () {
-                    this.invalidateMeasure();
-                    this.invalidateArrange();
-                    this.updateBounds(true);
-                    this.invalidate();
+                    this.invalidateMeasure().invalidateArrange().updateBounds(true).invalidate();
+                    return this;
+                };
+
+                TextBoxViewUpdater.prototype.invalidateMeasure = function () {
+                    _super.prototype.invalidateMeasure.call(this);
                     var docassets = this.tree.doc.assets;
                     docassets.actualWidth = NaN;
                     docassets.actualHeight = NaN;
+                    return this;
                 };
 
                 TextBoxViewUpdater.prototype.invalidateCaret = function () {
@@ -12766,6 +12769,8 @@ var minerva;
             };
 
             DocumentLayoutDef.prototype.getCursorFromPoint = function (point, docctx, docassets) {
+                if (point.y < 0)
+                    return 0;
                 var advance = 0;
                 var line;
                 for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
@@ -12781,6 +12786,8 @@ var minerva;
                     return advance;
 
                 var px = point.x - this.getHorizontalAlignmentX(docctx, docassets, line.width);
+                if (px < 0)
+                    return advance;
                 var curx = 0;
                 for (var runs = line.runs, i = 0, len = runs.length; i < len; i++) {
                     var run = runs[i];
@@ -12792,21 +12799,23 @@ var minerva;
                 if (!run)
                     return advance;
 
-                var end = Math.max(0, Math.ceil(px / run.width));
-                var usedText = run.text.slice(0, end);
+                var end = Math.max(0, Math.ceil(px / run.width * run.text.length));
+                var usedText = run.text.substr(0, end);
 
                 var width;
                 while (end > 0 && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
                     end--;
-                    usedText = run.text.slice(0, end);
+                    usedText = run.text.substr(0, end);
                 }
 
-                while (end < run.text.length && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
+                var lastEnd = end;
+                while (end < run.text.length && (width = this.measureTextWidth(usedText, run.attrs.font)) < px) {
+                    lastEnd = end;
                     end++;
-                    usedText = run.text.slice(0, end);
+                    usedText = run.text.substr(0, end);
                 }
 
-                return advance + end;
+                return advance + lastEnd;
             };
 
             DocumentLayoutDef.prototype.getCaretFromCursor = function (cursor, docctx, docassets) {
@@ -12906,22 +12915,22 @@ var minerva;
                 var text = assets.text;
 
                 var usedText = text;
-                var end = text.length - 1;
+                var end = text.length;
                 var width;
 
                 if ((width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                     end = (Math.ceil(docassets.maxWidth / width * text.length)) || 0;
-                    usedText = text.slice(0, end);
+                    usedText = text.substr(0, end);
                 }
 
                 while (end > 0 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                     end--;
-                    usedText = text.slice(0, end);
+                    usedText = text.substr(0, end);
                 }
 
                 while (end < text.length && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                     end++;
-                    usedText = text.slice(0, end);
+                    usedText = text.substr(0, end);
                 }
 
                 if ((end + 1) < text.length) {
@@ -13025,7 +13034,7 @@ var minerva;
                     curText += c;
                     curWidth = this.measureTextWidth(curText, font);
                     if (curWidth > maxWidth) {
-                        var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index - 1;
+                        var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index;
                         run.length = (breakIndex - start) || 1;
                         run.text = text.substr(start, run.length);
                         run.width = this.measureTextWidth(run.text, font);

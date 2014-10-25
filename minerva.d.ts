@@ -2099,7 +2099,8 @@ declare module minerva.controls.textboxview {
         public setDocument(docdef?: text.IDocumentLayoutDef): TextBoxViewUpdater;
         public getCursorFromPoint(point: IPoint): number;
         public invalidateFont(full?: boolean): void;
-        public invalidateTextMetrics(): void;
+        public invalidateTextMetrics(): TextBoxViewUpdater;
+        public invalidateMeasure(): TextBoxViewUpdater;
         public invalidateCaret(): void;
         public invalidateCaretRegion(): void;
         public resetCaretBlinker(shouldDelay: boolean): void;

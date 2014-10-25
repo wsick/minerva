@@ -35,22 +35,22 @@ module minerva.text {
             var text = assets.text;
 
             var usedText = text;
-            var end = text.length - 1;
+            var end = text.length;
             var width: number;
             //NOTE: Guess at clip point
             if ((width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                 end = (Math.ceil(docassets.maxWidth / width * text.length)) || 0;
-                usedText = text.slice(0, end);
+                usedText = text.substr(0, end);
             }
             //NOTE: Move backward if still need to clip
             while (end > 0 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                 end--;
-                usedText = text.slice(0, end);
+                usedText = text.substr(0, end);
             }
             //NOTE: Move forward if not clipping remaining characters
             while (end < text.length && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
                 end++;
-                usedText = text.slice(0, end);
+                usedText = text.substr(0, end);
             }
             //NOTE: Include clipped character
             if ((end + 1) < text.length) {
@@ -154,7 +154,7 @@ module minerva.text {
                 curText += c;
                 curWidth = this.measureTextWidth(curText, font);
                 if (curWidth > maxWidth) {
-                    var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index - 1;
+                    var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index;
                     run.length = (breakIndex - start) || 1; //Force at least 1 character
                     run.text = text.substr(start, run.length);
                     run.width = this.measureTextWidth(run.text, font);

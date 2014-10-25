@@ -80,6 +80,8 @@ module minerva.text {
         }
 
         getCursorFromPoint (point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number {
+            if (point.y < 0)
+                return 0;
             var advance = 0;
             var line: layout.Line;
             for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
@@ -93,6 +95,8 @@ module minerva.text {
                 return advance;
 
             var px = point.x - this.getHorizontalAlignmentX(docctx, docassets, line.width);
+            if (px < 0)
+                return advance;
             var curx = 0;
             for (var runs = line.runs, i = 0, len = runs.length; i < len; i++) {
                 var run = runs[i];
@@ -105,21 +109,23 @@ module minerva.text {
                 return advance;
 
             //NOTE: Guess at cursor
-            var end = Math.max(0, Math.ceil(px / run.width));
-            var usedText = run.text.slice(0, end);
+            var end = Math.max(0, Math.ceil(px / run.width * run.text.length));
+            var usedText = run.text.substr(0, end);
             //NOTE: Move backward if width is right of point
             var width: number;
             while (end > 0 && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
                 end--;
-                usedText = run.text.slice(0, end);
+                usedText = run.text.substr(0, end);
             }
             //NOTE: Move forward if width is left of point
-            while (end < run.text.length && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
+            var lastEnd = end;
+            while (end < run.text.length && (width = this.measureTextWidth(usedText, run.attrs.font)) < px) {
+                lastEnd = end;
                 end++;
-                usedText = run.text.slice(0, end);
+                usedText = run.text.substr(0, end);
             }
 
-            return advance + end;
+            return advance + lastEnd;
         }
 
         getCaretFromCursor (cursor: number, docctx: IDocumentContext, docassets: IDocumentAssets): Rect {

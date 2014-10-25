@@ -61,14 +61,20 @@ module minerva.controls.textboxview {
             this.invalidate();
         }
 
-        invalidateTextMetrics () {
-            this.invalidateMeasure();
-            this.invalidateArrange();
-            this.updateBounds(true);
-            this.invalidate();
+        invalidateTextMetrics (): TextBoxViewUpdater {
+            this.invalidateMeasure()
+                .invalidateArrange()
+                .updateBounds(true)
+                .invalidate();
+            return this;
+        }
+
+        invalidateMeasure (): TextBoxViewUpdater {
+            super.invalidateMeasure();
             var docassets = this.tree.doc.assets;
             docassets.actualWidth = NaN;
             docassets.actualHeight = NaN;
+            return this;
         }
 
         invalidateCaret () {
