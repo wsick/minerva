@@ -8192,7 +8192,9 @@ var minerva;
                         extentWidth: 0,
                         extentHeight: 0,
                         maxDesiredWidth: 0,
-                        maxDesiredHeight: 0
+                        maxDesiredHeight: 0,
+                        invalidate: function () {
+                        }
                     };
 
                     _super.prototype.init.call(this);
@@ -8244,10 +8246,11 @@ var minerva;
                             return true;
                         }
 
-                        if (scrollcontentpresenter.helpers.clampOffsets(input.scrollData)) {
+                        var sd = input.scrollData;
+                        if (scrollcontentpresenter.helpers.clampOffsets(sd)) {
+                            sd.invalidate();
                         }
 
-                        var sd = input.scrollData;
                         var desired = input.desiredSize;
 
                         var cr = state.childRect;
@@ -8303,6 +8306,7 @@ var minerva;
                         sd.viewportHeight = viewport.height;
 
                         if (scrollcontentpresenter.helpers.clampOffsets(sd) || changed) {
+                            sd.invalidate();
                         }
 
                         return true;
@@ -8474,6 +8478,7 @@ var minerva;
                         sd.extentHeight = extent.height;
 
                         if (scrollcontentpresenter.helpers.clampOffsets(sd) || changed) {
+                            sd.invalidate();
                         }
 
                         return true;

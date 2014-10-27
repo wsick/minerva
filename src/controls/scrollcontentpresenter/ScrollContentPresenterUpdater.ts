@@ -22,7 +22,9 @@ module minerva.controls.scrollcontentpresenter {
                 extentWidth: 0,
                 extentHeight: 0,
                 maxDesiredWidth: 0,
-                maxDesiredHeight: 0
+                maxDesiredHeight: 0,
+                invalidate: function () {
+                }
             };
 
             super.init();

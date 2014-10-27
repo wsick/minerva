@@ -6,12 +6,11 @@ module minerva.controls.scrollcontentpresenter.arrange.tapins {
             return true;
         }
 
-        if (helpers.clampOffsets(input.scrollData)) {
-            //TODO: InvalidateScrollInfo
-            //scrollOwner.InvalidateScrollInfo();
+        var sd = input.scrollData;
+        if (helpers.clampOffsets(sd)) {
+            sd.invalidate();
         }
 
-        var sd = input.scrollData;
         var desired = input.desiredSize;
 
         var cr = state.childRect;

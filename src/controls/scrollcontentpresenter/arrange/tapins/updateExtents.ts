@@ -9,8 +9,7 @@ module minerva.controls.scrollcontentpresenter.arrange.tapins {
         sd.viewportHeight = viewport.height;
 
         if (helpers.clampOffsets(sd) || changed) {
-            //TODO: InvalidateScrollInfo
-            //this.ScrollOwner.InvalidateScrollInfo();
+            sd.invalidate();
         }
 
         return true;

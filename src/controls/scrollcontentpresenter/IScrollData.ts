@@ -12,5 +12,6 @@ module minerva.controls.scrollcontentpresenter {
         extentHeight: number;
         maxDesiredWidth: number;
         maxDesiredHeight: number;
+        invalidate();
     }
 }

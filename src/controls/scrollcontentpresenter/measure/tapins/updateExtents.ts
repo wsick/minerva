@@ -14,8 +14,7 @@ module minerva.controls.scrollcontentpresenter.measure.tapins {
         sd.extentHeight = extent.height;
 
         if (helpers.clampOffsets(sd) || changed) {
-            //TODO: InvalidateScrollInfo
-            //this.ScrollOwner.InvalidateScrollInfo();
+            sd.invalidate();
         }
 
         return true;
