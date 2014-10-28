@@ -128,20 +128,17 @@ module minerva.core {
         }
 
         onAttached () {
-            this.updateBounds(true);
-            this.invalidateMeasure();
             //previousConstraint = undefined; ///OLD
-
             var assets = this.assets;
-
             assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
-            Updater.$$addDownDirty(this);
-            this.invalidate(assets.surfaceBoundsWithChildren);
             var lc = assets.layoutClip;
             lc.x = lc.y = lc.width = lc.height = 0;
             //TODO: clear assets.renderSize
-            this.invalidateMeasure();
-            this.invalidateArrange();
+            this.invalidateMeasure()
+                .invalidateArrange()
+                .invalidate()
+                .updateBounds(true);
+            Updater.$$addDownDirty(this);
             if ((assets.uiFlags & UIFlags.SizeHint) > 0 || assets.lastRenderSize !== undefined)
                 Updater.$$propagateUiFlagsUp(this, UIFlags.SizeHint);
         }
@@ -427,15 +424,16 @@ module minerva.core {
             return this;
         }
 
-        invalidate (region?: Rect) {
+        invalidate (region?: Rect): Updater {
             var assets = this.assets;
             if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
-                return;
+                return this;
             assets.dirtyFlags |= DirtyFlags.Invalidate;
             Updater.$$addUpDirty(this);
             if (!region)
                 region = assets.surfaceBoundsWithChildren;
             Rect.union(assets.dirtyRegion, region);
+            return this;
         }
 
         findChildInList (list: Updater[]) {

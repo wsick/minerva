@@ -1934,19 +1934,13 @@ var minerva;
             };
 
             Updater.prototype.onAttached = function () {
-                this.updateBounds(true);
-                this.invalidateMeasure();
-
                 var assets = this.assets;
-
                 assets.dirtyFlags |= (minerva.DirtyFlags.RenderVisibility | minerva.DirtyFlags.HitTestVisibility | minerva.DirtyFlags.LocalTransform | minerva.DirtyFlags.LocalProjection);
-                Updater.$$addDownDirty(this);
-                this.invalidate(assets.surfaceBoundsWithChildren);
                 var lc = assets.layoutClip;
                 lc.x = lc.y = lc.width = lc.height = 0;
 
-                this.invalidateMeasure();
-                this.invalidateArrange();
+                this.invalidateMeasure().invalidateArrange().invalidate().updateBounds(true);
+                Updater.$$addDownDirty(this);
                 if ((assets.uiFlags & 8192 /* SizeHint */) > 0 || assets.lastRenderSize !== undefined)
                     Updater.$$propagateUiFlagsUp(this, 8192 /* SizeHint */);
             };
@@ -2226,12 +2220,13 @@ var minerva;
             Updater.prototype.invalidate = function (region) {
                 var assets = this.assets;
                 if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
-                    return;
+                    return this;
                 assets.dirtyFlags |= minerva.DirtyFlags.Invalidate;
                 Updater.$$addUpDirty(this);
                 if (!region)
                     region = assets.surfaceBoundsWithChildren;
                 minerva.Rect.union(assets.dirtyRegion, region);
+                return this;
             };
 
             Updater.prototype.findChildInList = function (list) {
