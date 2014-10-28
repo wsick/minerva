@@ -1,6 +1,6 @@
 module minerva.core.hittest {
     export interface IHitTestTapin {
-        (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+        (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
     }
     export interface IHitTestData {
         assets: IUpdaterAssets;

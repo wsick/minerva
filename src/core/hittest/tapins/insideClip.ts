@@ -1,5 +1,5 @@
 module minerva.core.hittest.tapins {
-    export function insideClip (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean {
+    export function insideClip (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean {
         var clip = data.assets.clip;
         if (!clip)
             return true;

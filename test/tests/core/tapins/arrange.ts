@@ -66,6 +66,8 @@ module minerva.core.arrange.tapins.tests {
                 lastRenderSize: undefined,
                 dirtyFlags: 0,
                 uiFlags: 0,
+                origDirtyFlags: 0,
+                origUiFlags: 0,
                 newUpDirty: 0,
                 newDownDirty: 0,
                 newUiFlags: 0

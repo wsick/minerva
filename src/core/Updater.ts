@@ -375,9 +375,9 @@ module minerva.core {
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
         }
 
-        hitTest (pos: Point, list: Updater[], ctx: render.RenderContext): boolean {
+        hitTest (pos: Point, list: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean {
             var pipe = this.$$hittest;
-            return pipe.def.run(pipe.data, pos, list, ctx);
+            return pipe.def.run(pipe.data, pos, list, ctx, includeAll === true);
         }
 
         /////// SIZE UPDATES

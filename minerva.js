@@ -2172,9 +2172,9 @@ var minerva;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
             };
 
-            Updater.prototype.hitTest = function (pos, list, ctx) {
+            Updater.prototype.hitTest = function (pos, list, ctx, includeAll) {
                 var pipe = this.$$hittest;
-                return pipe.def.run(pipe.data, pos, list, ctx);
+                return pipe.def.run(pipe.data, pos, list, ctx, includeAll === true);
             };
 
             Updater.prototype.onSizeChanged = function (oldSize, newSize) {
@@ -3370,7 +3370,7 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function canHit(data, pos, hitList, ctx) {
+                function canHit(data, pos, hitList, ctx, includeAll) {
                     var assets = data.assets;
                     return !!assets.totalIsRenderVisible && !!assets.totalIsHitTestVisible && ((assets.totalOpacity * 255) >= 0.5);
                 }
@@ -3387,7 +3387,7 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function canHitInside(data, pos, hitList, ctx) {
+                function canHitInside(data, pos, hitList, ctx, includeAll) {
                     if (data.hitChildren)
                         return true;
 
@@ -3408,7 +3408,7 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function completeCtx(data, pos, hitList, ctx) {
+                function completeCtx(data, pos, hitList, ctx, includeAll) {
                     ctx.restore();
                     return true;
                 }
@@ -3425,16 +3425,16 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function insideChildren(data, pos, hitList, ctx) {
+                function insideChildren(data, pos, hitList, ctx, includeAll) {
                     hitList.unshift(data.updater);
 
-                    data.hitChildren = false;
+                    var hit = false;
                     for (var walker = data.tree.walk(3 /* ZReverse */); walker.step();) {
-                        if (walker.current.hitTest(pos, hitList, ctx)) {
-                            data.hitChildren = true;
-                            return true;
-                        }
+                        hit = walker.current.hitTest(pos, hitList, ctx, includeAll) || hit;
+                        if (hit && !includeAll)
+                            break;
                     }
+                    data.hitChildren = hit;
 
                     return true;
                 }
@@ -3451,7 +3451,7 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function insideClip(data, pos, hitList, ctx) {
+                function insideClip(data, pos, hitList, ctx, includeAll) {
                     var clip = data.assets.clip;
                     if (!clip)
                         return true;
@@ -3484,7 +3484,7 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function insideLayoutClip(data, pos, hitList, ctx) {
+                function insideLayoutClip(data, pos, hitList, ctx, includeAll) {
                     if (data.hitChildren)
                         return true;
 
@@ -3517,7 +3517,7 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function insideObject(data, pos, hitList, ctx) {
+                function insideObject(data, pos, hitList, ctx, includeAll) {
                     if (data.hitChildren)
                         return true;
 
@@ -3545,7 +3545,7 @@ var minerva;
     (function (core) {
         (function (hittest) {
             (function (tapins) {
-                function prepareCtx(data, pos, hitList, ctx) {
+                function prepareCtx(data, pos, hitList, ctx, includeAll) {
                     ctx.save();
                     ctx.pretransformMatrix(data.assets.renderXform);
                     return true;
@@ -10034,7 +10034,7 @@ var minerva;
                 }
             };
 
-            Surface.prototype.hitTest = function (pos) {
+            Surface.prototype.hitTest = function (pos, includeAll) {
                 if (this.$$layers.length < 1)
                     return null;
                 hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
@@ -10042,7 +10042,7 @@ var minerva;
 
                 var list = [];
                 for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
-                    layers[i].hitTest(pos, list, hitTestCtx);
+                    layers[i].hitTest(pos, list, hitTestCtx, includeAll);
                 }
                 return list;
             };

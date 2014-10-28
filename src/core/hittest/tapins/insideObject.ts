@@ -1,5 +1,5 @@
 module minerva.core.hittest.tapins {
-    export function insideObject (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean {
+    export function insideObject (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean {
         if (data.hitChildren)
             return true;
 

@@ -529,7 +529,7 @@ declare module minerva.core {
         public processDown(): boolean;
         public processUp(): boolean;
         public render(ctx: render.RenderContext, region: Rect): boolean;
-        public hitTest(pos: Point, list: Updater[], ctx: render.RenderContext): boolean;
+        public hitTest(pos: Point, list: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setSizeUpdater(updater: ISizeUpdater): void;
         public invalidateMeasure(): Updater;
@@ -779,7 +779,7 @@ declare module minerva.core.draft.tapins {
 }
 declare module minerva.core.hittest {
     interface IHitTestTapin {
-        (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+        (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
     }
     interface IHitTestData {
         assets: IUpdaterAssets;
@@ -794,28 +794,28 @@ declare module minerva.core.hittest {
     }
 }
 declare module minerva.core.hittest.tapins {
-    function canHit(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function canHit(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.hittest.tapins {
-    function canHitInside(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function canHitInside(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.hittest.tapins {
-    function completeCtx(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function completeCtx(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.hittest.tapins {
-    function insideChildren(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function insideChildren(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.hittest.tapins {
-    function insideClip(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function insideClip(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.hittest.tapins {
-    function insideLayoutClip(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function insideLayoutClip(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.hittest.tapins {
-    function insideObject(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function insideObject(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.hittest.tapins {
-    function prepareCtx(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean;
+    function prepareCtx(data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
 }
 declare module minerva.core.measure {
     interface IMeasureBinder {
@@ -2311,7 +2311,7 @@ declare module minerva.engine {
         public addDownDirty(updater: core.Updater): void;
         public updateLayout(): boolean;
         public resize(width: number, height: number): void;
-        public hitTest(pos: Point): core.Updater[];
+        public hitTest(pos: Point, includeAll: boolean): core.Updater[];
         static measureWidth(text: string, font: Font): number;
     }
 }

@@ -1,14 +1,14 @@
 module minerva.core.hittest.tapins {
-    export function insideChildren (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext): boolean {
+    export function insideChildren (data: IHitTestData, pos: Point, hitList: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean {
         hitList.unshift(data.updater);
 
-        data.hitChildren = false;
-        for (var walker = data.tree.walk(WalkDirection.ZReverse); walker.step(); ) {
-            if (walker.current.hitTest(pos, hitList, ctx)) {
-                data.hitChildren = true;
-                return true;
-            }
+        var hit = false;
+        for (var walker = data.tree.walk(WalkDirection.ZReverse); walker.step();) {
+            hit = walker.current.hitTest(pos, hitList, ctx, includeAll) || hit;
+            if (hit && !includeAll)
+                break;
         }
+        data.hitChildren = hit;
 
         return true;
     }

@@ -65,13 +65,13 @@ module minerva.core.hittest.tapins.tests {
 
         data.assets.totalIsRenderVisible = false;
         data.assets.totalIsHitTestVisible = false;
-        assert.ok(!tapins.canHit(data, pos, hitList, ctx));
+        assert.ok(!tapins.canHit(data, pos, hitList, ctx, false));
 
         data.assets.totalIsRenderVisible = true;
-        assert.ok(!tapins.canHit(data, pos, hitList, ctx));
+        assert.ok(!tapins.canHit(data, pos, hitList, ctx, false));
 
         data.assets.totalIsHitTestVisible = true;
-        assert.ok(tapins.canHit(data, pos, hitList, ctx));
+        assert.ok(tapins.canHit(data, pos, hitList, ctx, false));
     });
 
     QUnit.test("prepareCtx", (assert) => {
@@ -90,7 +90,7 @@ module minerva.core.hittest.tapins.tests {
 
         mat3.set([2, 0, 0, 0, 4, 0, 0, 0, 1], data.assets.renderXform);
 
-        assert.ok(tapins.prepareCtx(data, pos, hitList, ctx));
+        assert.ok(tapins.prepareCtx(data, pos, hitList, ctx, false));
         assert.strictEqual(saved, true);
         assert.deepEqual(typedToArray(ctx.currentTransform), [2, 0, 10, 0, 4, 20, 0, 0, 1]);
     });
@@ -108,7 +108,7 @@ module minerva.core.hittest.tapins.tests {
         };
 
         //No clip
-        assert.ok(tapins.insideClip(data, pos, hitList, ctx));
+        assert.ok(tapins.insideClip(data, pos, hitList, ctx, false));
         assert.strictEqual(restored, false);
 
         //Outside clip bounds
@@ -122,19 +122,19 @@ module minerva.core.hittest.tapins.tests {
                 ctx.raw.rect(0, 10, 50, 40);
             }
         };
-        assert.ok(!tapins.insideClip(data, pos, hitList, ctx));
+        assert.ok(!tapins.insideClip(data, pos, hitList, ctx, false));
         assert.strictEqual(restored, true);
         restored = false;
 
         //Outside clip path
         ctx.translate(50, 0);
-        assert.ok(!tapins.insideClip(data, pos, hitList, ctx));
+        assert.ok(!tapins.insideClip(data, pos, hitList, ctx, false));
         assert.strictEqual(restored, true);
         restored = false;
 
         //Inside
         ctx.translate(0, -10);
-        assert.ok(tapins.insideClip(data, pos, hitList, ctx));
+        assert.ok(tapins.insideClip(data, pos, hitList, ctx, false));
         assert.strictEqual(restored, false);
     });
 
@@ -145,7 +145,7 @@ module minerva.core.hittest.tapins.tests {
         var hitList: Updater[] = [];
         var ctx = mock.ctx();
 
-        assert.ok(tapins.insideChildren(data, pos, hitList, ctx));
+        assert.ok(tapins.insideChildren(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(hitList[0], updater);
         assert.strictEqual(data.hitChildren, false);
@@ -153,18 +153,27 @@ module minerva.core.hittest.tapins.tests {
         hitList = [];
         var children: Updater[] = [];
         data.tree.walk = mock.walk(children);
-        children[0].hitTest = function (pos2, hitList2, ctx2) {
+        children[0].hitTest = function (pos2, hitList2, ctx2, includeAll) {
             hitList.unshift(children[0]);
             return true;
         };
-        children[1].hitTest = function (pos2, hitList2, ctx2) {
+        children[1].hitTest = function (pos2, hitList2, ctx2, includeAll) {
             hitList.unshift(children[1]);
             return true;
         };
-        assert.ok(tapins.insideChildren(data, pos, hitList, ctx));
+        assert.ok(tapins.insideChildren(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 2);
         assert.strictEqual(hitList[0], children[1]);
         assert.strictEqual(hitList[1], updater);
+        assert.strictEqual(data.hitChildren, true);
+
+        data.hitChildren = false;
+        hitList = [];
+        assert.ok(tapins.insideChildren(data, pos, hitList, ctx, true));
+        assert.strictEqual(hitList.length, 3);
+        assert.strictEqual(hitList[0], children[0]);
+        assert.strictEqual(hitList[1], children[1]);
+        assert.strictEqual(hitList[2], updater);
         assert.strictEqual(data.hitChildren, true);
     });
 
@@ -181,12 +190,12 @@ module minerva.core.hittest.tapins.tests {
         };
 
         data.hitChildren = true;
-        assert.ok(tapins.canHitInside(data, pos, hitList, ctx));
+        assert.ok(tapins.canHitInside(data, pos, hitList, ctx, false));
         assert.strictEqual(restored, false);
         assert.strictEqual(hitList.length, 1);
 
         data.hitChildren = false;
-        assert.ok(!tapins.canHitInside(data, pos, hitList, ctx));
+        assert.ok(!tapins.canHitInside(data, pos, hitList, ctx, false));
         assert.strictEqual(restored, true);
         assert.strictEqual(hitList.length, 0);
     });
@@ -204,7 +213,7 @@ module minerva.core.hittest.tapins.tests {
         };
 
         data.hitChildren = true;
-        assert.ok(tapins.insideObject(data, pos, hitList, ctx));
+        assert.ok(tapins.insideObject(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, false);
 
@@ -213,12 +222,12 @@ module minerva.core.hittest.tapins.tests {
         ctx.translate(0, 0);
         pos.x = 10;
         pos.y = 10;
-        assert.ok(tapins.insideObject(data, pos, hitList, ctx));
+        assert.ok(tapins.insideObject(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, false);
 
         ctx.translate(100, 100);
-        assert.ok(!tapins.insideObject(data, pos, hitList, ctx));
+        assert.ok(!tapins.insideObject(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 0);
         assert.strictEqual(restored, true);
     });
@@ -238,19 +247,19 @@ module minerva.core.hittest.tapins.tests {
         //Hit children
         data.assets.layoutClip = null;
         data.hitChildren = true;
-        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, false);
 
         //No layout clip
         data.hitChildren = false;
-        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, false);
 
         //Empty layout clip
         var lc = data.assets.layoutClip = new Rect();
-        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, false);
 
@@ -259,13 +268,13 @@ module minerva.core.hittest.tapins.tests {
         lc.height = 50;
         pos.x = 25;
         pos.y = 15;
-        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, false);
 
         //Not inside layout clip
         ctx.translate(0, 40);
-        assert.ok(!tapins.insideLayoutClip(data, pos, hitList, ctx));
+        assert.ok(!tapins.insideLayoutClip(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 0);
         assert.strictEqual(restored, true);
     });
@@ -282,7 +291,7 @@ module minerva.core.hittest.tapins.tests {
             restored = true;
         };
 
-        assert.ok(tapins.completeCtx(data, pos, hitList, ctx));
+        assert.ok(tapins.completeCtx(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, true);
     });
