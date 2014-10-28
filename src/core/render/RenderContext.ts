@@ -130,7 +130,7 @@ module minerva.core.render {
             var raw = this.raw;
             brush.setupBrush(raw, region);
             raw.fillStyle = brush.toHtml5Object();
-            if (!fillRule)
+            if (fillRule == null)
                 return raw.fill();
             var fr = fillRule === FillRule.EvenOdd ? "evenodd" : "nonzero";
             (<any>raw).fillRule = raw.msFillRule = fr;
