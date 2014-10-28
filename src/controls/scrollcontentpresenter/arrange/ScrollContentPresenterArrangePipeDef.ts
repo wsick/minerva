@@ -14,7 +14,7 @@ module minerva.controls.scrollcontentpresenter.arrange {
         constructor () {
             super();
             this.replaceTapin('doOverride', tapins.doOverride)
-                .addTapinAfter('doOverride', 'updateClip', tapins.updateClip)
+                .addTapinAfter('completeOverride', 'updateClip', tapins.updateClip)
                 .addTapinAfter('updateClip', 'updateExtents', tapins.updateExtents);
         }
 

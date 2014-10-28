@@ -1875,7 +1875,7 @@ declare module minerva.controls.scrollcontentpresenter {
     }
 }
 declare module minerva.controls.scrollcontentpresenter {
-    interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
     class ScrollContentPresenterUpdater extends core.Updater {
         public assets: IScrollContentPresenterUpdaterAssets;
@@ -1934,6 +1934,17 @@ declare module minerva.controls.scrollcontentpresenter.measure.tapins {
 }
 declare module minerva.controls.scrollcontentpresenter.measure.tapins {
     function updateExtents(input: IInput, state: IState, output: core.measure.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.scrollcontentpresenter.render {
+    interface IInput extends core.render.IInput {
+        internalClip: Rect;
+    }
+    class ScrollContentPresenterRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+    }
+    module tapins {
+        function applyInternalClip(input: IInput, state: core.render.IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+    }
 }
 declare module minerva.controls.stackpanel {
     interface IStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {

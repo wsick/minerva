@@ -8175,7 +8175,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 ScrollContentPresenterUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(scrollcontentpresenter.measure.ScrollContentPresenterMeasurePipeDef)).setArrangePipe(minerva.singleton(scrollcontentpresenter.arrange.ScrollContentPresenterArrangePipeDef));
+                    this.setMeasurePipe(minerva.singleton(scrollcontentpresenter.measure.ScrollContentPresenterMeasurePipeDef)).setArrangePipe(minerva.singleton(scrollcontentpresenter.arrange.ScrollContentPresenterArrangePipeDef)).setRenderPipe(minerva.singleton(scrollcontentpresenter.render.ScrollContentPresenterRenderPipeDef));
 
                     var assets = this.assets;
                     assets.internalClip = new minerva.Rect();
@@ -8215,7 +8215,7 @@ var minerva;
                     __extends(ScrollContentPresenterArrangePipeDef, _super);
                     function ScrollContentPresenterArrangePipeDef() {
                         _super.call(this);
-                        this.replaceTapin('doOverride', arrange.tapins.doOverride).addTapinAfter('doOverride', 'updateClip', arrange.tapins.updateClip).addTapinAfter('updateClip', 'updateExtents', arrange.tapins.updateExtents);
+                        this.replaceTapin('doOverride', arrange.tapins.doOverride).addTapinAfter('completeOverride', 'updateClip', arrange.tapins.updateClip).addTapinAfter('updateClip', 'updateExtents', arrange.tapins.updateExtents);
                     }
                     ScrollContentPresenterArrangePipeDef.prototype.createOutput = function () {
                         var output = _super.prototype.createOutput.call(this);
@@ -8502,6 +8502,38 @@ var minerva;
                 var tapins = measure.tapins;
             })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
             var measure = scrollcontentpresenter.measure;
+        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+        var scrollcontentpresenter = controls.scrollcontentpresenter;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (scrollcontentpresenter) {
+            (function (render) {
+                var ScrollContentPresenterRenderPipeDef = (function (_super) {
+                    __extends(ScrollContentPresenterRenderPipeDef, _super);
+                    function ScrollContentPresenterRenderPipeDef() {
+                        _super.call(this);
+                        this.addTapinAfter('applyClip', 'applyInternalClip', tapins.applyInternalClip);
+                    }
+                    return ScrollContentPresenterRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.ScrollContentPresenterRenderPipeDef = ScrollContentPresenterRenderPipeDef;
+
+                (function (tapins) {
+                    function applyInternalClip(input, state, output, ctx, region, tree) {
+                        if (minerva.Rect.isEmpty(input.internalClip))
+                            return true;
+                        ctx.clipRect(input.internalClip);
+                        return true;
+                    }
+                    tapins.applyInternalClip = applyInternalClip;
+                })(render.tapins || (render.tapins = {}));
+                var tapins = render.tapins;
+            })(scrollcontentpresenter.render || (scrollcontentpresenter.render = {}));
+            var render = scrollcontentpresenter.render;
         })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
         var scrollcontentpresenter = controls.scrollcontentpresenter;
     })(minerva.controls || (minerva.controls = {}));

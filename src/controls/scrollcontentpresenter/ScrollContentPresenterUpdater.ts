@@ -1,5 +1,5 @@
 module minerva.controls.scrollcontentpresenter {
-    export interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput {
+    export interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
 
     export class ScrollContentPresenterUpdater extends core.Updater {
@@ -7,7 +7,8 @@ module minerva.controls.scrollcontentpresenter {
 
         init () {
             this.setMeasurePipe(singleton(measure.ScrollContentPresenterMeasurePipeDef))
-                .setArrangePipe(singleton(arrange.ScrollContentPresenterArrangePipeDef));
+                .setArrangePipe(singleton(arrange.ScrollContentPresenterArrangePipeDef))
+                .setRenderPipe(singleton(render.ScrollContentPresenterRenderPipeDef));
 
             var assets = this.assets;
             assets.internalClip = new Rect();
