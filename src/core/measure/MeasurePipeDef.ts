@@ -20,6 +20,8 @@ module minerva.core.measure {
         hiddenDesire: Size;
         dirtyFlags: DirtyFlags;
         uiFlags: UIFlags;
+        origDirtyFlags: DirtyFlags;
+        origUiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
         newUiFlags: UIFlags;
@@ -54,6 +56,9 @@ module minerva.core.measure {
                 dirtyFlags: 0,
                 uiFlags: 0,
 
+                origDirtyFlags: 0,
+                origUiFlags: 0,
+
                 newUpDirty: 0,
                 newDownDirty: 0,
                 newUiFlags: 0
@@ -64,15 +69,15 @@ module minerva.core.measure {
             Size.copyTo(input.previousConstraint, output.previousConstraint);
             Size.copyTo(input.desiredSize, output.desiredSize);
             Size.copyTo(input.hiddenDesire, output.hiddenDesire);
-            output.dirtyFlags = input.dirtyFlags;
-            output.uiFlags = input.uiFlags;
+            output.origDirtyFlags = output.dirtyFlags = input.dirtyFlags;
+            output.origUiFlags = output.uiFlags = input.uiFlags;
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
-            var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+            var newDirty = (output.dirtyFlags | input.dirtyFlags) & ~output.origDirtyFlags;
             output.newUpDirty = newDirty & DirtyFlags.UpDirtyState;
             output.newDownDirty = newDirty & DirtyFlags.DownDirtyState;
-            output.newUiFlags = output.uiFlags & ~input.uiFlags;
+            output.newUiFlags = (output.uiFlags | input.uiFlags) & ~output.origUiFlags;
             input.dirtyFlags = output.dirtyFlags;
             input.uiFlags = output.uiFlags;
             Size.copyTo(output.previousConstraint, input.previousConstraint);

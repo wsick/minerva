@@ -668,6 +668,8 @@ declare module minerva.core.arrange {
         renderSize: Size;
         lastRenderSize: Size;
         uiFlags: UIFlags;
+        origDirtyFlags: DirtyFlags;
+        origUiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
         newUiFlags: UIFlags;
@@ -845,6 +847,8 @@ declare module minerva.core.measure {
         hiddenDesire: Size;
         dirtyFlags: DirtyFlags;
         uiFlags: UIFlags;
+        origDirtyFlags: DirtyFlags;
+        origUiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
         newUiFlags: UIFlags;

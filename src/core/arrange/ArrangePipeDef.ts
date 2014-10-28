@@ -35,6 +35,8 @@ module minerva.core.arrange {
         renderSize: Size;
         lastRenderSize: Size;
         uiFlags: UIFlags;
+        origDirtyFlags: DirtyFlags;
+        origUiFlags: UIFlags;
         newUpDirty: DirtyFlags;
         newDownDirty: DirtyFlags;
         newUiFlags: UIFlags;
@@ -83,6 +85,8 @@ module minerva.core.arrange {
                 layoutClip: new Rect(),
                 renderSize: new Size(),
                 lastRenderSize: undefined,
+                origDirtyFlags: 0,
+                origUiFlags: 0,
                 newUpDirty: 0,
                 newDownDirty: 0,
                 newUiFlags: 0
@@ -90,8 +94,8 @@ module minerva.core.arrange {
         }
 
         prepare (input: IInput, state: IState, output: IOutput) {
-            output.dirtyFlags = input.dirtyFlags;
-            output.uiFlags = input.uiFlags;
+            output.origDirtyFlags = output.dirtyFlags = input.dirtyFlags;
+            output.origUiFlags = output.uiFlags = input.uiFlags;
 
             Rect.copyTo(input.layoutSlot, output.layoutSlot);
             Rect.copyTo(input.layoutClip, output.layoutClip);
@@ -101,10 +105,10 @@ module minerva.core.arrange {
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
-            var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+            var newDirty = (output.dirtyFlags | input.dirtyFlags) & ~output.origDirtyFlags;
             output.newUpDirty = newDirty & DirtyFlags.UpDirtyState;
             output.newDownDirty = newDirty & DirtyFlags.DownDirtyState;
-            output.newUiFlags = output.uiFlags & ~input.uiFlags;
+            output.newUiFlags = (output.uiFlags | input.uiFlags) & ~output.origUiFlags;
             input.dirtyFlags = output.dirtyFlags;
             input.uiFlags = output.uiFlags;
 

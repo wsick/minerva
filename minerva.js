@@ -2628,6 +2628,8 @@ var minerva;
                         layoutClip: new minerva.Rect(),
                         renderSize: new minerva.Size(),
                         lastRenderSize: undefined,
+                        origDirtyFlags: 0,
+                        origUiFlags: 0,
                         newUpDirty: 0,
                         newDownDirty: 0,
                         newUiFlags: 0
@@ -2635,8 +2637,8 @@ var minerva;
                 };
 
                 ArrangePipeDef.prototype.prepare = function (input, state, output) {
-                    output.dirtyFlags = input.dirtyFlags;
-                    output.uiFlags = input.uiFlags;
+                    output.origDirtyFlags = output.dirtyFlags = input.dirtyFlags;
+                    output.origUiFlags = output.uiFlags = input.uiFlags;
 
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
                     minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
@@ -2646,10 +2648,10 @@ var minerva;
                 };
 
                 ArrangePipeDef.prototype.flush = function (input, state, output) {
-                    var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+                    var newDirty = (output.dirtyFlags | input.dirtyFlags) & ~output.origDirtyFlags;
                     output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
                     output.newDownDirty = newDirty & minerva.DirtyFlags.DownDirtyState;
-                    output.newUiFlags = output.uiFlags & ~input.uiFlags;
+                    output.newUiFlags = (output.uiFlags | input.uiFlags) & ~output.origUiFlags;
                     input.dirtyFlags = output.dirtyFlags;
                     input.uiFlags = output.uiFlags;
 
@@ -3617,6 +3619,8 @@ var minerva;
                         hiddenDesire: new minerva.Size(),
                         dirtyFlags: 0,
                         uiFlags: 0,
+                        origDirtyFlags: 0,
+                        origUiFlags: 0,
                         newUpDirty: 0,
                         newDownDirty: 0,
                         newUiFlags: 0
@@ -3627,15 +3631,15 @@ var minerva;
                     minerva.Size.copyTo(input.previousConstraint, output.previousConstraint);
                     minerva.Size.copyTo(input.desiredSize, output.desiredSize);
                     minerva.Size.copyTo(input.hiddenDesire, output.hiddenDesire);
-                    output.dirtyFlags = input.dirtyFlags;
-                    output.uiFlags = input.uiFlags;
+                    output.origDirtyFlags = output.dirtyFlags = input.dirtyFlags;
+                    output.origUiFlags = output.uiFlags = input.uiFlags;
                 };
 
                 MeasurePipeDef.prototype.flush = function (input, state, output) {
-                    var newDirty = output.dirtyFlags & ~input.dirtyFlags;
+                    var newDirty = (output.dirtyFlags | input.dirtyFlags) & ~output.origDirtyFlags;
                     output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
                     output.newDownDirty = newDirty & minerva.DirtyFlags.DownDirtyState;
-                    output.newUiFlags = output.uiFlags & ~input.uiFlags;
+                    output.newUiFlags = (output.uiFlags | input.uiFlags) & ~output.origUiFlags;
                     input.dirtyFlags = output.dirtyFlags;
                     input.uiFlags = output.uiFlags;
                     minerva.Size.copyTo(output.previousConstraint, input.previousConstraint);
