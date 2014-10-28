@@ -10,6 +10,7 @@ module minerva.controls.scrollcontentpresenter {
                 .setArrangePipe(singleton(arrange.ScrollContentPresenterArrangePipeDef));
 
             var assets = this.assets;
+            assets.internalClip = new Rect();
             assets.scrollData = {
                 canHorizontallyScroll: false,
                 canVerticallyScroll: false,

@@ -8178,6 +8178,7 @@ var minerva;
                     this.setMeasurePipe(minerva.singleton(scrollcontentpresenter.measure.ScrollContentPresenterMeasurePipeDef)).setArrangePipe(minerva.singleton(scrollcontentpresenter.arrange.ScrollContentPresenterArrangePipeDef));
 
                     var assets = this.assets;
+                    assets.internalClip = new minerva.Rect();
                     assets.scrollData = {
                         canHorizontallyScroll: false,
                         canVerticallyScroll: false,
