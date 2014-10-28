@@ -1562,6 +1562,23 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var hitTestCtx = null;
+
+    function findElementsInHostSpace(pos, host) {
+        hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
+        var inv = mat3.inverse(host.assets.renderXform, mat3.create());
+
+        hitTestCtx.save();
+        hitTestCtx.pretransformMatrix(inv);
+        var list = [];
+        host.hitTest(pos, list, hitTestCtx, true);
+        hitTestCtx.restore();
+        return list;
+    }
+    minerva.findElementsInHostSpace = findElementsInHostSpace;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     minerva.errors = [];
 
     function layoutError(tree, pipedef, message) {

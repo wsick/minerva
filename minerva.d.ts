@@ -365,6 +365,9 @@ declare module minerva {
     }
 }
 declare module minerva {
+    function findElementsInHostSpace(pos: Point, host: core.Updater): core.Updater[];
+}
+declare module minerva {
     var errors: any[];
     function layoutError(tree: core.IUpdaterTree, pipedef: any, message: string): void;
 }
