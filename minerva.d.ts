@@ -200,6 +200,23 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IScrollData {
+        canHorizontallyScroll: boolean;
+        canVerticallyScroll: boolean;
+        offsetX: number;
+        offsetY: number;
+        cachedOffsetX: number;
+        cachedOffsetY: number;
+        viewportWidth: number;
+        viewportHeight: number;
+        extentWidth: number;
+        extentHeight: number;
+        maxDesiredWidth: number;
+        maxDesiredHeight: number;
+        invalidate(): any;
+    }
+}
+declare module minerva {
     var NO_SIZE_UPDATER: ISizeUpdater;
     interface ISizeUpdater {
         setActualWidth(value: number): any;
@@ -1875,23 +1892,6 @@ declare module minerva.controls.popup.processup {
     }
 }
 declare module minerva.controls.scrollcontentpresenter {
-    interface IScrollData {
-        canHorizontallyScroll: boolean;
-        canVerticallyScroll: boolean;
-        offsetX: number;
-        offsetY: number;
-        cachedOffsetX: number;
-        cachedOffsetY: number;
-        viewportWidth: number;
-        viewportHeight: number;
-        extentWidth: number;
-        extentHeight: number;
-        maxDesiredWidth: number;
-        maxDesiredHeight: number;
-        invalidate(): any;
-    }
-}
-declare module minerva.controls.scrollcontentpresenter {
     interface IScrollContentPresenterUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
     class ScrollContentPresenterUpdater extends core.Updater {
@@ -2284,6 +2284,30 @@ declare module minerva.controls.usercontrol.measure.tapins {
 }
 declare module minerva.controls.usercontrol.measure.tapins {
     function preOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.virtualizingstackpanel {
+    interface IVirtualizingStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {
+    }
+    class VirtualizingStackPanelUpdater extends panel.PanelUpdater {
+        public assets: IVirtualizingStackPanelUpdaterAssets;
+        public init(): void;
+    }
+}
+declare module minerva.controls.virtualizingstackpanel.arrange {
+    interface IInput extends panel.arrange.IInput {
+        scrollData: IScrollData;
+    }
+    class VirtualizingStackPanelArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.virtualizingstackpanel.measure {
+    interface IInput extends panel.measure.IInput {
+        scrollData: IScrollData;
+    }
+    class VirtualizingStackPanelMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
+        constructor();
+    }
 }
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {

@@ -9887,6 +9887,84 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            var VirtualizingStackPanelUpdater = (function (_super) {
+                __extends(VirtualizingStackPanelUpdater, _super);
+                function VirtualizingStackPanelUpdater() {
+                    _super.apply(this, arguments);
+                }
+                VirtualizingStackPanelUpdater.prototype.init = function () {
+                    var assets = this.assets;
+                    assets.scrollData = {
+                        canHorizontallyScroll: false,
+                        canVerticallyScroll: false,
+                        offsetX: 0,
+                        offsetY: 0,
+                        cachedOffsetX: 0,
+                        cachedOffsetY: 0,
+                        viewportWidth: 0,
+                        viewportHeight: 0,
+                        extentWidth: 0,
+                        extentHeight: 0,
+                        maxDesiredWidth: 0,
+                        maxDesiredHeight: 0,
+                        invalidate: function () {
+                        }
+                    };
+
+                    _super.prototype.init.call(this);
+                };
+                return VirtualizingStackPanelUpdater;
+            })(controls.panel.PanelUpdater);
+            virtualizingstackpanel.VirtualizingStackPanelUpdater = VirtualizingStackPanelUpdater;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (arrange) {
+                var VirtualizingStackPanelArrangePipeDef = (function (_super) {
+                    __extends(VirtualizingStackPanelArrangePipeDef, _super);
+                    function VirtualizingStackPanelArrangePipeDef() {
+                        _super.call(this);
+                    }
+                    return VirtualizingStackPanelArrangePipeDef;
+                })(controls.panel.arrange.PanelArrangePipeDef);
+                arrange.VirtualizingStackPanelArrangePipeDef = VirtualizingStackPanelArrangePipeDef;
+            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+            var arrange = virtualizingstackpanel.arrange;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (measure) {
+                var VirtualizingStackPanelMeasurePipeDef = (function (_super) {
+                    __extends(VirtualizingStackPanelMeasurePipeDef, _super);
+                    function VirtualizingStackPanelMeasurePipeDef() {
+                        _super.call(this);
+                    }
+                    return VirtualizingStackPanelMeasurePipeDef;
+                })(controls.panel.measure.PanelMeasurePipeDef);
+                measure.VirtualizingStackPanelMeasurePipeDef = VirtualizingStackPanelMeasurePipeDef;
+            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+            var measure = virtualizingstackpanel.measure;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (engine) {
         var fontCtx = null;
         var hitTestCtx = null;

@@ -1,4 +1,4 @@
-module minerva.controls.scrollcontentpresenter {
+module minerva {
     export interface IScrollData {
         canHorizontallyScroll: boolean;
         canVerticallyScroll: boolean;
