@@ -643,6 +643,7 @@ declare module minerva.core.arrange {
         arrangedSize: Size;
         finalRect: Rect;
         finalSize: Size;
+        childRect: Rect;
         framework: Size;
         stretched: Size;
         constrained: Size;
@@ -1175,7 +1176,6 @@ declare module minerva.controls.border.arrange {
     }
     interface IState extends core.arrange.IState {
         totalBorder: Thickness;
-        childRect: Rect;
     }
     interface IOutput extends core.arrange.IOutput {
     }
@@ -1298,13 +1298,11 @@ declare module minerva.controls.panel.arrange {
     interface IInput extends core.arrange.IInput {
     }
     interface IState extends core.arrange.IState {
-        childRect: Rect;
     }
     interface IOutput extends core.arrange.IOutput {
     }
     class PanelArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
-        public createState(): IState;
     }
 }
 declare module minerva.controls.canvas.arrange {
@@ -1891,21 +1889,19 @@ declare module minerva.controls.scrollcontentpresenter.arrange {
         internalClip: Rect;
     }
     interface IState extends core.arrange.IState {
-        childRect: Rect;
     }
     interface IOutput extends core.arrange.IOutput {
         internalClip: Rect;
     }
     class ScrollContentPresenterArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
-        public createState(): IState;
         public createOutput(): IOutput;
         public prepare(input: IInput, state: IState, output: IOutput): void;
         public flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    var doOverride: (input: IInput, state: IState, output: IOutput, tree: core.UpdaterTree, finalRect: Rect) => boolean;
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.UpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
     function updateClip(input: IInput, state: IState, output: IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
@@ -2227,7 +2223,6 @@ declare module minerva.controls.usercontrol.arrange {
     }
     interface IState extends core.arrange.IState {
         totalBorder: Thickness;
-        childRect: Rect;
     }
     class UserControlArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();

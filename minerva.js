@@ -2596,6 +2596,7 @@ var minerva;
                         arrangedSize: new minerva.Size(),
                         finalRect: new minerva.Rect(),
                         finalSize: new minerva.Size(),
+                        childRect: new minerva.Rect(),
                         framework: new minerva.Size(),
                         stretched: new minerva.Size(),
                         constrained: new minerva.Size(),
@@ -2924,13 +2925,16 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, finalRect) {
-                    var as = state.arrangedSize;
-                    as.width = as.height = 0;
+                    var cr = state.childRect;
+                    cr.x = cr.y = 0;
+                    minerva.Size.copyTo(state.finalSize, cr);
+
                     for (var walker = tree.walk(); walker.step();) {
                         var child = walker.current;
-                        child.measure(state.finalSize);
-                        minerva.Size.copyTo(child.assets.desiredSize, as);
+                        child.arrange(state.childRect);
                     }
+
+                    minerva.Size.copyTo(cr, state.arrangedSize);
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
@@ -4940,7 +4944,6 @@ var minerva;
                     BorderArrangePipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
                         state.totalBorder = new minerva.Thickness();
-                        state.childRect = new minerva.Rect();
                         return state;
                     };
                     return BorderArrangePipeDef;
@@ -5513,11 +5516,6 @@ var minerva;
                         _super.call(this);
                         this.replaceTapin('doOverride', doOverride);
                     }
-                    PanelArrangePipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.childRect = new minerva.Rect();
-                        return state;
-                    };
                     return PanelArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.PanelArrangePipeDef = PanelArrangePipeDef;
@@ -8218,12 +8216,6 @@ var minerva;
                         _super.call(this);
                         this.replaceTapin('doOverride', arrange.tapins.doOverride).addTapinAfter('doOverride', 'updateClip', arrange.tapins.updateClip).addTapinAfter('updateClip', 'updateExtents', arrange.tapins.updateExtents);
                     }
-                    ScrollContentPresenterArrangePipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.childRect = new minerva.Rect();
-                        return state;
-                    };
-
                     ScrollContentPresenterArrangePipeDef.prototype.createOutput = function () {
                         var output = _super.prototype.createOutput.call(this);
                         output.internalClip = new minerva.Rect();
@@ -8255,7 +8247,7 @@ var minerva;
         (function (scrollcontentpresenter) {
             (function (arrange) {
                 (function (tapins) {
-                    tapins.doOverride = function (input, state, output, tree, finalRect) {
+                    function doOverride(input, state, output, tree, finalRect) {
                         var as = state.arrangedSize;
                         if (!tree.subtree) {
                             as.width = as.height = 0;
@@ -8278,7 +8270,8 @@ var minerva;
                         tree.subtree.arrange(cr);
 
                         return true;
-                    };
+                    }
+                    tapins.doOverride = doOverride;
                 })(arrange.tapins || (arrange.tapins = {}));
                 var tapins = arrange.tapins;
             })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
@@ -9665,7 +9658,6 @@ var minerva;
                     UserControlArrangePipeDef.prototype.createState = function () {
                         var state = _super.prototype.createState.call(this);
                         state.totalBorder = new minerva.Thickness();
-                        state.childRect = new minerva.Rect();
                         return state;
                     };
                     return UserControlArrangePipeDef;
