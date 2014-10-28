@@ -8223,6 +8223,22 @@ var minerva;
                         state.childRect = new minerva.Rect();
                         return state;
                     };
+
+                    ScrollContentPresenterArrangePipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.internalClip = new minerva.Rect();
+                        return output;
+                    };
+
+                    ScrollContentPresenterArrangePipeDef.prototype.prepare = function (input, state, output) {
+                        minerva.Rect.copyTo(input.internalClip, output.internalClip);
+                        _super.prototype.prepare.call(this, input, state, output);
+                    };
+
+                    ScrollContentPresenterArrangePipeDef.prototype.flush = function (input, state, output) {
+                        _super.prototype.flush.call(this, input, state, output);
+                        minerva.Rect.copyTo(output.internalClip, input.internalClip);
+                    };
                     return ScrollContentPresenterArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.ScrollContentPresenterArrangePipeDef = ScrollContentPresenterArrangePipeDef;
@@ -8279,6 +8295,10 @@ var minerva;
             (function (arrange) {
                 (function (tapins) {
                     function updateClip(input, state, output, tree, availableSize) {
+                        var ic = output.internalClip;
+                        ic.x = ic.y = 0;
+                        minerva.Size.copyTo(state.arrangedSize, ic);
+
                         return true;
                     }
                     tapins.updateClip = updateClip;

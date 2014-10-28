@@ -100,19 +100,6 @@ module minerva.core {
                 this.setHitTestPipe();
         }
 
-        /*
-         setContainerMode (isLayoutContainer: boolean, isContainer?: boolean): Updater {
-         var assets = this.assets;
-         if (isLayoutContainer != null)
-         assets.isLayoutContainer = isLayoutContainer;
-         if (isContainer != null)
-         assets.isContainer = isContainer;
-         else
-         assets.isContainer = isLayoutContainer;
-         return this;
-         }
-         */
-
         onSizeChanged (oldSize: Size, newSize: Size) {
             //TODO: Raise SizeChanged
         }

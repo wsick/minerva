@@ -1888,23 +1888,30 @@ declare module minerva.controls.scrollcontentpresenter.arrange {
     interface IInput extends core.arrange.IInput {
         scrollData: IScrollData;
         desiredSize: Size;
+        internalClip: Rect;
     }
     interface IState extends core.arrange.IState {
         childRect: Rect;
     }
+    interface IOutput extends core.arrange.IOutput {
+        internalClip: Rect;
+    }
     class ScrollContentPresenterArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor();
         public createState(): IState;
+        public createOutput(): IOutput;
+        public prepare(input: IInput, state: IState, output: IOutput): void;
+        public flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    var doOverride: (input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, finalRect: Rect) => boolean;
+    var doOverride: (input: IInput, state: IState, output: IOutput, tree: core.UpdaterTree, finalRect: Rect) => boolean;
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    function updateClip(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
+    function updateClip(input: IInput, state: IState, output: IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    function updateExtents(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
+    function updateExtents(input: IInput, state: IState, output: IOutput, tree: core.UpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.scrollcontentpresenter {
     module helpers {

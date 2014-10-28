@@ -1,21 +1,10 @@
 module minerva.controls.scrollcontentpresenter.arrange.tapins {
-    export function updateClip (input: IInput, state: IState, output: core.arrange.IOutput, tree: core.UpdaterTree, availableSize: Size): boolean {
-        //TODO: Implement
-        /*
-         if (!this._IsClipPropertySet) {
-         this._ClippingRectangle = new Media.RectangleGeometry();
-         this.Clip = this._ClippingRectangle;
-         this._IsClipPropertySet = true;
-         }
+    export function updateClip (input: IInput, state: IState, output: IOutput, tree: core.UpdaterTree, availableSize: Size): boolean {
+        var ic = output.internalClip;
+        ic.x = ic.y = 0;
+        Size.copyTo(state.arrangedSize, ic);
 
-         var content;
-         if (this.TemplateOwner instanceof Controls.ScrollViewer && (content = this.Content) && (content instanceof Controls.Internal.TextBoxView || content instanceof Controls._RichTextBoxView)) {
-         //ScrollViewer inside TextBox/RichTextBox
-         this._ClippingRectangle.Rect = this._CalculateTextBoxClipRect(arrangeSize);
-         } else {
-         minerva.Size.copyTo(arrangeSize, this._ClippingRectangle.Rect = new minerva.Rect());
-         }
-         */
+        //TODO: Clip for TextBox/RichTextBox
 
         return true;
     }
