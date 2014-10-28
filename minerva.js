@@ -1826,6 +1826,8 @@ var minerva;
                 this.$$inDownDirty = false;
                 this.$$inUpDirty = false;
                 this.$$attached = {};
+                this.$$sizeupdater = null;
+                this.$$sizenotifier = null;
                 this.assets = {
                     width: NaN,
                     height: NaN,
@@ -1896,9 +1898,6 @@ var minerva;
                     this.setRenderPipe();
                 if (!this.$$hittest)
                     this.setHitTestPipe();
-            };
-
-            Updater.prototype.onSizeChanged = function (oldSize, newSize) {
             };
 
             Updater.prototype.setTree = function (tree) {
@@ -2128,6 +2127,7 @@ var minerva;
                     minerva.Size.copyTo(assets.lastRenderSize, oldSize);
                 var success = pipe.def.run(assets, pipe.state, pipe.output, this.tree);
                 minerva.Size.copyTo(pipe.output.actualSize, newSize);
+                this.$$sizeupdater && this.$$sizeupdater(newSize);
                 assets.lastRenderSize = undefined;
                 return success;
             };
@@ -2170,6 +2170,18 @@ var minerva;
             Updater.prototype.hitTest = function (pos, list, ctx) {
                 var pipe = this.$$hittest;
                 return pipe.def.run(pipe.data, pos, list, ctx);
+            };
+
+            Updater.prototype.onSizeChanged = function (oldSize, newSize) {
+                this.$$sizenotifier && this.$$sizenotifier(oldSize, newSize);
+            };
+
+            Updater.prototype.setSizeUpdater = function (updater) {
+                this.$$sizeupdater = updater;
+            };
+
+            Updater.prototype.setSizeNotifier = function (notifier) {
+                this.$$sizenotifier = notifier;
             };
 
             Updater.prototype.invalidateMeasure = function () {

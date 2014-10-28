@@ -491,11 +491,12 @@ declare module minerva.core {
         private $$inDownDirty;
         private $$inUpDirty;
         private $$attached;
+        private $$sizeupdater;
+        private $$sizenotifier;
         public assets: IUpdaterAssets;
         public tree: IUpdaterTree;
         constructor();
         public init(): void;
-        public onSizeChanged(oldSize: Size, newSize: Size): void;
         public setTree(tree?: IUpdaterTree): Updater;
         public getAttachedValue(name: string): any;
         public setAttachedValue(name: string, value?: any): void;
@@ -522,6 +523,9 @@ declare module minerva.core {
         public processUp(): boolean;
         public render(ctx: render.RenderContext, region: Rect): boolean;
         public hitTest(pos: Point, list: Updater[], ctx: render.RenderContext): boolean;
+        public onSizeChanged(oldSize: Size, newSize: Size): void;
+        public setSizeUpdater(updater: (newSize: Size) => any): void;
+        public setSizeNotifier(notifier: (oldSize: Size, newSize: Size) => any): void;
         public invalidateMeasure(): Updater;
         public invalidateArrange(): Updater;
         public updateBounds(forceRedraw?: boolean): Updater;
