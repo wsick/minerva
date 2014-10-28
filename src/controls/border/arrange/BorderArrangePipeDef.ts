@@ -5,7 +5,6 @@ module minerva.controls.border.arrange {
     }
     export interface IState extends core.arrange.IState {
         totalBorder: Thickness;
-        childRect: Rect;
     }
     export interface IOutput extends core.arrange.IOutput {
     }
@@ -20,7 +19,6 @@ module minerva.controls.border.arrange {
         createState (): IState {
             var state = <IState>super.createState();
             state.totalBorder = new Thickness();
-            state.childRect = new Rect();
             return state;
         }
     }

@@ -5,7 +5,6 @@ module minerva.controls.usercontrol.arrange {
     }
     export interface IState extends core.arrange.IState {
         totalBorder: Thickness;
-        childRect: Rect;
     }
 
     export class UserControlArrangePipeDef extends core.arrange.ArrangePipeDef {
@@ -18,7 +17,6 @@ module minerva.controls.usercontrol.arrange {
         createState (): IState {
             var state = <IState>super.createState();
             state.totalBorder = new Thickness();
-            state.childRect = new Rect();
             return state;
         }
     }

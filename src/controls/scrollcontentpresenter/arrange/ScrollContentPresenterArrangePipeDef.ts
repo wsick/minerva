@@ -5,7 +5,6 @@ module minerva.controls.scrollcontentpresenter.arrange {
         internalClip: Rect;
     }
     export interface IState extends core.arrange.IState {
-        childRect: Rect;
     }
     export interface IOutput extends core.arrange.IOutput {
         internalClip: Rect;
@@ -17,12 +16,6 @@ module minerva.controls.scrollcontentpresenter.arrange {
             this.replaceTapin('doOverride', tapins.doOverride)
                 .addTapinAfter('doOverride', 'updateClip', tapins.updateClip)
                 .addTapinAfter('updateClip', 'updateExtents', tapins.updateExtents);
-        }
-
-        createState (): IState {
-            var state = <IState>super.createState();
-            state.childRect = new Rect();
-            return state;
         }
 
         createOutput (): IOutput {

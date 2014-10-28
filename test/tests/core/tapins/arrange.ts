@@ -48,6 +48,7 @@ module minerva.core.arrange.tapins.tests {
                 arrangedSize: new Size(),
                 finalRect: new Rect(),
                 finalSize: new Size(),
+                childRect: new Rect(),
                 framework: new Size(),
                 stretched: new Size(),
                 constrained: new Size(),

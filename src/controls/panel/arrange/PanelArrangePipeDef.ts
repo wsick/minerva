@@ -2,7 +2,6 @@ module minerva.controls.panel.arrange {
     export interface IInput extends core.arrange.IInput {
     }
     export interface IState extends core.arrange.IState {
-        childRect: Rect;
     }
     export interface IOutput extends core.arrange.IOutput {
     }
@@ -11,12 +10,6 @@ module minerva.controls.panel.arrange {
         constructor () {
             super();
             this.replaceTapin('doOverride', doOverride);
-        }
-
-        createState (): IState {
-            var state = <IState>super.createState();
-            state.childRect = new Rect();
-            return state;
         }
     }
 

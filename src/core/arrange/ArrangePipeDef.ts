@@ -20,6 +20,7 @@ module minerva.core.arrange {
         arrangedSize: Size;
         finalRect: Rect;
         finalSize: Size;
+        childRect: Rect;
         framework: Size;
         stretched: Size;
         constrained: Size;
@@ -64,6 +65,7 @@ module minerva.core.arrange {
                 arrangedSize: new Size(),
                 finalRect: new Rect(),
                 finalSize: new Size(),
+                childRect: new Rect(),
                 framework: new Size(),
                 stretched: new Size(),
                 constrained: new Size(),
