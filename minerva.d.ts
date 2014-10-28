@@ -2311,7 +2311,7 @@ declare module minerva.engine {
         public addDownDirty(updater: core.Updater): void;
         public updateLayout(): boolean;
         public resize(width: number, height: number): void;
-        public hitTest(pos: Point, includeAll: boolean): core.Updater[];
+        public hitTest(pos: Point): core.Updater[];
         static measureWidth(text: string, font: Font): number;
     }
 }

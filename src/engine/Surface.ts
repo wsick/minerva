@@ -164,7 +164,7 @@ module minerva.engine {
             }
         }
 
-        hitTest (pos: Point, includeAll: boolean): core.Updater[] {
+        hitTest (pos: Point): core.Updater[] {
             if (this.$$layers.length < 1)
                 return null;
             hitTestCtx = hitTestCtx || new core.render.RenderContext(document.createElement('canvas').getContext('2d'));
@@ -172,7 +172,7 @@ module minerva.engine {
 
             var list: core.Updater[] = [];
             for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
-                layers[i].hitTest(pos, list, hitTestCtx, includeAll);
+                layers[i].hitTest(pos, list, hitTestCtx, false);
             }
             return list;
         }

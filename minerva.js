@@ -10034,7 +10034,7 @@ var minerva;
                 }
             };
 
-            Surface.prototype.hitTest = function (pos, includeAll) {
+            Surface.prototype.hitTest = function (pos) {
                 if (this.$$layers.length < 1)
                     return null;
                 hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
@@ -10042,7 +10042,7 @@ var minerva;
 
                 var list = [];
                 for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
-                    layers[i].hitTest(pos, list, hitTestCtx, includeAll);
+                    layers[i].hitTest(pos, list, hitTestCtx, false);
                 }
                 return list;
             };
