@@ -74,9 +74,9 @@ module minerva.core.arrange.tests {
         var state = pipedef.createState();
         var output = pipedef.createOutput();
 
-        input.dirtyFlags = DirtyFlags.Arrange;
+        output.origDirtyFlags = input.dirtyFlags = DirtyFlags.Arrange;
         output.dirtyFlags = DirtyFlags.Measure | DirtyFlags.Arrange | DirtyFlags.Transform;
-        input.uiFlags = UIFlags.MeasureHint;
+        output.origUiFlags = input.uiFlags = UIFlags.MeasureHint;
         output.uiFlags = UIFlags.MeasureHint | UIFlags.ArrangeHint;
 
         output.renderSize = new Size(100, 200);

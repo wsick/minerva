@@ -61,9 +61,9 @@ module minerva.core.measure.tests {
         output.previousConstraint = new Size(100, 200);
         output.desiredSize = new Size(50, 150);
         output.hiddenDesire = new Size(75, 125);
-        input.dirtyFlags = DirtyFlags.Arrange;
+        output.origDirtyFlags = input.dirtyFlags = DirtyFlags.Arrange;
         output.dirtyFlags = DirtyFlags.Measure | DirtyFlags.Arrange | DirtyFlags.Transform;
-        input.uiFlags = UIFlags.MeasureHint;
+        output.origUiFlags = input.uiFlags = UIFlags.MeasureHint;
         output.uiFlags = UIFlags.MeasureHint | UIFlags.ArrangeHint;
 
         pipedef.flush(input, state, output);
