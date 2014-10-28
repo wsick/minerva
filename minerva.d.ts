@@ -200,6 +200,14 @@ declare module minerva {
     }
 }
 declare module minerva {
+    var NO_SIZE_UPDATER: ISizeUpdater;
+    interface ISizeUpdater {
+        setActualWidth(value: number): any;
+        setActualHeight(value: number): any;
+        onSizeChanged(oldSize: Size, newSize: Size): any;
+    }
+}
+declare module minerva {
     interface IWalker<T> {
         current: T;
         step(): boolean;
@@ -492,7 +500,6 @@ declare module minerva.core {
         private $$inUpDirty;
         private $$attached;
         private $$sizeupdater;
-        private $$sizenotifier;
         public assets: IUpdaterAssets;
         public tree: IUpdaterTree;
         constructor();
@@ -524,8 +531,7 @@ declare module minerva.core {
         public render(ctx: render.RenderContext, region: Rect): boolean;
         public hitTest(pos: Point, list: Updater[], ctx: render.RenderContext): boolean;
         public onSizeChanged(oldSize: Size, newSize: Size): void;
-        public setSizeUpdater(updater: (newSize: Size) => any): void;
-        public setSizeNotifier(notifier: (oldSize: Size, newSize: Size) => any): void;
+        public setSizeUpdater(updater: ISizeUpdater): void;
         public invalidateMeasure(): Updater;
         public invalidateArrange(): Updater;
         public updateBounds(forceRedraw?: boolean): Updater;

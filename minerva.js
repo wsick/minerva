@@ -310,6 +310,17 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    minerva.NO_SIZE_UPDATER = {
+        setActualWidth: function (value) {
+        },
+        setActualHeight: function (value) {
+        },
+        onSizeChanged: function (oldSize, newSize) {
+        }
+    };
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     (function (WalkDirection) {
         WalkDirection[WalkDirection["Forward"] = 0] = "Forward";
         WalkDirection[WalkDirection["Reverse"] = 1] = "Reverse";
@@ -1826,8 +1837,7 @@ var minerva;
                 this.$$inDownDirty = false;
                 this.$$inUpDirty = false;
                 this.$$attached = {};
-                this.$$sizeupdater = null;
-                this.$$sizenotifier = null;
+                this.$$sizeupdater = minerva.NO_SIZE_UPDATER;
                 this.assets = {
                     width: NaN,
                     height: NaN,
@@ -2127,7 +2137,8 @@ var minerva;
                     minerva.Size.copyTo(assets.lastRenderSize, oldSize);
                 var success = pipe.def.run(assets, pipe.state, pipe.output, this.tree);
                 minerva.Size.copyTo(pipe.output.actualSize, newSize);
-                this.$$sizeupdater && this.$$sizeupdater(newSize);
+                this.$$sizeupdater.setActualWidth(newSize.width);
+                this.$$sizeupdater.setActualHeight(newSize.height);
                 assets.lastRenderSize = undefined;
                 return success;
             };
@@ -2173,15 +2184,11 @@ var minerva;
             };
 
             Updater.prototype.onSizeChanged = function (oldSize, newSize) {
-                this.$$sizenotifier && this.$$sizenotifier(oldSize, newSize);
+                this.$$sizeupdater.onSizeChanged(oldSize, newSize);
             };
 
             Updater.prototype.setSizeUpdater = function (updater) {
-                this.$$sizeupdater = updater;
-            };
-
-            Updater.prototype.setSizeNotifier = function (notifier) {
-                this.$$sizenotifier = notifier;
+                this.$$sizeupdater = updater || minerva.NO_SIZE_UPDATER;
             };
 
             Updater.prototype.invalidateMeasure = function () {

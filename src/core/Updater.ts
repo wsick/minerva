@@ -15,8 +15,7 @@ module minerva.core {
 
         private $$attached = {};
 
-        private $$sizeupdater: (newSize: Size) => any = null;
-        private $$sizenotifier: (oldSize: Size, newSize: Size) => any = null;
+        private $$sizeupdater: ISizeUpdater = NO_SIZE_UPDATER;
 
         assets: IUpdaterAssets = {
             width: NaN,
@@ -337,7 +336,8 @@ module minerva.core {
                 Size.copyTo(assets.lastRenderSize, oldSize);
             var success = pipe.def.run(assets, pipe.state, pipe.output, this.tree);
             Size.copyTo(pipe.output.actualSize, newSize);
-            this.$$sizeupdater && this.$$sizeupdater(newSize);
+            this.$$sizeupdater.setActualWidth(newSize.width);
+            this.$$sizeupdater.setActualHeight(newSize.height);
             assets.lastRenderSize = undefined;
             return success;
         }
@@ -386,15 +386,11 @@ module minerva.core {
         /////// SIZE UPDATES
 
         onSizeChanged (oldSize: Size, newSize: Size) {
-            this.$$sizenotifier && this.$$sizenotifier(oldSize, newSize);
+            this.$$sizeupdater.onSizeChanged(oldSize, newSize);
         }
 
-        setSizeUpdater (updater: (newSize: Size) => any) {
-            this.$$sizeupdater = updater;
-        }
-
-        setSizeNotifier (notifier: (oldSize: Size, newSize: Size) => any) {
-            this.$$sizenotifier = notifier;
+        setSizeUpdater (updater: ISizeUpdater) {
+            this.$$sizeupdater = updater || NO_SIZE_UPDATER;
         }
 
         /////// INVALIDATES
