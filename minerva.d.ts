@@ -2295,19 +2295,49 @@ declare module minerva.controls.virtualizingstackpanel {
 }
 declare module minerva.controls.virtualizingstackpanel.arrange {
     interface IInput extends panel.arrange.IInput {
+        orientation: Orientation;
         scrollData: IScrollData;
+    }
+    interface IState extends panel.arrange.IState {
+    }
+    interface IOutput extends panel.arrange.IOutput {
     }
     class VirtualizingStackPanelArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
         constructor();
     }
 }
+declare module minerva.controls.virtualizingstackpanel.arrange.tapins {
+    function doHorizontal(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.virtualizingstackpanel.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.virtualizingstackpanel.arrange.tapins {
+    function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
 declare module minerva.controls.virtualizingstackpanel.measure {
     interface IInput extends panel.measure.IInput {
+        orientation: Orientation;
         scrollData: IScrollData;
+    }
+    interface IState extends panel.measure.IState {
+        childAvailable: Size;
+    }
+    interface IOutput extends panel.measure.IOutput {
     }
     class VirtualizingStackPanelMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
         constructor();
+        public createState(): IState;
     }
+}
+declare module minerva.controls.virtualizingstackpanel.measure.tapins {
+    function doHorizontal(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.virtualizingstackpanel.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.virtualizingstackpanel.measure.tapins {
+    function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {

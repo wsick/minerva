@@ -9895,6 +9895,8 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 VirtualizingStackPanelUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(virtualizingstackpanel.measure.VirtualizingStackPanelMeasurePipeDef)).setArrangePipe(minerva.singleton(virtualizingstackpanel.arrange.VirtualizingStackPanelArrangePipeDef));
+
                     var assets = this.assets;
                     assets.scrollData = {
                         canHorizontallyScroll: false,
@@ -9932,10 +9934,104 @@ var minerva;
                     __extends(VirtualizingStackPanelArrangePipeDef, _super);
                     function VirtualizingStackPanelArrangePipeDef() {
                         _super.call(this);
+                        this.replaceTapin('doOverride', arrange.tapins.doOverride).addTapinAfter('doOverride', 'doHorizontal', arrange.tapins.doHorizontal).addTapinAfter('doOverride', 'doVertical', arrange.tapins.doVertical);
                     }
                     return VirtualizingStackPanelArrangePipeDef;
                 })(controls.panel.arrange.PanelArrangePipeDef);
                 arrange.VirtualizingStackPanelArrangePipeDef = VirtualizingStackPanelArrangePipeDef;
+            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+            var arrange = virtualizingstackpanel.arrange;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (arrange) {
+                (function (tapins) {
+                    function doHorizontal(input, state, output, tree, finalRect) {
+                        if (input.orientation !== 0 /* Horizontal */)
+                            return true;
+
+                        var fs = state.finalSize;
+                        var arranged = state.arrangedSize;
+                        arranged.width = 0;
+                        var childRect = state.childRect;
+                        var sd = input.scrollData;
+
+                        var child;
+                        var childDesired;
+                        for (var walker = tree.walk(); walker.step();) {
+                            child = walker.current;
+                            childDesired = child.assets.desiredSize;
+                            childDesired.height = fs.height;
+                            minerva.Size.copyTo(childDesired, childRect);
+                            childRect.x = arranged.width;
+                            childRect.y = -sd.offsetY;
+
+                            if (minerva.Rect.isEmpty(childRect))
+                                childRect.x = childRect.y = childRect.width = childRect.height = 0;
+                            child.arrange(childRect);
+
+                            arranged.width += childDesired.width;
+                            arranged.height = Math.max(arranged.height, childDesired.height);
+                        }
+
+                        arranged.width = Math.max(arranged.width, state.finalSize.width);
+
+                        return true;
+                    }
+                    tapins.doHorizontal = doHorizontal;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+            var arrange = virtualizingstackpanel.arrange;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (arrange) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        var cr = state.childRect;
+                        cr.x = cr.y = 0;
+                        minerva.Size.copyTo(state.finalSize, cr);
+                        minerva.Size.copyTo(state.finalSize, state.arrangedSize);
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+            var arrange = virtualizingstackpanel.arrange;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (arrange) {
+                (function (tapins) {
+                    function doVertical(input, state, output, tree, finalRect) {
+                        if (input.orientation !== 1 /* Vertical */)
+                            return true;
+
+                        return true;
+                    }
+                    tapins.doVertical = doVertical;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
             })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
             var arrange = virtualizingstackpanel.arrange;
         })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
@@ -9952,10 +10048,83 @@ var minerva;
                     __extends(VirtualizingStackPanelMeasurePipeDef, _super);
                     function VirtualizingStackPanelMeasurePipeDef() {
                         _super.call(this);
+                        this.replaceTapin('doOverride', measure.tapins.doOverride).addTapinAfter('doOverride', 'doHorizontal', measure.tapins.doHorizontal).addTapinAfter('doOverride', 'doVertical', measure.tapins.doVertical);
                     }
+                    VirtualizingStackPanelMeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.childAvailable = new minerva.Size();
+                        return state;
+                    };
                     return VirtualizingStackPanelMeasurePipeDef;
                 })(controls.panel.measure.PanelMeasurePipeDef);
                 measure.VirtualizingStackPanelMeasurePipeDef = VirtualizingStackPanelMeasurePipeDef;
+            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+            var measure = virtualizingstackpanel.measure;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (measure) {
+                (function (tapins) {
+                    function doHorizontal(input, state, output, tree, availableSize) {
+                        if (input.orientation !== 0 /* Horizontal */)
+                            return true;
+
+                        return true;
+                    }
+                    tapins.doHorizontal = doHorizontal;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+            var measure = virtualizingstackpanel.measure;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (measure) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, availableSize) {
+                        var ca = state.childAvailable;
+                        ca.width = ca.height = Number.POSITIVE_INFINITY;
+                        var desired = output.desiredSize;
+                        desired.width = desired.height = 0;
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
+            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+            var measure = virtualizingstackpanel.measure;
+        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+        var virtualizingstackpanel = controls.virtualizingstackpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingstackpanel) {
+            (function (measure) {
+                (function (tapins) {
+                    function doVertical(input, state, output, tree, availableSize) {
+                        if (input.orientation !== 1 /* Vertical */)
+                            return true;
+
+                        return true;
+                    }
+                    tapins.doVertical = doVertical;
+                })(measure.tapins || (measure.tapins = {}));
+                var tapins = measure.tapins;
             })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
             var measure = virtualizingstackpanel.measure;
         })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));

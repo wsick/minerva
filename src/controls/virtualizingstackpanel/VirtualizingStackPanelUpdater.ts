@@ -6,6 +6,8 @@ module minerva.controls.virtualizingstackpanel {
         assets: IVirtualizingStackPanelUpdaterAssets;
 
         init () {
+            this.setMeasurePipe(singleton(measure.VirtualizingStackPanelMeasurePipeDef))
+                .setArrangePipe(singleton(arrange.VirtualizingStackPanelArrangePipeDef));
 
             var assets = this.assets;
             assets.scrollData = {
