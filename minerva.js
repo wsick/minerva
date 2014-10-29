@@ -9952,6 +9952,7 @@ var minerva;
                     this.setMeasurePipe(minerva.singleton(virtualizingstackpanel.measure.VirtualizingStackPanelMeasurePipeDef)).setArrangePipe(minerva.singleton(virtualizingstackpanel.arrange.VirtualizingStackPanelArrangePipeDef));
 
                     var assets = this.assets;
+                    assets.orientation = 1 /* Vertical */;
                     assets.scrollData = {
                         canHorizontallyScroll: false,
                         canVerticallyScroll: false,

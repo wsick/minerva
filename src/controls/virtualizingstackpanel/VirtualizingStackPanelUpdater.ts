@@ -10,6 +10,7 @@ module minerva.controls.virtualizingstackpanel {
                 .setArrangePipe(singleton(arrange.VirtualizingStackPanelArrangePipeDef));
 
             var assets = this.assets;
+            assets.orientation = Orientation.Vertical;
             assets.scrollData = {
                 canHorizontallyScroll: false,
                 canVerticallyScroll: false,
