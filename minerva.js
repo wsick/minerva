@@ -9911,11 +9911,25 @@ var minerva;
 (function (minerva) {
     (function (controls) {
         (function (virtualizingpanel) {
+            virtualizingpanel.NO_CONTAINER_OWNER = {
+                itemCount: 0,
+                createGenerator: function () {
+                    return {
+                        current: undefined,
+                        generate: function () {
+                            return false;
+                        }
+                    };
+                },
+                remove: function (index, count) {
+                }
+            };
+
             var VirtualizingPanelUpdaterTree = (function (_super) {
                 __extends(VirtualizingPanelUpdaterTree, _super);
                 function VirtualizingPanelUpdaterTree() {
                     _super.apply(this, arguments);
-                    this.containerOwner = null;
+                    this.containerOwner = virtualizingpanel.NO_CONTAINER_OWNER;
                 }
                 return VirtualizingPanelUpdaterTree;
             })(controls.panel.PanelUpdaterTree);
@@ -10115,6 +10129,39 @@ var minerva;
                         if (input.orientation !== 0 /* Horizontal */)
                             return true;
 
+                        var ca = state.childAvailable;
+                        var sd = input.scrollData;
+                        if (sd.canVerticallyScroll)
+                            ca.height = Number.POSITIVE_INFINITY;
+
+                        var index = Math.floor(sd.offsetX);
+                        tree.containerOwner.remove(0, index);
+
+                        var viscount = 0;
+                        var ds = output.desiredSize;
+                        for (var generator = tree.containerOwner.createGenerator(); generator.generate();) {
+                            viscount++;
+                            var child = generator.current;
+                            child.measure(ca);
+                            var childDesired = child.assets.desiredSize;
+                            ds.height = Math.max(ds.height, childDesired.height);
+                            ds.width += childDesired.width;
+                            if (ds.width > ca.width)
+                                break;
+                        }
+
+                        var count = tree.containerOwner.itemCount;
+                        tree.containerOwner.remove(index + viscount, count - (index + viscount));
+
+                        var changed = sd.extentHeight !== ds.height || sd.extentWidth !== count || sd.viewportHeight !== ca.height || sd.viewportWidth !== viscount;
+                        sd.extentHeight = ds.height;
+                        sd.extentWidth = count;
+                        sd.viewportHeight = ca.height;
+                        sd.viewportWidth = viscount;
+
+                        if (changed)
+                            sd.invalidate();
+
                         return true;
                     }
                     tapins.doHorizontal = doHorizontal;
@@ -10135,7 +10182,7 @@ var minerva;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ca = state.childAvailable;
-                        ca.width = ca.height = Number.POSITIVE_INFINITY;
+                        minerva.Size.copyTo(state.availableSize, ca);
                         var desired = output.desiredSize;
                         desired.width = desired.height = 0;
                         return true;
@@ -10159,6 +10206,39 @@ var minerva;
                     function doVertical(input, state, output, tree, availableSize) {
                         if (input.orientation !== 1 /* Vertical */)
                             return true;
+
+                        var ca = state.childAvailable;
+                        var sd = input.scrollData;
+                        if (sd.canHorizontallyScroll)
+                            ca.width = Number.POSITIVE_INFINITY;
+
+                        var index = Math.floor(sd.offsetY);
+                        tree.containerOwner.remove(0, index);
+
+                        var viscount = 0;
+                        var ds = output.desiredSize;
+                        for (var generator = tree.containerOwner.createGenerator(); generator.generate();) {
+                            viscount++;
+                            var child = generator.current;
+                            child.measure(ca);
+                            var childDesired = child.assets.desiredSize;
+                            ds.width = Math.max(ds.width, childDesired.width);
+                            ds.height += childDesired.height;
+                            if (ds.height > ca.height)
+                                break;
+                        }
+
+                        var count = tree.containerOwner.itemCount;
+                        tree.containerOwner.remove(index + viscount, count - (index + viscount));
+
+                        var changed = sd.extentHeight !== count || sd.extentWidth !== ds.width || sd.viewportHeight !== viscount || sd.viewportWidth !== ca.width;
+                        sd.extentHeight = count;
+                        sd.extentWidth = ds.width;
+                        sd.viewportHeight = viscount;
+                        sd.viewportWidth = ca.width;
+
+                        if (changed)
+                            sd.invalidate();
 
                         return true;
                     }

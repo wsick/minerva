@@ -2287,6 +2287,7 @@ declare module minerva.controls.usercontrol.measure.tapins {
 }
 declare module minerva.controls.virtualizingpanel {
     interface IVirtualizingContainerOwner {
+        itemCount: number;
         createGenerator(): IVirtualizingGenerator;
         remove(index: number, count: number): any;
     }
@@ -2304,6 +2305,7 @@ declare module minerva.controls.virtualizingpanel {
     }
 }
 declare module minerva.controls.virtualizingpanel {
+    var NO_CONTAINER_OWNER: IVirtualizingContainerOwner;
     class VirtualizingPanelUpdaterTree extends panel.PanelUpdaterTree {
         public containerOwner: IVirtualizingContainerOwner;
     }
@@ -2354,13 +2356,13 @@ declare module minerva.controls.virtualizingstackpanel.measure {
     }
 }
 declare module minerva.controls.virtualizingstackpanel.measure.tapins {
-    function doHorizontal(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+    function doHorizontal(input: IInput, state: IState, output: IOutput, tree: virtualizingpanel.VirtualizingPanelUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.virtualizingstackpanel.measure.tapins {
     function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.virtualizingstackpanel.measure.tapins {
-    function doVertical(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+    function doVertical(input: IInput, state: IState, output: IOutput, tree: virtualizingpanel.VirtualizingPanelUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.engine {
     interface IPass extends core.draft.IDraftPipeData {
