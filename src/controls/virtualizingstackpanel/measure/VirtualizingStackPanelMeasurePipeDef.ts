@@ -10,14 +10,14 @@ module minerva.controls.virtualizingstackpanel.measure {
     }
 
     export class VirtualizingStackPanelMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
-        constructor() {
+        constructor () {
             super();
             this.replaceTapin('doOverride', tapins.doOverride)
                 .addTapinAfter('doOverride', 'doHorizontal', tapins.doHorizontal)
                 .addTapinAfter('doOverride', 'doVertical', tapins.doVertical);
         }
 
-        createState() {
+        createState () {
             var state = <IState>super.createState();
             state.childAvailable = new Size();
             return state;

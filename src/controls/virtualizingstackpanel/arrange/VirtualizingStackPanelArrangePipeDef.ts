@@ -9,7 +9,7 @@ module minerva.controls.virtualizingstackpanel.arrange {
     }
 
     export class VirtualizingStackPanelArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
-        constructor() {
+        constructor () {
             super();
             this.replaceTapin('doOverride', tapins.doOverride)
                 .addTapinAfter('doOverride', 'doHorizontal', tapins.doHorizontal)

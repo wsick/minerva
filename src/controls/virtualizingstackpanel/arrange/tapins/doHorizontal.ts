@@ -27,7 +27,7 @@ module minerva.controls.virtualizingstackpanel.arrange.tapins {
             arranged.height = Math.max(arranged.height, childDesired.height);
         }
 
-        arranged.width = Math.max(arranged.width, state.finalSize.width);
+        arranged.width = Math.max(arranged.width, fs.width);
 
         return true;
     }
