@@ -9888,6 +9888,46 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (controls) {
+        (function (virtualizingpanel) {
+            var VirtualizingPanelUpdater = (function (_super) {
+                __extends(VirtualizingPanelUpdater, _super);
+                function VirtualizingPanelUpdater() {
+                    _super.apply(this, arguments);
+                }
+                VirtualizingPanelUpdater.prototype.init = function () {
+                    this.setTree(new virtualizingpanel.VirtualizingPanelUpdaterTree());
+
+                    _super.prototype.init.call(this);
+                };
+                return VirtualizingPanelUpdater;
+            })(controls.panel.PanelUpdater);
+            virtualizingpanel.VirtualizingPanelUpdater = VirtualizingPanelUpdater;
+        })(controls.virtualizingpanel || (controls.virtualizingpanel = {}));
+        var virtualizingpanel = controls.virtualizingpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (virtualizingpanel) {
+            var VirtualizingPanelUpdaterTree = (function (_super) {
+                __extends(VirtualizingPanelUpdaterTree, _super);
+                function VirtualizingPanelUpdaterTree() {
+                    _super.apply(this, arguments);
+                    this.containerOwner = null;
+                }
+                return VirtualizingPanelUpdaterTree;
+            })(controls.panel.PanelUpdaterTree);
+            virtualizingpanel.VirtualizingPanelUpdaterTree = VirtualizingPanelUpdaterTree;
+        })(controls.virtualizingpanel || (controls.virtualizingpanel = {}));
+        var virtualizingpanel = controls.virtualizingpanel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
         (function (virtualizingstackpanel) {
             var VirtualizingStackPanelUpdater = (function (_super) {
                 __extends(VirtualizingStackPanelUpdater, _super);
@@ -9918,7 +9958,7 @@ var minerva;
                     _super.prototype.init.call(this);
                 };
                 return VirtualizingStackPanelUpdater;
-            })(controls.panel.PanelUpdater);
+            })(controls.virtualizingpanel.VirtualizingPanelUpdater);
             virtualizingstackpanel.VirtualizingStackPanelUpdater = VirtualizingStackPanelUpdater;
         })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
         var virtualizingstackpanel = controls.virtualizingstackpanel;

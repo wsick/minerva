@@ -2285,10 +2285,33 @@ declare module minerva.controls.usercontrol.measure.tapins {
 declare module minerva.controls.usercontrol.measure.tapins {
     function preOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
 }
+declare module minerva.controls.virtualizingpanel {
+    interface IVirtualizingContainerOwner {
+        createGenerator(): IVirtualizingGenerator;
+        remove(index: number, count: number): any;
+    }
+}
+declare module minerva.controls.virtualizingpanel {
+    interface IVirtualizingGenerator {
+        current: core.Updater;
+        generate(): boolean;
+    }
+}
+declare module minerva.controls.virtualizingpanel {
+    class VirtualizingPanelUpdater extends panel.PanelUpdater {
+        public tree: VirtualizingPanelUpdaterTree;
+        public init(): void;
+    }
+}
+declare module minerva.controls.virtualizingpanel {
+    class VirtualizingPanelUpdaterTree extends panel.PanelUpdaterTree {
+        public containerOwner: IVirtualizingContainerOwner;
+    }
+}
 declare module minerva.controls.virtualizingstackpanel {
     interface IVirtualizingStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {
     }
-    class VirtualizingStackPanelUpdater extends panel.PanelUpdater {
+    class VirtualizingStackPanelUpdater extends virtualizingpanel.VirtualizingPanelUpdater {
         public assets: IVirtualizingStackPanelUpdaterAssets;
         public init(): void;
     }

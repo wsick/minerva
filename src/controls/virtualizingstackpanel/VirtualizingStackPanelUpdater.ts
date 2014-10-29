@@ -2,7 +2,7 @@ module minerva.controls.virtualizingstackpanel {
     export interface IVirtualizingStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {
     }
 
-    export class VirtualizingStackPanelUpdater extends panel.PanelUpdater {
+    export class VirtualizingStackPanelUpdater extends virtualizingpanel.VirtualizingPanelUpdater {
         assets: IVirtualizingStackPanelUpdaterAssets;
 
         init () {

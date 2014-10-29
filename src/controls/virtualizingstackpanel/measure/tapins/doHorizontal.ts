@@ -3,6 +3,13 @@ module minerva.controls.virtualizingstackpanel.measure.tapins {
         if (input.orientation !== Orientation.Horizontal)
             return true;
 
+        var ca = state.childAvailable;
+        var sd = input.scrollData;
+        if (sd.canVerticallyScroll)
+            ca.height = Number.POSITIVE_INFINITY;
+        var index = Math.floor(sd.offsetX);
+
+
         return true;
     }
 }
