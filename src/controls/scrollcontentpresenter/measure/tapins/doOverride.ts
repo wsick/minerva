@@ -10,9 +10,9 @@ module minerva.controls.scrollcontentpresenter.measure.tapins {
         var ideal = state.idealSize;
         ideal.width = ideal.height = Number.POSITIVE_INFINITY;
         if (!sd.canHorizontallyScroll)
-            ideal.width = availableSize.width;
+            ideal.width = state.availableSize.width;
         if (!sd.canVerticallyScroll)
-            ideal.height = availableSize.height;
+            ideal.height = state.availableSize.height;
 
         tree.subtree.measure(ideal);
 
