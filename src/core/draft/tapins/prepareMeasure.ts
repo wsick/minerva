@@ -4,7 +4,7 @@ module minerva.core.draft.tapins {
             return true;
 
         var last = data.assets.previousConstraint;
-        if (data.tree.isContainer && (!last || (!Size.isEqual(last, data.surfaceSize)))) {
+        if (data.tree.isContainer && (Size.isUndef(last) || (!Size.isEqual(last, data.surfaceSize)))) {
             data.assets.dirtyFlags |= DirtyFlags.Measure;
             Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
         }

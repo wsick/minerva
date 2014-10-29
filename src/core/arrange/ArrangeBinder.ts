@@ -26,7 +26,7 @@ module minerva.core.arrange {
                 Size.copyTo(assets.desiredSize, viewport);
                 if (tree.surface) {
                     var measure = assets.previousConstraint;
-                    if (measure) {
+                    if (!Size.isUndef(measure)) {
                         viewport.width = Math.max(viewport.width, measure.width);
                         viewport.height = Math.max(viewport.height, measure.height);
                     } else {

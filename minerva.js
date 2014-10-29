@@ -1367,6 +1367,15 @@ var minerva;
             dest.width = Math.min(dest.width, size2.width);
             dest.height = Math.min(dest.height, size2.height);
         };
+
+        Size.isUndef = function (size) {
+            return isNaN(size.width) && isNaN(size.height);
+        };
+
+        Size.undef = function (size) {
+            size.width = NaN;
+            size.height = NaN;
+        };
         return Size;
     })();
     minerva.Size = Size;
@@ -1952,10 +1961,12 @@ var minerva;
 
             Updater.prototype.onAttached = function () {
                 var assets = this.assets;
+                minerva.Size.undef(assets.previousConstraint);
                 assets.dirtyFlags |= (minerva.DirtyFlags.RenderVisibility | minerva.DirtyFlags.HitTestVisibility | minerva.DirtyFlags.LocalTransform | minerva.DirtyFlags.LocalProjection);
                 var lc = assets.layoutClip;
                 lc.x = lc.y = lc.width = lc.height = 0;
-
+                var rs = assets.renderSize;
+                rs.width = rs.height = 0;
                 this.invalidateMeasure().invalidateArrange().invalidate().updateBounds(true);
                 Updater.$$addDownDirty(this);
                 if ((assets.uiFlags & 8192 /* SizeHint */) > 0 || assets.lastRenderSize !== undefined)
@@ -2580,7 +2591,7 @@ var minerva;
                         minerva.Size.copyTo(assets.desiredSize, viewport);
                         if (tree.surface) {
                             var measure = assets.previousConstraint;
-                            if (measure) {
+                            if (!minerva.Size.isUndef(measure)) {
                                 viewport.width = Math.max(viewport.width, measure.width);
                                 viewport.height = Math.max(viewport.height, measure.height);
                             } else {
@@ -3263,7 +3274,7 @@ var minerva;
                         return true;
 
                     var last = data.assets.previousConstraint;
-                    if (data.tree.isContainer && (!last || (!minerva.Size.isEqual(last, data.surfaceSize)))) {
+                    if (data.tree.isContainer && (minerva.Size.isUndef(last) || (!minerva.Size.isEqual(last, data.surfaceSize)))) {
                         data.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
                         minerva.Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
                     }
@@ -3588,11 +3599,11 @@ var minerva;
                     var old = new minerva.Size();
                     var tree = updater.tree;
 
-                    if (!tree.surface && !last && !tree.visualParent && tree.isLayoutContainer)
-                        last = new minerva.Size(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+                    if (!tree.surface && minerva.Size.isUndef(last) && !tree.visualParent && tree.isLayoutContainer)
+                        last.width = last.height = Number.POSITIVE_INFINITY;
 
                     var success = false;
-                    if (last) {
+                    if (!minerva.Size.isUndef(last)) {
                         minerva.Size.copyTo(assets.desiredSize, old);
                         success = updater.measure(last);
                         if (minerva.Size.isEqual(old, assets.desiredSize))
@@ -3696,8 +3707,8 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Measure) > 0)
                         return true;
                     var pc = input.previousConstraint;
-                    if (!pc || pc.width !== availableSize.width || pc.height !== availableSize.height) {
-                        minerva.Size.copyTo(pc, output.previousConstraint);
+                    if (minerva.Size.isUndef(pc) || pc.width !== availableSize.width || pc.height !== availableSize.height) {
+                        minerva.Size.copyTo(availableSize, output.previousConstraint);
                         return true;
                     }
                     return false;

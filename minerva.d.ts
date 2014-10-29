@@ -357,6 +357,8 @@ declare module minerva {
         static copyTo(src: ISize, dest: ISize): void;
         static isEqual(size1: ISize, size2: ISize): boolean;
         static min(dest: ISize, size2: ISize): void;
+        static isUndef(size: ISize): boolean;
+        static undef(size: ISize): void;
     }
 }
 declare module minerva {

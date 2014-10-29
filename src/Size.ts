@@ -27,5 +27,14 @@ module minerva {
             dest.width = Math.min(dest.width, size2.width);
             dest.height = Math.min(dest.height, size2.height);
         }
+
+        static isUndef (size: ISize): boolean {
+            return isNaN(size.width) && isNaN(size.height);
+        }
+
+        static undef (size: ISize) {
+            size.width = NaN;
+            size.height = NaN;
+        }
     }
 }

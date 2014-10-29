@@ -9,11 +9,11 @@ module minerva.core.measure {
             var old = new Size();
             var tree = updater.tree;
 
-            if (!tree.surface && !last && !tree.visualParent && tree.isLayoutContainer)
-                last = new Size(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+            if (!tree.surface && Size.isUndef(last) && !tree.visualParent && tree.isLayoutContainer)
+                last.width = last.height = Number.POSITIVE_INFINITY;
 
             var success = false;
-            if (last) {
+            if (!Size.isUndef(last)) {
                 Size.copyTo(assets.desiredSize, old);
                 success = updater.measure(last);
                 if (Size.isEqual(old, assets.desiredSize))

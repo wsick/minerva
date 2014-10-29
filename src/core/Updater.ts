@@ -128,12 +128,13 @@ module minerva.core {
         }
 
         onAttached () {
-            //previousConstraint = undefined; ///OLD
             var assets = this.assets;
+            Size.undef(assets.previousConstraint);
             assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
             var lc = assets.layoutClip;
             lc.x = lc.y = lc.width = lc.height = 0;
-            //TODO: clear assets.renderSize
+            var rs = assets.renderSize;
+            rs.width = rs.height = 0;
             this.invalidateMeasure()
                 .invalidateArrange()
                 .invalidate()
