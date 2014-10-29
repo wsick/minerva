@@ -1,7 +1,7 @@
-module minerva.controls.virtualizingpanel {
+module minerva {
     export interface IVirtualizingContainerOwner {
         itemCount: number;
-        createGenerator(): IVirtualizingGenerator;
+        createGenerator(index: number, count: number): IVirtualizingGenerator;
         remove(index: number, count: number);
     }
 }

@@ -10135,11 +10135,12 @@ var minerva;
                             ca.height = Number.POSITIVE_INFINITY;
 
                         var index = Math.floor(sd.offsetX);
+                        var count = tree.containerOwner.itemCount;
                         tree.containerOwner.remove(0, index);
 
                         var viscount = 0;
                         var ds = output.desiredSize;
-                        for (var generator = tree.containerOwner.createGenerator(); generator.generate();) {
+                        for (var generator = tree.containerOwner.createGenerator(index, count); generator.generate();) {
                             viscount++;
                             var child = generator.current;
                             child.measure(ca);
@@ -10150,7 +10151,6 @@ var minerva;
                                 break;
                         }
 
-                        var count = tree.containerOwner.itemCount;
                         tree.containerOwner.remove(index + viscount, count - (index + viscount));
 
                         var changed = sd.extentHeight !== ds.height || sd.extentWidth !== count || sd.viewportHeight !== ca.height || sd.viewportWidth !== viscount;
@@ -10213,11 +10213,12 @@ var minerva;
                             ca.width = Number.POSITIVE_INFINITY;
 
                         var index = Math.floor(sd.offsetY);
+                        var count = tree.containerOwner.itemCount;
                         tree.containerOwner.remove(0, index);
 
                         var viscount = 0;
                         var ds = output.desiredSize;
-                        for (var generator = tree.containerOwner.createGenerator(); generator.generate();) {
+                        for (var generator = tree.containerOwner.createGenerator(index, count); generator.generate();) {
                             viscount++;
                             var child = generator.current;
                             child.measure(ca);
@@ -10228,7 +10229,6 @@ var minerva;
                                 break;
                         }
 
-                        var count = tree.containerOwner.itemCount;
                         tree.containerOwner.remove(index + viscount, count - (index + viscount));
 
                         var changed = sd.extentHeight !== count || sd.extentWidth !== ds.width || sd.viewportHeight !== viscount || sd.viewportWidth !== ca.width;

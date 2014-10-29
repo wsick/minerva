@@ -10,11 +10,12 @@ module minerva.controls.virtualizingstackpanel.measure.tapins {
 
         //Dispose and remove containers that are before offset
         var index = Math.floor(sd.offsetY);
+        var count = tree.containerOwner.itemCount;
         tree.containerOwner.remove(0, index);
 
         var viscount = 0;
         var ds = output.desiredSize;
-        for (var generator = tree.containerOwner.createGenerator(); generator.generate();) {
+        for (var generator = tree.containerOwner.createGenerator(index, count); generator.generate();) {
             viscount++;
             var child = generator.current;
             child.measure(ca);
@@ -26,7 +27,6 @@ module minerva.controls.virtualizingstackpanel.measure.tapins {
         }
 
         //Dispose and remove containers that are after visible
-        var count = tree.containerOwner.itemCount;
         tree.containerOwner.remove(index + viscount, count - (index + viscount));
 
         var changed = sd.extentHeight !== count

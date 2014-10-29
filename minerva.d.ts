@@ -225,6 +225,19 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IVirtualizingContainerOwner {
+        itemCount: number;
+        createGenerator(index: number, count: number): IVirtualizingGenerator;
+        remove(index: number, count: number): any;
+    }
+}
+declare module minerva {
+    interface IVirtualizingGenerator {
+        current: core.Updater;
+        generate(): boolean;
+    }
+}
+declare module minerva {
     interface IWalker<T> {
         current: T;
         step(): boolean;
@@ -2284,19 +2297,6 @@ declare module minerva.controls.usercontrol.measure.tapins {
 }
 declare module minerva.controls.usercontrol.measure.tapins {
     function preOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
-}
-declare module minerva.controls.virtualizingpanel {
-    interface IVirtualizingContainerOwner {
-        itemCount: number;
-        createGenerator(): IVirtualizingGenerator;
-        remove(index: number, count: number): any;
-    }
-}
-declare module minerva.controls.virtualizingpanel {
-    interface IVirtualizingGenerator {
-        current: core.Updater;
-        generate(): boolean;
-    }
 }
 declare module minerva.controls.virtualizingpanel {
     class VirtualizingPanelUpdater extends panel.PanelUpdater {
