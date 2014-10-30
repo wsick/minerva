@@ -23,6 +23,10 @@ module minerva.controls.popup {
             super.init();
         }
 
+        setInitiator(initiator: core.Updater) {
+            this.tree.initiatorSurface = initiator.tree.surface;
+        }
+
         setChild(child: core.Updater) {
             var old = this.tree.child;
             if (old) {
@@ -44,7 +48,7 @@ module minerva.controls.popup {
             if (!this.assets.isVisible || !vchild)
                 return false;
             this.assets.isVisible = false;
-            var surface = this.tree.surface;
+            var surface = this.tree.initiatorSurface;
             if (!surface)
                 return false;
             surface.detachLayer(vchild);
@@ -56,7 +60,7 @@ module minerva.controls.popup {
             if (this.assets.isVisible || !vchild)
                 return false;
             this.assets.isVisible = true;
-            var surface = this.tree.surface;
+            var surface = this.tree.initiatorSurface;
             if (!surface)
                 return false;
             surface.attachLayer(vchild);
@@ -74,7 +78,7 @@ module minerva.controls.popup {
             var child = tree.child;
             if (!child)
                 return;
-            var tweenX = newValue - updater.assets.horizontalOffset;
+            var tweenX = newValue - oldValue;
             if (tweenX === 0)
                 return;
             tweenOffset(child, tweenX, 0);
@@ -87,7 +91,7 @@ module minerva.controls.popup {
             var child = tree.child;
             if (!child)
                 return;
-            var tweenY = newValue - updater.assets.verticalOffset;
+            var tweenY = newValue - oldValue;
             if (tweenY === 0)
                 return;
             tweenOffset(child, 0, tweenY);

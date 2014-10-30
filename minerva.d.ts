@@ -1858,6 +1858,7 @@ declare module minerva.controls.popup {
         public assets: IPopupUpdaterAssets;
         public tree: PopupUpdaterTree;
         public init(): void;
+        public setInitiator(initiator: core.Updater): void;
         public setChild(child: core.Updater): void;
         public hide(): boolean;
         public show(): boolean;
@@ -1872,6 +1873,7 @@ declare module minerva.controls.popup {
     class PopupUpdaterTree extends core.UpdaterTree {
         public child: core.Updater;
         public visualChild: core.Updater;
+        public initiatorSurface: core.ISurface;
         public walk(direction?: WalkDirection): IWalker<core.Updater>;
     }
 }

@@ -4,6 +4,7 @@ module minerva.controls.popup {
     export class PopupUpdaterTree extends core.UpdaterTree {
         child: core.Updater = undefined;
         visualChild: core.Updater = undefined;
+        initiatorSurface: core.ISurface = undefined;
 
         walk (direction?: WalkDirection): IWalker<core.Updater> {
             var visited = false;

@@ -7943,6 +7943,10 @@ var minerva;
                     _super.prototype.init.call(this);
                 };
 
+                PopupUpdater.prototype.setInitiator = function (initiator) {
+                    this.tree.initiatorSurface = initiator.tree.surface;
+                };
+
                 PopupUpdater.prototype.setChild = function (child) {
                     var old = this.tree.child;
                     if (old) {
@@ -7964,7 +7968,7 @@ var minerva;
                     if (!this.assets.isVisible || !vchild)
                         return false;
                     this.assets.isVisible = false;
-                    var surface = this.tree.surface;
+                    var surface = this.tree.initiatorSurface;
                     if (!surface)
                         return false;
                     surface.detachLayer(vchild);
@@ -7976,7 +7980,7 @@ var minerva;
                     if (this.assets.isVisible || !vchild)
                         return false;
                     this.assets.isVisible = true;
-                    var surface = this.tree.surface;
+                    var surface = this.tree.initiatorSurface;
                     if (!surface)
                         return false;
                     surface.attachLayer(vchild);
@@ -7997,7 +8001,7 @@ var minerva;
                     var child = tree.child;
                     if (!child)
                         return;
-                    var tweenX = newValue - updater.assets.horizontalOffset;
+                    var tweenX = newValue - oldValue;
                     if (tweenX === 0)
                         return;
                     tweenOffset(child, tweenX, 0);
@@ -8011,7 +8015,7 @@ var minerva;
                     var child = tree.child;
                     if (!child)
                         return;
-                    var tweenY = newValue - updater.assets.verticalOffset;
+                    var tweenY = newValue - oldValue;
                     if (tweenY === 0)
                         return;
                     tweenOffset(child, 0, tweenY);
@@ -8046,6 +8050,7 @@ var minerva;
                     _super.apply(this, arguments);
                     this.child = undefined;
                     this.visualChild = undefined;
+                    this.initiatorSurface = undefined;
                 }
                 PopupUpdaterTree.prototype.walk = function (direction) {
                     var visited = false;
