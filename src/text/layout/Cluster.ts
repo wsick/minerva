@@ -18,6 +18,7 @@ module minerva.text.layout {
             //Background
             var bg = cluster.isSelected ? (assets.selectionBackground || Cluster.DEFAULT_SELECTION_BG) : assets.background;
             if (bg) {
+                raw.beginPath();
                 raw.rect(area.x, area.y, area.width, area.height);
                 ctx.fillEx(bg, area);
             }
