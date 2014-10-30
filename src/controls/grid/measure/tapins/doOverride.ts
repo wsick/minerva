@@ -6,7 +6,7 @@ module minerva.controls.grid.measure.tapins {
             desired.width += cm[i][i].desired;
         }
         for (var rm = input.gridState.rowMatrix, i = 0; i < rm.length; i++) {
-            desired.height = rm[i][i].desired;
+            desired.height += rm[i][i].desired;
         }
         return true;
     }
