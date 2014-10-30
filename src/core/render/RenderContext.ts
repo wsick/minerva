@@ -36,9 +36,9 @@ module minerva.core.render {
         hasFillRule: boolean;
 
         constructor (ctx: CanvasRenderingContext2D) {
-            Object.defineProperty(this, 'raw', { value: ctx, writable: false });
-            Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
-            Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false });
+            Object.defineProperty(this, 'raw', {value: ctx, writable: false});
+            Object.defineProperty(this, 'currentTransform', {value: mat3.identity(), writable: false});
+            Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false});
         }
 
         static get hasFillRule (): boolean {
@@ -130,11 +130,14 @@ module minerva.core.render {
             var raw = this.raw;
             brush.setupBrush(raw, region);
             raw.fillStyle = brush.toHtml5Object();
-            if (fillRule == null)
-                return raw.fill();
-            var fr = fillRule === FillRule.EvenOdd ? "evenodd" : "nonzero";
-            (<any>raw).fillRule = raw.msFillRule = fr;
-            raw.fill(fr);
+            if (fillRule == null) {
+                (<any>raw).fillRule = raw.msFillRule = "nonzero";
+                raw.fill();
+            } else {
+                var fr = fillRule === FillRule.EvenOdd ? "evenodd" : "nonzero";
+                (<any>raw).fillRule = raw.msFillRule = fr;
+                raw.fill(fr);
+            }
         }
 
         drawRectEx (extents: Rect, cr?: ICornerRadius) {
@@ -156,23 +159,23 @@ module minerva.core.render {
             var trr = cr.topRight - right_adj;
             raw.lineTo(extents.x + extents.width - trt, extents.y);
             raw.bezierCurveTo(
-                    extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y,
-                    extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER,
-                    extents.x + extents.width, extents.y + trr);
+                extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y,
+                extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER,
+                extents.x + extents.width, extents.y + trr);
 
             var brr = cr.bottomRight - right_adj;
             var brb = cr.bottomRight - bottom_adj;
             raw.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
             raw.bezierCurveTo(
-                    extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER,
-                    extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height,
-                    extents.x + extents.width - brb, extents.y + extents.height);
+                extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER,
+                extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height,
+                extents.x + extents.width - brb, extents.y + extents.height);
 
             var blb = cr.bottomLeft - bottom_adj;
             var bll = cr.bottomLeft - left_adj;
             raw.lineTo(extents.x + blb, extents.y + extents.height);
             raw.bezierCurveTo(
-                    extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height,
+                extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height,
                 extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER,
                 extents.x, extents.y + extents.height - bll);
 
@@ -180,8 +183,8 @@ module minerva.core.render {
             raw.lineTo(extents.x, extents.y + tll);
             raw.bezierCurveTo(
                 extents.x, extents.y + tll - tll * ARC_TO_BEZIER,
-                    extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y,
-                    extents.x + tlt, extents.y);
+                extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y,
+                extents.x + tlt, extents.y);
         }
 
         isPointInStrokeEx (strokePars: IStrokeParameters, x: number, y: number): boolean {
