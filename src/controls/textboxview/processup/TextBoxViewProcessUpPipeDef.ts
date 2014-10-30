@@ -33,6 +33,7 @@ module minerva.controls.textboxview.processup {
             e.x = e.y = 0;
             Size.copyTo(state.actualSize, e);
             Rect.copyTo(e, output.extentsWithChildren);
+            output.extentsWithChildren.width++; //include caret
 
             return true;
         }

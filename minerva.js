@@ -9612,6 +9612,7 @@ var minerva;
                         e.x = e.y = 0;
                         minerva.Size.copyTo(state.actualSize, e);
                         minerva.Rect.copyTo(e, output.extentsWithChildren);
+                        output.extentsWithChildren.width++;
 
                         return true;
                     }
