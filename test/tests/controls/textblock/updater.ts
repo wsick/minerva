@@ -32,13 +32,14 @@ module minerva.controls.textblock.tests {
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
-        run.assets.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris efficitur nunc lobortis varius dignissim. Sed sed sem non orci laoreet tempus. Nullam a nisi consequat, dignissim diam volutpat, blandit augue. Praesent et nulla nec ante consectetur varius et condimentum leo. Nam ornare odio neque, ut lobortis purus volutpat eu. In hac habitasse platea dictumst. Etiam accumsan bibendum vehicula.";
+        var alltext = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris efficitur nunc lobortis varius dignissim. Sed sed sem non orci laoreet tempus. Nullam a nisi consequat, dignissim diam volutpat, blandit augue. Praesent et nulla nec ante consectetur varius et condimentum leo. Nam ornare odio neque, ut lobortis purus volutpat eu. In hac habitasse platea dictumst. Etiam accumsan bibendum vehicula.";
+        run.assets.text = alltext;
         updater.invalidateTextMetrics();
         updater.tree.layout(new Size(99, Number.POSITIVE_INFINITY), updater.assets);
         assert.strictEqual(docassets.lines.length, 1);
         assert.strictEqual(docassets.lines[0].runs.length, 1);
-        assert.strictEqual(docassets.lines[0].runs[0].text, "Lorem ipsum do");
-        assert.strictEqual(docassets.actualWidth, mock.measure("Lorem ipsum do", run.assets.font));
+        assert.strictEqual(docassets.lines[0].runs[0].text, alltext);
+        assert.strictEqual(docassets.actualWidth, mock.measure(alltext, run.assets.font, true));
         assert.strictEqual(docassets.actualHeight, 19);
 
         run.assets.text = "Lorem";
@@ -47,7 +48,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines.length, 1);
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "Lorem");
-        assert.strictEqual(docassets.actualWidth, mock.measure("Lorem", run.assets.font));
+        assert.strictEqual(docassets.actualWidth, mock.measure("Lorem", run.assets.font, true));
         assert.strictEqual(docassets.actualHeight, 19);
     });
 
@@ -61,21 +62,19 @@ module minerva.controls.textblock.tests {
         run.assets.text = "Lorem ipsum\rdolor sit amet,\r\nconsectetur adipiscing\nelit.";
         updater.invalidateTextMetrics();
         updater.tree.layout(new Size(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY), updater.assets);
-        assert.strictEqual(docassets.lines.length, 5);
+        assert.strictEqual(docassets.lines.length, 4);
         docassets.lines.forEach(line => assert.strictEqual(line.width, line.runs.reduce<number>((agg, run) => agg + run.width, 0), "Line Width === Run Widths"));
         var runs = docassets.lines.reduce<minerva.text.layout.Run[]>((agg, line) => agg.concat(line.runs), []);
         runs.forEach(run => delete run.attrs);
         var expectedRuns = [
             mock.run("Lorem ipsum\r", 0, run.assets),
             mock.run("dolor sit amet,\r\n", 0, run.assets),
-            mock.run("consectetur ", 0, run.assets),
-            mock.run("adipiscing\n", 0, run.assets),
+            mock.run("consectetur adipiscing\n", 0, run.assets),
             mock.run("elit.", 0, run.assets)
         ];
         runs.forEach((run, i?) => assert.deepEqual(run, expectedRuns[i]));
     });
 
-    /*
     QUnit.test("NoWrap - Finite width with line breaks", (assert) => {
         var updater = new TextBlockUpdater();
 
@@ -86,20 +85,18 @@ module minerva.controls.textblock.tests {
         run.assets.text = "Lorem ipsum\rdolor sit amet,\r\nconsectetur adipiscing\nelit.";
         updater.invalidateTextMetrics();
         updater.tree.layout(new Size(99, Number.POSITIVE_INFINITY), updater.assets);
-        assert.strictEqual(docassets.lines.length, 5);
+        assert.strictEqual(docassets.lines.length, 4);
         docassets.lines.forEach(line => assert.strictEqual(line.width, line.runs.reduce<number>((agg, run) => agg + run.width, 0), "Line Width === Run Widths"));
         var runs = docassets.lines.reduce<minerva.text.layout.Run[]>((agg, line) => agg.concat(line.runs), []);
         runs.forEach(run => delete run.attrs);
         var expectedRuns = [
             mock.run("Lorem ipsum\r", 0, run.assets),
             mock.run("dolor sit amet,\r\n", 0, run.assets),
-            mock.run("consectetur ", 0, run.assets),
-            mock.run("adipiscing\n", 0, run.assets),
+            mock.run("consectetur adipiscing\n", 0, run.assets),
             mock.run("elit.", 0, run.assets)
         ];
         runs.forEach((run, i?) => assert.deepEqual(run, expectedRuns[i]));
     });
-    */
 
     QUnit.test("Wrap", (assert) => {
         var updater = new TextBlockUpdater();
