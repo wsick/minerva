@@ -24,6 +24,23 @@ module minerva.controls.textblock.tests {
         }
     };
 
+    QUnit.test("Empty", (assert) => {
+        var updater = new TextBlockUpdater();
+        updater.assets.textWrapping = TextWrapping.NoWrap;
+        var run = mock.textUpdater();
+        updater.tree.onTextAttached(run);
+        var docassets = updater.tree.doc.assets;
+
+        run.assets.text = "";
+        updater.invalidateTextMetrics();
+        updater.tree.layout(new Size(99, Number.POSITIVE_INFINITY), updater.assets);
+        assert.strictEqual(docassets.lines.length, 1);
+        assert.strictEqual(docassets.lines[0].runs.length, 1);
+        assert.strictEqual(docassets.lines[0].runs[0].text, "");
+        assert.strictEqual(docassets.actualWidth, 0);
+        assert.strictEqual(docassets.actualHeight, 19);
+    });
+
     QUnit.test("NoWrap", (assert) => {
         var updater = new TextBlockUpdater();
         updater.assets.textWrapping = TextWrapping.NoWrap;

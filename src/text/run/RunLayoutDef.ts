@@ -7,6 +7,10 @@ module minerva.text.run {
                 var line = new layout.Line();
                 line.height = assets.font.getHeight();
                 docassets.lines.push(line);
+                var run1 = new layout.Run();
+                run1.attrs = assets;
+                line.runs.push(run1);
+                docassets.actualHeight = line.height;
                 return false;
             }
 

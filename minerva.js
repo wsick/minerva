@@ -9364,6 +9364,7 @@ var minerva;
                 TextBoxViewUpdater.prototype.invalidateSelectionStart = function () {
                     this.tree.doc.assets.selCached = false;
                     this.invalidateCaretRegion();
+                    this.invalidate();
                     this.resetCaretBlinker(true);
                 };
 
@@ -13641,6 +13642,10 @@ var minerva;
                         var line = new _text.layout.Line();
                         line.height = assets.font.getHeight();
                         docassets.lines.push(line);
+                        var run1 = new _text.layout.Run();
+                        run1.attrs = assets;
+                        line.runs.push(run1);
+                        docassets.actualHeight = line.height;
                         return false;
                     }
 
