@@ -13525,7 +13525,8 @@ var minerva;
                 line.runs.push(run);
 
                 while (pass.index < pass.max) {
-                    if (this.advanceLineBreak(run, pass, font) || this.advanceToBreak(run, pass, font, docassets.maxWidth)) {
+                    var hitbreak = isFinite(docassets.maxWidth) ? this.advanceFinite(run, pass, font, docassets.maxWidth) : this.advanceInfinite(run, pass, font);
+                    if (hitbreak) {
                         docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
                         line.width = run.width;
                         line = new _text.layout.Line();
@@ -13542,37 +13543,44 @@ var minerva;
                 docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
             };
 
-            TextLayoutDef.prototype.advanceLineBreak = function (run, pass, font) {
-                var c0 = pass.text.charAt(pass.index);
-                if (c0 === '\n') {
-                    run.length++;
-                    run.text += c0;
-                    run.width = this.measureTextWidth(run.text, font);
-                    pass.index++;
-                    return true;
-                }
-                var c1 = pass.text.charAt(pass.index + 1);
-                if (c0 === '\r' && c1 === '\n') {
-                    run.length += 2;
-                    run.text += (c0 + c1);
-                    run.width = this.measureTextWidth(run.text, font);
-                    pass.index += 2;
-                    return true;
-                }
-                return false;
-            };
+            TextLayoutDef.prototype.advanceInfinite = function (run, pass, font) {
+                var remaining = pass.text.substr(pass.index);
+                var rindex = remaining.indexOf('\r');
+                var nindex = remaining.indexOf('\n');
 
-            TextLayoutDef.prototype.advanceToBreak = function (run, pass, font, maxWidth) {
-                var text = pass.text;
-
-                if (!isFinite(maxWidth)) {
-                    run.text += text.substr(pass.index);
-                    run.length = run.text.length;
-                    pass.index += run.text.length;
+                if (rindex < 0 && nindex < 0) {
+                    run.length = remaining.length;
+                    run.text = remaining;
                     run.width = this.measureTextWidth(run.text, font);
+                    pass.index += run.length;
                     return false;
                 }
 
+                if (rindex > -1 && rindex + 1 === nindex) {
+                    run.length = nindex + 1;
+                    run.text = remaining.substr(0, run.length);
+                    run.width = this.measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return true;
+                }
+
+                if (rindex > -1 && rindex < nindex) {
+                    run.length = rindex + 1;
+                    run.text = remaining.substr(0, run.length);
+                    run.width = this.measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return true;
+                }
+
+                run.length = nindex + 1;
+                run.text = remaining.substr(0, run.length);
+                run.width = this.measureTextWidth(run.text, font);
+                pass.index += run.length;
+                return true;
+            };
+
+            TextLayoutDef.prototype.advanceFinite = function (run, pass, font, maxWidth) {
+                var text = pass.text;
                 var start = pass.index;
                 var lastSpace = -1;
                 var c;
@@ -13582,6 +13590,23 @@ var minerva;
                     c = text.charAt(pass.index);
                     curText += c;
                     curWidth = this.measureTextWidth(curText, font);
+                    if (c === '\n') {
+                        run.length = pass.index - start + 1;
+                        run.text = text.substr(start, run.length);
+                        run.width = this.measureTextWidth(run.text, font);
+                        pass.index++;
+                        return true;
+                    } else if (c === '\r') {
+                        run.length = pass.index - start + 1;
+                        pass.index++;
+                        if (text.charAt(pass.index) === '\n') {
+                            run.length++;
+                            pass.index++;
+                        }
+                        run.text = text.substr(start, run.length);
+                        run.width = this.measureTextWidth(run.text, font);
+                        return true;
+                    }
                     if (curWidth > maxWidth) {
                         var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index;
                         run.length = (breakIndex - start) || 1;

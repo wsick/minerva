@@ -100,7 +100,8 @@ module minerva.text {
             line.runs.push(run);
 
             while (pass.index < pass.max) {
-                if (this.advanceLineBreak(run, pass, font) || this.advanceToBreak(run, pass, font, docassets.maxWidth)) {
+                var hitbreak = isFinite(docassets.maxWidth) ? this.advanceFinite(run, pass, font, docassets.maxWidth) : this.advanceInfinite(run, pass, font);
+                if (hitbreak) {
                     docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
                     line.width = run.width;
                     line = new layout.Line();
@@ -117,37 +118,50 @@ module minerva.text {
             docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
         }
 
-        advanceLineBreak (run: layout.Run, pass: ITextLayoutPass, font: Font): boolean {
-            var c0 = pass.text.charAt(pass.index);
-            if (c0 === '\n') {
-                run.length++;
-                run.text += c0;
-                run.width = this.measureTextWidth(run.text, font);
-                pass.index++;
-                return true;
-            }
-            var c1 = pass.text.charAt(pass.index + 1);
-            if (c0 === '\r' && c1 === '\n') {
-                run.length += 2;
-                run.text += (c0 + c1);
-                run.width = this.measureTextWidth(run.text, font);
-                pass.index += 2;
-                return true;
-            }
-            return false;
-        }
-
-        advanceToBreak (run: layout.Run, pass: ITextLayoutPass, font: Font, maxWidth: number): boolean {
-            var text = pass.text;
+        advanceInfinite (run: layout.Run, pass: ITextLayoutPass, font: Font): boolean {
             //NOTE: Returning true implies a new line is necessary
-            if (!isFinite(maxWidth)) {
-                run.text += text.substr(pass.index);
-                run.length = run.text.length;
-                pass.index += run.text.length;
+            var remaining = pass.text.substr(pass.index);
+            var rindex = remaining.indexOf('\r');
+            var nindex = remaining.indexOf('\n');
+
+            if (rindex < 0 && nindex < 0) {
+                //Didn't find \r or \n
+                run.length = remaining.length;
+                run.text = remaining;
                 run.width = this.measureTextWidth(run.text, font);
+                pass.index += run.length;
                 return false;
             }
 
+            if (rindex > -1 && rindex + 1 === nindex) {
+                //Found \r\n
+                run.length = nindex + 1;
+                run.text = remaining.substr(0, run.length);
+                run.width = this.measureTextWidth(run.text, font);
+                pass.index += run.length;
+                return true;
+            }
+
+            if (rindex > -1 && rindex < nindex) {
+                //Found \r before \n, but not back-to-back
+                run.length = rindex + 1;
+                run.text = remaining.substr(0, run.length);
+                run.width = this.measureTextWidth(run.text, font);
+                pass.index += run.length;
+                return true;
+            }
+
+            //Found \n (potentially before \r, don't care)
+            run.length = nindex + 1;
+            run.text = remaining.substr(0, run.length);
+            run.width = this.measureTextWidth(run.text, font);
+            pass.index += run.length;
+            return true;
+        }
+
+        advanceFinite (run: layout.Run, pass: ITextLayoutPass, font: Font, maxWidth: number): boolean {
+            //NOTE: Returning true implies a new line is necessary
+            var text = pass.text;
             var start = pass.index;
             var lastSpace = -1;
             var c: string;
@@ -157,6 +171,23 @@ module minerva.text {
                 c = text.charAt(pass.index);
                 curText += c;
                 curWidth = this.measureTextWidth(curText, font);
+                if (c === '\n') {
+                    run.length = pass.index - start + 1;
+                    run.text = text.substr(start, run.length);
+                    run.width = this.measureTextWidth(run.text, font);
+                    pass.index++;
+                    return true;
+                } else if (c === '\r') {
+                    run.length = pass.index - start + 1;
+                    pass.index++;
+                    if (text.charAt(pass.index) === '\n') {
+                        run.length++;
+                        pass.index++;
+                    }
+                    run.text = text.substr(start, run.length);
+                    run.width = this.measureTextWidth(run.text, font);
+                    return true;
+                }
                 if (curWidth > maxWidth) {
                     var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index;
                     run.length = (breakIndex - start) || 1; //Force at least 1 character

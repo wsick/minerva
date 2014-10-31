@@ -3019,8 +3019,8 @@ declare module minerva.text {
         public layout(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): boolean;
         public doLayoutNoWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
         public doLayoutWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
-        public advanceLineBreak(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
-        public advanceToBreak(run: layout.Run, pass: ITextLayoutPass, font: Font, maxWidth: number): boolean;
+        public advanceInfinite(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
+        public advanceFinite(run: layout.Run, pass: ITextLayoutPass, font: Font, maxWidth: number): boolean;
         public measureTextWidth(text: string, font: Font): number;
     }
 }
