@@ -13444,204 +13444,6 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (_text) {
-        var TextLayoutDef = (function () {
-            function TextLayoutDef() {
-            }
-            TextLayoutDef.prototype.layout = function (docctx, docassets, assets) {
-                var text = assets.text;
-                if (!text) {
-                    var line = new _text.layout.Line();
-                    line.height = assets.font.getHeight();
-                    docassets.lines.push(line);
-                    return false;
-                }
-
-                if (docctx.textWrapping === 0 /* NoWrap */)
-                    this.doLayoutNoWrap(docctx, docassets, assets);
-                else
-                    this.doLayoutWrap(docctx, docassets, assets);
-
-                docassets.selCached = false;
-                return true;
-            };
-
-            TextLayoutDef.prototype.doLayoutNoWrap = function (docctx, docassets, assets) {
-                var text = assets.text;
-
-                var usedText = text;
-                var end = text.length;
-                var width;
-
-                if ((width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-                    end = (Math.ceil(docassets.maxWidth / width * text.length)) || 0;
-                    usedText = text.substr(0, end);
-                }
-
-                while (end > 0 && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-                    end--;
-                    usedText = text.substr(0, end);
-                }
-
-                while (end < text.length && (width = this.measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-                    end++;
-                    usedText = text.substr(0, end);
-                }
-
-                if ((end + 1) < text.length) {
-                    end++;
-                    usedText += text[end + 1];
-                    width = this.measureTextWidth(usedText, assets.font);
-                }
-
-                var line = new _text.layout.Line();
-                line.height = assets.font.getHeight();
-                docassets.lines.push(line);
-
-                var run = new _text.layout.Run();
-                run.attrs = assets;
-                run.text = usedText;
-                run.start = 0;
-                run.length = end;
-                run.width = width;
-
-                line.width = run.width;
-                line.runs.push(run);
-
-                docassets.actualWidth = line.width;
-                docassets.actualHeight = line.height;
-            };
-
-            TextLayoutDef.prototype.doLayoutWrap = function (docctx, docassets, assets) {
-                var pass = {
-                    text: assets.text,
-                    index: 0,
-                    max: assets.text.length
-                };
-
-                var font = assets.font;
-
-                var line = new _text.layout.Line();
-                line.height = font.getHeight();
-                docassets.actualHeight += line.height;
-                docassets.lines.push(line);
-
-                var run = new _text.layout.Run();
-                run.attrs = assets;
-                line.runs.push(run);
-
-                while (pass.index < pass.max) {
-                    var hitbreak = isFinite(docassets.maxWidth) ? this.advanceFinite(run, pass, font, docassets.maxWidth) : this.advanceInfinite(run, pass, font);
-                    if (hitbreak) {
-                        docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
-                        line.width = run.width;
-                        line = new _text.layout.Line();
-                        line.height = font.getHeight();
-                        docassets.actualHeight += line.height;
-                        docassets.lines.push(line);
-
-                        run = new _text.layout.Run();
-                        run.attrs = assets;
-                        line.runs.push(run);
-                    }
-                }
-                line.width = run.width;
-                docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
-            };
-
-            TextLayoutDef.prototype.advanceInfinite = function (run, pass, font) {
-                var remaining = pass.text.substr(pass.index);
-                var rindex = remaining.indexOf('\r');
-                var nindex = remaining.indexOf('\n');
-
-                if (rindex < 0 && nindex < 0) {
-                    run.length = remaining.length;
-                    run.text = remaining;
-                    run.width = this.measureTextWidth(run.text, font);
-                    pass.index += run.length;
-                    return false;
-                }
-
-                if (rindex > -1 && rindex + 1 === nindex) {
-                    run.length = nindex + 1;
-                    run.text = remaining.substr(0, run.length);
-                    run.width = this.measureTextWidth(run.text, font);
-                    pass.index += run.length;
-                    return true;
-                }
-
-                if (rindex > -1 && rindex < nindex) {
-                    run.length = rindex + 1;
-                    run.text = remaining.substr(0, run.length);
-                    run.width = this.measureTextWidth(run.text, font);
-                    pass.index += run.length;
-                    return true;
-                }
-
-                run.length = nindex + 1;
-                run.text = remaining.substr(0, run.length);
-                run.width = this.measureTextWidth(run.text, font);
-                pass.index += run.length;
-                return true;
-            };
-
-            TextLayoutDef.prototype.advanceFinite = function (run, pass, font, maxWidth) {
-                var text = pass.text;
-                var start = pass.index;
-                var lastSpace = -1;
-                var c;
-                var curText = "";
-                var curWidth = 0;
-                while (pass.index < pass.max) {
-                    c = text.charAt(pass.index);
-                    curText += c;
-                    curWidth = this.measureTextWidth(curText, font);
-                    if (c === '\n') {
-                        run.length = pass.index - start + 1;
-                        run.text = text.substr(start, run.length);
-                        run.width = this.measureTextWidth(run.text, font);
-                        pass.index++;
-                        return true;
-                    } else if (c === '\r') {
-                        run.length = pass.index - start + 1;
-                        pass.index++;
-                        if (text.charAt(pass.index) === '\n') {
-                            run.length++;
-                            pass.index++;
-                        }
-                        run.text = text.substr(start, run.length);
-                        run.width = this.measureTextWidth(run.text, font);
-                        return true;
-                    }
-                    if (curWidth > maxWidth) {
-                        var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index;
-                        run.length = (breakIndex - start) || 1;
-                        run.text = text.substr(start, run.length);
-                        run.width = this.measureTextWidth(run.text, font);
-                        pass.index = breakIndex;
-                        return true;
-                    }
-                    if (c === ' ')
-                        lastSpace = pass.index;
-                    pass.index++;
-                }
-                run.text = text.substr(start);
-                run.length = run.text.length;
-                run.width = this.measureTextWidth(run.text, font);
-                return false;
-            };
-
-            TextLayoutDef.prototype.measureTextWidth = function (text, font) {
-                return minerva.engine.Surface.measureWidth(text, font);
-            };
-            return TextLayoutDef;
-        })();
-        _text.TextLayoutDef = TextLayoutDef;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (_text) {
         var TextUpdater = (function () {
             function TextUpdater() {
                 this.assets = {
@@ -13669,7 +13471,7 @@ var minerva;
             TextUpdater.prototype.setTextLayout = function (tldef) {
                 if (this.$$textlayout)
                     return this;
-                this.$$textlayout = tldef || new text.TextLayoutDef();
+                this.$$textlayout = tldef || new _text.run.RunLayoutDef();
                 return this;
             };
 
@@ -13823,6 +13625,229 @@ var minerva;
             layout.Run = Run;
         })(_text.layout || (_text.layout = {}));
         var layout = _text.layout;
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (_text) {
+        (function (run) {
+            var RunLayoutDef = (function () {
+                function RunLayoutDef() {
+                }
+                RunLayoutDef.prototype.layout = function (docctx, docassets, assets) {
+                    var text = assets.text;
+                    if (!text) {
+                        var line = new _text.layout.Line();
+                        line.height = assets.font.getHeight();
+                        docassets.lines.push(line);
+                        return false;
+                    }
+
+                    if (docctx.textWrapping === 0 /* NoWrap */)
+                        run.doLayoutNoWrap(docctx, docassets, assets);
+                    else
+                        run.doLayoutWrap(docctx, docassets, assets);
+
+                    docassets.selCached = false;
+                    return true;
+                };
+                return RunLayoutDef;
+            })();
+            run.RunLayoutDef = RunLayoutDef;
+        })(_text.run || (_text.run = {}));
+        var run = _text.run;
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (_text) {
+        (function (_run) {
+            function doLayoutNoWrap(docctx, docassets, assets) {
+                var text = assets.text;
+
+                var usedText = text;
+                var end = text.length;
+                var width;
+
+                if ((width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
+                    end = (Math.ceil(docassets.maxWidth / width * text.length)) || 0;
+                    usedText = text.substr(0, end);
+                }
+
+                while (end > 0 && (width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
+                    end--;
+                    usedText = text.substr(0, end);
+                }
+
+                while (end < text.length && (width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
+                    end++;
+                    usedText = text.substr(0, end);
+                }
+
+                if ((end + 1) < text.length) {
+                    end++;
+                    usedText += text[end + 1];
+                    width = measureTextWidth(usedText, assets.font);
+                }
+
+                var line = new _text.layout.Line();
+                line.height = assets.font.getHeight();
+                docassets.lines.push(line);
+
+                var run = new _text.layout.Run();
+                run.attrs = assets;
+                run.text = usedText;
+                run.start = 0;
+                run.length = end;
+                run.width = width;
+
+                line.width = run.width;
+                line.runs.push(run);
+
+                docassets.actualWidth = line.width;
+                docassets.actualHeight = line.height;
+            }
+            _run.doLayoutNoWrap = doLayoutNoWrap;
+
+            function measureTextWidth(text, font) {
+                return minerva.engine.Surface.measureWidth(text, font);
+            }
+        })(_text.run || (_text.run = {}));
+        var run = _text.run;
+    })(minerva.text || (minerva.text = {}));
+    var text = minerva.text;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (_text) {
+        (function (_run) {
+            function doLayoutWrap(docctx, docassets, assets) {
+                var pass = {
+                    text: assets.text,
+                    index: 0,
+                    max: assets.text.length
+                };
+
+                var font = assets.font;
+
+                var line = new _text.layout.Line();
+                line.height = font.getHeight();
+                docassets.actualHeight += line.height;
+                docassets.lines.push(line);
+
+                var run = new _text.layout.Run();
+                run.attrs = assets;
+                line.runs.push(run);
+
+                while (pass.index < pass.max) {
+                    var hitbreak = isFinite(docassets.maxWidth) ? advanceFinite(run, pass, font, docassets.maxWidth) : advanceInfinite(run, pass, font);
+                    if (hitbreak) {
+                        docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
+                        line.width = run.width;
+                        line = new _text.layout.Line();
+                        line.height = font.getHeight();
+                        docassets.actualHeight += line.height;
+                        docassets.lines.push(line);
+
+                        run = new _text.layout.Run();
+                        run.attrs = assets;
+                        line.runs.push(run);
+                    }
+                }
+                line.width = run.width;
+                docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
+            }
+            _run.doLayoutWrap = doLayoutWrap;
+
+            function advanceInfinite(run, pass, font) {
+                var remaining = pass.text.substr(pass.index);
+                var rindex = remaining.indexOf('\r');
+                var nindex = remaining.indexOf('\n');
+
+                if (rindex < 0 && nindex < 0) {
+                    run.length = remaining.length;
+                    run.text = remaining;
+                    run.width = measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return false;
+                }
+
+                if (rindex > -1 && rindex + 1 === nindex) {
+                    run.length = nindex + 1;
+                    run.text = remaining.substr(0, run.length);
+                    run.width = measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return true;
+                }
+
+                if (rindex > -1 && rindex < nindex) {
+                    run.length = rindex + 1;
+                    run.text = remaining.substr(0, run.length);
+                    run.width = measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return true;
+                }
+
+                run.length = nindex + 1;
+                run.text = remaining.substr(0, run.length);
+                run.width = measureTextWidth(run.text, font);
+                pass.index += run.length;
+                return true;
+            }
+
+            function advanceFinite(run, pass, font, maxWidth) {
+                var text = pass.text;
+                var start = pass.index;
+                var lastSpace = -1;
+                var c;
+                var curText = "";
+                var curWidth = 0;
+                while (pass.index < pass.max) {
+                    c = text.charAt(pass.index);
+                    curText += c;
+                    curWidth = measureTextWidth(curText, font);
+                    if (c === '\n') {
+                        run.length = pass.index - start + 1;
+                        run.text = text.substr(start, run.length);
+                        run.width = measureTextWidth(run.text, font);
+                        pass.index++;
+                        return true;
+                    } else if (c === '\r') {
+                        run.length = pass.index - start + 1;
+                        pass.index++;
+                        if (text.charAt(pass.index) === '\n') {
+                            run.length++;
+                            pass.index++;
+                        }
+                        run.text = text.substr(start, run.length);
+                        run.width = measureTextWidth(run.text, font);
+                        return true;
+                    }
+                    if (curWidth > maxWidth) {
+                        var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index;
+                        run.length = (breakIndex - start) || 1;
+                        run.text = text.substr(start, run.length);
+                        run.width = measureTextWidth(run.text, font);
+                        pass.index = breakIndex;
+                        return true;
+                    }
+                    if (c === ' ')
+                        lastSpace = pass.index;
+                    pass.index++;
+                }
+                run.text = text.substr(start);
+                run.length = run.text.length;
+                run.width = measureTextWidth(run.text, font);
+                return false;
+            }
+
+            function measureTextWidth(text, font) {
+                return minerva.engine.Surface.measureWidth(text, font);
+            }
+        })(_text.run || (_text.run = {}));
+        var run = _text.run;
     })(minerva.text || (minerva.text = {}));
     var text = minerva.text;
 })(minerva || (minerva = {}));

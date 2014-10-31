@@ -27,9 +27,9 @@ module minerva.text {
             text: ""
         };
 
-        private $$textlayout: text.TextLayoutDef;
+        private $$textlayout: ITextLayoutDef;
 
-        constructor() {
+        constructor () {
             this.init();
         }
 
@@ -39,10 +39,10 @@ module minerva.text {
 
         /////// PREPARE TEXT LAYOUT
 
-        setTextLayout (tldef?: text.TextLayoutDef): TextUpdater {
+        setTextLayout (tldef?: ITextLayoutDef): TextUpdater {
             if (this.$$textlayout)
                 return this;
-            this.$$textlayout = tldef || new text.TextLayoutDef();
+            this.$$textlayout = tldef || new run.RunLayoutDef();
             return this;
         }
 

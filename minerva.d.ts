@@ -3010,18 +3010,8 @@ declare module minerva.text {
         isUnderlined: boolean;
         font: Font;
     }
-    interface ITextLayoutPass {
-        text: string;
-        index: number;
-        max: number;
-    }
-    class TextLayoutDef {
-        public layout(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): boolean;
-        public doLayoutNoWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
-        public doLayoutWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
-        public advanceInfinite(run: layout.Run, pass: ITextLayoutPass, font: Font): boolean;
-        public advanceFinite(run: layout.Run, pass: ITextLayoutPass, font: Font, maxWidth: number): boolean;
-        public measureTextWidth(text: string, font: Font): number;
+    interface ITextLayoutDef {
+        layout(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): any;
     }
 }
 declare module minerva.text {
@@ -3039,7 +3029,7 @@ declare module minerva.text {
         private $$textlayout;
         constructor();
         public init(): void;
-        public setTextLayout(tldef?: TextLayoutDef): TextUpdater;
+        public setTextLayout(tldef?: ITextLayoutDef): TextUpdater;
         public layout(docctx: IDocumentContext, docassets: IDocumentAssets): number;
         public invalidateFont(): boolean;
     }
@@ -3074,4 +3064,15 @@ declare module minerva.text.layout {
         public post: Cluster;
         static splitSelection(run: Run, start: number, end: number, measureWidth: (text: string, assets: ITextAssets) => number): void;
     }
+}
+declare module minerva.text.run {
+    class RunLayoutDef implements ITextLayoutDef {
+        public layout(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): boolean;
+    }
+}
+declare module minerva.text.run {
+    function doLayoutNoWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
+}
+declare module minerva.text.run {
+    function doLayoutWrap(docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets): void;
 }
