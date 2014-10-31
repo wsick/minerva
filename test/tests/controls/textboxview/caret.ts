@@ -65,4 +65,21 @@ module minerva.controls.textboxview.caret.tests {
         upd.assets.selectionStart = 0;
         assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, 19));
     });
+
+    QUnit.test("getCaretFromCursor - Line Breaks", (assert) => {
+        var upd = mock.updater();
+        upd.assets.textWrapping = TextWrapping.Wrap;
+        var textupd = mock.textUpdater();
+        upd.tree.onTextAttached(textupd);
+
+        textupd.assets.text = "Welcome to Fayde\nThis is the next line.\nHere is the last line.";
+        upd.invalidateTextMetrics();
+        upd.tree.layout(new Size(150, 100), upd.assets);
+
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, 19));
+        upd.assets.selectionStart = 17;
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 19, 1, 19));
+        upd.assets.selectionStart = 20;
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(mock.measure("Thi", textupd.assets.font, true), 19, 1, 19));
+    });
 }

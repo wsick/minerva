@@ -13306,28 +13306,31 @@ var minerva;
             };
 
             DocumentLayoutDef.prototype.getCursorFromPoint = function (point, docctx, docassets) {
-                if (point.y < 0)
-                    return 0;
-                var advance = 0;
-                var line;
-                for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
-                    line = lines[i];
-                    if (point.y <= (cury + line.height))
-                        break;
-                    advance += line.runs.reduce(function (agg, r) {
-                        return agg + r.length;
-                    }, 0);
-                    cury += line.height;
-                }
+                var line = docassets.lines[0];
                 if (!line)
-                    return advance;
+                    return 0;
+
+                var advance = 0;
+                if (point.y > 0) {
+                    for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
+                        line = lines[i];
+                        if (point.y <= (cury + line.height))
+                            break;
+                        advance += line.runs.reduce(function (agg, r) {
+                            return agg + r.length;
+                        }, 0);
+                        cury += line.height;
+                    }
+                }
 
                 var px = point.x - this.getHorizontalAlignmentX(docctx, docassets, line.width);
                 if (px < 0)
                     return advance;
+
                 var curx = 0;
+                var run;
                 for (var runs = line.runs, i = 0, len = runs.length; i < len; i++) {
-                    var run = runs[i];
+                    run = runs[i];
                     if (px <= (curx + run.width))
                         break;
                     advance += run.length;
@@ -13370,6 +13373,7 @@ var minerva;
                             cr.x += this.measureTextWidth(run.text.substr(0, cursor - advance), run.attrs.font);
                             return cr;
                         }
+                        advance += run.length;
                         cr.x += line.width;
                     }
                     cr.y += line.height;
@@ -13384,12 +13388,12 @@ var minerva;
                 if (assets.selCached)
                     return;
                 var start = docctx.selectionStart;
-                var end = start + docctx.selectionLength;
                 assets.lines.forEach(function (line) {
                     return line.runs.forEach(function (run) {
-                        return _text.layout.Run.splitSelection(run, start, end, function (text, attrs) {
+                        _text.layout.Run.splitSelection(run, start, start + docctx.selectionLength, function (text, attrs) {
                             return _this.measureTextWidth(text, attrs.font);
                         });
+                        start -= run.length;
                     });
                 });
                 assets.selCached = true;
