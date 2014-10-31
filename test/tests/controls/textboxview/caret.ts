@@ -42,6 +42,9 @@ module minerva.controls.textboxview.caret.tests {
         assert.strictEqual(upd.getCursorFromPoint(new Point(0, 0)), 0);
         assert.strictEqual(upd.getCursorFromPoint(new Point(0, 20)), 5);
         assert.strictEqual(upd.getCursorFromPoint(new Point(0, 40)), 11);
+        assert.strictEqual(upd.getCursorFromPoint(new Point(60, 0)), 5);
+        assert.strictEqual(upd.getCursorFromPoint(new Point(60, 20)), 11);
+        assert.strictEqual(upd.getCursorFromPoint(new Point(60, 40)), 17);
     });
 
     QUnit.test("getCaretFromCursor", (assert) => {

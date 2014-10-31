@@ -27,7 +27,7 @@ module minerva.text {
     }
 
     export class DocumentLayoutDef implements IDocumentLayoutDef {
-        createAssets (): IDocumentAssets {
+        createAssets(): IDocumentAssets {
             return {
                 availableWidth: Number.POSITIVE_INFINITY,
                 actualWidth: NaN,
@@ -39,7 +39,7 @@ module minerva.text {
             };
         }
 
-        layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean {
+        layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean {
             if (!isNaN(docassets.actualWidth))
                 return false;
             docassets.maxWidth = constraint.width;
@@ -53,7 +53,7 @@ module minerva.text {
             return true;
         }
 
-        render (ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets) {
+        render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets) {
             this.splitSelection(docctx, docassets);
 
             ctx.save();
@@ -79,7 +79,7 @@ module minerva.text {
             ctx.restore();
         }
 
-        getCursorFromPoint (point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number {
+        getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number {
             var line = docassets.lines[0];
             if (!line)
                 return 0;
@@ -102,19 +102,20 @@ module minerva.text {
 
             //NOTE: Find run that contains point
             var curx = 0;
-            var run: layout.Run;
-            for (var runs = line.runs, i = 0, len = runs.length; i < len; i++) {
-                run = runs[i];
+            var i = 0;
+            for (var runs = line.runs, len = runs.length; i < len; i++) {
+                var run = runs[i];
                 if (px <= (curx + run.width))
                     break;
                 advance += run.length;
                 curx += run.width;
             }
+            var run = runs[i];
             if (!run)
                 return advance;
 
             //NOTE: Guess at cursor
-            var end = Math.max(0, Math.ceil(px / run.width * run.text.length));
+            var end = Math.max(0, Math.min(run.text.length, Math.ceil((px - curx) / run.width * run.text.length)));
             var usedText = run.text.substr(0, end);
             //NOTE: Move backward if width is right of point
             var width: number;
@@ -133,7 +134,7 @@ module minerva.text {
             return advance + lastEnd;
         }
 
-        getCaretFromCursor (docctx: IDocumentContext, docassets: IDocumentAssets): Rect {
+        getCaretFromCursor(docctx: IDocumentContext, docassets: IDocumentAssets): Rect {
             var cursor = docctx.selectionStart;
             var advance = 0;
             var cr = new Rect(0, 0, 1, 0);
@@ -158,7 +159,7 @@ module minerva.text {
             return cr;
         }
 
-        splitSelection (docctx: IDocumentContext, assets: IDocumentAssets) {
+        splitSelection(docctx: IDocumentContext, assets: IDocumentAssets) {
             if (assets.selCached)
                 return;
             var start = docctx.selectionStart;
@@ -170,7 +171,7 @@ module minerva.text {
             assets.selCached = true;
         }
 
-        getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number {
+        getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number {
             if (docctx.textAlignment === TextAlignment.Left || docctx.textAlignment === TextAlignment.Justify)
                 return 0;
             var width = getWidthConstraint(assets);
@@ -181,12 +182,12 @@ module minerva.text {
             return width - lineWidth;
         }
 
-        measureTextWidth (text: string, font: Font): number {
+        measureTextWidth(text: string, font: Font): number {
             return engine.Surface.measureWidth(text, font);
         }
     }
 
-    function getWidthConstraint (assets: IDocumentAssets): number {
+    function getWidthConstraint(assets: IDocumentAssets): number {
         if (isFinite(assets.availableWidth))
             return assets.availableWidth;
         if (!isFinite(assets.maxWidth))

@@ -13328,18 +13328,19 @@ var minerva;
                     return advance;
 
                 var curx = 0;
-                var run;
-                for (var runs = line.runs, i = 0, len = runs.length; i < len; i++) {
-                    run = runs[i];
+                var i = 0;
+                for (var runs = line.runs, len = runs.length; i < len; i++) {
+                    var run = runs[i];
                     if (px <= (curx + run.width))
                         break;
                     advance += run.length;
                     curx += run.width;
                 }
+                var run = runs[i];
                 if (!run)
                     return advance;
 
-                var end = Math.max(0, Math.ceil(px / run.width * run.text.length));
+                var end = Math.max(0, Math.min(run.text.length, Math.ceil((px - curx) / run.width * run.text.length)));
                 var usedText = run.text.substr(0, end);
 
                 var width;
