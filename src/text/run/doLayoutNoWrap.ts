@@ -1,48 +1,86 @@
 module minerva.text.run {
-    export function doLayoutNoWrap (docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets) {
-        var text = assets.text;
+    interface IRunLayoutPass {
+        text: string;
+        index: number;
+        max: number;
+    }
 
-        var usedText = text;
-        var end = text.length;
-        var width: number;
-        //NOTE: Guess at clip point
-        if ((width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-            end = (Math.ceil(docassets.maxWidth / width * text.length)) || 0;
-            usedText = text.substr(0, end);
-        }
-        //NOTE: Move backward if still need to clip
-        while (end > 0 && (width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-            end--;
-            usedText = text.substr(0, end);
-        }
-        //NOTE: Move forward if not clipping remaining characters
-        while (end < text.length && (width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-            end++;
-            usedText = text.substr(0, end);
-        }
-        //NOTE: Include clipped character
-        if ((end + 1) < text.length) {
-            end++;
-            usedText += text[end + 1];
-            width = measureTextWidth(usedText, assets.font);
-        }
+    export function doLayoutNoWrap (docctx: IDocumentContext, docassets: IDocumentAssets, assets: ITextAssets) {
+        var pass: IRunLayoutPass = {
+            text: assets.text,
+            index: 0,
+            max: assets.text.length
+        };
+
+        var font = assets.font;
 
         var line = new layout.Line();
-        line.height = assets.font.getHeight();
+        line.height = font.getHeight();
+        docassets.actualHeight += line.height;
         docassets.lines.push(line);
 
         var run = new layout.Run();
         run.attrs = assets;
-        run.text = usedText;
-        run.start = 0;
-        run.length = end;
-        run.width = width;
-
-        line.width = run.width;
         line.runs.push(run);
 
-        docassets.actualWidth = line.width;
-        docassets.actualHeight = line.height;
+        while (pass.index < pass.max) {
+            var hitbreak = advance(run, pass, font);
+            if (hitbreak) {
+                docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
+                line.width = run.width;
+                line = new layout.Line();
+                line.height = font.getHeight();
+                docassets.actualHeight += line.height;
+                docassets.lines.push(line);
+
+                run = new layout.Run();
+                run.attrs = assets;
+                line.runs.push(run);
+            }
+        }
+        line.width = run.width;
+        docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
+    }
+
+    function advance (run: layout.Run, pass: IRunLayoutPass, font: Font): boolean {
+        //NOTE: Returning true implies a new line is necessary
+        var remaining = pass.text.substr(pass.index);
+        var rindex = remaining.indexOf('\r');
+        var nindex = remaining.indexOf('\n');
+
+        if (rindex < 0 && nindex < 0) {
+            //Didn't find \r or \n
+            run.length = remaining.length;
+            run.text = remaining;
+            run.width = measureTextWidth(run.text, font);
+            pass.index += run.length;
+            return false;
+        }
+
+        if (rindex > -1 && rindex + 1 === nindex) {
+            //Found \r\n
+            run.length = nindex + 1;
+            run.text = remaining.substr(0, run.length);
+            run.width = measureTextWidth(run.text, font);
+            pass.index += run.length;
+            return true;
+        }
+
+        if (rindex > -1 && rindex < nindex) {
+            //Found \r before \n, but not back-to-back
+            run.length = rindex + 1;
+            run.text = remaining.substr(0, run.length);
+            run.width = measureTextWidth(run.text, font);
+            pass.index += run.length;
+            return true;
+        }
+
+        //Found \n (potentially before \r, don't care)
+        run.length = nindex + 1;
+        run.text = remaining.substr(0, run.length);
+        run.width = measureTextWidth(run.text, font);
+        pass.index += run.length;
+        return true;
     }
 
     function measureTextWidth (text: string, font: Font): number {

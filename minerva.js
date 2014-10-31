@@ -13665,51 +13665,78 @@ var minerva;
     (function (_text) {
         (function (_run) {
             function doLayoutNoWrap(docctx, docassets, assets) {
-                var text = assets.text;
+                var pass = {
+                    text: assets.text,
+                    index: 0,
+                    max: assets.text.length
+                };
 
-                var usedText = text;
-                var end = text.length;
-                var width;
-
-                if ((width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-                    end = (Math.ceil(docassets.maxWidth / width * text.length)) || 0;
-                    usedText = text.substr(0, end);
-                }
-
-                while (end > 0 && (width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-                    end--;
-                    usedText = text.substr(0, end);
-                }
-
-                while (end < text.length && (width = measureTextWidth(usedText, assets.font)) > docassets.maxWidth) {
-                    end++;
-                    usedText = text.substr(0, end);
-                }
-
-                if ((end + 1) < text.length) {
-                    end++;
-                    usedText += text[end + 1];
-                    width = measureTextWidth(usedText, assets.font);
-                }
+                var font = assets.font;
 
                 var line = new _text.layout.Line();
-                line.height = assets.font.getHeight();
+                line.height = font.getHeight();
+                docassets.actualHeight += line.height;
                 docassets.lines.push(line);
 
                 var run = new _text.layout.Run();
                 run.attrs = assets;
-                run.text = usedText;
-                run.start = 0;
-                run.length = end;
-                run.width = width;
-
-                line.width = run.width;
                 line.runs.push(run);
 
-                docassets.actualWidth = line.width;
-                docassets.actualHeight = line.height;
+                while (pass.index < pass.max) {
+                    var hitbreak = advance(run, pass, font);
+                    if (hitbreak) {
+                        docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
+                        line.width = run.width;
+                        line = new _text.layout.Line();
+                        line.height = font.getHeight();
+                        docassets.actualHeight += line.height;
+                        docassets.lines.push(line);
+
+                        run = new _text.layout.Run();
+                        run.attrs = assets;
+                        line.runs.push(run);
+                    }
+                }
+                line.width = run.width;
+                docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
             }
             _run.doLayoutNoWrap = doLayoutNoWrap;
+
+            function advance(run, pass, font) {
+                var remaining = pass.text.substr(pass.index);
+                var rindex = remaining.indexOf('\r');
+                var nindex = remaining.indexOf('\n');
+
+                if (rindex < 0 && nindex < 0) {
+                    run.length = remaining.length;
+                    run.text = remaining;
+                    run.width = measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return false;
+                }
+
+                if (rindex > -1 && rindex + 1 === nindex) {
+                    run.length = nindex + 1;
+                    run.text = remaining.substr(0, run.length);
+                    run.width = measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return true;
+                }
+
+                if (rindex > -1 && rindex < nindex) {
+                    run.length = rindex + 1;
+                    run.text = remaining.substr(0, run.length);
+                    run.width = measureTextWidth(run.text, font);
+                    pass.index += run.length;
+                    return true;
+                }
+
+                run.length = nindex + 1;
+                run.text = remaining.substr(0, run.length);
+                run.width = measureTextWidth(run.text, font);
+                pass.index += run.length;
+                return true;
+            }
 
             function measureTextWidth(text, font) {
                 return minerva.engine.Surface.measureWidth(text, font);
