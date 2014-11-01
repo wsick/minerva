@@ -3,7 +3,7 @@ module minerva.controls.popup.processdown.tapins {
         if ((input.dirtyFlags & DirtyFlags.Transform) === 0)
             return true;
 
-        var child = tree.child;
+        var child = tree.popupChild;
         if (!child)
             return true;
 

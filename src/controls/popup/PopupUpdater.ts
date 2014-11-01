@@ -23,47 +23,50 @@ module minerva.controls.popup {
             super.init();
         }
 
-        setInitiator(initiator: core.Updater) {
+        setInitiator (initiator: core.Updater) {
             this.tree.initiatorSurface = initiator.tree.surface;
         }
 
-        setChild(child: core.Updater) {
-            var old = this.tree.child;
+        setChild (child: core.Updater) {
+            var old = this.tree.popupChild;
             if (old) {
-                this.hide();
                 old.assets.carrierProjection = null;
                 old.assets.carrierXform = null;
             }
-
-            this.tree.child = child;
+            this.tree.popupChild = child;
             if (child) {
                 child.assets.carrierXform = mat3.identity();
-                if (this.assets.isOpen)
-                    this.show();
             }
         }
 
+        setLayer (layer: core.Updater) {
+            this.hide();
+            this.tree.layer = layer;
+            if (this.assets.isOpen)
+                this.show();
+        }
+
         hide (): boolean {
-            var vchild = this.tree.visualChild;
-            if (!this.assets.isVisible || !vchild)
+            var layer = this.tree.layer;
+            if (!this.assets.isVisible || !layer)
                 return false;
             this.assets.isVisible = false;
             var surface = this.tree.initiatorSurface;
             if (!surface)
                 return false;
-            surface.detachLayer(vchild);
+            surface.detachLayer(layer);
             return true;
         }
 
         show (): boolean {
-            var vchild = this.tree.visualChild;
-            if (this.assets.isVisible || !vchild)
+            var layer = this.tree.layer;
+            if (this.assets.isVisible || !layer)
                 return false;
             this.assets.isVisible = true;
             var surface = this.tree.initiatorSurface;
             if (!surface)
                 return false;
-            surface.attachLayer(vchild);
+            surface.attachLayer(layer);
             return true;
         }
     }
@@ -75,28 +78,28 @@ module minerva.controls.popup {
 
         export function horizontalOffset (updater: PopupUpdater, oldValue: number, newValue: number) {
             var tree = updater.tree;
-            var child = tree.child;
+            var child = tree.popupChild;
             if (!child)
                 return;
             var tweenX = newValue - oldValue;
             if (tweenX === 0)
                 return;
             tweenOffset(child, tweenX, 0);
-            if (tree.visualChild)
-                tree.visualChild.invalidateMeasure();
+            if (tree.layer)
+                tree.layer.invalidateMeasure();
         }
 
         export function verticalOffset (updater: PopupUpdater, oldValue: number, newValue: number) {
             var tree = updater.tree;
-            var child = tree.child;
+            var child = tree.popupChild;
             if (!child)
                 return;
             var tweenY = newValue - oldValue;
             if (tweenY === 0)
                 return;
             tweenOffset(child, 0, tweenY);
-            if (tree.visualChild)
-                tree.visualChild.invalidateMeasure();
+            if (tree.layer)
+                tree.layer.invalidateMeasure();
         }
 
         function tweenOffset (child: core.Updater, tweenX: number, tweenY: number) {
