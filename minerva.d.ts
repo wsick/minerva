@@ -1659,6 +1659,7 @@ declare module minerva.controls.panel.render {
     interface IInput extends core.render.IInput, core.helpers.ISized {
         background: IBrush;
         compositeLayoutClip: Rect;
+        extents: Rect;
     }
     class PanelRenderPipeDef extends core.render.RenderPipeDef {
         constructor();

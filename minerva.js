@@ -6999,8 +6999,8 @@ var minerva;
                     var background = input.background;
                     if (!background || background.isTransparent())
                         return true;
-                    var renderRegion = state.renderRegion;
-                    if (minerva.Rect.isEmpty(renderRegion))
+                    var extents = input.extents;
+                    if (minerva.Rect.isEmpty(extents))
                         return true;
 
                     var raw = ctx.raw;
@@ -7012,8 +7012,8 @@ var minerva;
                     }
 
                     raw.beginPath();
-                    raw.rect(renderRegion.x, renderRegion.y, renderRegion.width, renderRegion.height);
-                    ctx.fillEx(background, renderRegion);
+                    raw.rect(extents.x, extents.y, extents.width, extents.height);
+                    ctx.fillEx(background, extents);
 
                     return true;
                 }
@@ -9364,7 +9364,6 @@ var minerva;
                 TextBoxViewUpdater.prototype.invalidateSelectionStart = function () {
                     this.tree.doc.assets.selCached = false;
                     this.invalidateCaretRegion();
-                    this.invalidate();
                     this.resetCaretBlinker(true);
                 };
 

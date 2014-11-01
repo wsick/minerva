@@ -2,6 +2,7 @@ module minerva.controls.panel.render {
     export interface IInput extends core.render.IInput, core.helpers.ISized {
         background: IBrush;
         compositeLayoutClip: Rect;
+        extents: Rect;
     }
 
     export class PanelRenderPipeDef extends core.render.RenderPipeDef {
@@ -15,8 +16,8 @@ module minerva.controls.panel.render {
         var background = input.background;
         if (!background || background.isTransparent())
             return true;
-        var renderRegion = state.renderRegion;
-        if (Rect.isEmpty(renderRegion))
+        var extents = input.extents;
+        if (Rect.isEmpty(extents))
             return true;
 
         var raw = ctx.raw;
@@ -28,8 +29,8 @@ module minerva.controls.panel.render {
         }
 
         raw.beginPath();
-        raw.rect(renderRegion.x, renderRegion.y, renderRegion.width, renderRegion.height);
-        ctx.fillEx(background, renderRegion);
+        raw.rect(extents.x, extents.y, extents.width, extents.height);
+        ctx.fillEx(background, extents);
 
         return true;
     }
