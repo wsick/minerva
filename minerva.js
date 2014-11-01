@@ -7055,6 +7055,7 @@ var minerva;
                         minerva.core.helpers.coerceSize(framework, input);
 
                         var raw = ctx.raw;
+                        raw.save();
 
                         for (var cols = input.columnDefinitions, i = 0, x = 0; i < cols.length; i++) {
                             x += cols[i].ActualWidth;
@@ -7073,6 +7074,8 @@ var minerva;
                             raw.lineTo(framework.width, y);
                             raw.stroke();
                         }
+
+                        raw.restore();
 
                         return true;
                     }
@@ -7951,42 +7954,45 @@ var minerva;
                 };
 
                 PopupUpdater.prototype.setChild = function (child) {
-                    var old = this.tree.child;
+                    var old = this.tree.popupChild;
                     if (old) {
-                        this.hide();
                         old.assets.carrierProjection = null;
                         old.assets.carrierXform = null;
                     }
-
-                    this.tree.child = child;
+                    this.tree.popupChild = child;
                     if (child) {
                         child.assets.carrierXform = mat3.identity();
-                        if (this.assets.isOpen)
-                            this.show();
                     }
                 };
 
+                PopupUpdater.prototype.setLayer = function (layer) {
+                    this.hide();
+                    this.tree.layer = layer;
+                    if (this.assets.isOpen)
+                        this.show();
+                };
+
                 PopupUpdater.prototype.hide = function () {
-                    var vchild = this.tree.visualChild;
-                    if (!this.assets.isVisible || !vchild)
+                    var layer = this.tree.layer;
+                    if (!this.assets.isVisible || !layer)
                         return false;
                     this.assets.isVisible = false;
                     var surface = this.tree.initiatorSurface;
                     if (!surface)
                         return false;
-                    surface.detachLayer(vchild);
+                    surface.detachLayer(layer);
                     return true;
                 };
 
                 PopupUpdater.prototype.show = function () {
-                    var vchild = this.tree.visualChild;
-                    if (this.assets.isVisible || !vchild)
+                    var layer = this.tree.layer;
+                    if (this.assets.isVisible || !layer)
                         return false;
                     this.assets.isVisible = true;
                     var surface = this.tree.initiatorSurface;
                     if (!surface)
                         return false;
-                    surface.attachLayer(vchild);
+                    surface.attachLayer(layer);
                     return true;
                 };
                 return PopupUpdater;
@@ -8001,29 +8007,29 @@ var minerva;
 
                 function horizontalOffset(updater, oldValue, newValue) {
                     var tree = updater.tree;
-                    var child = tree.child;
+                    var child = tree.popupChild;
                     if (!child)
                         return;
                     var tweenX = newValue - oldValue;
                     if (tweenX === 0)
                         return;
                     tweenOffset(child, tweenX, 0);
-                    if (tree.visualChild)
-                        tree.visualChild.invalidateMeasure();
+                    if (tree.layer)
+                        tree.layer.invalidateMeasure();
                 }
                 reactTo.horizontalOffset = horizontalOffset;
 
                 function verticalOffset(updater, oldValue, newValue) {
                     var tree = updater.tree;
-                    var child = tree.child;
+                    var child = tree.popupChild;
                     if (!child)
                         return;
                     var tweenY = newValue - oldValue;
                     if (tweenY === 0)
                         return;
                     tweenOffset(child, 0, tweenY);
-                    if (tree.visualChild)
-                        tree.visualChild.invalidateMeasure();
+                    if (tree.layer)
+                        tree.layer.invalidateMeasure();
                 }
                 reactTo.verticalOffset = verticalOffset;
 
@@ -8051,22 +8057,10 @@ var minerva;
                 __extends(PopupUpdaterTree, _super);
                 function PopupUpdaterTree() {
                     _super.apply(this, arguments);
-                    this.child = undefined;
-                    this.visualChild = undefined;
+                    this.popupChild = undefined;
+                    this.layer = undefined;
                     this.initiatorSurface = undefined;
                 }
-                PopupUpdaterTree.prototype.walk = function (direction) {
-                    var visited = false;
-                    var _this = this;
-                    return {
-                        current: undefined,
-                        step: function () {
-                            this.current = !visited ? _this.child : undefined;
-                            visited = true;
-                            return this.current !== undefined;
-                        }
-                    };
-                };
                 return PopupUpdaterTree;
             })(minerva.core.UpdaterTree);
             popup.PopupUpdaterTree = PopupUpdaterTree;
@@ -8135,7 +8129,7 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                             return true;
 
-                        var child = tree.child;
+                        var child = tree.popupChild;
                         if (!child)
                             return true;
 
@@ -8182,7 +8176,7 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                             return true;
 
-                        var child = tree.child;
+                        var child = tree.popupChild;
                         if (child) {
                             child.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                             minerva.core.Updater.$$addDownDirty(child);
@@ -12160,34 +12154,8 @@ var minerva;
                     tapins.calcNaturalBounds = calcNaturalBounds;
 
                     function doOverride(input, state, output, tree) {
-                        var sx;
-                        var sy;
-                        var nb = output.naturalBounds;
-                        var as = state.availableSize;
-                        switch (input.stretch) {
-                            case 0 /* None */:
-                                sx = sy = 0;
-                                break;
-                            default:
-                            case 1 /* Fill */:
-                                sx = as.width / nb.width;
-                                sy = as.height / nb.height;
-                                break;
-                            case 2 /* Uniform */:
-                                sx = sy = Math.min(as.width / nb.width, as.height / nb.height);
-                                break;
-                            case 3 /* UniformToFill */:
-                                sx = sy = Math.max(as.width / nb.width, as.height / nb.height);
-                                break;
-                        }
-
                         var ds = output.desiredSize;
-                        ds.width = (nb.width * sx) || 0;
-                        ds.height = (nb.height * sy) || 0;
-
-                        if (!isFinite(ds.width) || !isFinite(ds.height))
-                            ds.width = ds.height = 0;
-
+                        ds.width = ds.height = 0;
                         return true;
                     }
                     tapins.doOverride = doOverride;

@@ -41,34 +41,8 @@ module minerva.shapes.shape.measure {
         }
 
         export function doOverride (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
-            var sx: number;
-            var sy: number;
-            var nb = output.naturalBounds;
-            var as = state.availableSize;
-            switch (input.stretch) {
-                case Stretch.None:
-                    sx = sy = 0;
-                    break;
-                default:
-                case Stretch.Fill:
-                    sx = as.width / nb.width;
-                    sy = as.height / nb.height;
-                    break;
-                case Stretch.Uniform:
-                    sx = sy = Math.min(as.width / nb.width, as.height / nb.height);
-                    break;
-                case Stretch.UniformToFill:
-                    sx = sy = Math.max(as.width / nb.width, as.height / nb.height);
-                    break;
-            }
-
             var ds = output.desiredSize;
-            ds.width = (nb.width * sx) || 0;
-            ds.height = (nb.height * sy) || 0;
-
-            if (!isFinite(ds.width) || !isFinite(ds.height))
-                ds.width = ds.height = 0;
-
+            ds.width = ds.height = 0;
             return true;
         }
     }

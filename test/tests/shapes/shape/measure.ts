@@ -63,14 +63,14 @@ module minerva.shapes.shape.measure.tests {
         input.stretch = Stretch.Fill;
         state.availableSize = new Size(100, 150);
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(100, 150));
+        assert.deepEqual(output.desiredSize, new Size(0, 0));
 
         input.stretch = Stretch.Uniform;
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(100, 100));
+        assert.deepEqual(output.desiredSize, new Size(0, 0));
 
         input.stretch = Stretch.UniformToFill;
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(150, 150));
+        assert.deepEqual(output.desiredSize, new Size(0, 0));
     });
 }
