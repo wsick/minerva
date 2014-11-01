@@ -36,6 +36,7 @@ module minerva.controls.grid.render {
             core.helpers.coerceSize(framework, input);
 
             var raw = ctx.raw;
+            raw.save();
 
             for (var cols = input.columnDefinitions, i = 0, x = 0; i < cols.length; i++) {
                 x += cols[i].ActualWidth;
@@ -54,6 +55,8 @@ module minerva.controls.grid.render {
                 raw.lineTo(framework.width, y);
                 raw.stroke();
             }
+
+            raw.restore();
 
             return true;
         }
