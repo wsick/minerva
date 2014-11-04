@@ -1130,6 +1130,7 @@ declare module minerva.core.render {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         surfaceBoundsWithChildren: Rect;
+        compositeLayoutClip: Rect;
         renderXform: number[];
         clip: IGeometry;
         effect: IEffect;
@@ -1162,6 +1163,9 @@ declare module minerva.core.render.tapins {
 }
 declare module minerva.core.render.tapins {
     var renderChildren: IRenderTapin;
+}
+declare module minerva.core.render.tapins {
+    function renderLayoutClip(input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect, tree: IUpdaterTree): boolean;
 }
 declare module minerva.core.render.tapins {
     var restoreContext: IRenderTapin;
@@ -1392,6 +1396,14 @@ declare module minerva.controls.canvas.measure {
 }
 declare module minerva.controls.canvas.measure.tapins {
     function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.canvas.processdown {
+    class CanvasProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
+        constructor();
+    }
+    module tapins {
+        function processLayoutClip(input: core.processdown.IInput, state: core.processdown.IState, output: core.processdown.IOutput, vpinput: core.processdown.IInput, tree: core.IUpdaterTree): boolean;
+    }
 }
 declare module minerva.controls.canvas.processup {
     interface IInput extends core.processup.IInput {
@@ -2302,6 +2314,14 @@ declare module minerva.controls.usercontrol.measure.tapins {
 }
 declare module minerva.controls.usercontrol.measure.tapins {
     function preOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.usercontrol.processdown {
+    class UserControlProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
+        constructor();
+    }
+    module tapins {
+        function processLayoutClip(input: core.processdown.IInput, state: core.processdown.IState, output: core.processdown.IOutput, vpinput: core.processdown.IInput, tree: core.IUpdaterTree): boolean;
+    }
 }
 declare module minerva.controls.virtualizingpanel {
     class VirtualizingPanelUpdater extends panel.PanelUpdater {

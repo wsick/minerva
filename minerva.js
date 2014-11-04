@@ -4662,7 +4662,7 @@ var minerva;
                 __extends(RenderPipeDef, _super);
                 function RenderPipeDef() {
                     _super.call(this);
-                    this.addTapin('validate', render.tapins.validate).addTapin('validateRegion', render.tapins.validateRegion).addTapin('prepareContext', render.tapins.prepareContext).addTapin('applyClip', render.tapins.applyClip).addTapin('preRender', render.tapins.preRender).addTapin('doRender', render.tapins.doRender).addTapin('postRender', render.tapins.postRender).addTapin('renderChildren', render.tapins.renderChildren).addTapin('restoreContext', render.tapins.restoreContext);
+                    this.addTapin('validate', render.tapins.validate).addTapin('validateRegion', render.tapins.validateRegion).addTapin('prepareContext', render.tapins.prepareContext).addTapin('applyClip', render.tapins.applyClip).addTapin('preRender', render.tapins.preRender).addTapin('renderLayoutClip', render.tapins.renderLayoutClip).addTapin('doRender', render.tapins.doRender).addTapin('postRender', render.tapins.postRender).addTapin('renderChildren', render.tapins.renderChildren).addTapin('restoreContext', render.tapins.restoreContext);
                 }
                 RenderPipeDef.prototype.createState = function () {
                     return {
@@ -4783,6 +4783,25 @@ var minerva;
                     }
                     return true;
                 };
+            })(render.tapins || (render.tapins = {}));
+            var tapins = render.tapins;
+        })(core.render || (core.render = {}));
+        var render = core.render;
+    })(minerva.core || (minerva.core = {}));
+    var core = minerva.core;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (core) {
+        (function (render) {
+            (function (tapins) {
+                function renderLayoutClip(input, state, output, ctx, region, tree) {
+                    if (minerva.Rect.isEmpty(input.compositeLayoutClip))
+                        return true;
+                    ctx.clipRect(input.compositeLayoutClip);
+                    return true;
+                }
+                tapins.renderLayoutClip = renderLayoutClip;
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
         })(core.render || (core.render = {}));
@@ -5507,7 +5526,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 CanvasUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(canvas.measure.CanvasMeasurePipeDef)).setArrangePipe(minerva.singleton(canvas.arrange.CanvasArrangePipeDef)).setProcessUpPipe(minerva.singleton(canvas.processup.CanvasProcessUpPipeDef));
+                    this.setMeasurePipe(minerva.singleton(canvas.measure.CanvasMeasurePipeDef)).setArrangePipe(minerva.singleton(canvas.arrange.CanvasArrangePipeDef)).setProcessDownPipe(minerva.singleton(canvas.processdown.CanvasProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(canvas.processup.CanvasProcessUpPipeDef));
                     _super.prototype.init.call(this);
                 };
                 return CanvasUpdater;
@@ -5713,6 +5732,40 @@ var minerva;
                 var tapins = measure.tapins;
             })(canvas.measure || (canvas.measure = {}));
             var measure = canvas.measure;
+        })(controls.canvas || (controls.canvas = {}));
+        var canvas = controls.canvas;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (canvas) {
+            (function (processdown) {
+                var CanvasProcessDownPipeDef = (function (_super) {
+                    __extends(CanvasProcessDownPipeDef, _super);
+                    function CanvasProcessDownPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('processLayoutClip', tapins.processLayoutClip);
+                    }
+                    return CanvasProcessDownPipeDef;
+                })(minerva.core.processdown.ProcessDownPipeDef);
+                processdown.CanvasProcessDownPipeDef = CanvasProcessDownPipeDef;
+
+                (function (tapins) {
+                    function processLayoutClip(input, state, output, vpinput, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
+                            return true;
+
+                        var clc = input.compositeLayoutClip;
+                        clc.x = clc.y = clc.width = clc.height;
+                        return true;
+                    }
+                    tapins.processLayoutClip = processLayoutClip;
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(canvas.processdown || (canvas.processdown = {}));
+            var processdown = canvas.processdown;
         })(controls.canvas || (controls.canvas = {}));
         var canvas = controls.canvas;
     })(minerva.controls || (minerva.controls = {}));
@@ -7764,10 +7817,8 @@ var minerva;
 
                         source.lock();
                         ctx.save();
-
                         ctx.pretransformMatrix(input.imgXform);
                         ctx.raw.drawImage(source.image, 0, 0);
-
                         ctx.restore();
                         source.unlock();
 
@@ -9652,10 +9703,7 @@ var minerva;
 
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
-                        ctx.save();
-
                         tree.render(ctx, input);
-                        ctx.restore();
                         return true;
                     }
                     tapins.doRender = doRender;
@@ -9710,7 +9758,7 @@ var minerva;
                     _super.apply(this, arguments);
                 }
                 UserControlUpdater.prototype.init = function () {
-                    this.setMeasurePipe(minerva.singleton(usercontrol.measure.UserControlMeasurePipeDef)).setArrangePipe(minerva.singleton(usercontrol.arrange.UserControlArrangePipeDef));
+                    this.setMeasurePipe(minerva.singleton(usercontrol.measure.UserControlMeasurePipeDef)).setArrangePipe(minerva.singleton(usercontrol.arrange.UserControlArrangePipeDef)).setProcessDownPipe(minerva.singleton(usercontrol.processdown.UserControlProcessDownPipeDef));
 
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();
@@ -9894,6 +9942,40 @@ var minerva;
                 var tapins = measure.tapins;
             })(usercontrol.measure || (usercontrol.measure = {}));
             var measure = usercontrol.measure;
+        })(controls.usercontrol || (controls.usercontrol = {}));
+        var usercontrol = controls.usercontrol;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (usercontrol) {
+            (function (processdown) {
+                var UserControlProcessDownPipeDef = (function (_super) {
+                    __extends(UserControlProcessDownPipeDef, _super);
+                    function UserControlProcessDownPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('processLayoutClip', tapins.processLayoutClip);
+                    }
+                    return UserControlProcessDownPipeDef;
+                })(minerva.core.processdown.ProcessDownPipeDef);
+                processdown.UserControlProcessDownPipeDef = UserControlProcessDownPipeDef;
+
+                (function (tapins) {
+                    function processLayoutClip(input, state, output, vpinput, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
+                            return true;
+
+                        var clc = input.compositeLayoutClip;
+                        clc.x = clc.y = clc.width = clc.height;
+                        return true;
+                    }
+                    tapins.processLayoutClip = processLayoutClip;
+                })(processdown.tapins || (processdown.tapins = {}));
+                var tapins = processdown.tapins;
+            })(usercontrol.processdown || (usercontrol.processdown = {}));
+            var processdown = usercontrol.processdown;
         })(controls.usercontrol || (controls.usercontrol = {}));
         var usercontrol = controls.usercontrol;
     })(minerva.controls || (minerva.controls = {}));

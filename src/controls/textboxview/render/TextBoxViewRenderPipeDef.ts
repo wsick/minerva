@@ -35,10 +35,7 @@ module minerva.controls.textboxview.render {
 
     export module tapins {
         export function doRender (input: IInput, state: core.render.IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: TextBoxViewUpdaterTree): boolean {
-            ctx.save();
-            //TODO: Render layout clip
             tree.render(ctx, input);
-            ctx.restore();
             return true;
         }
 

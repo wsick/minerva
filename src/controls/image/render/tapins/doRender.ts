@@ -6,15 +6,8 @@ module minerva.controls.image.render.tapins {
 
         source.lock();
         ctx.save();
-
-        //TODO: RenderLayoutClip
-        /*
-        if (this.CompositeLayoutClip || input.overlap !== RectOverlap.In)
-            this.RenderLayoutClip(ctx);
-        */
         ctx.pretransformMatrix(input.imgXform);
         ctx.raw.drawImage(source.image, 0, 0);
-
         ctx.restore();
         source.unlock();
 

@@ -6,6 +6,7 @@ module minerva.core.render {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         surfaceBoundsWithChildren: Rect;
+        compositeLayoutClip: Rect;
         renderXform: number[];
         clip: IGeometry;
         effect: IEffect;
@@ -25,6 +26,7 @@ module minerva.core.render {
                 .addTapin('prepareContext', tapins.prepareContext)
                 .addTapin('applyClip', tapins.applyClip)
                 .addTapin('preRender', tapins.preRender)
+                .addTapin('renderLayoutClip', tapins.renderLayoutClip)
                 .addTapin('doRender', tapins.doRender)
                 .addTapin('postRender', tapins.postRender)
                 .addTapin('renderChildren', tapins.renderChildren)
@@ -38,8 +40,7 @@ module minerva.core.render {
         }
 
         createOutput (): IOutput {
-            return {
-            };
+            return {};
         }
     }
 }
