@@ -7,10 +7,8 @@ module minerva.controls.usercontrol {
 
         init () {
             this.setMeasurePipe(singleton(measure.UserControlMeasurePipeDef))
-                .setArrangePipe(singleton(arrange.UserControlArrangePipeDef));
-
-            //TODO: Use for layout clip rendering
-            //this.BreaksLayoutClipRender = true;
+                .setArrangePipe(singleton(arrange.UserControlArrangePipeDef))
+                .setProcessDownPipe(singleton(processdown.UserControlProcessDownPipeDef));
 
             var assets = this.assets;
             assets.padding = new Thickness();

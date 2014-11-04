@@ -10,6 +10,7 @@ module minerva.controls.canvas {
         init() {
             this.setMeasurePipe(singleton(measure.CanvasMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.CanvasArrangePipeDef))
+                .setProcessDownPipe(singleton(processdown.CanvasProcessDownPipeDef))
                 .setProcessUpPipe(singleton(processup.CanvasProcessUpPipeDef));
             super.init();
         }
