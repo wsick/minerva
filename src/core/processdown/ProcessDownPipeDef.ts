@@ -33,6 +33,7 @@ module minerva.core.processdown {
         localXform: number[];
         renderAsProjection: number[];
         subtreeDownDirty: DirtyFlags;
+        needsLayoutClipShift: boolean;
     }
     export interface IOutput extends pipe.IPipeOutput {
         totalIsRenderVisible: boolean;
@@ -63,6 +64,7 @@ module minerva.core.processdown {
                 .addTapin('calcAbsoluteProjection', tapins.calcAbsoluteProjection)
                 .addTapin('processXform', tapins.processXform)
                 .addTapin('processLayoutClip', tapins.processLayoutClip)
+                .addTapin('shiftLayoutClip', tapins.shiftLayoutClip)
                 .addTapin('propagateDirtyToChildren', tapins.propagateDirtyToChildren);
         }
 
@@ -71,7 +73,8 @@ module minerva.core.processdown {
                 xformOrigin: new Point(),
                 localXform: mat3.identity(),
                 renderAsProjection: mat4.identity(),
-                subtreeDownDirty: 0
+                subtreeDownDirty: 0,
+                needsLayoutClipShift: false
             };
         }
 
@@ -108,6 +111,7 @@ module minerva.core.processdown {
             mat4.set(input.absoluteProjection, output.absoluteProjection);
             output.totalHasRenderProjection = input.totalHasRenderProjection;
             state.subtreeDownDirty = 0;
+            state.needsLayoutClipShift = false;
         }
 
         flush (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree) {

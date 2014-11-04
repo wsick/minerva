@@ -11,6 +11,8 @@ module minerva.core.processdown.tapins {
         mat3.multiply(rx, state.localXform, rx); //render = local * render
         mat3.toAffineMat4(rx, state.renderAsProjection);
 
+        state.needsLayoutClipShift = true;
+
         return true;
     };
 }

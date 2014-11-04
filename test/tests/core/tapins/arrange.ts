@@ -266,14 +266,21 @@ module minerva.core.arrange.tapins.tests {
         var output = mock.output();
         var tree = mock.tree();
 
+        output.layoutClip = new Rect(0, 0, 0, 0);
+
+        tree.isTop = true;
+        assert.ok(tapins.buildLayoutClip(input, state, output, tree, new Rect()));
+        assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
+
+        tree.isTop = false;
+        tree.isContainer = true;
         state.visualOffset = new Point(5, 15);
         state.finalRect = new Rect(5, 15, 200, 300);
         state.arrangedSize = new Size(100, 100);
+        input.layoutClip = new Rect(0, 0, 0, 0);
         assert.ok(tapins.buildLayoutClip(input, state, output, tree, new Rect()));
-        assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
-        assert.notStrictEqual(output.dirtyFlags & DirtyFlags.LayoutClip, DirtyFlags.LayoutClip);
-
-        //TODO: Test layoutClip in panel arrange
+        assert.deepEqual(output.layoutClip, new Rect(5, 15, 100, 100));
+        assert.strictEqual(output.dirtyFlags & DirtyFlags.LayoutClip, DirtyFlags.LayoutClip);
     });
 
     QUnit.test("buildLayoutXform", (assert) => {

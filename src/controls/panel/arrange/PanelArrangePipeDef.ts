@@ -9,8 +9,7 @@ module minerva.controls.panel.arrange {
     export class PanelArrangePipeDef extends core.arrange.ArrangePipeDef {
         constructor () {
             super();
-            this.replaceTapin('doOverride', tapins.doOverride)
-                .replaceTapin('buildLayoutClip', tapins.buildLayoutClip);
+            this.replaceTapin('doOverride', tapins.doOverride);
         }
     }
 }

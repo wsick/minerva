@@ -958,6 +958,7 @@ declare module minerva.core.processdown {
         localXform: number[];
         renderAsProjection: number[];
         subtreeDownDirty: DirtyFlags;
+        needsLayoutClipShift: boolean;
     }
     interface IOutput extends pipe.IPipeOutput {
         totalIsRenderVisible: boolean;
@@ -1016,6 +1017,9 @@ declare module minerva.core.processdown.tapins {
 }
 declare module minerva.core.processdown.tapins {
     var propagateDirtyToChildren: IProcessDownTapin;
+}
+declare module minerva.core.processdown.tapins {
+    var shiftLayoutClip: IProcessDownTapin;
 }
 declare module minerva.core.processup {
     interface IProcessUpTapin extends pipe.ITriTapin {
@@ -1847,9 +1851,6 @@ declare module minerva.controls.panel {
         public onChildAttached(child: core.Updater): void;
         public onChildDetached(child: core.Updater): void;
     }
-}
-declare module minerva.controls.panel.arrange.tapins {
-    function buildLayoutClip(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.panel.arrange.tapins {
     function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
