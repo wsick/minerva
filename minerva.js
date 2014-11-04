@@ -2726,40 +2726,9 @@ var minerva;
     (function (core) {
         (function (arrange) {
             (function (tapins) {
-                var testRect = new minerva.Rect();
-                var fwClip = new minerva.Rect();
                 tapins.buildLayoutClip = function (input, state, output, tree, finalRect) {
-                    if (tree.isTop)
-                        return true;
-
-                    var layoutClip = output.layoutClip;
-                    var vo = state.visualOffset;
-
-                    minerva.Rect.copyTo(state.finalRect, output.layoutClip);
-                    layoutClip.x = Math.max(layoutClip.x - vo.x, 0);
-                    layoutClip.y = Math.max(layoutClip.y - vo.y, 0);
-
-                    if (input.useLayoutRounding) {
-                        layoutClip.x = Math.round(layoutClip.x);
-                        layoutClip.y = Math.round(layoutClip.y);
-                    }
-
-                    testRect.x = 0;
-                    testRect.y = 0;
-                    minerva.Size.copyTo(state.arrangedSize, testRect);
-                    if ((!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, state.arrangedSize)) && tree.isContainer) {
-                        fwClip.x = fwClip.y = 0;
-                        fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
-                        core.helpers.coerceSize(fwClip, input);
-                        minerva.Rect.intersection(layoutClip, fwClip);
-                    } else {
-                        layoutClip.x = layoutClip.y = layoutClip.width = layoutClip.height = 0;
-                    }
-
-                    if (!minerva.Rect.isEqual(output.layoutClip, input.layoutClip)) {
-                        output.dirtyFlags |= minerva.DirtyFlags.LayoutClip;
-                    }
-
+                    var lc = output.layoutClip;
+                    lc.x = lc.y = lc.width = lc.height = 0;
                     return true;
                 };
             })(arrange.tapins || (arrange.tapins = {}));
@@ -5584,24 +5553,11 @@ var minerva;
                     __extends(PanelArrangePipeDef, _super);
                     function PanelArrangePipeDef() {
                         _super.call(this);
-                        this.replaceTapin('doOverride', doOverride);
+                        this.replaceTapin('doOverride', arrange.tapins.doOverride).replaceTapin('buildLayoutClip', arrange.tapins.buildLayoutClip);
                     }
                     return PanelArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.PanelArrangePipeDef = PanelArrangePipeDef;
-
-                function doOverride(input, state, output, tree, finalRect) {
-                    var cr = state.childRect;
-                    cr.x = cr.y = 0;
-                    minerva.Size.copyTo(state.finalSize, cr);
-
-                    for (var walker = tree.walk(); walker.step();) {
-                        walker.current.arrange(cr);
-                    }
-
-                    minerva.Size.copyTo(state.finalSize, state.arrangedSize);
-                    return true;
-                }
             })(panel.arrange || (panel.arrange = {}));
             var arrange = panel.arrange;
         })(controls.panel || (controls.panel = {}));
@@ -7914,6 +7870,85 @@ var minerva;
                 var zi2 = upd2.getAttachedValue("Panel.ZIndex") || 0;
                 return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
             }
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (arrange) {
+                (function (tapins) {
+                    var testRect = new minerva.Rect();
+                    var fwClip = new minerva.Rect();
+
+                    function buildLayoutClip(input, state, output, tree, finalRect) {
+                        if (tree.isTop)
+                            return true;
+
+                        var layoutClip = output.layoutClip;
+                        var vo = state.visualOffset;
+
+                        minerva.Rect.copyTo(state.finalRect, output.layoutClip);
+                        layoutClip.x = Math.max(layoutClip.x - vo.x, 0);
+                        layoutClip.y = Math.max(layoutClip.y - vo.y, 0);
+
+                        if (input.useLayoutRounding) {
+                            layoutClip.x = Math.round(layoutClip.x);
+                            layoutClip.y = Math.round(layoutClip.y);
+                        }
+
+                        testRect.x = 0;
+                        testRect.y = 0;
+                        minerva.Size.copyTo(state.arrangedSize, testRect);
+                        if (!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, state.arrangedSize)) {
+                            fwClip.x = fwClip.y = 0;
+                            fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
+                            minerva.core.helpers.coerceSize(fwClip, input);
+                            minerva.Rect.intersection(layoutClip, fwClip);
+                        } else {
+                            layoutClip.x = layoutClip.y = layoutClip.width = layoutClip.height = 0;
+                        }
+
+                        if (!minerva.Rect.isEqual(output.layoutClip, input.layoutClip)) {
+                            output.dirtyFlags |= minerva.DirtyFlags.LayoutClip;
+                        }
+                    }
+                    tapins.buildLayoutClip = buildLayoutClip;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(panel.arrange || (panel.arrange = {}));
+            var arrange = panel.arrange;
+        })(controls.panel || (controls.panel = {}));
+        var panel = controls.panel;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (panel) {
+            (function (arrange) {
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        var cr = state.childRect;
+                        cr.x = cr.y = 0;
+                        minerva.Size.copyTo(state.finalSize, cr);
+
+                        for (var walker = tree.walk(); walker.step();) {
+                            walker.current.arrange(cr);
+                        }
+
+                        minerva.Size.copyTo(state.finalSize, state.arrangedSize);
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
+            })(panel.arrange || (panel.arrange = {}));
+            var arrange = panel.arrange;
         })(controls.panel || (controls.panel = {}));
         var panel = controls.panel;
     })(minerva.controls || (minerva.controls = {}));

@@ -1848,6 +1848,12 @@ declare module minerva.controls.panel {
         public onChildDetached(child: core.Updater): void;
     }
 }
+declare module minerva.controls.panel.arrange.tapins {
+    function buildLayoutClip(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.panel.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
 declare module minerva.controls.panel.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
         assets: IPanelUpdaterAssets;
