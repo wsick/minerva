@@ -1,7 +1,6 @@
 module minerva.core.arrange.tapins {
     var testRect = new Rect();
     var fwClip = new Rect();
-    //NOTE: Panels will change this so layout clip doesn't calculate at all
     export var buildLayoutClip: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree, finalRect: Rect): boolean {
         if (tree.isTop)
             return true;
@@ -21,7 +20,7 @@ module minerva.core.arrange.tapins {
         testRect.x = 0;
         testRect.y = 0;
         Size.copyTo(state.arrangedSize, testRect);
-        if (!Rect.isContainedIn(testRect, layoutClip) || !Size.isEqual(state.constrained, state.arrangedSize)) {
+        if ((!Rect.isContainedIn(testRect, layoutClip) || !Size.isEqual(state.constrained, state.arrangedSize)) && tree.isContainer) {
             fwClip.x = fwClip.y = 0;
             fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
             helpers.coerceSize(fwClip, input);

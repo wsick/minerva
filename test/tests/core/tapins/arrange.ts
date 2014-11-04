@@ -273,6 +273,7 @@ module minerva.core.arrange.tapins.tests {
         assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
 
         tree.isTop = false;
+        tree.isContainer = true;
         state.visualOffset = new Point(5, 15);
         state.finalRect = new Rect(5, 15, 200, 300);
         state.arrangedSize = new Size(100, 100);

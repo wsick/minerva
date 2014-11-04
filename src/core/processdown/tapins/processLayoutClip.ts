@@ -14,6 +14,11 @@ module minerva.core.processdown.tapins {
                 Rect.intersection(clc, lc);
         }
 
+        //NOTE: Put compositeLayoutClip in render coordinate space
+        if (!Rect.isEmpty(clc))
+            Rect.transform(clc, output.renderXform);
+
+
         if (!Rect.isEqual(input.compositeLayoutClip, output.compositeLayoutClip))
             state.subtreeDownDirty |= DirtyFlags.LayoutClip;
 

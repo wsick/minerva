@@ -2728,7 +2728,6 @@ var minerva;
             (function (tapins) {
                 var testRect = new minerva.Rect();
                 var fwClip = new minerva.Rect();
-
                 tapins.buildLayoutClip = function (input, state, output, tree, finalRect) {
                     if (tree.isTop)
                         return true;
@@ -2748,7 +2747,7 @@ var minerva;
                     testRect.x = 0;
                     testRect.y = 0;
                     minerva.Size.copyTo(state.arrangedSize, testRect);
-                    if (!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, state.arrangedSize)) {
+                    if ((!minerva.Rect.isContainedIn(testRect, layoutClip) || !minerva.Size.isEqual(state.constrained, state.arrangedSize)) && tree.isContainer) {
                         fwClip.x = fwClip.y = 0;
                         fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
                         core.helpers.coerceSize(fwClip, input);
@@ -3516,12 +3515,12 @@ var minerva;
                     if (data.hitChildren)
                         return true;
 
-                    var layoutClip = data.assets.layoutClip;
-                    if (!layoutClip || minerva.Rect.isEmpty(layoutClip))
+                    var clc = data.assets.compositeLayoutClip;
+                    if (!clc || minerva.Rect.isEmpty(clc))
                         return true;
 
                     var lcbounds = data.layoutClipBounds;
-                    minerva.Rect.copyTo(layoutClip, lcbounds);
+                    minerva.Rect.copyTo(clc, lcbounds);
                     minerva.Rect.transform(lcbounds, ctx.currentTransform);
 
                     if (!minerva.Rect.containsPoint(lcbounds, pos)) {
@@ -4109,6 +4108,9 @@ var minerva;
                         if (!minerva.Rect.isEmpty(lc))
                             minerva.Rect.intersection(clc, lc);
                     }
+
+                    if (!minerva.Rect.isEmpty(clc))
+                        minerva.Rect.transform(clc, output.renderXform);
 
                     if (!minerva.Rect.isEqual(input.compositeLayoutClip, output.compositeLayoutClip))
                         state.subtreeDownDirty |= minerva.DirtyFlags.LayoutClip;

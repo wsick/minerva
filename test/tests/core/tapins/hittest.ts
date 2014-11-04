@@ -245,7 +245,7 @@ module minerva.core.hittest.tapins.tests {
         };
 
         //Hit children
-        data.assets.layoutClip = null;
+        data.assets.compositeLayoutClip = null;
         data.hitChildren = true;
         assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
@@ -258,14 +258,14 @@ module minerva.core.hittest.tapins.tests {
         assert.strictEqual(restored, false);
 
         //Empty layout clip
-        var lc = data.assets.layoutClip = new Rect();
+        var clc = data.assets.compositeLayoutClip = new Rect();
         assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx, false));
         assert.strictEqual(hitList.length, 1);
         assert.strictEqual(restored, false);
 
         //Inside layout clip
-        lc.width = 50;
-        lc.height = 50;
+        clc.width = 50;
+        clc.height = 50;
         pos.x = 25;
         pos.y = 15;
         assert.ok(tapins.insideLayoutClip(data, pos, hitList, ctx, false));

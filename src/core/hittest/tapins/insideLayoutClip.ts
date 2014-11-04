@@ -3,14 +3,12 @@ module minerva.core.hittest.tapins {
         if (data.hitChildren)
             return true;
 
-        var layoutClip = data.assets.layoutClip;
-        if (!layoutClip || Rect.isEmpty(layoutClip))
+        var clc = data.assets.compositeLayoutClip;
+        if (!clc || Rect.isEmpty(clc))
             return true;
 
-        //TODO: Handle composite LayoutClip
-
         var lcbounds = data.layoutClipBounds;
-        Rect.copyTo(layoutClip, lcbounds);
+        Rect.copyTo(clc, lcbounds);
         Rect.transform(lcbounds, ctx.currentTransform);
 
         if (!Rect.containsPoint(lcbounds, pos)) {
