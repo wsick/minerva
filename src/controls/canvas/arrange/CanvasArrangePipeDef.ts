@@ -11,7 +11,8 @@ module minerva.controls.canvas.arrange {
     export class CanvasArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
         constructor () {
             super();
-            this.replaceTapin('doOverride', tapins.doOverride);
+            this.replaceTapin('doOverride', tapins.doOverride)
+                .replaceTapin('buildLayoutClip', tapins.buildLayoutClip);
         }
     }
 }

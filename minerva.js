@@ -5620,11 +5620,32 @@ var minerva;
                     __extends(CanvasArrangePipeDef, _super);
                     function CanvasArrangePipeDef() {
                         _super.call(this);
-                        this.replaceTapin('doOverride', arrange.tapins.doOverride);
+                        this.replaceTapin('doOverride', arrange.tapins.doOverride).replaceTapin('buildLayoutClip', arrange.tapins.buildLayoutClip);
                     }
                     return CanvasArrangePipeDef;
                 })(controls.panel.arrange.PanelArrangePipeDef);
                 arrange.CanvasArrangePipeDef = CanvasArrangePipeDef;
+            })(canvas.arrange || (canvas.arrange = {}));
+            var arrange = canvas.arrange;
+        })(controls.canvas || (controls.canvas = {}));
+        var canvas = controls.canvas;
+    })(minerva.controls || (minerva.controls = {}));
+    var controls = minerva.controls;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    (function (controls) {
+        (function (canvas) {
+            (function (arrange) {
+                (function (tapins) {
+                    function buildLayoutClip(input, state, output, tree, finalRect) {
+                        var lc = output.layoutClip;
+                        lc.x = lc.y = lc.width = lc.height = 0;
+                        return true;
+                    }
+                    tapins.buildLayoutClip = buildLayoutClip;
+                })(arrange.tapins || (arrange.tapins = {}));
+                var tapins = arrange.tapins;
             })(canvas.arrange || (canvas.arrange = {}));
             var arrange = canvas.arrange;
         })(controls.canvas || (controls.canvas = {}));

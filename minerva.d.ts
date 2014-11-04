@@ -1374,6 +1374,9 @@ declare module minerva.controls.canvas.arrange {
     }
 }
 declare module minerva.controls.canvas.arrange.tapins {
+    function buildLayoutClip(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.canvas.arrange.tapins {
     function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.panel.measure {
