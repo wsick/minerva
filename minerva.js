@@ -8536,11 +8536,8 @@ var minerva;
 
                         var sd = input.scrollData;
                         var ideal = state.idealSize;
-                        ideal.width = ideal.height = Number.POSITIVE_INFINITY;
-                        if (!sd.canHorizontallyScroll)
-                            ideal.width = state.availableSize.width;
-                        if (!sd.canVerticallyScroll)
-                            ideal.height = state.availableSize.height;
+                        ideal.width = !sd.canHorizontallyScroll ? state.availableSize.width : Number.POSITIVE_INFINITY;
+                        ideal.height = !sd.canVerticallyScroll ? state.availableSize.height : Number.POSITIVE_INFINITY;
 
                         tree.subtree.measure(ideal);
 
