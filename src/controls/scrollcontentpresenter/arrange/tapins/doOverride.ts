@@ -11,7 +11,7 @@ module minerva.controls.scrollcontentpresenter.arrange.tapins {
             sd.invalidate();
         }
 
-        var desired = input.desiredSize;
+        var desired = tree.subtree.assets.desiredSize;
 
         var cr = state.childRect;
         cr.x = -sd.offsetX;
