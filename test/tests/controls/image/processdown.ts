@@ -50,7 +50,6 @@ module minerva.controls.image.processdown.tests {
                 localXform: mat3.identity(),
                 renderAsProjection: mat4.identity(),
                 subtreeDownDirty: 0,
-                needsLayoutClipShift: false,
                 //IMAGE
                 imgRect: new Rect(),
                 paintRect: new Rect(),

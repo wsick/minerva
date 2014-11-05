@@ -2727,20 +2727,28 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 var testRect = new minerva.Rect();
-
+                var fwClip = new minerva.Rect();
                 tapins.buildLayoutClip = function (input, state, output, tree, finalRect) {
-                    minerva.Point.copyTo(state.visualOffset, testRect);
-                    minerva.Size.copyTo(state.arrangedSize, testRect);
-
                     var lc = output.layoutClip;
                     minerva.Rect.copyTo(state.finalRect, lc);
+
+                    var vo = state.visualOffset;
+                    lc.x = Math.max(lc.x - vo.x, 0);
+                    lc.y = Math.max(lc.y - vo.y, 0);
+
                     if (input.useLayoutRounding) {
                         lc.x = Math.round(lc.x);
                         lc.y = Math.round(lc.y);
                     }
 
-                    if ((!tree.isTop && !minerva.Rect.isContainedIn(testRect, lc)) || !minerva.Size.isEqual(state.constrained, state.arrangedSize)) {
-                        minerva.Rect.intersection(lc, testRect);
+                    testRect.x = testRect.y = 0;
+                    var as = state.arrangedSize;
+                    minerva.Size.copyTo(as, testRect);
+                    if ((!tree.isTop && !minerva.Rect.isContainedIn(testRect, lc)) || !minerva.Size.isEqual(state.constrained, as)) {
+                        fwClip.x = fwClip.y = 0;
+                        fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
+                        core.helpers.coerceSize(fwClip, input);
+                        minerva.Rect.intersection(lc, fwClip);
                     } else {
                         lc.x = lc.y = lc.width = lc.height = 0;
                     }
@@ -3853,15 +3861,14 @@ var minerva;
                 __extends(ProcessDownPipeDef, _super);
                 function ProcessDownPipeDef() {
                     _super.call(this);
-                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('shiftLayoutClip', processdown.tapins.shiftLayoutClip).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
+                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
                 }
                 ProcessDownPipeDef.prototype.createState = function () {
                     return {
                         xformOrigin: new minerva.Point(),
                         localXform: mat3.identity(),
                         renderAsProjection: mat4.identity(),
-                        subtreeDownDirty: 0,
-                        needsLayoutClipShift: false
+                        subtreeDownDirty: 0
                     };
                 };
 
@@ -3898,7 +3905,6 @@ var minerva;
                     mat4.set(input.absoluteProjection, output.absoluteProjection);
                     output.totalHasRenderProjection = input.totalHasRenderProjection;
                     state.subtreeDownDirty = 0;
-                    state.needsLayoutClipShift = false;
                 };
 
                 ProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
@@ -4021,8 +4027,6 @@ var minerva;
                     mat3.multiply(rx, state.localXform, rx);
                     mat3.toAffineMat4(rx, state.renderAsProjection);
 
-                    state.needsLayoutClipShift = true;
-
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));
@@ -4104,7 +4108,6 @@ var minerva;
 
                     if (!minerva.Rect.isEqual(input.compositeLayoutClip, output.compositeLayoutClip)) {
                         state.subtreeDownDirty |= minerva.DirtyFlags.LayoutClip;
-                        state.needsLayoutClipShift = true;
                     }
 
                     return true;
@@ -4242,29 +4245,6 @@ var minerva;
                         walker.current.assets.dirtyFlags |= newDownDirty;
                         core.Updater.$$addDownDirty(walker.current);
                     }
-                    return true;
-                };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (core) {
-        (function (processdown) {
-            (function (tapins) {
-                tapins.shiftLayoutClip = function (input, state, output, vpinput, tree) {
-                    if (!state.needsLayoutClipShift)
-                        return true;
-
-                    if (minerva.Rect.isEmpty(output.compositeLayoutClip))
-                        return true;
-
-                    minerva.Rect.transform(output.compositeLayoutClip, mat3.inverse(output.renderXform));
-
                     return true;
                 };
             })(processdown.tapins || (processdown.tapins = {}));

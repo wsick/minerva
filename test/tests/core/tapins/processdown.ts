@@ -45,8 +45,7 @@ module minerva.core.processdown.tapins.tests {
                 xformOrigin: new Point(),
                 localXform: mat3.identity(),
                 renderAsProjection: mat4.identity(),
-                subtreeDownDirty: 0,
-                needsLayoutClipShift: false
+                subtreeDownDirty: 0
             };
         },
         output: function (): processdown.IOutput {
@@ -212,38 +211,30 @@ module minerva.core.processdown.tapins.tests {
         var output = mock.output();
         var vpinput = mock.input();
 
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
         assert.deepEqual(typedToArray(state.renderAsProjection), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-        assert.strictEqual(state.needsLayoutClipShift, false);
 
         input.dirtyFlags |= DirtyFlags.Transform;
-        state.needsLayoutClipShift = false;
         mat3.set([2, 0, 0, 0, 2, 0, 0, 0, 1], input.carrierXform);
         mat3.set([1, 0, 10, 0, 1, 50, 0, 0, 1], input.layoutXform);
         mat3.set([-1, 0, 0, 0, 1, 0, 0, 0, 1], state.localXform);
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
         assert.deepEqual(typedToArray(state.renderAsProjection), [-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
-        assert.strictEqual(state.needsLayoutClipShift, true);
 
         //Ensure running twice doesn't change renderXform
         mat3.set(output.renderXform, input.renderXform);
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
         assert.deepEqual(typedToArray(state.renderAsProjection), [-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
-        assert.strictEqual(state.needsLayoutClipShift, true);
 
         //Ensure running again without a carrier doesn't affect the renderXform
         mat3.set(output.renderXform, input.renderXform);
         input.carrierXform = null;
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-1, 0, -10, 0, 1, 50, 0, 0, 1]);
         assert.deepEqual(typedToArray(state.renderAsProjection), [-1, 0, 0, -10, 0, 1, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
-        assert.strictEqual(state.needsLayoutClipShift, true);
     });
 
     QUnit.test("calcLocalProjection", (assert) => {
@@ -341,37 +332,27 @@ module minerva.core.processdown.tapins.tests {
         var output = mock.output();
         var vpinput = mock.input();
 
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.processLayoutClip(input, state, output, null));
         assert.deepEqual(output.compositeLayoutClip, new Rect());
-        assert.strictEqual(state.needsLayoutClipShift, false);
 
         input.dirtyFlags |= DirtyFlags.LayoutClip;
         input.layoutClip = new Rect();
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.processLayoutClip(input, state, output, null));
         assert.deepEqual(output.compositeLayoutClip, new Rect());
-        assert.strictEqual(state.needsLayoutClipShift, false);
 
         input.layoutClip = new Rect(10, 20, 90, 80);
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.processLayoutClip(input, state, output, null));
         assert.deepEqual(output.compositeLayoutClip, new Rect(10, 20, 90, 80));
-        assert.strictEqual(state.needsLayoutClipShift, true);
 
         vpinput.compositeLayoutClip = new Rect(30, 30, 20, 100);
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
         assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 70));
-        assert.strictEqual(state.needsLayoutClipShift, true);
 
         state.subtreeDownDirty = 0;
         input.layoutClip = new Rect();
-        state.needsLayoutClipShift = false;
         assert.ok(tapins.processLayoutClip(input, state, output, vpinput));
         assert.deepEqual(output.compositeLayoutClip, new Rect(30, 30, 20, 100));
         assert.strictEqual(state.subtreeDownDirty, DirtyFlags.LayoutClip);
-        assert.strictEqual(state.needsLayoutClipShift, true);
     });
 
     QUnit.test("propagateDirtyToChildren", (assert) => {

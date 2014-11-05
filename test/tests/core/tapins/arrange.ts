@@ -279,7 +279,7 @@ module minerva.core.arrange.tapins.tests {
         state.arrangedSize = new Size(100, 100);
         input.layoutClip = new Rect(0, 0, 0, 0);
         assert.ok(tapins.buildLayoutClip(input, state, output, tree, new Rect()));
-        assert.deepEqual(output.layoutClip, new Rect(5, 15, 100, 100));
+        assert.deepEqual(output.layoutClip, new Rect(0, 0, 200, 300));
         assert.strictEqual(output.dirtyFlags & DirtyFlags.LayoutClip, DirtyFlags.LayoutClip);
     });
 

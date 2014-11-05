@@ -958,7 +958,6 @@ declare module minerva.core.processdown {
         localXform: number[];
         renderAsProjection: number[];
         subtreeDownDirty: DirtyFlags;
-        needsLayoutClipShift: boolean;
     }
     interface IOutput extends pipe.IPipeOutput {
         totalIsRenderVisible: boolean;
@@ -1017,9 +1016,6 @@ declare module minerva.core.processdown.tapins {
 }
 declare module minerva.core.processdown.tapins {
     var propagateDirtyToChildren: IProcessDownTapin;
-}
-declare module minerva.core.processdown.tapins {
-    var shiftLayoutClip: IProcessDownTapin;
 }
 declare module minerva.core.processup {
     interface IProcessUpTapin extends pipe.ITriTapin {

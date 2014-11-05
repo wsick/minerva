@@ -16,7 +16,6 @@ module minerva.core.processdown.tapins {
 
         if (!Rect.isEqual(input.compositeLayoutClip, output.compositeLayoutClip)) {
             state.subtreeDownDirty |= DirtyFlags.LayoutClip;
-            state.needsLayoutClipShift = true;
         }
 
         return true;
