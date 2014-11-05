@@ -39,14 +39,15 @@ module minerva.core.helpers {
 
     export interface IClipAssets {
         layoutClip: Rect;
+        compositeLayoutClip: Rect;
     }
-    export function renderLayoutClip (ctx: CanvasRenderingContext2D, assets: IClipAssets) {
-        var lc = assets.layoutClip;
-        if (!Rect.isEmpty(lc)) {
-            //Are we in the correct coordinate space to render
-            ctx.beginPath();
-            ctx.rect(lc.x, lc.y, lc.width, lc.height);
-            ctx.clip();
+    export function renderLayoutClip (ctx: render.RenderContext, assets: IClipAssets) {
+        var clc = assets.compositeLayoutClip;
+        if (!Rect.isEmpty(clc)) {
+            var raw = ctx.raw;
+            raw.beginPath();
+            raw.rect(clc.x, clc.y, clc.width, clc.height);
+            raw.clip();
         }
     }
 }

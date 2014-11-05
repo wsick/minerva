@@ -627,8 +627,9 @@ declare module minerva.core.helpers {
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
     interface IClipAssets {
         layoutClip: Rect;
+        compositeLayoutClip: Rect;
     }
-    function renderLayoutClip(ctx: CanvasRenderingContext2D, assets: IClipAssets): void;
+    function renderLayoutClip(ctx: render.RenderContext, assets: IClipAssets): void;
 }
 declare module minerva.core.reactTo {
     module helpers {
@@ -1163,9 +1164,6 @@ declare module minerva.core.render.tapins {
 }
 declare module minerva.core.render.tapins {
     var renderChildren: IRenderTapin;
-}
-declare module minerva.core.render.tapins {
-    function renderLayoutClip(input: IInput, state: IState, output: IOutput, ctx: RenderContext, region: Rect, tree: IUpdaterTree): boolean;
 }
 declare module minerva.core.render.tapins {
     var restoreContext: IRenderTapin;

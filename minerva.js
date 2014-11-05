@@ -2433,11 +2433,12 @@ var minerva;
             helpers.copyGrowTransform4 = copyGrowTransform4;
 
             function renderLayoutClip(ctx, assets) {
-                var lc = assets.layoutClip;
-                if (!minerva.Rect.isEmpty(lc)) {
-                    ctx.beginPath();
-                    ctx.rect(lc.x, lc.y, lc.width, lc.height);
-                    ctx.clip();
+                var clc = assets.compositeLayoutClip;
+                if (!minerva.Rect.isEmpty(clc)) {
+                    var raw = ctx.raw;
+                    raw.beginPath();
+                    raw.rect(clc.x, clc.y, clc.width, clc.height);
+                    raw.clip();
                 }
             }
             helpers.renderLayoutClip = renderLayoutClip;
@@ -4659,7 +4660,7 @@ var minerva;
                 __extends(RenderPipeDef, _super);
                 function RenderPipeDef() {
                     _super.call(this);
-                    this.addTapin('validate', render.tapins.validate).addTapin('validateRegion', render.tapins.validateRegion).addTapin('prepareContext', render.tapins.prepareContext).addTapin('applyClip', render.tapins.applyClip).addTapin('preRender', render.tapins.preRender).addTapin('renderLayoutClip', render.tapins.renderLayoutClip).addTapin('doRender', render.tapins.doRender).addTapin('postRender', render.tapins.postRender).addTapin('renderChildren', render.tapins.renderChildren).addTapin('restoreContext', render.tapins.restoreContext);
+                    this.addTapin('validate', render.tapins.validate).addTapin('validateRegion', render.tapins.validateRegion).addTapin('prepareContext', render.tapins.prepareContext).addTapin('applyClip', render.tapins.applyClip).addTapin('preRender', render.tapins.preRender).addTapin('doRender', render.tapins.doRender).addTapin('postRender', render.tapins.postRender).addTapin('renderChildren', render.tapins.renderChildren).addTapin('restoreContext', render.tapins.restoreContext);
                 }
                 RenderPipeDef.prototype.createState = function () {
                     return {
@@ -4780,25 +4781,6 @@ var minerva;
                     }
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (core) {
-        (function (render) {
-            (function (tapins) {
-                function renderLayoutClip(input, state, output, ctx, region, tree) {
-                    if (minerva.Rect.isEmpty(input.compositeLayoutClip))
-                        return true;
-                    ctx.clipRect(input.compositeLayoutClip);
-                    return true;
-                }
-                tapins.renderLayoutClip = renderLayoutClip;
             })(render.tapins || (render.tapins = {}));
             var tapins = render.tapins;
         })(core.render || (core.render = {}));
@@ -7062,13 +7044,6 @@ var minerva;
                         return true;
 
                     var raw = ctx.raw;
-                    var composite = input.compositeLayoutClip;
-                    if (composite && !minerva.Rect.isEmpty(composite)) {
-                        raw.beginPath();
-                        raw.rect(composite.x, composite.y, composite.width, composite.height);
-                        raw.clip();
-                    }
-
                     raw.beginPath();
                     raw.rect(extents.x, extents.y, extents.width, extents.height);
                     ctx.fillEx(background, extents);
