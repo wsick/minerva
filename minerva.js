@@ -6011,6 +6011,8 @@ var minerva;
                 };
 
                 Segment.init = function (segment, offered, min, max, unitType) {
+                    segment.desired = 0.0;
+                    segment.stars = 0;
                     segment.offered = offered || 0.0;
                     segment.min = min || 0.0;
                     segment.max = max != null ? max : Number.POSITIVE_INFINITY;

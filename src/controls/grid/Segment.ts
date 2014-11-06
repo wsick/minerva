@@ -17,6 +17,8 @@ module minerva.controls.grid {
         }
 
         static init (segment: Segment, offered?: number, min?: number, max?: number, unitType?: GridUnitType): Segment {
+            segment.desired = 0.0;
+            segment.stars = 0;
             segment.offered = offered || 0.0;
             segment.min = min || 0.0;
             segment.max = max != null ? max : Number.POSITIVE_INFINITY;
