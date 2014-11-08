@@ -3843,6 +3843,8 @@ var minerva;
                 tapins.validateVisibility = function (input, state, output, tree, availableSize) {
                     if (input.visibility !== 0 /* Visible */) {
                         minerva.Size.copyTo(availableSize, output.previousConstraint);
+                        var ds = output.desiredSize;
+                        ds.width = ds.height = 0;
                         return false;
                     }
                     return true;

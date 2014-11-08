@@ -72,15 +72,19 @@ module minerva.core.measure.tapins.tests {
         var output = mock.output();
         var tree = mock.tree();
 
+        output.previousConstraint = new Size(100, 100);
+        output.desiredSize = new Size(50, 50);
         assert.ok(tapins.validateVisibility(input, state, output, tree, new Size()));
+        assert.deepEqual(output.previousConstraint, new Size(100, 100));
+        assert.deepEqual(output.desiredSize, new Size(50, 50));
 
         input.visibility = minerva.Visibility.Collapsed;
-        output.previousConstraint.width = 0;
-        output.previousConstraint.height = 0;
+        output.previousConstraint = new Size();
         var as = new Size(1, 2);
         assert.ok(!tapins.validateVisibility(input, state, output, tree, as));
         assert.notStrictEqual(output.previousConstraint, as);
         assert.deepEqual(output.previousConstraint, new Size(1, 2));
+        assert.deepEqual(output.desiredSize, new Size());
     });
 
     QUnit.test("applyTemplate", (assert) => {
