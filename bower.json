@@ -2,7 +2,10 @@
   "name": "minerva",
   "main": "minerva.js",
   "version": "0.1.0",
-  "homepage": "https://github.com/BSick7/minerva",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bsick7/minerva"
+  },
   "authors": [
     "BSick7 <brad.sickles@gmail.com>"
   ],
@@ -20,6 +23,7 @@
     "build",
     "node_modules",
     "bower_components",
+    "src",
     "test",
     "tests"
   ]
