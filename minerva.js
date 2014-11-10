@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.1.0';
+    minerva.version = '0.1.1';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -13463,7 +13463,7 @@ var minerva;
                 if (docctx.textAlignment === 0 /* Left */ || docctx.textAlignment === 3 /* Justify */)
                     return 0;
                 var width = getWidthConstraint(assets);
-                if (lineWidth < width)
+                if (lineWidth >= width)
                     return 0;
                 if (docctx.textAlignment === 1 /* Center */)
                     return (width - lineWidth) / 2.0;

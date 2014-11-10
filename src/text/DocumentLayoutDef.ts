@@ -175,7 +175,7 @@ module minerva.text {
             if (docctx.textAlignment === TextAlignment.Left || docctx.textAlignment === TextAlignment.Justify)
                 return 0;
             var width = getWidthConstraint(assets);
-            if (lineWidth < width)
+            if (lineWidth >= width)
                 return 0;
             if (docctx.textAlignment === TextAlignment.Center)
                 return (width - lineWidth) / 2.0;

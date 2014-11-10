@@ -67,4 +67,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['setup:test', 'version:apply', 'typescript:build', 'copy:pretest', 'typescript:test', 'qunit']);
     setup(grunt);
     version(grunt);
+    grunt.registerTask('dist:upbuild', ['version:bump:build', 'version:apply', 'typescript:build']);
+    grunt.registerTask('dist:upminor', ['version:bump:minor', 'version:apply', 'typescript:build']);
+    grunt.registerTask('dist:upmajor', ['version:bump:major', 'version:apply', 'typescript:build']);
 };
