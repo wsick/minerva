@@ -2,7 +2,7 @@ module minerva {
     export function singleton (type: Function): any {
         var x = <any>type;
         if (!x.$$instance)
-            x.$$instance = new x();
+            Object.defineProperty(x, '$$instance', {value: new x(), enumerable: false});
         return x.$$instance;
     }
 }

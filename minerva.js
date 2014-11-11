@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.1.4';
+    minerva.version = '0.1.5';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -1604,7 +1604,7 @@ var minerva;
     function singleton(type) {
         var x = type;
         if (!x.$$instance)
-            x.$$instance = new x();
+            Object.defineProperty(x, '$$instance', { value: new x(), enumerable: false });
         return x.$$instance;
     }
     minerva.singleton = singleton;
