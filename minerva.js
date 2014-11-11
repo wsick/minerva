@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.1.2';
+    minerva.version = '0.1.3';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -3399,7 +3399,7 @@ var minerva;
             (function (tapins) {
                 function canHit(data, pos, hitList, ctx, includeAll) {
                     var assets = data.assets;
-                    return !!assets.totalIsRenderVisible && !!assets.totalIsHitTestVisible && ((assets.totalOpacity * 255) >= 0.5);
+                    return !!assets.totalIsRenderVisible && !!assets.totalIsHitTestVisible;
                 }
                 tapins.canHit = canHit;
             })(hittest.tapins || (hittest.tapins = {}));
