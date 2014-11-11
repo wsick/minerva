@@ -100,6 +100,8 @@ module minerva.core {
                 this.setRenderPipe();
             if (!this.$$hittest)
                 this.setHitTestPipe();
+            if (!this.$$hittest.data.tree)
+                this.$$hittest.data.tree = this.tree;
         }
 
         setTree (tree?: IUpdaterTree): Updater {

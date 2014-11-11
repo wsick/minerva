@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.1.1';
+    minerva.version = '0.1.2';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -1934,6 +1934,8 @@ var minerva;
                     this.setRenderPipe();
                 if (!this.$$hittest)
                     this.setHitTestPipe();
+                if (!this.$$hittest.data.tree)
+                    this.$$hittest.data.tree = this.tree;
             };
 
             Updater.prototype.setTree = function (tree) {
