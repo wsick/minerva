@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.1.3';
+    minerva.version = '0.1.4';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -4198,6 +4198,9 @@ var minerva;
 
                     if (input.totalIsRenderVisible !== output.totalIsRenderVisible) {
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
+                        state.subtreeDownDirty |= minerva.DirtyFlags.RenderVisibility;
+                    }
+                    if (input.totalOpacity !== output.totalOpacity) {
                         state.subtreeDownDirty |= minerva.DirtyFlags.RenderVisibility;
                     }
 

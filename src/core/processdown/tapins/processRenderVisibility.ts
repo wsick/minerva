@@ -22,6 +22,9 @@ module minerva.core.processdown.tapins {
             output.dirtyFlags |= DirtyFlags.NewBounds;
             state.subtreeDownDirty |= DirtyFlags.RenderVisibility;
         }
+        if (input.totalOpacity !== output.totalOpacity) {
+            state.subtreeDownDirty |= DirtyFlags.RenderVisibility;
+        }
 
         return true;
     };
