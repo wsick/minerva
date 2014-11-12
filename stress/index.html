@@ -15,6 +15,7 @@
             callback: function (text, Runner) {
                 runner = new Runner(
                     document.getElementById('test_list'),
+                    document.getElementById('test_info'),
                     document.getElementById('test_status'),
                     document.getElementById('test_output'));
                 runner.init();
@@ -27,11 +28,11 @@
 <div style="float: left; width: 200px;">
     <ul>
         Stress Tests
-        <div id="test_list">
-        </div>
+        <div id="test_list"></div>
     </ul>
 </div>
 <div style="margin-left: 200px;">
+    <h2 id="test_info"></h2>
     <div id="test_status">
     </div>
     <div id="test_output">

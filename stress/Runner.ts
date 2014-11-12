@@ -7,7 +7,7 @@ interface ITest {
 import ITestImpl = require('ITestImpl');
 
 class Runner {
-    constructor (public listEl: HTMLElement, public statusEl: HTMLElement, public outputEl: HTMLElement) {
+    constructor (public listEl: HTMLElement, public infoEl: HTMLElement, public statusEl: HTMLElement, public outputEl: HTMLElement) {
     }
 
     init () {
@@ -27,6 +27,7 @@ class Runner {
     private run (test: ITest) {
         require([test.test], (type) => {
             var code = new type();
+            this.infoEl.innerText = "Test: " + test.name;
             code.run(test.runCount, this.reportStatus.bind(this), this.reportOutput.bind(this));
         });
     }
