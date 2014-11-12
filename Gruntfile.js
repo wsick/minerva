@@ -148,6 +148,7 @@ module.exports = function (grunt) {
             },
             stress: {
                 files: [
+                    '<%= dirs.stress.root %>/tests.json',
                     '<%= dirs.stress.build %>/**/*.js'
                 ],
                 options: {

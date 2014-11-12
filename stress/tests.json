@@ -1,9 +1,9 @@
 {
   "tests": [
     {
-      "name": "Updater",
+      "name": "Updater (new)",
       "test": "tests/Updater",
-      "runCount": 1000
+      "runCount": 10000
     }
   ]
 }

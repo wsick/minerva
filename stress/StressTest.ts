@@ -2,33 +2,42 @@ import ITestImpl = require('ITestImpl');
 
 class StressTest implements ITestImpl {
     run (runCount: number, onStatus: (status: any) => any, onOutput: (output: any) => any) {
-        var min = Number.POSITIVE_INFINITY;
-        var max = Number.NEGATIVE_INFINITY;
-        var total = 0;
         var all: number[] = [];
 
+        //Pre-run
+        for (var i = 0; i < 5; i++) {
+            this.runIteration();
+        }
+
+        console.profile();
         for (var i = 0; i < runCount; i++) {
             var start = new Date().getTime();
             this.runIteration();
-            var duration = new Date().getTime() - start;
-            min = Math.min(min, duration);
-            max = Math.max(max, duration);
-            total += duration;
-            all.push(duration);
-            var status = "Iterations Complete: "
-                + (i + 1).toString() + "/" + runCount.toString()
-                + "<br /> Total Elapsed: "
-                + createTimingString(total);
-            onStatus(status);
+            all.push(new Date().getTime() - start);
+            /*
+             var status = "Iterations Complete: "
+             + (i + 1).toString() + "/" + runCount.toString()
+             + "<br /> Total Elapsed: "
+             + createTimingString(total);
+             onStatus(status);
+             */
         }
+        console.profileEnd();
 
+        var min = all.reduce((agg, ms) => Math.min(agg, ms), Number.POSITIVE_INFINITY);
+        var max = all.reduce((agg, ms) => Math.max(agg, ms), Number.NEGATIVE_INFINITY);
+        var total = all.reduce((agg, ms) => agg + ms, 0);
         var avg = total / runCount;
         var sd = calcStdDev(all, total);
 
-        var output = "Min: " + createTimingString(min)
-            + "<br />Max: " + createTimingString(max)
-            + "<br />Average: " + createTimingString(avg)
-            + "<br />Std Dev: " + createTimingString(sd);
+        var output = [
+            "Count: " + runCount.toString(),
+            "Min: " + createTimingString(min),
+            "Max: " + createTimingString(max),
+            "Total: " + createTimingString(total),
+            "Average: " + createTimingString(avg),
+            "Std Dev: " + createTimingString(sd)
+        ].join("<br />");
         onOutput(output);
     }
 
