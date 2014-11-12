@@ -26,5 +26,8 @@
     "src",
     "test",
     "tests"
-  ]
+  ],
+  "devDependencies": {
+    "qunit": "~1.15.0"
+  }
 }

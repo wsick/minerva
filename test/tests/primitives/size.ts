@@ -1,6 +1,3 @@
-/// <reference path="../../qunit.d.ts" />
-/// <reference path="../../lib/minerva/minerva" />
-
 module tests.primitives.size {
     QUnit.module("Size");
 

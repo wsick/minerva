@@ -6,6 +6,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-contrib-symlink');
 
     var meta = {
         name: 'minerva'
@@ -13,14 +14,38 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         meta: meta,
+        clean: {
+            test: ['test/.build', 'test/lib']
+        },
         setup: {
+            fayde: {
+                cwd: '.'
+            }
+        },
+        symlink: {
+            options: {
+                overwrite: true
+            },
             test: {
-                cwd: './test'
+                files: [
+                    { src: './lib/qunit', dest: './test/lib/qunit' },
+                    { src: './minerva.js', dest: './test/lib/minerva/minerva.js' },
+                    { src: './minerva.d.ts', dest: './test/lib/minerva/minerva.d.ts' },
+                    { src: './minerva.js.map', dest: './test/lib/minerva/minerva.js.map' },
+                    { src: './src', dest: './test/lib/minerva/src' }
+                ]
             }
         },
         typescript: {
             build: {
-                src: ['src/_Version.ts', 'src/*.ts', 'src/pipe/*.ts', 'src/core/*.ts', 'src/core/**/*.ts', 'src/**/*.ts'],
+                src: [
+                    'src/_Version.ts',
+                    'src/*.ts',
+                    'src/pipe/*.ts',
+                    'src/core/*.ts',
+                    'src/core/**/*.ts',
+                    'src/**/*.ts'
+                ],
                 dest: '<%= meta.name %>.js',
                 options: {
                     target: 'es5',
@@ -29,25 +54,25 @@ module.exports = function (grunt) {
                 }
             },
             test: {
-                src: ['test/**/*.ts', '!test/lib/**/*.ts'],
+                src: [
+                    'minerva.d.ts',
+                    'test/**/*.ts',
+                    '!test/lib/**/*.ts',
+                    'typings/*.d.ts'
+                ],
                 dest: 'test/.build',
                 options: {
                     target: 'es5',
                     basePath: 'test/tests',
                     sourceMap: true
                 }
-            }
-        },
-        clean: {
-            build: ["<%= meta.name %>.*"],
-            test: ["test/.build", "test/lib/<%= meta.name %>"]
-        },
-        copy: {
-            pretest: {
-                files: [
-                    { expand: true, flatten: true, src: ['<%= meta.name %>.js'], dest: 'test/lib/<%= meta.name %>', filter: 'isFile' },
-                    { expand: true, flatten: true, src: ['<%= meta.name %>.d.ts'], dest: 'test/lib/<%= meta.name %>', filter: 'isFile' }
-                ]
+            },
+            stress: {
+                src: [],
+                options: {
+                    target: 'es5',
+                    sourceMap: true
+                }
             }
         },
         qunit: {
@@ -63,10 +88,12 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['version:apply', 'typescript:build']);
-    grunt.registerTask('test', ['setup:test', 'version:apply', 'typescript:build', 'copy:pretest', 'typescript:test', 'qunit']);
+    grunt.registerTask('default', ['typescript:build']);
+    grunt.registerTask('test', ['typescript:build', 'typescript:test', 'qunit']);
+    grunt.registerTask('stress', ['typescript:build', 'typescript:stress']);
     setup(grunt);
     version(grunt);
+    grunt.registerTask('lib:reset', ['clean', 'setup', 'symlink:test']);
     grunt.registerTask('dist:upbuild', ['version:bump:build', 'version:apply', 'typescript:build']);
     grunt.registerTask('dist:upminor', ['version:bump:minor', 'version:apply', 'typescript:build']);
     grunt.registerTask('dist:upmajor', ['version:bump:major', 'version:apply', 'typescript:build']);

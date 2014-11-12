@@ -1,6 +1,3 @@
-/// <reference path="../../../qunit" />
-/// <reference path="../../../lib/minerva/minerva" />
-
 module minerva.core.arrange.tapins.tests {
     QUnit.module("Arrange Pipe Tapins");
 

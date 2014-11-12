@@ -1,6 +1,3 @@
-/// <reference path="../../../qunit" />
-/// <reference path="../../../lib/minerva/minerva" />
-
 module minerva.core.processup.tapins.tests {
     QUnit.module("Process Up Pipe Tapins");
 

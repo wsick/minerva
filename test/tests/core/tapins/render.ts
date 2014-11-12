@@ -1,6 +1,3 @@
-/// <reference path="../../../qunit" />
-/// <reference path="../../../lib/minerva/minerva" />
-
 module minerva.core.render.tapins.tests {
     QUnit.module("Render Pipe Tapins");
 

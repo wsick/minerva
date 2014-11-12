@@ -1,6 +1,3 @@
-/// <reference path="../../qunit.d.ts" />
-/// <reference path="../../lib/minerva/minerva" />
-
 module tests.primitives.rect {
     QUnit.module("Rect");
 
