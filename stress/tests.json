@@ -2,7 +2,8 @@
   "tests": [
     {
       "name": "Updater",
-      "test": "tests/updater"
+      "test": "tests/Updater",
+      "runCount": 1000
     }
   ]
 }

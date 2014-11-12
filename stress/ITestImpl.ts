@@ -1,4 +1,4 @@
 interface ITestImpl {
-    run(onStatus: (status: any) => any, onOutput: (output: any) => any);
+    run(runCount: number, onStatus: (status: any) => any, onOutput: (output: any) => any);
 }
 export = ITestImpl;

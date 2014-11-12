@@ -1,9 +1,8 @@
-import ITestImpl = require('ITestImpl');
+import StressTest = require('../StressTest');
 
-class updater implements ITestImpl {
-    run (onStatus: (status: any) => any, onOutput: (output: any) => any) {
-        onStatus("started");
-        onOutput("completed");
+class Updater extends StressTest {
+    runIteration () {
+
     }
 }
-export = updater;
+export = Updater;

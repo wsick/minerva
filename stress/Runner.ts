@@ -1,6 +1,7 @@
 interface ITest {
     name: string;
     test: string;
+    runCount: number;
 }
 
 import ITestImpl = require('ITestImpl');
@@ -26,16 +27,16 @@ class Runner {
     private run (test: ITest) {
         require([test.test], (type) => {
             var code = new type();
-            code.run(this.reportStatus.bind(this), this.reportOutput.bind(this));
+            code.run(test.runCount, this.reportStatus.bind(this), this.reportOutput.bind(this));
         });
     }
 
     private reportStatus (status) {
-        this.statusEl.innerText = status;
+        this.statusEl.innerHTML = status;
     }
 
     private reportOutput (output) {
-        this.outputEl.innerText = output;
+        this.outputEl.innerHTML = output;
     }
 
     private getTests (cb: (tests: ITest[]) => any) {
