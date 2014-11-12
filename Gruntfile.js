@@ -138,6 +138,13 @@ module.exports = function (grunt) {
             }
         },
         watch: {
+            src: {
+                files: [
+                    'src/*.ts',
+                    'src/**/*.ts'
+                ],
+                tasks: ['typescript:build']
+            },
             stressts: {
                 files: [
                     '<%= dirs.stress.root %>/*.ts',
@@ -150,7 +157,8 @@ module.exports = function (grunt) {
                 files: [
                     '<%= dirs.stress.root %>/tests.json',
                     '<%= dirs.stress.root %>/index.html',
-                    '<%= dirs.stress.build %>/**/*.js'
+                    '<%= dirs.stress.build %>/**/*.js',
+                    'minerva.js'
                 ],
                 options: {
                     livereload: ports.livereload

@@ -28,7 +28,11 @@ class Runner {
         require([test.test], (type) => {
             var code = new type();
             this.infoEl.innerText = "Test: " + test.name;
-            code.run(test.runCount, this.reportStatus.bind(this), this.reportOutput.bind(this));
+            var status = this.reportStatus.bind(this);
+            var output = this.reportOutput.bind(this);
+            window.setTimeout(() => {
+                code.run(test.runCount, status, output);
+            }, 1);
         });
     }
 
