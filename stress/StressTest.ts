@@ -59,7 +59,7 @@ function createTimingString (ms: number): string {
     return ms.toString()
         + "ms ("
         + (ms / 1000).toFixed(1)
-        + ")";
+        + "s)";
 }
 
 function calcStdDev (all: number[], total: number): number {

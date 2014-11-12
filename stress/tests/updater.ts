@@ -2,7 +2,7 @@ import StressTest = require('../StressTest');
 
 class Updater extends StressTest {
     prepare () {
-        
+
     }
 
     prepareIteration () {
