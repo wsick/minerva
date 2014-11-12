@@ -13,14 +13,8 @@ class StressTest implements ITestImpl {
         for (var i = 0; i < runCount; i++) {
             var start = new Date().getTime();
             this.runIteration();
-            all.push(new Date().getTime() - start);
-            /*
-             var status = "Iterations Complete: "
-             + (i + 1).toString() + "/" + runCount.toString()
-             + "<br /> Total Elapsed: "
-             + createTimingString(total);
-             onStatus(status);
-             */
+            var dur = new Date().getTime() - start;
+            all.push(dur);
         }
         console.profileEnd();
 
@@ -30,11 +24,15 @@ class StressTest implements ITestImpl {
         var avg = total / runCount;
         var sd = calcStdDev(all, total);
 
+        var status = [
+            "Iterations Complete: " + runCount.toString(),
+            "Total Elapsed: " + createTimingString(total)
+        ].join("<br />");
+        onStatus(status);
+
         var output = [
-            "Count: " + runCount.toString(),
             "Min: " + createTimingString(min),
             "Max: " + createTimingString(max),
-            "Total: " + createTimingString(total),
             "Average: " + createTimingString(avg),
             "Std Dev: " + createTimingString(sd)
         ].join("<br />");
