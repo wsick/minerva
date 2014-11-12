@@ -4,13 +4,17 @@ class StressTest implements ITestImpl {
     run (runCount: number, onStatus: (status: any) => any, onOutput: (output: any) => any) {
         var all: number[] = [];
 
+        this.prepare();
+
         //Pre-run
         for (var i = 0; i < 5; i++) {
+            this.prepareIteration();
             this.runIteration();
         }
 
         console.profile();
         for (var i = 0; i < runCount; i++) {
+            this.prepareIteration();
             var start = new Date().getTime();
             this.runIteration();
             var dur = new Date().getTime() - start;
@@ -37,6 +41,14 @@ class StressTest implements ITestImpl {
             "Std Dev: " + createTimingString(sd)
         ].join("<br />");
         onOutput(output);
+    }
+
+    prepare () {
+
+    }
+
+    prepareIteration () {
+
     }
 
     runIteration () {
