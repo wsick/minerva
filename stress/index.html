@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="lib/minerva/minerva.js"></script>
+    <script type="text/javascript">
+        var runner;
+        var require = {
+            baseUrl: "./",
+            paths: {
+                "text": "lib/requirejs-text/text"
+            },
+            deps: ["text", "Runner"],
+            callback: function (text, Runner) {
+                runner = new Runner(
+                    document.getElementById('test_list'),
+                    document.getElementById('test_status'),
+                    document.getElementById('test_output'));
+                runner.init();
+            }
+        }
+    </script>
+    <script src="lib/requirejs/require.js"></script>
+</head>
+<body style="margin: 0;">
+<div style="float: left; width: 200px;">
+    <ul>
+        Stress Tests
+        <div id="test_list">
+        </div>
+    </ul>
+</div>
+<div style="margin-left: 200px;">
+    <div id="test_status">
+    </div>
+    <div id="test_output">
+    </div>
+</div>
+</body>
+</html>

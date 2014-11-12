@@ -1,0 +1,8 @@
+{
+  "tests": [
+    {
+      "name": "Updater",
+      "test": "tests/updater"
+    }
+  ]
+}

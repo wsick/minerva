@@ -3,3 +3,4 @@ node_modules/
 test/lib/
 test/.build/
 lib/
+stress/.build/
