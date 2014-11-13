@@ -4,6 +4,11 @@
       "name": "Updater (new)",
       "test": "tests/Updater",
       "runCount": 10000
+    },
+    {
+      "name": "Process Down",
+      "test": "tests/ProcessDown",
+      "runCount": 10000
     }
   ]
 }
