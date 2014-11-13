@@ -13,18 +13,19 @@ class StressTest implements ITestImpl {
         }
 
         console.profile();
+        var start = new Date().getTime();
         for (var i = 0; i < runCount; i++) {
+            var s = new Date().getTime();
             this.prepareIteration();
-            var start = new Date().getTime();
             this.runIteration();
-            var dur = new Date().getTime() - start;
-            all.push(dur);
+            all.push(new Date().getTime() - s);
         }
+        var total = new Date().getTime() - start;
         console.profileEnd();
 
         var min = all.reduce((agg, ms) => Math.min(agg, ms), Number.POSITIVE_INFINITY);
         var max = all.reduce((agg, ms) => Math.max(agg, ms), Number.NEGATIVE_INFINITY);
-        var total = all.reduce((agg, ms) => agg + ms, 0);
+        var sum = all.reduce((agg, ms) => agg + ms, 0);
         var avg = total / runCount;
         var sd = calcStdDev(all, total);
 
@@ -35,6 +36,7 @@ class StressTest implements ITestImpl {
         onStatus(status);
 
         var output = [
+            "Sum: " + createTimingString(sum),
             "Min: " + createTimingString(min),
             "Max: " + createTimingString(max),
             "Average: " + createTimingString(avg),
