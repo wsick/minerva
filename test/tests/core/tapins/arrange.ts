@@ -170,7 +170,7 @@ module minerva.core.arrange.tapins.tests {
         var tree = mock.tree();
 
         assert.ok(tapins.invalidateFuture(input, state, output, tree, new Rect()));
-        assert.strictEqual(output.dirtyFlags, DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Bounds);
+        assert.strictEqual(output.dirtyFlags, DirtyFlags.LocalTransform | DirtyFlags.Bounds);
         assert.deepEqual(output.layoutClip, new Rect(0, 0, 0, 0));
     });
 

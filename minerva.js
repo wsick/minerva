@@ -150,7 +150,6 @@ var minerva;
     (function (DirtyFlags) {
         DirtyFlags[DirtyFlags["Transform"] = 1 << 0] = "Transform";
         DirtyFlags[DirtyFlags["LocalTransform"] = 1 << 1] = "LocalTransform";
-        DirtyFlags[DirtyFlags["LocalProjection"] = 1 << 2] = "LocalProjection";
         DirtyFlags[DirtyFlags["Clip"] = 1 << 3] = "Clip";
         DirtyFlags[DirtyFlags["LocalClip"] = 1 << 4] = "LocalClip";
         DirtyFlags[DirtyFlags["LayoutClip"] = 1 << 5] = "LayoutClip";
@@ -165,7 +164,7 @@ var minerva;
         DirtyFlags[DirtyFlags["InUpDirtyList"] = 1 << 30] = "InUpDirtyList";
         DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
 
-        DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ImageMetrics] = "DownDirtyState";
+        DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ImageMetrics] = "DownDirtyState";
         DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.NewBounds | DirtyFlags.Invalidate] = "UpDirtyState";
 
         DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
@@ -1882,7 +1881,6 @@ var minerva;
                     isHitTestVisible: true,
                     renderTransform: mat3.identity(),
                     renderTransformOrigin: new minerva.Point(),
-                    projection: null,
                     effectPadding: new minerva.Thickness(),
                     previousConstraint: new minerva.Size(),
                     desiredSize: new minerva.Size(),
@@ -1898,7 +1896,6 @@ var minerva;
                     totalIsRenderVisible: true,
                     totalOpacity: 1.0,
                     totalIsHitTestVisible: true,
-                    totalHasRenderProjection: false,
                     extents: new minerva.Rect(),
                     extentsWithChildren: new minerva.Rect(),
                     surfaceBoundsWithChildren: new minerva.Rect(),
@@ -1907,9 +1904,6 @@ var minerva;
                     carrierXform: null,
                     renderXform: mat3.identity(),
                     absoluteXform: mat3.identity(),
-                    carrierProjection: null,
-                    localProjection: mat4.identity(),
-                    absoluteProjection: mat4.identity(),
                     dirtyRegion: new minerva.Rect(),
                     dirtyFlags: 0,
                     uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */,
@@ -1964,7 +1958,7 @@ var minerva;
             Updater.prototype.onAttached = function () {
                 var assets = this.assets;
                 minerva.Size.undef(assets.previousConstraint);
-                assets.dirtyFlags |= (minerva.DirtyFlags.RenderVisibility | minerva.DirtyFlags.HitTestVisibility | minerva.DirtyFlags.LocalTransform | minerva.DirtyFlags.LocalProjection);
+                assets.dirtyFlags |= (minerva.DirtyFlags.RenderVisibility | minerva.DirtyFlags.HitTestVisibility | minerva.DirtyFlags.LocalTransform);
                 var lc = assets.layoutClip;
                 lc.x = lc.y = lc.width = lc.height = 0;
                 var rs = assets.renderSize;
@@ -2240,7 +2234,7 @@ var minerva;
                 var assets = this.assets;
                 this.invalidate(assets.surfaceBoundsWithChildren);
                 if (invTransforms) {
-                    assets.dirtyFlags |= (minerva.DirtyFlags.LocalTransform | minerva.DirtyFlags.LocalProjection);
+                    assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                     Updater.$$addDownDirty(this);
                 }
                 this.updateBounds(true);
@@ -2295,21 +2289,21 @@ var minerva;
                 if (!fromUpdater.tree.surface || (toUpdater && !toUpdater.tree.surface))
                     return null;
 
-                var result = mat4.create();
+                var result = mat3.create();
 
                 if (toUpdater) {
-                    var inverse = mat4.create();
-                    mat4.inverse(toUpdater.assets.absoluteProjection, inverse);
-                    mat4.multiply(fromUpdater.assets.absoluteProjection, inverse, result);
+                    var inverse = mat3.create();
+                    mat3.inverse(toUpdater.assets.absoluteXform, inverse);
+                    mat3.multiply(fromUpdater.assets.absoluteXform, inverse, result);
                 } else {
-                    mat4.set(fromUpdater.assets.absoluteProjection, result);
+                    mat3.set(fromUpdater.assets.absoluteXform, result);
                 }
 
-                return mat4.toAffineMat3(result) || result;
+                return result;
             };
 
             Updater.transformPoint = function (updater, p) {
-                var inverse = mat4.inverse(updater.assets.absoluteProjection, mat4.create());
+                var inverse = mat3.inverse(updater.assets.absoluteXform, mat3.create());
                 if (!inverse) {
                     console.warn("Could not get inverse of Absolute Projection for UIElement.");
                     return;
@@ -2426,6 +2420,14 @@ var minerva;
             }
             helpers.coerceSize = coerceSize;
 
+            function copyGrowTransform(dest, src, thickness, xform) {
+                minerva.Rect.copyTo(src, dest);
+                minerva.Thickness.growRect(thickness, dest);
+                if (xform)
+                    minerva.Rect.transform(dest, xform);
+            }
+            helpers.copyGrowTransform = copyGrowTransform;
+
             function copyGrowTransform4(dest, src, thickness, projection) {
                 minerva.Rect.copyTo(src, dest);
                 minerva.Thickness.growRect(thickness, dest);
@@ -2529,12 +2531,6 @@ var minerva;
                 core.Updater.$$addDownDirty(updater);
             }
             reactTo.clip = clip;
-
-            function projection(updater, oldValue, newValue) {
-                updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalProjection;
-                core.Updater.$$addDownDirty(updater);
-            }
-            reactTo.projection = projection;
 
             function renderTransform(updater, oldValue, newValue) {
                 updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
@@ -2996,7 +2992,6 @@ var minerva;
                     var lc = output.layoutClip;
                     lc.x = lc.y = lc.width = lc.height = 0;
                     output.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
-                    output.dirtyFlags |= minerva.DirtyFlags.LocalProjection;
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     return true;
                 };
@@ -3866,13 +3861,12 @@ var minerva;
                 __extends(ProcessDownPipeDef, _super);
                 function ProcessDownPipeDef() {
                     _super.call(this);
-                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('processLocalProjection', processdown.tapins.processLocalProjection).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcLocalProjection', processdown.tapins.calcLocalProjection).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('calcAbsoluteProjection', processdown.tapins.calcAbsoluteProjection).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
+                    this.addTapin('processRenderVisibility', processdown.tapins.processRenderVisibility).addTapin('processHitTestVisibility', processdown.tapins.processHitTestVisibility).addTapin('calcXformOrigin', processdown.tapins.calcXformOrigin).addTapin('processLocalXform', processdown.tapins.processLocalXform).addTapin('calcRenderXform', processdown.tapins.calcRenderXform).addTapin('calcAbsoluteXform', processdown.tapins.calcAbsoluteXform).addTapin('processXform', processdown.tapins.processXform).addTapin('processLayoutClip', processdown.tapins.processLayoutClip).addTapin('propagateDirtyToChildren', processdown.tapins.propagateDirtyToChildren);
                 }
                 ProcessDownPipeDef.prototype.createState = function () {
                     return {
                         xformOrigin: new minerva.Point(),
                         localXform: mat3.identity(),
-                        renderAsProjection: mat4.identity(),
                         subtreeDownDirty: 0
                     };
                 };
@@ -3886,16 +3880,13 @@ var minerva;
                         compositeLayoutClip: new minerva.Rect(),
                         renderXform: mat3.identity(),
                         absoluteXform: mat3.identity(),
-                        localProjection: mat4.identity(),
-                        absoluteProjection: mat4.identity(),
-                        totalHasRenderProjection: false,
                         dirtyFlags: 0,
                         newUpDirty: 0
                     };
                 };
 
                 ProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
-                    if ((input.dirtyFlags & (minerva.DirtyFlags.LocalProjection | minerva.DirtyFlags.LocalTransform)) > 0) {
+                    if ((input.dirtyFlags & minerva.DirtyFlags.LocalTransform) > 0) {
                         input.dirtyFlags |= minerva.DirtyFlags.Transform;
                     }
                     output.dirtyFlags = input.dirtyFlags;
@@ -3906,9 +3897,6 @@ var minerva;
                     minerva.Rect.copyTo(input.compositeLayoutClip, output.compositeLayoutClip);
                     mat3.set(input.renderXform, output.renderXform);
                     mat3.set(input.absoluteXform, output.absoluteXform);
-                    mat4.set(input.localProjection, output.localProjection);
-                    mat4.set(input.absoluteProjection, output.absoluteProjection);
-                    output.totalHasRenderProjection = input.totalHasRenderProjection;
                     state.subtreeDownDirty = 0;
                 };
 
@@ -3922,38 +3910,10 @@ var minerva;
                     minerva.Rect.copyTo(output.compositeLayoutClip, input.compositeLayoutClip);
                     mat3.set(output.renderXform, input.renderXform);
                     mat3.set(output.absoluteXform, input.absoluteXform);
-                    mat4.set(output.localProjection, input.localProjection);
-                    mat4.set(output.absoluteProjection, input.absoluteProjection);
-                    input.totalHasRenderProjection = output.totalHasRenderProjection;
                 };
                 return ProcessDownPipeDef;
             })(minerva.pipe.TriPipeDef);
             processdown.ProcessDownPipeDef = ProcessDownPipeDef;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (core) {
-        (function (processdown) {
-            (function (tapins) {
-                tapins.calcAbsoluteProjection = function (input, state, output, vpinput, tree) {
-                    if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
-                        return true;
-
-                    var abs = output.absoluteProjection;
-
-                    if (vpinput)
-                        mat4.multiply(output.localProjection, vpinput.absoluteProjection, abs);
-                    else
-                        mat4.set(output.localProjection, abs);
-
-                    return true;
-                };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
         })(core.processdown || (core.processdown = {}));
         var processdown = core.processdown;
     })(minerva.core || (minerva.core = {}));
@@ -3989,37 +3949,6 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.calcLocalProjection = function (input, state, output, vpinput, tree) {
-                    if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
-                        return true;
-
-                    output.totalHasRenderProjection = vpinput ? vpinput.totalHasRenderProjection : false;
-
-                    var lp = output.localProjection;
-                    if (input.carrierProjection)
-                        mat4.multiply(input.carrierProjection, state.renderAsProjection, lp);
-                    else
-                        mat4.set(state.renderAsProjection, lp);
-                    var projection = input.projection;
-                    if (projection) {
-                        mat4.multiply(lp, input.projection.getTransform(), lp);
-                        output.totalHasRenderProjection = true;
-                    }
-
-                    return true;
-                };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (core) {
-        (function (processdown) {
-            (function (tapins) {
                 tapins.calcRenderXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
@@ -4030,7 +3959,6 @@ var minerva;
                     else
                         mat3.set(input.layoutXform, rx);
                     mat3.multiply(rx, state.localXform, rx);
-                    mat3.toAffineMat4(rx, state.renderAsProjection);
 
                     return true;
                 };
@@ -4129,31 +4057,6 @@ var minerva;
     (function (core) {
         (function (processdown) {
             (function (tapins) {
-                tapins.processLocalProjection = function (input, state, output, vpinput, tree) {
-                    if ((input.dirtyFlags & minerva.DirtyFlags.LocalProjection) === 0)
-                        return true;
-
-                    var projection = input.projection;
-                    output.z = NaN;
-                    if (projection) {
-                        projection.setObjectSize(input.actualWidth, input.actualHeight);
-                        output.z = projection.getDistanceFromXYPlane();
-                    }
-
-                    return true;
-                };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    (function (core) {
-        (function (processdown) {
-            (function (tapins) {
                 tapins.processLocalXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
                         return true;
@@ -4222,10 +4125,10 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
-                    if (!mat4.equal(input.localProjection, output.localProjection)) {
+                    if (!mat3.equal(input.renderXform, output.renderXform)) {
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
                         state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
-                    } else if (!mat4.equal(input.absoluteProjection, output.absoluteProjection)) {
+                    } else if (!mat3.equal(input.absoluteXform, output.absoluteXform)) {
                         state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
                     }
 
@@ -4389,8 +4292,8 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
-                    core.helpers.copyGrowTransform4(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.localProjection);
-                    core.helpers.copyGrowTransform4(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteProjection);
+                    core.helpers.copyGrowTransform(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform);
+                    core.helpers.copyGrowTransform(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteXform);
 
                     return true;
                 };
@@ -5796,7 +5699,7 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
-                        minerva.core.helpers.copyGrowTransform4(output.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.localProjection);
+                        minerva.core.helpers.copyGrowTransform(output.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.renderXform);
                         var sbwc = output.surfaceBoundsWithChildren;
                         var surface = tree.surface;
                         if (surface && tree.isTop) {
@@ -5804,7 +5707,7 @@ var minerva;
                             sbwc.width = surface.width;
                             sbwc.height = surface.height;
                         } else {
-                            minerva.core.helpers.copyGrowTransform4(sbwc, input.extentsWithChildren, input.effectPadding, input.absoluteProjection);
+                            minerva.core.helpers.copyGrowTransform(sbwc, input.extentsWithChildren, input.effectPadding, input.absoluteXform);
                         }
 
                         return true;
@@ -8024,7 +7927,6 @@ var minerva;
                 PopupUpdater.prototype.setChild = function (child) {
                     var old = this.tree.popupChild;
                     if (old) {
-                        old.assets.carrierProjection = null;
                         old.assets.carrierXform = null;
                     }
                     this.tree.popupChild = child;
@@ -8102,11 +8004,7 @@ var minerva;
                 reactTo.verticalOffset = verticalOffset;
 
                 function tweenOffset(child, tweenX, tweenY) {
-                    var proj = child.assets.carrierProjection;
-                    if (proj) {
-                        var transl = mat4.createTranslate(tweenX, tweenY, 0.0);
-                        mat4.multiply(transl, proj, proj);
-                    } else if (child.assets.carrierXform) {
+                    if (child.assets.carrierXform) {
                         mat3.translate(child.assets.carrierXform, tweenX, tweenY);
                     }
                 }
@@ -8201,26 +8099,14 @@ var minerva;
                         if (!child)
                             return true;
 
-                        if (output.totalHasRenderProjection) {
-                            child.assets.carrierXform = null;
-                            child.assets.dirtyFlags |= minerva.DirtyFlags.LocalProjection;
+                        child.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
 
-                            var carrier = child.assets.carrierProjection;
-                            if (!carrier)
-                                carrier = child.assets.carrierProjection || mat4.create();
-                            mat4.set(output.absoluteProjection, carrier);
-                            var transl = mat4.createTranslate(input.horizontalOffset, input.verticalOffset, 0.0);
-                            mat4.multiply(transl, carrier, carrier);
-                        } else {
-                            child.assets.carrierProjection = null;
-                            child.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
+                        var carrier = child.assets.carrierXform;
+                        if (!carrier)
+                            carrier = child.assets.carrierXform || mat3.create();
+                        mat3.set(output.absoluteXform, carrier);
+                        mat3.translate(carrier, input.horizontalOffset, input.verticalOffset);
 
-                            var carrier = child.assets.carrierXform;
-                            if (!carrier)
-                                carrier = child.assets.carrierXform || mat3.create();
-                            mat3.set(output.absoluteXform, carrier);
-                            mat3.translate(carrier, input.horizontalOffset, input.verticalOffset);
-                        }
                         minerva.core.Updater.$$addDownDirty(child);
 
                         return true;

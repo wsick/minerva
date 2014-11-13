@@ -9,7 +9,6 @@ module minerva.core.processdown.tapins {
         else
             mat3.set(input.layoutXform, rx); //render = layout
         mat3.multiply(rx, state.localXform, rx); //render = local * render
-        mat3.toAffineMat4(rx, state.renderAsProjection);
 
         return true;
     };

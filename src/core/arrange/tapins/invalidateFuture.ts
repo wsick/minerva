@@ -3,7 +3,6 @@ module minerva.core.arrange.tapins {
         var lc = output.layoutClip;
         lc.x = lc.y = lc.width = lc.height = 0;
         output.dirtyFlags |= DirtyFlags.LocalTransform;
-        output.dirtyFlags |= DirtyFlags.LocalProjection;
         output.dirtyFlags |= DirtyFlags.Bounds;
         return true;
     };

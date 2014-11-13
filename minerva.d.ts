@@ -107,7 +107,6 @@ declare module minerva {
     enum DirtyFlags {
         Transform,
         LocalTransform,
-        LocalProjection,
         Clip,
         LocalClip,
         LayoutClip,
@@ -624,6 +623,7 @@ declare module minerva.core.helpers {
         useLayoutRounding: boolean;
     }
     function coerceSize(size: ISize, assets: ISized): void;
+    function copyGrowTransform(dest: Rect, src: Rect, thickness: Thickness, xform: number[]): void;
     function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
     interface IClipAssets {
         layoutClip: Rect;
@@ -643,7 +643,6 @@ declare module minerva.core.reactTo {
     function visibility(updater: Updater, oldValue: Visibility, newValue: Visibility): void;
     function effect(updater: Updater, oldValue: IEffect, newValue: IEffect): void;
     function clip(updater: Updater, oldValue: IGeometry, newValue: IGeometry): void;
-    function projection(updater: Updater, oldValue: IProjection, newValue: IProjection): void;
     function renderTransform(updater: Updater, oldValue: any, newValue: any): void;
     function renderTransformOrigin(updater: Updater, oldValue: Point, newValue: Point): void;
     var width: typeof helpers.sizeChanged;
@@ -934,7 +933,6 @@ declare module minerva.core.processdown {
         isHitTestVisible: boolean;
         renderTransform: number[];
         renderTransformOrigin: Point;
-        projection: IProjection;
         actualWidth: number;
         actualHeight: number;
         surfaceBoundsWithChildren: Rect;
@@ -948,16 +946,11 @@ declare module minerva.core.processdown {
         carrierXform: number[];
         renderXform: number[];
         absoluteXform: number[];
-        carrierProjection: number[];
-        localProjection: number[];
-        absoluteProjection: number[];
-        totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
     }
     interface IState extends pipe.IPipeState {
         xformOrigin: Point;
         localXform: number[];
-        renderAsProjection: number[];
         subtreeDownDirty: DirtyFlags;
     }
     interface IOutput extends pipe.IPipeOutput {
@@ -968,9 +961,6 @@ declare module minerva.core.processdown {
         compositeLayoutClip: Rect;
         renderXform: number[];
         absoluteXform: number[];
-        localProjection: number[];
-        absoluteProjection: number[];
-        totalHasRenderProjection: boolean;
         dirtyFlags: DirtyFlags;
         newUpDirty: DirtyFlags;
     }
@@ -983,13 +973,7 @@ declare module minerva.core.processdown {
     }
 }
 declare module minerva.core.processdown.tapins {
-    var calcAbsoluteProjection: IProcessDownTapin;
-}
-declare module minerva.core.processdown.tapins {
     var calcAbsoluteXform: IProcessDownTapin;
-}
-declare module minerva.core.processdown.tapins {
-    var calcLocalProjection: IProcessDownTapin;
 }
 declare module minerva.core.processdown.tapins {
     var calcRenderXform: IProcessDownTapin;
@@ -1002,9 +986,6 @@ declare module minerva.core.processdown.tapins {
 }
 declare module minerva.core.processdown.tapins {
     var processLayoutClip: IProcessDownTapin;
-}
-declare module minerva.core.processdown.tapins {
-    var processLocalProjection: IProcessDownTapin;
 }
 declare module minerva.core.processdown.tapins {
     var processLocalXform: IProcessDownTapin;
@@ -1033,8 +1014,8 @@ declare module minerva.core.processup {
         actualWidth: number;
         actualHeight: number;
         effectPadding: Thickness;
-        localProjection: number[];
-        absoluteProjection: number[];
+        renderXform: number[];
+        absoluteXform: number[];
         extents: Rect;
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;

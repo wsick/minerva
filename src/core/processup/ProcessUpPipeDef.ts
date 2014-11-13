@@ -13,8 +13,8 @@ module minerva.core.processup {
         actualWidth: number;
         actualHeight: number;
         effectPadding: Thickness;
-        localProjection: number[];
-        absoluteProjection: number[];
+        renderXform: number[];
+        absoluteXform: number[];
         extents: Rect;
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;

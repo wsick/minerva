@@ -3,8 +3,8 @@ module minerva.core.processup.tapins {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 
-        helpers.copyGrowTransform4(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.localProjection);
-        helpers.copyGrowTransform4(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteProjection);
+        helpers.copyGrowTransform(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform);
+        helpers.copyGrowTransform(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteXform);
 
         return true;
     };

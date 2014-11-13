@@ -35,7 +35,6 @@ module minerva.core {
             isHitTestVisible: true,
             renderTransform: mat3.identity(),
             renderTransformOrigin: new Point(),
-            projection: null,
             effectPadding: new Thickness(),
 
             previousConstraint: new Size(),
@@ -55,7 +54,6 @@ module minerva.core {
             totalIsRenderVisible: true,
             totalOpacity: 1.0,
             totalIsHitTestVisible: true,
-            totalHasRenderProjection: false,
 
             extents: new Rect(),
             extentsWithChildren: new Rect(),
@@ -66,9 +64,6 @@ module minerva.core {
             carrierXform: null,
             renderXform: mat3.identity(),
             absoluteXform: mat3.identity(),
-            carrierProjection: null,
-            localProjection: mat4.identity(),
-            absoluteProjection: mat4.identity(),
 
             dirtyRegion: new Rect(),
             dirtyFlags: 0,
@@ -78,13 +73,13 @@ module minerva.core {
 
         tree: IUpdaterTree = null;
 
-        constructor () {
+        constructor() {
             this.setMeasureBinder()
                 .setArrangeBinder()
                 .init();
         }
 
-        init () {
+        init() {
             this.setTree(this.tree);
             if (!this.$$measure)
                 this.setMeasurePipe();
@@ -104,22 +99,22 @@ module minerva.core {
                 this.$$hittest.data.tree = this.tree;
         }
 
-        setTree (tree?: IUpdaterTree): Updater {
+        setTree(tree?: IUpdaterTree): Updater {
             this.tree = tree || <IUpdaterTree>new UpdaterTree();
             return this;
         }
 
-        getAttachedValue (name: string): any {
+        getAttachedValue(name: string): any {
             return this.$$attached[name];
         }
 
-        setAttachedValue (name: string, value?: any) {
+        setAttachedValue(name: string, value?: any) {
             this.$$attached[name] = value;
         }
 
         /////// TREE
 
-        onDetached () {
+        onDetached() {
             reactTo.helpers.invalidateParent(this);
             this.invalidateMeasure();
 
@@ -129,10 +124,10 @@ module minerva.core {
             lc.x = lc.y = lc.width = lc.height = 0;
         }
 
-        onAttached () {
+        onAttached() {
             var assets = this.assets;
             Size.undef(assets.previousConstraint);
-            assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
+            assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform);
             var lc = assets.layoutClip;
             lc.x = lc.y = lc.width = lc.height = 0;
             var rs = assets.renderSize;
@@ -146,7 +141,7 @@ module minerva.core {
                 Updater.$$propagateUiFlagsUp(this, UIFlags.SizeHint);
         }
 
-        setVisualParent (visualParent: Updater): Updater {
+        setVisualParent(visualParent: Updater): Updater {
             if (!visualParent && this.tree.visualParent) {
                 this.onDetached();
                 this.tree.visualParent.tree.onChildDetached(this);
@@ -160,7 +155,7 @@ module minerva.core {
             return this;
         }
 
-        setSurface (surface: ISurface): Updater {
+        setSurface(surface: ISurface): Updater {
             var cur: core.Updater;
             var newUps: core.Updater[] = [];
             for (var walker = this.walkDeep(); walker.step();) {
@@ -187,7 +182,7 @@ module minerva.core {
             return this;
         }
 
-        walkDeep (dir?: WalkDirection): IDeepWalker<Updater> {
+        walkDeep(dir?: WalkDirection): IDeepWalker<Updater> {
             var last: Updater = undefined;
             var walkList: Updater[] = [this];
             dir = dir || WalkDirection.Forward;
@@ -213,7 +208,7 @@ module minerva.core {
 
         /////// PREPARE PIPES
 
-        setMeasurePipe (pipedef?: measure.MeasurePipeDef): Updater {
+        setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater {
             if (this.$$measure)
                 return this;
             var def = pipedef || new measure.MeasurePipeDef();
@@ -221,12 +216,12 @@ module minerva.core {
             return this;
         }
 
-        setMeasureBinder (mb?: measure.IMeasureBinder): Updater {
+        setMeasureBinder(mb?: measure.IMeasureBinder): Updater {
             this.$$measureBinder = mb || new measure.MeasureBinder();
             return this;
         }
 
-        setArrangePipe (pipedef?: arrange.ArrangePipeDef): Updater {
+        setArrangePipe(pipedef?: arrange.ArrangePipeDef): Updater {
             if (this.$$arrange)
                 return this;
             var def = pipedef || new arrange.ArrangePipeDef();
@@ -234,12 +229,12 @@ module minerva.core {
             return this;
         }
 
-        setArrangeBinder (ab?: arrange.IArrangeBinder): Updater {
+        setArrangeBinder(ab?: arrange.IArrangeBinder): Updater {
             this.$$arrangeBinder = ab || new arrange.ArrangeBinder();
             return this;
         }
 
-        setSizingPipe (pipedef?: sizing.SizingPipeDef): Updater {
+        setSizingPipe(pipedef?: sizing.SizingPipeDef): Updater {
             if (this.$$sizing)
                 return this;
             var def: pipe.TriPipeDef<sizing.ISizingTapin, sizing.IInput, sizing.IState, sizing.IOutput> = pipedef;
@@ -249,7 +244,7 @@ module minerva.core {
             return this;
         }
 
-        setProcessDownPipe (pipedef?: processdown.ProcessDownPipeDef): Updater {
+        setProcessDownPipe(pipedef?: processdown.ProcessDownPipeDef): Updater {
             var def: pipe.TriPipeDef<processdown.IProcessDownTapin, processdown.IInput, processdown.IState, processdown.IOutput> = pipedef;
             if (!def)
                 def = new processdown.ProcessDownPipeDef();
@@ -257,7 +252,7 @@ module minerva.core {
             return this;
         }
 
-        setProcessUpPipe (pipedef?: processup.ProcessUpPipeDef): Updater {
+        setProcessUpPipe(pipedef?: processup.ProcessUpPipeDef): Updater {
             if (this.$$processup)
                 return this;
             var def: pipe.TriPipeDef<processup.IProcessUpTapin, processup.IInput, processup.IState, processup.IOutput> = pipedef;
@@ -267,7 +262,7 @@ module minerva.core {
             return this;
         }
 
-        setRenderPipe (pipedef?: render.RenderPipeDef): Updater {
+        setRenderPipe(pipedef?: render.RenderPipeDef): Updater {
             if (this.$$render)
                 return this;
             var def = pipedef || new render.RenderPipeDef();
@@ -275,7 +270,7 @@ module minerva.core {
             return this;
         }
 
-        setHitTestPipe (pipedef?: hittest.HitTestPipeDef) {
+        setHitTestPipe(pipedef?: hittest.HitTestPipeDef) {
             if (this.$$hittest)
                 return this;
             var def = pipedef || new hittest.HitTestPipeDef();
@@ -295,11 +290,11 @@ module minerva.core {
 
         /////// RUN PIPES
 
-        doMeasure () {
+        doMeasure() {
             this.$$measureBinder.bind(this);
         }
 
-        measure (availableSize: Size): boolean {
+        measure(availableSize: Size): boolean {
             var pipe = this.$$measure;
             var output = pipe.output;
             var success = pipe.def.run(this.assets, pipe.state, output, this.tree, availableSize);
@@ -312,11 +307,11 @@ module minerva.core {
             return success;
         }
 
-        doArrange () {
+        doArrange() {
             this.$$arrangeBinder.bind(this);
         }
 
-        arrange (finalRect: Rect): boolean {
+        arrange(finalRect: Rect): boolean {
             var pipe = this.$$arrange;
             var output = pipe.output;
             var success = pipe.def.run(this.assets, pipe.state, output, this.tree, finalRect);
@@ -329,7 +324,7 @@ module minerva.core {
             return success;
         }
 
-        sizing (oldSize: Size, newSize: Size): boolean {
+        sizing(oldSize: Size, newSize: Size): boolean {
             var pipe = this.$$sizing;
             var assets = this.assets;
             if (assets.lastRenderSize)
@@ -342,7 +337,7 @@ module minerva.core {
             return success;
         }
 
-        processDown (): boolean {
+        processDown(): boolean {
             if (!this.tree.surface)
                 this.$$inDownDirty = false;
             if (!this.$$inDownDirty)
@@ -361,7 +356,7 @@ module minerva.core {
             return success;
         }
 
-        processUp (): boolean {
+        processUp(): boolean {
             if (!this.tree.surface)
                 this.$$inUpDirty = false;
             if (!this.$$inUpDirty)
@@ -373,41 +368,41 @@ module minerva.core {
             return success;
         }
 
-        render (ctx: render.RenderContext, region: Rect): boolean {
+        render(ctx: render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
         }
 
-        hitTest (pos: Point, list: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean {
+        hitTest(pos: Point, list: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean {
             var pipe = this.$$hittest;
             return pipe.def.run(pipe.data, pos, list, ctx, includeAll === true);
         }
 
         /////// SIZE UPDATES
 
-        onSizeChanged (oldSize: Size, newSize: Size) {
+        onSizeChanged(oldSize: Size, newSize: Size) {
             this.$$sizeupdater.onSizeChanged(oldSize, newSize);
         }
 
-        setSizeUpdater (updater: ISizeUpdater) {
+        setSizeUpdater(updater: ISizeUpdater) {
             this.$$sizeupdater = updater || NO_SIZE_UPDATER;
         }
 
         /////// INVALIDATES
 
-        invalidateMeasure (): Updater {
+        invalidateMeasure(): Updater {
             this.assets.dirtyFlags |= DirtyFlags.Measure;
             Updater.$$propagateUiFlagsUp(this, UIFlags.MeasureHint);
             return this;
         }
 
-        invalidateArrange (): Updater {
+        invalidateArrange(): Updater {
             this.assets.dirtyFlags |= DirtyFlags.Arrange;
             Updater.$$propagateUiFlagsUp(this, UIFlags.ArrangeHint);
             return this;
         }
 
-        updateBounds (forceRedraw?: boolean): Updater {
+        updateBounds(forceRedraw?: boolean): Updater {
             var assets = this.assets;
             assets.dirtyFlags |= DirtyFlags.Bounds;
             Updater.$$addUpDirty(this);
@@ -416,18 +411,18 @@ module minerva.core {
             return this;
         }
 
-        fullInvalidate (invTransforms?: boolean): Updater {
+        fullInvalidate(invTransforms?: boolean): Updater {
             var assets = this.assets;
             this.invalidate(assets.surfaceBoundsWithChildren);
             if (invTransforms) {
-                assets.dirtyFlags |= (DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
+                assets.dirtyFlags |= DirtyFlags.LocalTransform;
                 Updater.$$addDownDirty(this);
             }
             this.updateBounds(true);
             return this;
         }
 
-        invalidate (region?: Rect): Updater {
+        invalidate(region?: Rect): Updater {
             var assets = this.assets;
             if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
                 return this;
@@ -439,7 +434,7 @@ module minerva.core {
             return this;
         }
 
-        findChildInList (list: Updater[]) {
+        findChildInList(list: Updater[]) {
             for (var i = 0, len = list.length; i < len; i++) {
                 if (list[i].tree.visualParent === this)
                     return i;
@@ -449,7 +444,7 @@ module minerva.core {
 
         /////// STATIC HELPERS
 
-        static $$addUpDirty (updater: Updater) {
+        static $$addUpDirty(updater: Updater) {
             var surface = updater.tree.surface;
             if (surface && !updater.$$inUpDirty) {
                 surface.addUpDirty(updater);
@@ -457,7 +452,7 @@ module minerva.core {
             }
         }
 
-        static $$addDownDirty (updater: Updater) {
+        static $$addDownDirty(updater: Updater) {
             var surface = updater.tree.surface;
             if (surface && !updater.$$inDownDirty) {
                 surface.addDownDirty(updater);
@@ -465,7 +460,7 @@ module minerva.core {
             }
         }
 
-        static $$propagateUiFlagsUp (updater: Updater, flags: UIFlags) {
+        static $$propagateUiFlagsUp(updater: Updater, flags: UIFlags) {
             updater.assets.uiFlags |= flags;
             var vpu = updater;
             while ((vpu = vpu.tree.visualParent) != null && (vpu.assets.uiFlags & flags) === 0) {
@@ -473,30 +468,30 @@ module minerva.core {
             }
         }
 
-        static transformToVisual (fromUpdater: Updater, toUpdater?: Updater): number[] {
+        static transformToVisual(fromUpdater: Updater, toUpdater?: Updater): number[] {
             if (!fromUpdater.tree.surface || (toUpdater && !toUpdater.tree.surface))
                 return null;
 
             //1. invert transform from input element to top level
             //2. transform back down to this element
-            var result = mat4.create();
+            var result = mat3.create();
             // A = From, B = To, M = what we want
             // A = M * B
             // => M = inv (B) * A
             if (toUpdater) {
-                var inverse = mat4.create();
-                mat4.inverse(toUpdater.assets.absoluteProjection, inverse);
-                mat4.multiply(fromUpdater.assets.absoluteProjection, inverse, result); //result = inverse * abs
+                var inverse = mat3.create();
+                mat3.inverse(toUpdater.assets.absoluteXform, inverse);
+                mat3.multiply(fromUpdater.assets.absoluteXform, inverse, result); //result = inverse * abs
             } else {
-                mat4.set(fromUpdater.assets.absoluteProjection, result); //result = absolute
+                mat3.set(fromUpdater.assets.absoluteXform, result); //result = absolute
             }
 
             //TODO: Looks suspicious, will always create affine matrix (most likely won't work if user specifies a projection)
-            return mat4.toAffineMat3(result) || result;
+            return result;
         }
 
-        static transformPoint (updater: Updater, p: Point) {
-            var inverse: number[] = mat4.inverse(updater.assets.absoluteProjection, mat4.create());
+        static transformPoint(updater: Updater, p: Point) {
+            var inverse: number[] = mat3.inverse(updater.assets.absoluteXform, mat3.create());
             if (!inverse) {
                 console.warn("Could not get inverse of Absolute Projection for UIElement.");
                 return;
