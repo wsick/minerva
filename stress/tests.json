@@ -6,6 +6,11 @@
       "runCount": 10000
     },
     {
+      "name": "Measure",
+      "test": "tests/core/Measure",
+      "runCount": 10000
+    },
+    {
       "name": "Process Down",
       "test": "tests/core/ProcessDown",
       "runCount": 10000
