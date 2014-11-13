@@ -27,7 +27,7 @@ class StressTest implements ITestImpl {
         var max = all.reduce((agg, ms) => Math.max(agg, ms), Number.NEGATIVE_INFINITY);
         var sum = all.reduce((agg, ms) => agg + ms, 0);
         var avg = total / runCount;
-        var sd = calcStdDev(all, total);
+        var sd = calcStdDev(all, sum);
 
         var status = [
             "Iterations Complete: " + runCount.toString(),
