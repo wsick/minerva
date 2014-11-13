@@ -9,11 +9,6 @@
       "name": "Process Down",
       "test": "tests/core/ProcessDown",
       "runCount": 10000
-    },
-    {
-      "name": "Process Down",
-      "test": "tests/ProcessDown",
-      "runCount": 10000
     }
   ]
 }
