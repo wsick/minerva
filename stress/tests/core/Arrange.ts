@@ -14,36 +14,33 @@ var mock = {
     }
 };
 
-class Measure extends StressTest {
+class Arrange extends StressTest {
     surface: Surface;
     updater: Updater;
     childUpdater: Updater;
-    constraint: Size;
+    finalRect: Rect;
 
     prepare () {
         (this.childUpdater = new Updater())
             .setVisualParent(this.updater = new Updater());
         this.updater.setSurface(this.surface = new Surface());
 
-        this.childUpdater.measure = function (constraint: Size): boolean {
+        this.childUpdater.arrange = function (finalRect: Rect): boolean {
             return true;
         };
-        this.constraint = new Size(100, 200);
+        this.finalRect = new Rect(0, 0, 100, 200);
     }
 
     prepareIteration () {
-        var cassets = this.childUpdater.assets;
-        cassets.desiredSize = new Size(50, 50);
-
         var assets = this.updater.assets;
         assets.visibility = minerva.Visibility.Visible;
         assets.margin = new minerva.Thickness(5, 5, 5, 5);
-        assets.dirtyFlags |= DirtyFlags.Measure;
+        assets.dirtyFlags |= DirtyFlags.Arrange;
         assets.useLayoutRounding = true;
     }
 
     runIteration () {
-        this.updater.measure(this.constraint);
+        this.updater.arrange(this.finalRect);
     }
 }
-export = Measure;
+export = Arrange;

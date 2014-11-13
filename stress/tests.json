@@ -11,6 +11,11 @@
       "runCount": 10000
     },
     {
+      "name": "Arrange",
+      "test": "tests/core/Arrange",
+      "runCount": 10000
+    },
+    {
       "name": "Process Down",
       "test": "tests/core/ProcessDown",
       "runCount": 10000
