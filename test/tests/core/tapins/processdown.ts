@@ -30,10 +30,6 @@ module minerva.core.processdown.tapins.tests {
                 carrierXform: mat3.identity(),
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
-                carrierProjection: mat4.identity(),
-                localProjection: mat4.identity(),
-                absoluteProjection: mat4.identity(),
-                totalHasRenderProjection: false,
                 dirtyFlags: 0
             };
         },
@@ -41,7 +37,6 @@ module minerva.core.processdown.tapins.tests {
             return {
                 xformOrigin: new Point(),
                 localXform: mat3.identity(),
-                renderAsProjection: mat4.identity(),
                 subtreeDownDirty: 0
             };
         },
@@ -54,9 +49,6 @@ module minerva.core.processdown.tapins.tests {
                 compositeLayoutClip: new Rect(),
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
-                localProjection: mat4.identity(),
-                absoluteProjection: mat4.identity(),
-                totalHasRenderProjection: false,
                 dirtyFlags: 0,
                 newUpDirty: 0
             };
@@ -178,30 +170,6 @@ module minerva.core.processdown.tapins.tests {
         assert.deepEqual(typedToArray(state.localXform), [1, 0, 5, 0, 2, 100, 0, 0, 1]);
     });
 
-    QUnit.test("processLocalProjection", (assert) => {
-        var input = mock.input();
-        var state = mock.state();
-        var output = mock.output();
-        var vpinput = mock.input();
-
-        assert.ok(tapins.processLocalProjection(input, state, output, vpinput));
-        assert.ok(isNaN(output.z));
-
-        input.projection = {
-            setObjectSize (objectWidth: number, objectHeight: number) {
-            },
-            getDistanceFromXYPlane (): number {
-                return 10;
-            },
-            getTransform (): number[] {
-                return mat4.identity()
-            }
-        };
-        input.dirtyFlags |= DirtyFlags.LocalProjection;
-        assert.ok(tapins.processLocalProjection(input, state, output, vpinput));
-        assert.strictEqual(output.z, 10);
-    });
-
     QUnit.test("calcRenderXform", (assert) => {
         var input = mock.input();
         var state = mock.state();
@@ -210,7 +178,6 @@ module minerva.core.processdown.tapins.tests {
 
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
-        assert.deepEqual(typedToArray(state.renderAsProjection), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
         input.dirtyFlags |= DirtyFlags.Transform;
         mat3.set([2, 0, 0, 0, 2, 0, 0, 0, 1], input.carrierXform);
@@ -218,53 +185,17 @@ module minerva.core.processdown.tapins.tests {
         mat3.set([-1, 0, 0, 0, 1, 0, 0, 0, 1], state.localXform);
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
-        assert.deepEqual(typedToArray(state.renderAsProjection), [-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
 
         //Ensure running twice doesn't change renderXform
         mat3.set(output.renderXform, input.renderXform);
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
-        assert.deepEqual(typedToArray(state.renderAsProjection), [-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
 
         //Ensure running again without a carrier doesn't affect the renderXform
         mat3.set(output.renderXform, input.renderXform);
         input.carrierXform = null;
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-1, 0, -10, 0, 1, 50, 0, 0, 1]);
-        assert.deepEqual(typedToArray(state.renderAsProjection), [-1, 0, 0, -10, 0, 1, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1]);
-    });
-
-    QUnit.test("calcLocalProjection", (assert) => {
-        var input = mock.input();
-        var state = mock.state();
-        var output = mock.output();
-        var vpinput = mock.input();
-
-        assert.ok(tapins.calcLocalProjection(input, state, output, vpinput));
-        assert.ok(!output.totalHasRenderProjection);
-
-        input.dirtyFlags |= DirtyFlags.Transform;
-        vpinput.totalHasRenderProjection = true;
-        assert.ok(tapins.calcLocalProjection(input, state, output, vpinput));
-        assert.ok(output.totalHasRenderProjection);
-        assert.deepEqual(typedToArray(output.localProjection), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-
-        vpinput.totalHasRenderProjection = false;
-        input.projection = {
-            setObjectSize (objectWidth: number, objectHeight: number) {
-            },
-            getDistanceFromXYPlane (): number {
-                return 10;
-            },
-            getTransform (): number[] {
-                return mat4.identity()
-            }
-        };
-        mat4.set([1, 0, 0, 100, 0, 1, 0, 200, 0, 0, 1, 0, 0, 0, 0, 1], input.carrierProjection);
-        mat4.set([-2, 0, 0, -10, 0, 2, 0, 50, 0, 0, 1, 0, 0, 0, 0, 1], state.renderAsProjection);
-        assert.ok(tapins.calcLocalProjection(input, state, output, vpinput));
-        assert.ok(output.totalHasRenderProjection);
-        assert.deepEqual(typedToArray(output.localProjection), [-2, 0, 0, -210, 0, 2, 0, 450, 0, 0, 1, 0, 0, 0, 0, 1]);
     });
 
     QUnit.test("calcAbsoluteXform", (assert) => {
@@ -283,22 +214,6 @@ module minerva.core.processdown.tapins.tests {
         assert.deepEqual(typedToArray(output.absoluteXform), [2, 0, 50, 0, 4, 100, 0, 0, 1]);
     });
 
-    QUnit.test("calcAbsoluteProjection", (assert) => {
-        var input = mock.input();
-        var state = mock.state();
-        var output = mock.output();
-        var vpinput = mock.input();
-
-        assert.ok(tapins.calcAbsoluteProjection(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.absoluteProjection), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-
-        input.dirtyFlags |= DirtyFlags.Transform;
-        mat4.createScale(2, 4, 1, vpinput.absoluteProjection);
-        mat4.createTranslate(50, 100, 0, output.localProjection);
-        assert.ok(tapins.calcAbsoluteProjection(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.absoluteProjection), [2, 0, 0, 0, 0, 4, 0, 0, 0, 0, 1, 0, 50, 100, 0, 1]);
-    });
-
     QUnit.test("processXform", (assert) => {
         var input = mock.input();
         var state = mock.state();
@@ -315,8 +230,7 @@ module minerva.core.processdown.tapins.tests {
         assert.notStrictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);
 
         state.subtreeDownDirty = 0;
-        input.absoluteProjection = mat3.create();
-        mat4.createScale(3, 2, 1, output.localProjection);
+        mat3.createScale(3, 2, output.renderXform);
         assert.ok(tapins.processXform(input, state, output, vpinput));
         assert.strictEqual(output.dirtyFlags & DirtyFlags.Bounds, DirtyFlags.Bounds);
         assert.strictEqual(output.dirtyFlags & DirtyFlags.NewBounds, DirtyFlags.NewBounds);

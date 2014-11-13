@@ -20,8 +20,8 @@ module minerva.core.processup.tapins.tests {
                 actualWidth: 0,
                 actualHeight: 0,
                 effectPadding: new Thickness(),
-                localProjection: mat4.identity(),
-                absoluteProjection: mat4.identity(),
+                renderXform: mat3.identity(),
+                absoluteXform: mat3.identity(),
                 extents: new Rect(),
                 extentsWithChildren: new Rect(),
                 globalBoundsWithChildren: new Rect(),
@@ -123,7 +123,7 @@ module minerva.core.processup.tapins.tests {
 
         input.dirtyFlags |= DirtyFlags.Bounds;
         input.effectPadding = new Thickness(5, 10, 5, 10);
-        mat4.createScale(2, 4, 6, input.absoluteProjection);
+        mat3.createScale(2, 4, input.absoluteXform);
         assert.ok(tapins.calcPaintBounds(input, state, output, tree));
         assert.deepEqual(output.globalBoundsWithChildren, new Rect(-5, -10, 160, 320));
         assert.deepEqual(output.surfaceBoundsWithChildren, new Rect(-10, -40, 320, 1280));

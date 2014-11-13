@@ -35,7 +35,6 @@ module minerva.core {
             isHitTestVisible: true,
             renderTransform: mat3.identity(),
             renderTransformOrigin: new Point(),
-            projection: null,
             effectPadding: new Thickness(),
 
             previousConstraint: new Size(),
@@ -55,7 +54,6 @@ module minerva.core {
             totalIsRenderVisible: true,
             totalOpacity: 1.0,
             totalIsHitTestVisible: true,
-            totalHasRenderProjection: false,
 
             extents: new Rect(),
             extentsWithChildren: new Rect(),
@@ -66,9 +64,6 @@ module minerva.core {
             carrierXform: null,
             renderXform: mat3.identity(),
             absoluteXform: mat3.identity(),
-            carrierProjection: null,
-            localProjection: mat4.identity(),
-            absoluteProjection: mat4.identity(),
 
             dirtyRegion: new Rect(),
             dirtyFlags: 0,
@@ -132,7 +127,7 @@ module minerva.core {
         onAttached () {
             var assets = this.assets;
             Size.undef(assets.previousConstraint);
-            assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
+            assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform);
             var lc = assets.layoutClip;
             lc.x = lc.y = lc.width = lc.height = 0;
             var rs = assets.renderSize;
@@ -420,7 +415,7 @@ module minerva.core {
             var assets = this.assets;
             this.invalidate(assets.surfaceBoundsWithChildren);
             if (invTransforms) {
-                assets.dirtyFlags |= (DirtyFlags.LocalTransform | DirtyFlags.LocalProjection);
+                assets.dirtyFlags |= DirtyFlags.LocalTransform;
                 Updater.$$addDownDirty(this);
             }
             this.updateBounds(true);
@@ -479,39 +474,33 @@ module minerva.core {
 
             //1. invert transform from input element to top level
             //2. transform back down to this element
-            var result = mat4.create();
+            var result = mat3.create();
             // A = From, B = To, M = what we want
             // A = M * B
             // => M = inv (B) * A
             if (toUpdater) {
-                var inverse = mat4.create();
-                mat4.inverse(toUpdater.assets.absoluteProjection, inverse);
-                mat4.multiply(fromUpdater.assets.absoluteProjection, inverse, result); //result = inverse * abs
+                var inverse = mat3.create();
+                mat3.inverse(toUpdater.assets.absoluteXform, inverse);
+                mat3.multiply(fromUpdater.assets.absoluteXform, inverse, result); //result = inverse * abs
             } else {
-                mat4.set(fromUpdater.assets.absoluteProjection, result); //result = absolute
+                mat3.set(fromUpdater.assets.absoluteXform, result); //result = absolute
             }
 
             //TODO: Looks suspicious, will always create affine matrix (most likely won't work if user specifies a projection)
-            return mat4.toAffineMat3(result) || result;
+            return result;
         }
 
         static transformPoint (updater: Updater, p: Point) {
-            var inverse: number[] = mat4.inverse(updater.assets.absoluteProjection, mat4.create());
+            var inverse: number[] = mat3.inverse(updater.assets.absoluteXform, mat3.create());
             if (!inverse) {
-                console.warn("Could not get inverse of Absolute Projection for UIElement.");
+                console.warn("Could not get inverse of Absolute Transform for UIElement.");
                 return;
             }
 
-            var p4: number[] = vec4.createFrom(p.x, p.y, 0.0, 1.0);
-            var m20 = inverse[2];
-            var m21 = inverse[6];
-            var m22 = inverse[10];
-            var m23 = inverse[14];
-            p4[2] = -(m20 * p4[0] + m21 * p4[1] + m23) / m22;
-
-            mat4.transformVec4(inverse, p4);
-            p.x = p4[0] / p4[3];
-            p.y = p4[1] / p4[3];
+            var p2: number[] = vec2.createFrom(p.x, p.y);
+            mat3.transformVec2(inverse, p2);
+            p.x = p2[0];
+            p.y = p2[1];
         }
     }
 }

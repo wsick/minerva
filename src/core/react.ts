@@ -78,11 +78,6 @@ module minerva.core.reactTo {
         Updater.$$addDownDirty(updater);
     }
 
-    export function projection(updater: Updater, oldValue: IProjection, newValue: IProjection) {
-        updater.assets.dirtyFlags |= DirtyFlags.LocalProjection;
-        Updater.$$addDownDirty(updater);
-    }
-
     export function renderTransform(updater: Updater, oldValue: any, newValue: any) {
         updater.assets.dirtyFlags |= DirtyFlags.LocalTransform;
         Updater.$$addDownDirty(updater);

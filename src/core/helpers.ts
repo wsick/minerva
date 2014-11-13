@@ -8,7 +8,7 @@ module minerva.core.helpers {
         maxHeight: number;
         useLayoutRounding: boolean;
     }
-    export function coerceSize (size: ISize, assets: ISized) {
+    export function coerceSize(size: ISize, assets: ISized) {
         var cw = Math.max(assets.minWidth, size.width);
         var ch = Math.max(assets.minHeight, size.height);
 
@@ -30,7 +30,14 @@ module minerva.core.helpers {
         size.height = ch;
     }
 
-    export function copyGrowTransform4 (dest: Rect, src: Rect, thickness: Thickness, projection: number[]) {
+    export function copyGrowTransform(dest: Rect, src: Rect, thickness: Thickness, xform: number[]) {
+        Rect.copyTo(src, dest);
+        Thickness.growRect(thickness, dest);
+        if (xform)
+            Rect.transform(dest, xform);
+    }
+
+    export function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]) {
         Rect.copyTo(src, dest);
         Thickness.growRect(thickness, dest);
         if (projection)
@@ -41,7 +48,7 @@ module minerva.core.helpers {
         layoutClip: Rect;
         compositeLayoutClip: Rect;
     }
-    export function renderLayoutClip (ctx: render.RenderContext, assets: IClipAssets) {
+    export function renderLayoutClip(ctx: render.RenderContext, assets: IClipAssets) {
         var clc = assets.compositeLayoutClip;
         if (!Rect.isEmpty(clc)) {
             var raw = ctx.raw;

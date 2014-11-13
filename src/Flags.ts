@@ -2,7 +2,6 @@ module minerva {
     export enum DirtyFlags {
         Transform = 1 << 0,
         LocalTransform = 1 << 1,
-        LocalProjection = 1 << 2,
         Clip = 1 << 3,
         LocalClip = 1 << 4,
         LayoutClip = 1 << 5,
@@ -17,7 +16,7 @@ module minerva {
         InUpDirtyList = 1 << 30,
         InDownDirtyList = 1 << 31,
 
-        DownDirtyState = Transform | LocalTransform | LocalProjection
+        DownDirtyState = Transform | LocalTransform
             | Clip | LocalClip | LayoutClip | RenderVisibility
             | HitTestVisibility | ImageMetrics,
         UpDirtyState = Bounds | NewBounds | Invalidate,

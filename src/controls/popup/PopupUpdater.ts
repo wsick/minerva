@@ -30,7 +30,6 @@ module minerva.controls.popup {
         setChild (child: core.Updater) {
             var old = this.tree.popupChild;
             if (old) {
-                old.assets.carrierProjection = null;
                 old.assets.carrierXform = null;
             }
             this.tree.popupChild = child;
@@ -103,11 +102,7 @@ module minerva.controls.popup {
         }
 
         function tweenOffset (child: core.Updater, tweenX: number, tweenY: number) {
-            var proj = child.assets.carrierProjection;
-            if (proj) {
-                var transl = mat4.createTranslate(tweenX, tweenY, 0.0);
-                mat4.multiply(transl, proj, proj);
-            } else if (child.assets.carrierXform) {
+            if (child.assets.carrierXform) {
                 mat3.translate(child.assets.carrierXform, tweenX, tweenY);
             }
         }

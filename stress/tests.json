@@ -2,7 +2,12 @@
   "tests": [
     {
       "name": "Updater (new)",
-      "test": "tests/Updater",
+      "test": "tests/core/Updater",
+      "runCount": 10000
+    },
+    {
+      "name": "Process Down",
+      "test": "tests/core/ProcessDown",
       "runCount": 10000
     },
     {
