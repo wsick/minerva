@@ -1,4 +1,4 @@
-import StressTest = require('../StressTest');
+import StressTest = require('../../StressTest');
 import Surface = minerva.engine.Surface;
 import Updater = minerva.core.Updater;
 import DirtyFlags = minerva.DirtyFlags;
