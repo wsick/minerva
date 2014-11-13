@@ -2305,20 +2305,14 @@ var minerva;
             Updater.transformPoint = function (updater, p) {
                 var inverse = mat3.inverse(updater.assets.absoluteXform, mat3.create());
                 if (!inverse) {
-                    console.warn("Could not get inverse of Absolute Projection for UIElement.");
+                    console.warn("Could not get inverse of Absolute Transform for UIElement.");
                     return;
                 }
 
-                var p4 = vec4.createFrom(p.x, p.y, 0.0, 1.0);
-                var m20 = inverse[2];
-                var m21 = inverse[6];
-                var m22 = inverse[10];
-                var m23 = inverse[14];
-                p4[2] = -(m20 * p4[0] + m21 * p4[1] + m23) / m22;
-
-                mat4.transformVec4(inverse, p4);
-                p.x = p4[0] / p4[3];
-                p.y = p4[1] / p4[3];
+                var p2 = vec2.createFrom(p.x, p.y);
+                mat3.transformVec2(inverse, p2);
+                p.x = p2[0];
+                p.y = p2[1];
             };
             return Updater;
         })();
