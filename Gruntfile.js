@@ -50,9 +50,7 @@ module.exports = function (grunt) {
             test: {
                 files: [
                     {src: './lib/qunit', dest: './test/lib/qunit'},
-                    {src: './minerva.js', dest: './test/lib/minerva/minerva.js'},
-                    {src: './minerva.d.ts', dest: './test/lib/minerva/minerva.d.ts'},
-                    {src: './minerva.js.map', dest: './test/lib/minerva/minerva.js.map'},
+                    {src: './dist', dest: './test/lib/minerva/dist'},
                     {src: './src', dest: './test/lib/minerva/src'}
                 ]
             },
@@ -60,9 +58,7 @@ module.exports = function (grunt) {
                 files: [
                     {src: './lib/requirejs', dest: './stress/lib/requirejs'},
                     {src: './lib/requirejs-text', dest: './stress/lib/requirejs-text'},
-                    {src: './minerva.js', dest: './stress/lib/minerva/minerva.js'},
-                    {src: './minerva.d.ts', dest: './stress/lib/minerva/minerva.d.ts'},
-                    {src: './minerva.js.map', dest: './stress/lib/minerva/minerva.js.map'},
+                    {src: './dist', dest: './stress/lib/minerva/dist'},
                     {src: './src', dest: './stress/lib/minerva/src'}
                 ]
             }
@@ -77,7 +73,7 @@ module.exports = function (grunt) {
                     'src/core/**/*.ts',
                     'src/**/*.ts'
                 ],
-                dest: '<%= meta.name %>.js',
+                dest: 'dist/<%= meta.name %>.js',
                 options: {
                     target: 'es5',
                     declaration: true,
@@ -86,7 +82,7 @@ module.exports = function (grunt) {
             },
             test: {
                 src: [
-                    'minerva.d.ts',
+                    'dist/minerva.d.ts',
                     'test/**/*.ts',
                     '!test/lib/**/*.ts',
                     'typings/*.d.ts'
@@ -100,7 +96,7 @@ module.exports = function (grunt) {
             },
             stress: {
                 src: [
-                    'minerva.d.ts',
+                    'dist/minerva.d.ts',
                     'stress/**/*.ts',
                     '!stress/lib/**/*.ts',
                     'typings/*.d.ts'
@@ -115,7 +111,7 @@ module.exports = function (grunt) {
             }
         },
         qunit: {
-            all: ['test/**/*.html']
+            all: ['test/*.html']
         },
         connect: {
             stress: {
@@ -158,7 +154,7 @@ module.exports = function (grunt) {
                     '<%= dirs.stress.root %>/tests.json',
                     '<%= dirs.stress.root %>/index.html',
                     '<%= dirs.stress.build %>/**/*.js',
-                    'minerva.js'
+                    'dist/minerva.js'
                 ],
                 options: {
                     livereload: ports.livereload
