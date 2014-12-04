@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.2.1';
+    minerva.version = '0.2.2';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -4947,6 +4947,9 @@ var minerva;
 
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
+                        if (data.hitChildren)
+                            return true;
+
                         if (!data.assets.background && !data.assets.borderBrush) {
                             hitList.shift();
                             ctx.restore();
