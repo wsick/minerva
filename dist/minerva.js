@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.2.0';
+    minerva.version = '0.2.1';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -5693,7 +5693,7 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
-                        minerva.core.helpers.copyGrowTransform(output.globalBoundsWithChildren, input.extentsWithChildren, input.effectPadding, input.renderXform);
+                        minerva.core.helpers.copyGrowTransform(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform);
                         var sbwc = output.surfaceBoundsWithChildren;
                         var surface = tree.surface;
                         if (surface && tree.isTop) {
@@ -5701,7 +5701,7 @@ var minerva;
                             sbwc.width = surface.width;
                             sbwc.height = surface.height;
                         } else {
-                            minerva.core.helpers.copyGrowTransform(sbwc, input.extentsWithChildren, input.effectPadding, input.absoluteXform);
+                            minerva.core.helpers.copyGrowTransform(sbwc, output.extentsWithChildren, input.effectPadding, input.absoluteXform);
                         }
 
                         return true;
