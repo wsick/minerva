@@ -1,6 +1,6 @@
 module minerva.core.arrange.tapins {
     export var buildLayoutXform: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree, finalRect: Rect): boolean {
-        var vo = state.visualOffset;
+        var vo = output.visualOffset;
         var layoutXform = mat3.createTranslate(vo.x, vo.y, output.layoutXform);
         if (state.flipHorizontal) {
             mat3.translate(layoutXform, state.arrangedSize.width, 0);

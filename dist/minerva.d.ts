@@ -626,9 +626,10 @@ declare module minerva.core.helpers {
     function intersectBoundsWithClipPath(dest: Rect, src: Rect, thickness: Thickness, xform: number[], clip: IGeometry, layoutClip: Rect): void;
     interface IClipAssets {
         layoutClip: Rect;
-        compositeLayoutClip: Rect;
+        breakLayoutClip: boolean;
+        visualOffset: Point;
     }
-    function renderLayoutClip(ctx: render.RenderContext, assets: IClipAssets): void;
+    function renderLayoutClip(ctx: render.RenderContext, assets: IClipAssets, tree: IUpdaterTree): void;
 }
 declare module minerva.core.reactTo {
     module helpers {
@@ -682,6 +683,7 @@ declare module minerva.core.arrange {
         lastRenderSize: Size;
         layoutXform: number[];
         layoutClip: Rect;
+        visualOffset: Point;
     }
     interface IState extends pipe.IPipeState {
         arrangedSize: Size;
@@ -691,7 +693,6 @@ declare module minerva.core.arrange {
         framework: Size;
         stretched: Size;
         constrained: Size;
-        visualOffset: Point;
         flipHorizontal: boolean;
     }
     interface IOutput extends pipe.IPipeOutput {
@@ -701,6 +702,7 @@ declare module minerva.core.arrange {
         layoutClip: Rect;
         renderSize: Size;
         lastRenderSize: Size;
+        visualOffset: Point;
         uiFlags: UIFlags;
         origDirtyFlags: DirtyFlags;
         origUiFlags: UIFlags;
@@ -1113,7 +1115,9 @@ declare module minerva.core.render {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         surfaceBoundsWithChildren: Rect;
-        compositeLayoutClip: Rect;
+        layoutClip: Rect;
+        breakLayoutClip: boolean;
+        visualOffset: Point;
         renderXform: number[];
         clip: IGeometry;
         effect: IEffect;
@@ -1653,7 +1657,6 @@ declare module minerva.controls.grid.processup.tapins {
 declare module minerva.controls.panel.render {
     interface IInput extends core.render.IInput, core.helpers.ISized {
         background: IBrush;
-        compositeLayoutClip: Rect;
         extents: Rect;
     }
     class PanelRenderPipeDef extends core.render.RenderPipeDef {
@@ -2958,7 +2961,7 @@ declare module minerva.shapes.shape.render.tapins {
     function finishDraw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
 declare module minerva.shapes.shape.render.tapins {
-    function prepareDraw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
+    function prepareDraw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.shapes.shape.render.tapins {
     function stroke(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;

@@ -1,7 +1,6 @@
 module minerva.controls.panel.render {
     export interface IInput extends core.render.IInput, core.helpers.ISized {
         background: IBrush;
-        compositeLayoutClip: Rect;
         extents: Rect;
     }
 
@@ -20,11 +19,15 @@ module minerva.controls.panel.render {
         if (Rect.isEmpty(extents))
             return true;
 
+        ctx.save();
+        core.helpers.renderLayoutClip(ctx, input, tree);
+
         var raw = ctx.raw;
         raw.beginPath();
         raw.rect(extents.x, extents.y, extents.width, extents.height);
         ctx.fillEx(background, extents);
 
+        ctx.restore();
         return true;
     }
 }

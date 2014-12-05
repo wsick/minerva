@@ -45,15 +45,40 @@ module minerva.core.helpers {
 
     export interface IClipAssets {
         layoutClip: Rect;
-        compositeLayoutClip: Rect;
+        breakLayoutClip: boolean;
+        visualOffset: Point;
     }
-    export function renderLayoutClip (ctx: render.RenderContext, assets: IClipAssets) {
-        var clc = assets.compositeLayoutClip;
-        if (!Rect.isEmpty(clc)) {
-            var raw = ctx.raw;
-            raw.beginPath();
-            raw.rect(clc.x, clc.y, clc.width, clc.height);
-            raw.clip();
+    var offset = new Point();
+
+    export function renderLayoutClip (ctx: render.RenderContext, assets: IClipAssets, tree: core.IUpdaterTree) {
+        var lc: Rect;
+        offset.x = 0;
+        offset.y = 0;
+
+        var raw = ctx.raw;
+        var cur: Updater;
+        while (assets) {
+            lc = assets.layoutClip;
+            if (!Rect.isEmpty(lc)) {
+                raw.beginPath();
+                raw.rect(lc.x, lc.y, lc.width, lc.height);
+                raw.clip();
+            }
+
+            if (assets.breakLayoutClip)
+                break;
+
+            var vo = assets.visualOffset;
+            offset.x += vo.x;
+            offset.y += vo.y;
+            ctx.translate(-vo.x, -vo.y);
+
+            if (!tree)
+                break;
+            cur = tree.visualParent;
+            tree = cur ? cur.tree : null;
+            assets = <any>(cur ? cur.assets : null);
         }
+        ctx.translate(offset.x, offset.y);
     }
 }

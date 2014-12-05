@@ -1886,10 +1886,12 @@ var minerva;
                     desiredSize: new minerva.Size(),
                     hiddenDesire: new minerva.Size(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY),
                     renderSize: new minerva.Size(),
+                    visualOffset: new minerva.Point(),
                     lastRenderSize: undefined,
                     layoutSlot: new minerva.Rect(),
                     layoutClip: new minerva.Rect(),
                     compositeLayoutClip: new minerva.Rect(),
+                    breakLayoutClip: false,
                     actualWidth: 0,
                     actualHeight: 0,
                     z: NaN,
@@ -2428,14 +2430,38 @@ var minerva;
             }
             helpers.intersectBoundsWithClipPath = intersectBoundsWithClipPath;
 
-            function renderLayoutClip(ctx, assets) {
-                var clc = assets.compositeLayoutClip;
-                if (!minerva.Rect.isEmpty(clc)) {
-                    var raw = ctx.raw;
-                    raw.beginPath();
-                    raw.rect(clc.x, clc.y, clc.width, clc.height);
-                    raw.clip();
+            var offset = new minerva.Point();
+
+            function renderLayoutClip(ctx, assets, tree) {
+                var lc;
+                offset.x = 0;
+                offset.y = 0;
+
+                var raw = ctx.raw;
+                var cur;
+                while (assets) {
+                    lc = assets.layoutClip;
+                    if (!minerva.Rect.isEmpty(lc)) {
+                        raw.beginPath();
+                        raw.rect(lc.x, lc.y, lc.width, lc.height);
+                        raw.clip();
+                    }
+
+                    if (assets.breakLayoutClip)
+                        break;
+
+                    var vo = assets.visualOffset;
+                    offset.x += vo.x;
+                    offset.y += vo.y;
+                    ctx.translate(-vo.x, -vo.y);
+
+                    if (!tree)
+                        break;
+                    cur = tree.visualParent;
+                    tree = cur ? cur.tree : null;
+                    assets = (cur ? cur.assets : null);
                 }
+                ctx.translate(offset.x, offset.y);
             }
             helpers.renderLayoutClip = renderLayoutClip;
         })(core.helpers || (core.helpers = {}));
@@ -2633,7 +2659,6 @@ var minerva;
                         framework: new minerva.Size(),
                         stretched: new minerva.Size(),
                         constrained: new minerva.Size(),
-                        visualOffset: new minerva.Point(),
                         flipHorizontal: false
                     };
                 };
@@ -2647,6 +2672,7 @@ var minerva;
                         layoutClip: new minerva.Rect(),
                         renderSize: new minerva.Size(),
                         lastRenderSize: undefined,
+                        visualOffset: new minerva.Point(),
                         origDirtyFlags: 0,
                         origUiFlags: 0,
                         newUpDirty: 0,
@@ -2664,6 +2690,7 @@ var minerva;
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
                     output.lastRenderSize = input.lastRenderSize;
                     mat3.set(input.layoutXform, output.layoutXform);
+                    minerva.Point.copyTo(input.visualOffset, output.visualOffset);
                 };
 
                 ArrangePipeDef.prototype.flush = function (input, state, output) {
@@ -2679,6 +2706,7 @@ var minerva;
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
                     input.lastRenderSize = output.lastRenderSize;
                     mat3.set(output.layoutXform, input.layoutXform);
+                    minerva.Point.copyTo(output.visualOffset, input.visualOffset);
                 };
                 return ArrangePipeDef;
             })(minerva.pipe.TriPipeDef);
@@ -2723,7 +2751,7 @@ var minerva;
                     var lc = output.layoutClip;
                     minerva.Rect.copyTo(state.finalRect, lc);
 
-                    var vo = state.visualOffset;
+                    var vo = output.visualOffset;
                     lc.x = Math.max(lc.x - vo.x, 0);
                     lc.y = Math.max(lc.y - vo.y, 0);
 
@@ -2763,7 +2791,7 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.buildLayoutXform = function (input, state, output, tree, finalRect) {
-                    var vo = state.visualOffset;
+                    var vo = output.visualOffset;
                     var layoutXform = mat3.createTranslate(vo.x, vo.y, output.layoutXform);
                     if (state.flipHorizontal) {
                         mat3.translate(layoutXform, state.arrangedSize.width, 0);
@@ -2849,7 +2877,7 @@ var minerva;
         (function (arrange) {
             (function (tapins) {
                 tapins.calcVisualOffset = function (input, state, output, tree, finalRect) {
-                    var vo = state.visualOffset;
+                    var vo = output.visualOffset;
                     var fr = state.finalRect;
                     var constrained = state.constrained;
                     vo.x = fr.x;
@@ -5147,6 +5175,7 @@ var minerva;
                         if (!state.shouldRender)
                             return true;
                         ctx.save();
+                        minerva.core.helpers.renderLayoutClip(ctx, input, tree);
 
                         var borderBrush = input.borderBrush;
                         var extents = input.extents;
@@ -5411,6 +5440,10 @@ var minerva;
                 }
                 CanvasUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(canvas.measure.CanvasMeasurePipeDef)).setArrangePipe(minerva.singleton(canvas.arrange.CanvasArrangePipeDef)).setProcessDownPipe(minerva.singleton(canvas.processdown.CanvasProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(canvas.processup.CanvasProcessUpPipeDef));
+
+                    var assets = this.assets;
+                    assets.breakLayoutClip = true;
+
                     _super.prototype.init.call(this);
                 };
                 return CanvasUpdater;
@@ -6950,11 +6983,15 @@ var minerva;
                     if (minerva.Rect.isEmpty(extents))
                         return true;
 
+                    ctx.save();
+                    minerva.core.helpers.renderLayoutClip(ctx, input, tree);
+
                     var raw = ctx.raw;
                     raw.beginPath();
                     raw.rect(extents.x, extents.y, extents.width, extents.height);
                     ctx.fillEx(background, extents);
 
+                    ctx.restore();
                     return true;
                 }
             })(panel.render || (panel.render = {}));
@@ -7704,6 +7741,7 @@ var minerva;
 
                         source.lock();
                         ctx.save();
+                        minerva.core.helpers.renderLayoutClip(ctx, input, tree);
                         ctx.pretransformMatrix(input.imgXform);
                         ctx.raw.drawImage(source.image, 0, 0);
                         ctx.restore();
@@ -9125,10 +9163,13 @@ var minerva;
 
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
+                        ctx.save();
+                        minerva.core.helpers.renderLayoutClip(ctx, input, tree);
                         var padding = input.padding;
                         if (padding)
                             ctx.translate(padding.left, padding.top);
                         tree.render(ctx, input);
+                        ctx.restore();
                         return true;
                     }
                     tapins.doRender = doRender;
@@ -9598,7 +9639,10 @@ var minerva;
 
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
+                        ctx.save();
+                        minerva.core.helpers.renderLayoutClip(ctx, input, tree);
                         tree.render(ctx, input);
+                        ctx.restore();
                         return true;
                     }
                     tapins.doRender = doRender;
@@ -9656,6 +9700,7 @@ var minerva;
                     this.setMeasurePipe(minerva.singleton(usercontrol.measure.UserControlMeasurePipeDef)).setArrangePipe(minerva.singleton(usercontrol.arrange.UserControlArrangePipeDef)).setProcessDownPipe(minerva.singleton(usercontrol.processdown.UserControlProcessDownPipeDef));
 
                     var assets = this.assets;
+                    assets.breakLayoutClip = true;
                     assets.padding = new minerva.Thickness();
                     assets.borderThickness = new minerva.Thickness();
 
@@ -13127,10 +13172,11 @@ var minerva;
         (function (shape) {
             (function (render) {
                 (function (tapins) {
-                    function prepareDraw(input, state, output, ctx, region) {
+                    function prepareDraw(input, state, output, ctx, region, tree) {
                         if (!state.shouldDraw)
                             return true;
                         ctx.save();
+                        minerva.core.helpers.renderLayoutClip(ctx, input, tree);
                         return true;
                     }
                     tapins.prepareDraw = prepareDraw;

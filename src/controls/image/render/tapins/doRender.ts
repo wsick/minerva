@@ -6,6 +6,7 @@ module minerva.controls.image.render.tapins {
 
         source.lock();
         ctx.save();
+        core.helpers.renderLayoutClip(ctx, input, tree);
         ctx.pretransformMatrix(input.imgXform);
         ctx.raw.drawImage(source.image, 0, 0);
         ctx.restore();

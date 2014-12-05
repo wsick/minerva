@@ -3,6 +3,7 @@ module minerva.controls.border.render.tapins {
         if (!state.shouldRender)
             return true;
         ctx.save();
+        core.helpers.renderLayoutClip(ctx, input, tree);
 
         var borderBrush = input.borderBrush;
         var extents = input.extents;
