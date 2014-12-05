@@ -12,6 +12,10 @@ module minerva.controls.canvas {
                 .setArrangePipe(singleton(arrange.CanvasArrangePipeDef))
                 .setProcessDownPipe(singleton(processdown.CanvasProcessDownPipeDef))
                 .setProcessUpPipe(singleton(processup.CanvasProcessUpPipeDef));
+
+            var assets = this.assets;
+            assets.breakLayoutClip = true;
+
             super.init();
         }
     }

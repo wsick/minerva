@@ -34,6 +34,7 @@ module minerva.core.arrange.tapins.tests {
                 uiFlags: 0,
                 layoutSlot: new Rect(),
                 renderSize: new Size(),
+                visualOffset: new Point(),
                 lastRenderSize: undefined,
                 layoutClip: new Rect(),
                 layoutXform: mat3.identity(),
@@ -60,6 +61,7 @@ module minerva.core.arrange.tapins.tests {
                 layoutXform: mat3.identity(),
                 layoutClip: new Rect(),
                 renderSize: new Size(),
+                visualOffset: new Point(),
                 lastRenderSize: undefined,
                 dirtyFlags: 0,
                 uiFlags: 0,
@@ -254,7 +256,7 @@ module minerva.core.arrange.tapins.tests {
         input.verticalAlignment = minerva.VerticalAlignment.Center;
         input.horizontalAlignment = minerva.HorizontalAlignment.Center;
         assert.ok(tapins.calcVisualOffset(input, state, output, tree, new Rect()));
-        assert.deepEqual(state.visualOffset, new Point(87, 222));
+        assert.deepEqual(output.visualOffset, new Point(87, 222));
     });
 
     QUnit.test("buildLayoutClip", (assert) => {
@@ -271,7 +273,7 @@ module minerva.core.arrange.tapins.tests {
 
         tree.isTop = false;
         tree.isContainer = true;
-        state.visualOffset = new Point(5, 15);
+        output.visualOffset = new Point(5, 15);
         state.finalRect = new Rect(5, 15, 200, 300);
         state.arrangedSize = new Size(100, 100);
         input.layoutClip = new Rect(0, 0, 0, 0);
@@ -286,7 +288,7 @@ module minerva.core.arrange.tapins.tests {
         var output = mock.output();
         var tree = mock.tree();
 
-        state.visualOffset = new Point(150, 200);
+        output.visualOffset = new Point(150, 200);
         input.layoutXform = mat3.identity();
         assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
         assert.deepEqual(typedToArray(output.layoutXform), [1, 0, 150, 0, 1, 200, 0, 0, 1]);

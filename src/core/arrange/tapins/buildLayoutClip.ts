@@ -5,7 +5,7 @@ module minerva.core.arrange.tapins {
         var lc = output.layoutClip;
         Rect.copyTo(state.finalRect, lc);
 
-        var vo = state.visualOffset;
+        var vo = output.visualOffset;
         lc.x = Math.max(lc.x - vo.x, 0);
         lc.y = Math.max(lc.y - vo.y, 0);
 

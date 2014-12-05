@@ -15,6 +15,7 @@ module minerva.core.arrange {
         lastRenderSize: Size;
         layoutXform: number[];
         layoutClip: Rect; //NOTE: empty represents no layout clip
+        visualOffset: Point
     }
     export interface IState extends pipe.IPipeState {
         arrangedSize: Size;
@@ -24,7 +25,6 @@ module minerva.core.arrange {
         framework: Size;
         stretched: Size;
         constrained: Size;
-        visualOffset: Point;
         flipHorizontal: boolean;
     }
     export interface IOutput extends pipe.IPipeOutput {
@@ -34,6 +34,7 @@ module minerva.core.arrange {
         layoutClip: Rect;
         renderSize: Size;
         lastRenderSize: Size;
+        visualOffset: Point;
         uiFlags: UIFlags;
         origDirtyFlags: DirtyFlags;
         origUiFlags: UIFlags;
@@ -71,7 +72,6 @@ module minerva.core.arrange {
                 framework: new Size(),
                 stretched: new Size(),
                 constrained: new Size(),
-                visualOffset: new Point(),
                 flipHorizontal: false
             };
         }
@@ -85,6 +85,7 @@ module minerva.core.arrange {
                 layoutClip: new Rect(),
                 renderSize: new Size(),
                 lastRenderSize: undefined,
+                visualOffset: new Point(),
                 origDirtyFlags: 0,
                 origUiFlags: 0,
                 newUpDirty: 0,
@@ -102,6 +103,7 @@ module minerva.core.arrange {
             Size.copyTo(input.renderSize, output.renderSize);
             output.lastRenderSize = input.lastRenderSize;
             mat3.set(input.layoutXform, output.layoutXform);
+            Point.copyTo(input.visualOffset, output.visualOffset);
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
@@ -117,6 +119,7 @@ module minerva.core.arrange {
             Size.copyTo(output.renderSize, input.renderSize);
             input.lastRenderSize = output.lastRenderSize;
             mat3.set(output.layoutXform, input.layoutXform);
+            Point.copyTo(output.visualOffset, input.visualOffset);
         }
     }
 }

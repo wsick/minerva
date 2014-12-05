@@ -11,6 +11,7 @@ module minerva.controls.usercontrol {
                 .setProcessDownPipe(singleton(processdown.UserControlProcessDownPipeDef));
 
             var assets = this.assets;
+            assets.breakLayoutClip = true;
             assets.padding = new Thickness();
             assets.borderThickness = new Thickness();
 

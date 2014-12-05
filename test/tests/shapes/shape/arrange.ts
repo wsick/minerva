@@ -23,6 +23,7 @@ module minerva.shapes.shape.arrange.tests {
 
                 layoutSlot: new Rect(),
                 renderSize: new Size(),
+                visualOffset: new Point(),
                 lastRenderSize: null,
                 layoutXform: mat3.identity(),
                 layoutClip: new Rect(), //NOTE: empty represents no layout clip

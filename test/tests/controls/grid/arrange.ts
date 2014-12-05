@@ -26,6 +26,7 @@ module minerva.controls.grid.arrange.tests {
                 lastRenderSize: null,
                 layoutXform: mat3.identity(),
                 layoutClip: new Rect(),
+                visualOffset: new Point(),
 
                 gridState: {
                     rowMatrix: [],
@@ -47,7 +48,6 @@ module minerva.controls.grid.arrange.tests {
                 framework: new Size(),
                 stretched: new Size(),
                 constrained: new Size(),
-                visualOffset: new Point(),
                 flipHorizontal: false
             };
         },

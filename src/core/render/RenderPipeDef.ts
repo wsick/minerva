@@ -6,7 +6,9 @@ module minerva.core.render {
         totalIsRenderVisible: boolean;
         totalOpacity: number;
         surfaceBoundsWithChildren: Rect;
-        compositeLayoutClip: Rect;
+        layoutClip: Rect;
+        breakLayoutClip: boolean;
+        visualOffset: Point;
         renderXform: number[];
         clip: IGeometry;
         effect: IEffect;

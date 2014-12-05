@@ -18,6 +18,7 @@ module minerva.core.render.tapins.tests {
                 totalOpacity: 1.0,
                 surfaceBoundsWithChildren: new Rect(),
                 renderXform: mat3.identity(),
+                layoutClip: new Rect(),
                 clip: null,
                 effect: null
             };

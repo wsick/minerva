@@ -1,6 +1,6 @@
 module minerva.core.arrange.tapins {
     export var calcVisualOffset: IArrangeTapin = function (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree, finalRect: Rect): boolean {
-        var vo = state.visualOffset;
+        var vo = output.visualOffset;
         var fr = state.finalRect;
         var constrained = state.constrained;
         vo.x = fr.x;
