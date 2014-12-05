@@ -623,8 +623,7 @@ declare module minerva.core.helpers {
         useLayoutRounding: boolean;
     }
     function coerceSize(size: ISize, assets: ISized): void;
-    function copyGrowTransform(dest: Rect, src: Rect, thickness: Thickness, xform: number[]): void;
-    function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]): void;
+    function intersectBoundsWithClipPath(dest: Rect, src: Rect, thickness: Thickness, xform: number[], clip: IGeometry, layoutClip: Rect): void;
     interface IClipAssets {
         layoutClip: Rect;
         compositeLayoutClip: Rect;
@@ -1011,11 +1010,13 @@ declare module minerva.core.processup {
         maxWidth: number;
         maxHeight: number;
         useLayoutRounding: boolean;
+        clip: IGeometry;
         actualWidth: number;
         actualHeight: number;
         effectPadding: Thickness;
         renderXform: number[];
         absoluteXform: number[];
+        layoutClip: Rect;
         extents: Rect;
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;

@@ -2414,21 +2414,19 @@ var minerva;
             }
             helpers.coerceSize = coerceSize;
 
-            function copyGrowTransform(dest, src, thickness, xform) {
+            function intersectBoundsWithClipPath(dest, src, thickness, xform, clip, layoutClip) {
                 minerva.Rect.copyTo(src, dest);
                 minerva.Thickness.growRect(thickness, dest);
+
+                if (clip)
+                    minerva.Rect.intersection(dest, clip.GetBounds());
+                if (!minerva.Rect.isEmpty(layoutClip))
+                    minerva.Rect.intersection(dest, layoutClip);
+
                 if (xform)
                     minerva.Rect.transform(dest, xform);
             }
-            helpers.copyGrowTransform = copyGrowTransform;
-
-            function copyGrowTransform4(dest, src, thickness, projection) {
-                minerva.Rect.copyTo(src, dest);
-                minerva.Thickness.growRect(thickness, dest);
-                if (projection)
-                    minerva.Rect.transform4(dest, projection);
-            }
-            helpers.copyGrowTransform4 = copyGrowTransform4;
+            helpers.intersectBoundsWithClipPath = intersectBoundsWithClipPath;
 
             function renderLayoutClip(ctx, assets) {
                 var clc = assets.compositeLayoutClip;
@@ -4286,8 +4284,8 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
 
-                    core.helpers.copyGrowTransform(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform);
-                    core.helpers.copyGrowTransform(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteXform);
+                    core.helpers.intersectBoundsWithClipPath(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform, input.clip, input.layoutClip);
+                    core.helpers.intersectBoundsWithClipPath(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteXform, input.clip, input.layoutClip);
 
                     return true;
                 };
@@ -5696,7 +5694,7 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
 
-                        minerva.core.helpers.copyGrowTransform(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform);
+                        minerva.core.helpers.intersectBoundsWithClipPath(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform, input.clip, input.layoutClip);
                         var sbwc = output.surfaceBoundsWithChildren;
                         var surface = tree.surface;
                         if (surface && tree.isTop) {
@@ -5704,7 +5702,7 @@ var minerva;
                             sbwc.width = surface.width;
                             sbwc.height = surface.height;
                         } else {
-                            minerva.core.helpers.copyGrowTransform(sbwc, output.extentsWithChildren, input.effectPadding, input.absoluteXform);
+                            minerva.core.helpers.intersectBoundsWithClipPath(sbwc, output.extentsWithChildren, input.effectPadding, input.absoluteXform, input.clip, input.layoutClip);
                         }
 
                         return true;

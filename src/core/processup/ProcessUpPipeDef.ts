@@ -10,11 +10,13 @@ module minerva.core.processup {
         maxWidth: number;
         maxHeight: number;
         useLayoutRounding: boolean;
+        clip: IGeometry;
         actualWidth: number;
         actualHeight: number;
         effectPadding: Thickness;
         renderXform: number[];
         absoluteXform: number[];
+        layoutClip: Rect;
         extents: Rect;
         extentsWithChildren: Rect;
         globalBoundsWithChildren: Rect;

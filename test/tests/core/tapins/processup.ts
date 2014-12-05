@@ -17,11 +17,13 @@ module minerva.core.processup.tapins.tests {
                 maxWidth: Number.POSITIVE_INFINITY,
                 maxHeight: Number.POSITIVE_INFINITY,
                 useLayoutRounding: true,
+                clip: null,
                 actualWidth: 0,
                 actualHeight: 0,
                 effectPadding: new Thickness(),
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
+                layoutClip: new Rect(),
                 extents: new Rect(),
                 extentsWithChildren: new Rect(),
                 globalBoundsWithChildren: new Rect(),
@@ -127,6 +129,18 @@ module minerva.core.processup.tapins.tests {
         assert.ok(tapins.calcPaintBounds(input, state, output, tree));
         assert.deepEqual(output.globalBoundsWithChildren, new Rect(-5, -10, 160, 320));
         assert.deepEqual(output.surfaceBoundsWithChildren, new Rect(-10, -40, 320, 1280));
+
+        input.clip = <IGeometry>{
+            Draw (ctx: core.render.RenderContext) {
+            },
+            GetBounds () {
+                return new Rect(25, 25, 100, 100);
+            }
+        };
+        input.layoutClip = new Rect(0, 0, 100, 100);
+        assert.ok(tapins.calcPaintBounds(input, state, output, tree));
+        assert.deepEqual(output.globalBoundsWithChildren, new Rect(25, 25, 75, 75));
+        assert.deepEqual(output.surfaceBoundsWithChildren, new Rect(50, 100, 150, 300));
     });
 
     QUnit.test("processBounds", (assert) => {

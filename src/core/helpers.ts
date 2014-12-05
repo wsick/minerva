@@ -8,7 +8,7 @@ module minerva.core.helpers {
         maxHeight: number;
         useLayoutRounding: boolean;
     }
-    export function coerceSize(size: ISize, assets: ISized) {
+    export function coerceSize (size: ISize, assets: ISized) {
         var cw = Math.max(assets.minWidth, size.width);
         var ch = Math.max(assets.minHeight, size.height);
 
@@ -30,25 +30,24 @@ module minerva.core.helpers {
         size.height = ch;
     }
 
-    export function copyGrowTransform(dest: Rect, src: Rect, thickness: Thickness, xform: number[]) {
+    export function intersectBoundsWithClipPath (dest: Rect, src: Rect, thickness: Thickness, xform: number[], clip: IGeometry, layoutClip: Rect) {
         Rect.copyTo(src, dest);
         Thickness.growRect(thickness, dest);
+
+        if (clip)
+            Rect.intersection(dest, clip.GetBounds());
+        if (!Rect.isEmpty(layoutClip))
+            Rect.intersection(dest, layoutClip);
+
         if (xform)
             Rect.transform(dest, xform);
-    }
-
-    export function copyGrowTransform4(dest: Rect, src: Rect, thickness: Thickness, projection: number[]) {
-        Rect.copyTo(src, dest);
-        Thickness.growRect(thickness, dest);
-        if (projection)
-            Rect.transform4(dest, projection);
     }
 
     export interface IClipAssets {
         layoutClip: Rect;
         compositeLayoutClip: Rect;
     }
-    export function renderLayoutClip(ctx: render.RenderContext, assets: IClipAssets) {
+    export function renderLayoutClip (ctx: render.RenderContext, assets: IClipAssets) {
         var clc = assets.compositeLayoutClip;
         if (!Rect.isEmpty(clc)) {
             var raw = ctx.raw;

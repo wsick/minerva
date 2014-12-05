@@ -3,7 +3,7 @@ module minerva.controls.canvas.processup.tapins {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 
-        core.helpers.copyGrowTransform(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform);
+        core.helpers.intersectBoundsWithClipPath(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform, input.clip, input.layoutClip);
         var sbwc = output.surfaceBoundsWithChildren;
         var surface = tree.surface;
         if (surface && tree.isTop) {
@@ -11,7 +11,7 @@ module minerva.controls.canvas.processup.tapins {
             sbwc.width = surface.width;
             sbwc.height = surface.height;
         } else {
-            core.helpers.copyGrowTransform(sbwc, output.extentsWithChildren, input.effectPadding, input.absoluteXform);
+            core.helpers.intersectBoundsWithClipPath(sbwc, output.extentsWithChildren, input.effectPadding, input.absoluteXform, input.clip, input.layoutClip);
         }
 
         return true;
