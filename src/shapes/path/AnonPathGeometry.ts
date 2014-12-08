@@ -1,6 +1,6 @@
 module minerva.shapes.path {
     export class AnonPathGeometry implements IPathGeometry {
-        old: boolean = false;
+        old: boolean = true;
         path = new minerva.path.Path();
         fillRule = FillRule.EvenOdd;
 

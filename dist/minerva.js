@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.2.4';
+    minerva.version = '0.2.5';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -12266,6 +12266,7 @@ var minerva;
                         path.reset();
                         path.move(input.x1, input.y1);
                         path.line(input.x2, input.y2);
+                        input.data.old = false;
                         return true;
                     }
                     tapins.buildPath = buildPath;
@@ -12284,7 +12285,7 @@ var minerva;
         (function (path) {
             var AnonPathGeometry = (function () {
                 function AnonPathGeometry() {
-                    this.old = false;
+                    this.old = true;
                     this.path = new minerva.path.Path();
                     this.fillRule = 0 /* EvenOdd */;
                 }
@@ -12621,6 +12622,7 @@ var minerva;
                         if (input.isClosed)
                             path.close();
 
+                        input.data.old = false;
                         return true;
                     }
                     tapins.buildPath = buildPath;

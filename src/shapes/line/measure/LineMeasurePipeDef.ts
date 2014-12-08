@@ -27,6 +27,7 @@ module minerva.shapes.line.measure {
             path.reset();
             path.move(input.x1, input.y1);
             path.line(input.x2, input.y2);
+            input.data.old = false;
             return true;
         }
     }

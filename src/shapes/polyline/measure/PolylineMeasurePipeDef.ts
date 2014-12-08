@@ -45,6 +45,7 @@ module minerva.shapes.polyline.measure {
             if (input.isClosed)
                 path.close();
 
+            input.data.old = false;
             return true;
         }
 
