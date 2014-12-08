@@ -1,7 +1,7 @@
 {
   "name": "minerva",
   "main": "minerva.js",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "repository": {
     "type": "git",
     "url": "git://github.com/bsick7/minerva"
@@ -23,9 +23,12 @@
     "build",
     "node_modules",
     "bower_components",
-    "src",
+    "stress",
     "test",
-    "tests"
+    "typings",
+    "bower.json",
+    "package.json",
+    "Gruntfile.js"
   ],
   "devDependencies": {
     "qunit": "~1.15.0",
