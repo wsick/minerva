@@ -18,8 +18,13 @@ module minerva {
         UltraExpanded: "ultra-expanded"
     };
 
+    /// References
+    //  Font-face generator: http://www.flaticon.com/font-face
+    //  How to use: http://stackoverflow.com/questions/14399484/how-to-render-segoe-ui-font-in-different-navigators-and-oss
+    //  Font Share: http://www.cssfontstack.com/
+
     export class Font {
-        static DEFAULT_FAMILY = "Segoe UI, Lucida Sans Unicode, Verdana";
+        static DEFAULT_FAMILY = "Lucida Grande, Segoe UI, Verdana";
         static DEFAULT_STRETCH = FontStretch.Normal;
         static DEFAULT_STYLE = FontStyle.Normal;
         static DEFAULT_WEIGHT = FontWeight.Normal;

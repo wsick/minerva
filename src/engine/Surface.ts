@@ -33,7 +33,7 @@ module minerva.engine {
 
         init (canvas: HTMLCanvasElement) {
             this.$$canvas = canvas;
-            this.$$ctx = new core.render.RenderContext(canvas.getContext('2d'));
+            this.$$ctx = new core.render.RenderContext(canvas.getContext('2d', {alpha: false}));
             this.$$width = canvas.offsetWidth;
             this.$$height = canvas.offsetHeight;
         }
@@ -107,8 +107,9 @@ module minerva.engine {
                 this.$$sizechanged = false;
                 ctx.resize(this.$$width, this.$$height);
             } else {
-                ctx.raw.clearRect(region.x, region.y, region.width, region.height);
             }
+            ctx.raw.fillStyle = "#ffffff";
+            ctx.raw.fillRect(region.x, region.y, region.width, region.height);
 
             ctx.save();
             ctx.clipRect(region);

@@ -253,7 +253,7 @@ var minerva;
         Font.prototype.getDescender = function () {
             return 0;
         };
-        Font.DEFAULT_FAMILY = "Segoe UI, Lucida Sans Unicode, Verdana";
+        Font.DEFAULT_FAMILY = "Lucida Grande, Segoe UI, Verdana";
         Font.DEFAULT_STRETCH = FontStretch.Normal;
         Font.DEFAULT_STYLE = FontStyle.Normal;
         Font.DEFAULT_WEIGHT = 400 /* Normal */;
@@ -10351,7 +10351,7 @@ var minerva;
 
             Surface.prototype.init = function (canvas) {
                 this.$$canvas = canvas;
-                this.$$ctx = new minerva.core.render.RenderContext(canvas.getContext('2d'));
+                this.$$ctx = new minerva.core.render.RenderContext(canvas.getContext('2d', { alpha: false }));
                 this.$$width = canvas.offsetWidth;
                 this.$$height = canvas.offsetHeight;
             };
@@ -10424,8 +10424,9 @@ var minerva;
                     this.$$sizechanged = false;
                     ctx.resize(this.$$width, this.$$height);
                 } else {
-                    ctx.raw.clearRect(region.x, region.y, region.width, region.height);
                 }
+                ctx.raw.fillStyle = "#ffffff";
+                ctx.raw.fillRect(region.x, region.y, region.width, region.height);
 
                 ctx.save();
                 ctx.clipRect(region);
