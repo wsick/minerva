@@ -3,27 +3,45 @@ module minerva.controls.border.render.tapins.shim {
         if (!state.shouldRender)
             return true;
         ctx.save();
+        core.helpers.renderLayoutClip(ctx, input, tree);
 
-        var raw = ctx.raw;
-        if (Thickness.isBalanced(input.borderThickness)) {
-            raw.beginPath();
-            ctx.drawRectEx(state.strokeExtents, state.middleCornerRadius);
+        if (input.background)
+            renderBackground(ctx, input, state);
 
-            raw.lineWidth = input.borderThickness.left;
-            raw.lineCap = "butt";
-            raw.lineJoin = "miter";
-            raw.miterLimit = 0;
-            input.borderBrush.setupBrush(raw, state.strokeExtents);
-            raw.strokeStyle = input.borderBrush.toHtml5Object();
-            raw.stroke();
-        } else {
-            raw.beginPath();
-            raw.fillStyle = state.pattern;
-            ctx.drawRectEx(input.extents, state.outerCornerRadius);
-            raw.fill();
+        if (state.pattern) {
+            renderPattern(ctx, input, state);
+        } else if (input.borderBrush) {
+            renderBorder(ctx, input, state);
         }
 
         ctx.restore();
         return true;
+    }
+
+    function renderPattern (ctx: core.render.RenderContext, input: IInput, state: IShimState) {
+        var raw = ctx.raw;
+        raw.beginPath();
+        raw.fillStyle = state.pattern;
+        ctx.drawRectEx(input.extents, state.outerCornerRadius);
+        raw.fill();
+    }
+
+    function renderBackground (ctx: core.render.RenderContext, input: IInput, state: IShimState) {
+        ctx.raw.beginPath();
+        ctx.drawRectEx(state.fillExtents, state.innerCornerRadius);
+        ctx.fillEx(input.background, state.fillExtents);
+    }
+
+    function renderBorder (ctx: core.render.RenderContext, input: IInput, state: IShimState) {
+        var raw = ctx.raw;
+        raw.beginPath();
+        ctx.drawRectEx(state.strokeExtents, state.middleCornerRadius);
+        raw.lineWidth = input.borderThickness.left;
+        raw.lineCap = "butt";
+        raw.lineJoin = "miter";
+        raw.miterLimit = 0;
+        input.borderBrush.setupBrush(raw, state.strokeExtents);
+        raw.strokeStyle = input.borderBrush.toHtml5Object();
+        raw.stroke();
     }
 }
