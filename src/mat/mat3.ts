@@ -1,4 +1,4 @@
-interface IMatrix3 {
+interface IMatrix3Static {
     create (src?: number[]): number[];
     copyTo (src: number[], dest: number[]): number[];
     init (dest: number[], m11: number, m12: number, m21: number, m22: number, x0: number, y0: number): number[];
@@ -18,7 +18,7 @@ interface IMatrix3 {
 module minerva {
     /// NOTE:
     ///     Row-major order
-    ///     [m11, m12, m21, m22, ox, oy]
+    ///     [m11, m12, m21, m22, x0, y0]
     var FLOAT_EPSILON = 0.000001;
     var createTypedArray: (length: number) => number[];
 
@@ -32,7 +32,7 @@ module minerva {
         };
     }
 
-    export var mat3 = <IMatrix3>{
+    export var mat3: IMatrix3Static = {
         create (src?: number[]): number[] {
             var dest = createTypedArray(6);
 
@@ -108,8 +108,7 @@ module minerva {
             return dest;
         },
         inverse (mat: number[], dest?: number[]): number[] {
-            //Simple scaling/translation matrix
-            if (Math.abs(mat[1]) < FLOAT_EPSILON && Math.abs(mat[2]) < FLOAT_EPSILON)
+            if (Math.abs(mat[1]) < FLOAT_EPSILON && Math.abs(mat[2]) < FLOAT_EPSILON) //Simple scaling/translation matrix
                 return simple_inverse(mat, dest);
             else
                 return complex_inverse(mat, dest);
@@ -239,4 +238,4 @@ module minerva {
         return dest;
     }
 }
-var mat3 = <IMatrix3>minerva.mat3;
+var mat3 = minerva.mat3;
