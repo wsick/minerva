@@ -13,6 +13,8 @@ interface IMatrix4Static {
     createRotateX (theta: number, dest?: number[]): number[];
     createRotateY (theta: number, dest?: number[]): number[];
     createRotateZ (theta: number, dest?: number[]): number[];
+    createPerspective (fieldOfViewY: number, aspectRatio: number, zNearPlane: number, zFarPlane: number, dest?: number[]): number[];
+    createViewport (width: number, height: number, dest?: number[]): number[];
 }
 
 module minerva {
@@ -343,6 +345,61 @@ module minerva {
 
             dest[Indexes.OffsetX] = 0;
             dest[Indexes.OffsetY] = 0;
+            dest[Indexes.OffsetZ] = 0;
+            dest[Indexes.M44] = 1;
+
+            return dest;
+        },
+
+        createPerspective (fieldOfViewY: number, aspectRatio: number, zNearPlane: number, zFarPlane: number, dest?: number[]): number[] {
+            if (!dest) dest = mat4.create();
+
+            var height = 1.0 / Math.tan(fieldOfViewY / 2.0);
+            var width = height / aspectRatio;
+            var d = zNearPlane - zFarPlane;
+
+            dest[Indexes.M11] = width;
+            dest[Indexes.M12] = 0;
+            dest[Indexes.M13] = 0;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M21] = 0;
+            dest[Indexes.M22] = height;
+            dest[Indexes.M23] = 0;
+            dest[Indexes.M24] = 0;
+
+            dest[Indexes.M31] = 0;
+            dest[Indexes.M32] = 0;
+            dest[Indexes.M33] = zFarPlane / d;
+            dest[Indexes.M34] = -1.0;
+
+            dest[Indexes.OffsetX] = 0;
+            dest[Indexes.OffsetY] = 0;
+            dest[Indexes.OffsetZ] = zNearPlane * zFarPlane / d;
+            dest[Indexes.M44] = 0.0;
+
+            return dest;
+        },
+        createViewport (width: number, height: number, dest?: number[]): number[] {
+            if (!dest) dest = mat4.create();
+
+            dest[Indexes.M11] = width / 2.0;
+            dest[Indexes.M12] = 0;
+            dest[Indexes.M13] = 0;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M21] = 0;
+            dest[Indexes.M22] = -height / 2.0;
+            dest[Indexes.M23] = 0;
+            dest[Indexes.M24] = 0;
+
+            dest[Indexes.M31] = 0;
+            dest[Indexes.M32] = 0;
+            dest[Indexes.M33] = 1;
+            dest[Indexes.M34] = 0;
+
+            dest[Indexes.OffsetX] = width / 2.0;
+            dest[Indexes.OffsetY] = height / 2.0;
             dest[Indexes.OffsetZ] = 0;
             dest[Indexes.M44] = 1;
 
