@@ -8,6 +8,11 @@ interface IMatrix4Static {
     inverse (mat: number[], dest?: number[]): number[];
     transformVec4 (mat: number[], vec: number[], dest?: number[]): number[];
     //toAffineMat3 (m44: number[]): number[];
+    createTranslate (x: number, y: number, z: number, dest?: number[]): number[];
+    createScale (x: number, y: number, z: number, dest?: number[]): number[];
+    createRotateX (theta: number, dest?: number[]): number[];
+    createRotateY (theta: number, dest?: number[]): number[];
+    createRotateZ (theta: number, dest?: number[]): number[];
 }
 
 module minerva {
@@ -207,11 +212,147 @@ module minerva {
             if (!dest) dest = vec;
             console.warn("[mat4.transformVec4] Not implemented");
             return dest;
-        }
-        /*
-        toAffineMat3 (m44: number[]): number[] {
+        },
 
-        }*/
+        createTranslate (x: number, y: number, z: number, dest?: number[]): number[] {
+            if (!dest) dest = mat4.create();
+
+            dest[Indexes.M11] = 1;
+            dest[Indexes.M12] = 0;
+            dest[Indexes.M13] = 0;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M21] = 0;
+            dest[Indexes.M22] = 1;
+            dest[Indexes.M23] = 0;
+            dest[Indexes.M24] = 0;
+
+            dest[Indexes.M31] = 0;
+            dest[Indexes.M32] = 0;
+            dest[Indexes.M33] = 1;
+            dest[Indexes.M34] = 0;
+
+            dest[Indexes.OffsetX] = x;
+            dest[Indexes.OffsetY] = y;
+            dest[Indexes.OffsetZ] = z;
+            dest[Indexes.M44] = 1;
+
+            return dest;
+        },
+        createScale (x: number, y: number, z: number, dest?: number[]): number[] {
+            if (!dest) dest = mat4.create();
+
+            dest[Indexes.M11] = x;
+            dest[Indexes.M12] = 0;
+            dest[Indexes.M13] = 0;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M11] = 0;
+            dest[Indexes.M12] = y;
+            dest[Indexes.M13] = 0;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M31] = 0;
+            dest[Indexes.M32] = 0;
+            dest[Indexes.M33] = z;
+            dest[Indexes.M34] = 0;
+
+            dest[Indexes.OffsetX] = 0;
+            dest[Indexes.OffsetY] = 0;
+            dest[Indexes.OffsetZ] = 0;
+            dest[Indexes.M44] = 1;
+
+            return dest;
+        },
+        createRotateX (theta: number, dest?: number[]): number[] {
+            if (!dest) dest = mat4.create();
+
+            var s = Math.sin(theta);
+            var c = Math.cos(theta);
+
+            dest[Indexes.M11] = 1;
+            dest[Indexes.M12] = 0;
+            dest[Indexes.M13] = 0;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M21] = 0;
+            dest[Indexes.M22] = c;
+            dest[Indexes.M23] = s;
+            dest[Indexes.M24] = 0;
+
+            dest[Indexes.M31] = 0;
+            dest[Indexes.M32] = -s;
+            dest[Indexes.M33] = c;
+            dest[Indexes.M34] = 0;
+
+            dest[Indexes.OffsetX] = 0;
+            dest[Indexes.OffsetY] = 0;
+            dest[Indexes.OffsetZ] = 0;
+            dest[Indexes.M44] = 1;
+
+            return dest;
+        },
+        createRotateY (theta: number, dest?: number[]): number[] {
+            if (!dest) dest = mat4.create();
+
+            var s = Math.sin(theta);
+            var c = Math.cos(theta);
+
+            dest[Indexes.M11] = c;
+            dest[Indexes.M12] = 0;
+            dest[Indexes.M13] = -s;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M21] = 0;
+            dest[Indexes.M22] = 1;
+            dest[Indexes.M23] = 0;
+            dest[Indexes.M24] = 0;
+
+            dest[Indexes.M31] = s;
+            dest[Indexes.M32] = 0;
+            dest[Indexes.M33] = c;
+            dest[Indexes.M34] = 0;
+
+            dest[Indexes.OffsetX] = 0;
+            dest[Indexes.OffsetY] = 0;
+            dest[Indexes.OffsetZ] = 0;
+            dest[Indexes.M44] = 1;
+
+            return dest;
+        },
+        createRotateZ (theta: number, dest?: number[]): number[] {
+            if (!dest) dest = mat4.create();
+
+            var s = Math.sin(theta);
+            var c = Math.cos(theta);
+
+            dest[Indexes.M11] = c;
+            dest[Indexes.M12] = s;
+            dest[Indexes.M13] = 0;
+            dest[Indexes.M14] = 0;
+
+            dest[Indexes.M21] = -s;
+            dest[Indexes.M22] = c;
+            dest[Indexes.M23] = 0;
+            dest[Indexes.M24] = 0;
+
+            dest[Indexes.M31] = 0;
+            dest[Indexes.M32] = 0;
+            dest[Indexes.M33] = 1;
+            dest[Indexes.M34] = 0;
+
+            dest[Indexes.OffsetX] = 0;
+            dest[Indexes.OffsetY] = 0;
+            dest[Indexes.OffsetZ] = 0;
+            dest[Indexes.M44] = 1;
+
+            return dest;
+        }
+
+        /*
+         toAffineMat3 (m44: number[]): number[] {
+
+         }*/
     };
 }
 
