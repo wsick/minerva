@@ -7,7 +7,6 @@ interface IMatrix4Static {
     multiply (a: number[], b: number[], dest?: number[]): number[];
     inverse (mat: number[], dest?: number[]): number[];
     transformVec4 (mat: number[], vec: number[], dest?: number[]): number[];
-    //toAffineMat3 (m44: number[]): number[];
     createTranslate (x: number, y: number, z: number, dest?: number[]): number[];
     createScale (x: number, y: number, z: number, dest?: number[]): number[];
     createRotateX (theta: number, dest?: number[]): number[];
@@ -212,7 +211,19 @@ module minerva {
         },
         transformVec4 (mat: number[], vec: number[], dest?: number[]): number[] {
             if (!dest) dest = vec;
-            console.warn("[mat4.transformVec4] Not implemented");
+
+            var x = vec[0], y = vec[1], z = vec[2], w = vec[3];
+
+            var m11 = mat[Indexes.M11], m12 = mat[Indexes.M12], m13 = mat[Indexes.M13], m14 = mat[Indexes.M14],
+                m21 = mat[Indexes.M21], m22 = mat[Indexes.M22], m23 = mat[Indexes.M23], m24 = mat[Indexes.M24],
+                m31 = mat[Indexes.M31], m32 = mat[Indexes.M32], m33 = mat[Indexes.M33], m34 = mat[Indexes.M34],
+                mx0 = mat[Indexes.OffsetX], my0 = mat[Indexes.OffsetY], mz0 = mat[Indexes.OffsetZ], m44 = mat[Indexes.M44];
+
+            dest[0] = m11 * x + m12 * y + m13 * z + m14 * w;
+            dest[1] = m21 * x + m22 * y + m23 * z + m24 * w;
+            dest[2] = m31 * x + m32 * y + m33 * z + m34 * w;
+            dest[3] = mx0 * x + my0 * y + mz0 * z + m44 * w;
+
             return dest;
         },
 
@@ -405,11 +416,6 @@ module minerva {
 
             return dest;
         }
-
-        /*
-         toAffineMat3 (m44: number[]): number[] {
-
-         }*/
     };
 }
 
