@@ -107,6 +107,9 @@ module mat3 {
         return dest;
     }
 
+    /// NOTE:
+    ///     Parameters are in reverse order
+    ///     dest = mat2 * mat
     export function multiply (mat: number[], mat2: number[], dest?: number[]): number[] {
         // dest = mat2 * mat
         if (!dest) {
