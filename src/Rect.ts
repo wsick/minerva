@@ -127,6 +127,7 @@ module minerva {
             return mask;
         }
 
+        /*
         static transform4 (dest: Rect, projection: number[]) {
             if (!projection)
                 return;
@@ -136,10 +137,10 @@ module minerva {
             var width = dest.width;
             var height = dest.height;
 
-            var p1 = vec4.createFrom(x, y, 0.0, 1.0);
-            var p2 = vec4.createFrom(x + width, y, 0.0, 1.0);
-            var p3 = vec4.createFrom(x + width, y + height, 0.0, 1.0);
-            var p4 = vec4.createFrom(x, y + height, 0.0, 1.0);
+            var p1 = vec4.create(x, y, 0.0, 1.0);
+            var p2 = vec4.create(x + width, y, 0.0, 1.0);
+            var p3 = vec4.create(x + width, y + height, 0.0, 1.0);
+            var p4 = vec4.create(x, y + height, 0.0, 1.0);
 
             mat4.transformVec4(projection, p1);
             mat4.transformVec4(projection, p2);
@@ -194,6 +195,7 @@ module minerva {
                 Rect.extendTo(dest, p4[0], p4[1]);
             }
         }
+        */
 
         static extendTo (dest: Rect, x: number, y: number) {
             var rx = dest.x;
@@ -255,10 +257,10 @@ module minerva {
             var width = dest.width;
             var height = dest.height;
 
-            var p1 = vec2.createFrom(x, y);
-            var p2 = vec2.createFrom(x + width, y);
-            var p3 = vec2.createFrom(x + width, y + height);
-            var p4 = vec2.createFrom(x, y + height);
+            var p1 = vec2.create(x, y);
+            var p2 = vec2.create(x + width, y);
+            var p3 = vec2.create(x + width, y + height);
+            var p4 = vec2.create(x, y + height);
 
             mat3.transformVec2(mat, p1);
             mat3.transformVec2(mat, p2);

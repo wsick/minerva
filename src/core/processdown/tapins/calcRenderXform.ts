@@ -7,7 +7,7 @@ module minerva.core.processdown.tapins {
         if (input.carrierXform)
             mat3.multiply(input.carrierXform, input.layoutXform, rx); //render = layout * carrier
         else
-            mat3.set(input.layoutXform, rx); //render = layout
+            mat3.copyTo(input.layoutXform, rx); //render = layout
         mat3.multiply(rx, state.localXform, rx); //render = local * render
 
         return true;

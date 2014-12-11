@@ -25,13 +25,13 @@ module minerva.shapes.path.arrange {
         }
 
         prepare (input: IInput, state: IState, output: IOutput) {
-            mat3.set(input.stretchXform, output.stretchXform);
+            mat3.copyTo(input.stretchXform, output.stretchXform);
             super.prepare(input, state, output);
         }
 
         flush (input: IInput, state: IState, output: IOutput) {
             super.flush(input, state, output);
-            mat3.set(output.stretchXform, input.stretchXform);
+            mat3.copyTo(output.stretchXform, input.stretchXform);
         }
     }
 

@@ -102,7 +102,7 @@ module minerva.core.arrange {
             Rect.copyTo(input.layoutClip, output.layoutClip);
             Size.copyTo(input.renderSize, output.renderSize);
             output.lastRenderSize = input.lastRenderSize;
-            mat3.set(input.layoutXform, output.layoutXform);
+            mat3.copyTo(input.layoutXform, output.layoutXform);
             Point.copyTo(input.visualOffset, output.visualOffset);
         }
 
@@ -118,7 +118,7 @@ module minerva.core.arrange {
             Rect.copyTo(output.layoutClip, input.layoutClip);
             Size.copyTo(output.renderSize, input.renderSize);
             input.lastRenderSize = output.lastRenderSize;
-            mat3.set(output.layoutXform, input.layoutXform);
+            mat3.copyTo(output.layoutXform, input.layoutXform);
             Point.copyTo(output.visualOffset, input.visualOffset);
         }
     }

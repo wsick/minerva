@@ -46,13 +46,13 @@ module minerva.controls.image.processdown {
         prepare (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree) {
             super.prepare(input, state, output, vpinput, tree);
             output.overlap = input.overlap;
-            mat3.set(input.imgXform, output.imgXform);
+            mat3.copyTo(input.imgXform, output.imgXform);
         }
 
         flush (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree) {
             super.flush(input, state, output, vpinput, tree);
             input.overlap = output.overlap;
-            mat3.set(output.imgXform, input.imgXform);
+            mat3.copyTo(output.imgXform, input.imgXform);
         }
     }
 }

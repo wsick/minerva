@@ -56,19 +56,19 @@ module minerva.core.render {
         }
 
         save () {
-            this.$$transforms.push(mat3.clone(this.currentTransform));
+            this.$$transforms.push(mat3.create(this.currentTransform));
             this.raw.save();
         }
 
         restore () {
             var old = this.$$transforms.pop();
             if (old)
-                mat3.set(old, this.currentTransform);
+                mat3.copyTo(old, this.currentTransform);
             this.raw.restore();
         }
 
         setTransform (m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
-            mat3.set([m11, m12, dx, m21, m22, dy, 0, 0, 1], this.currentTransform);
+            mat3.copyTo([m11, m12, dx, m21, m22, dy, 0, 0, 1], this.currentTransform);
             this.raw.setTransform(m11, m12, m21, m22, dx, dy);
         }
 

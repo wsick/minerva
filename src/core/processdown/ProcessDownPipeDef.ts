@@ -86,8 +86,8 @@ module minerva.core.processdown {
             output.totalIsHitTestVisible = input.totalIsHitTestVisible;
             output.z = input.z;
             Rect.copyTo(input.compositeLayoutClip, output.compositeLayoutClip);
-            mat3.set(input.renderXform, output.renderXform);
-            mat3.set(input.absoluteXform, output.absoluteXform);
+            mat3.copyTo(input.renderXform, output.renderXform);
+            mat3.copyTo(input.absoluteXform, output.absoluteXform);
             state.subtreeDownDirty = 0;
         }
 
@@ -99,8 +99,8 @@ module minerva.core.processdown {
             input.totalIsHitTestVisible = output.totalIsHitTestVisible;
             input.z = output.z;
             Rect.copyTo(output.compositeLayoutClip, input.compositeLayoutClip);
-            mat3.set(output.renderXform, input.renderXform);
-            mat3.set(output.absoluteXform, input.absoluteXform);
+            mat3.copyTo(output.renderXform, input.renderXform);
+            mat3.copyTo(output.absoluteXform, input.absoluteXform);
         }
     }
 }

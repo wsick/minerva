@@ -12,7 +12,7 @@ module minerva.controls.popup.processdown.tapins {
         var carrier = child.assets.carrierXform;
         if (!carrier)
             carrier = child.assets.carrierXform || mat3.create();
-        mat3.set(output.absoluteXform, carrier);
+        mat3.copyTo(output.absoluteXform, carrier);
         mat3.translate(carrier, input.horizontalOffset, input.verticalOffset);
 
         core.Updater.$$addDownDirty(child);

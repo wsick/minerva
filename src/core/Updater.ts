@@ -485,7 +485,7 @@ module minerva.core {
                 mat3.inverse(toUpdater.assets.absoluteXform, inverse);
                 mat3.multiply(fromUpdater.assets.absoluteXform, inverse, result); //result = inverse * abs
             } else {
-                mat3.set(fromUpdater.assets.absoluteXform, result); //result = absolute
+                mat3.copyTo(fromUpdater.assets.absoluteXform, result); //result = absolute
             }
 
             //TODO: Looks suspicious, will always create affine matrix (most likely won't work if user specifies a projection)
@@ -499,7 +499,7 @@ module minerva.core {
                 return;
             }
 
-            var p2: number[] = vec2.createFrom(p.x, p.y);
+            var p2: number[] = vec2.create(p.x, p.y);
             mat3.transformVec2(inverse, p2);
             p.x = p2[0];
             p.y = p2[1];

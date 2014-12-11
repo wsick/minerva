@@ -8,7 +8,7 @@ module minerva.core.processdown.tapins {
         if (vpinput)
             mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
         else
-            mat3.set(output.renderXform, abs);
+            mat3.copyTo(output.renderXform, abs);
 
         return true;
     };
