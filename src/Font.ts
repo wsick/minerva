@@ -24,7 +24,7 @@ module minerva {
     //  Font Share: http://www.cssfontstack.com/
 
     export class Font {
-        static DEFAULT_FAMILY = "Lucida Grande, Segoe UI, Verdana";
+        static DEFAULT_FAMILY = "Segoe UI, Lucida Grande, Verdana";
         static DEFAULT_STRETCH = FontStretch.Normal;
         static DEFAULT_STYLE = FontStyle.Normal;
         static DEFAULT_WEIGHT = FontWeight.Normal;

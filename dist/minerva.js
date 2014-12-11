@@ -253,7 +253,7 @@ var minerva;
         Font.prototype.getDescender = function () {
             return 0;
         };
-        Font.DEFAULT_FAMILY = "Lucida Grande, Segoe UI, Verdana";
+        Font.DEFAULT_FAMILY = "Segoe UI, Lucida Grande, Verdana";
         Font.DEFAULT_STRETCH = FontStretch.Normal;
         Font.DEFAULT_STYLE = FontStyle.Normal;
         Font.DEFAULT_WEIGHT = 400 /* Normal */;
