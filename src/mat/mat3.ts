@@ -4,6 +4,7 @@ interface IMatrix3Static {
     init (dest: number[], m11: number, m12: number, m21: number, m22: number, x0: number, y0: number): number[];
     identity (dest?: number[]): number[];
     equal (a: number[], b: number[]): boolean;
+    // dest = a * b
     multiply (a: number[], b: number[], dest?: number[]): number[];
     inverse(mat: number[], dest?: number[]): number[];
     transformVec2(mat: number[], vec: number[], dest?: number[]): number[];
@@ -162,8 +163,8 @@ module minerva {
             var c = Math.cos(angleRad);
             var s = Math.sin(angleRad);
             dest[0] = c;
-            dest[1] = -s;
-            dest[2] = s;
+            dest[1] = s;
+            dest[2] = -s;
             dest[3] = c;
             dest[4] = 0;
             dest[5] = 0;
