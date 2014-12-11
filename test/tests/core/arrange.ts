@@ -50,7 +50,7 @@ module minerva.core.arrange.tests {
 
         input.renderSize = new Size(100, 200);
         input.layoutSlot = new Rect(10, 15, 150, 300);
-        input.layoutXform = mat3.create([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        input.layoutXform = mat3.create([1, 2, 3, 4, 5, 6]);
         input.layoutClip = new Rect(50, 50, 50, 50);
 
         pipedef.prepare(input, state, output);
@@ -61,7 +61,7 @@ module minerva.core.arrange.tests {
         assert.notStrictEqual(input.layoutSlot, output.layoutSlot);
         assert.deepEqual(output.layoutSlot, new Rect(10, 15, 150, 300));
         assert.notStrictEqual(input.layoutXform, output.layoutXform);
-        assert.deepEqual(typedToArray(output.layoutXform), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert.deepEqual(typedToArray(output.layoutXform), [1, 2, 3, 4, 5, 6]);
         assert.notStrictEqual(input.layoutClip, output.layoutClip);
         assert.deepEqual(output.layoutClip, new Rect(50, 50, 50, 50));
 
@@ -82,7 +82,7 @@ module minerva.core.arrange.tests {
 
         output.renderSize = new Size(100, 200);
         output.layoutSlot = new Rect(10, 15, 150, 300);
-        output.layoutXform = mat3.create([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        output.layoutXform = mat3.create([1, 2, 3, 4, 5, 6]);
         output.layoutClip = new Rect(50, 50, 50, 50);
 
         pipedef.flush(input, state, output);
@@ -93,7 +93,7 @@ module minerva.core.arrange.tests {
         assert.notStrictEqual(input.layoutSlot, output.layoutSlot);
         assert.deepEqual(input.layoutSlot, new Rect(10, 15, 150, 300));
         assert.notStrictEqual(input.layoutXform, output.layoutXform);
-        assert.deepEqual(typedToArray(input.layoutXform), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert.deepEqual(typedToArray(input.layoutXform), [1, 2, 3, 4, 5, 6]);
         assert.notStrictEqual(input.layoutClip, output.layoutClip);
         assert.deepEqual(input.layoutClip, new Rect(50, 50, 50, 50));
 

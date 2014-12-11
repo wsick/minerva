@@ -476,20 +476,19 @@ module minerva.core {
 
             //1. invert transform from input element to top level
             //2. transform back down to this element
-            var result = mat3.create();
+            var m = mat3.create();
+            var a = fromUpdater.assets.absoluteXform;
             // A = From, B = To, M = what we want
             // A = M * B
-            // => M = inv (B) * A
+            // => M = A * inv(B)
             if (toUpdater) {
-                var inverse = mat3.create();
-                mat3.inverse(toUpdater.assets.absoluteXform, inverse);
-                mat3.multiply(fromUpdater.assets.absoluteXform, inverse, result); //result = inverse * abs
+                var invB = mat3.inverse(toUpdater.assets.absoluteXform, mat3.create());
+                mat3.multiply(a, invB, m); //M = A * inv(B)
             } else {
-                mat3.copyTo(fromUpdater.assets.absoluteXform, result); //result = absolute
+                mat3.copyTo(a, m); //M = A
             }
 
-            //TODO: Looks suspicious, will always create affine matrix (most likely won't work if user specifies a projection)
-            return result;
+            return m;
         }
 
         static transformPoint (updater: Updater, p: Point) {

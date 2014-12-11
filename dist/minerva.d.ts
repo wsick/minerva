@@ -266,52 +266,6 @@ declare module minerva {
         static copyTo(src: IPoint, dest: IPoint): void;
     }
 }
-declare module vec2 {
-    function createFrom(x: number, y: number): number[];
-}
-declare module vec4 {
-    function create(vec?: number[]): number[];
-    function createFrom(x: number, y: number, z: number, w: number): number[];
-}
-declare module mat3 {
-    function create(mat?: number[]): number[];
-    function inverse(mat: number[], dest?: number[]): number[];
-    function multiply(mat: number[], mat2: number[], dest?: number[]): number[];
-    function set(mat: number[], dest: number[]): number[];
-    function equal(a: number[], b: number[]): boolean;
-    function identity(dest?: number[]): number[];
-    function str(mat: number[]): string;
-    function clone(mat: number[]): number[];
-    function toAffineMat4(mat: number[], dest?: number[]): number[];
-    function transformVec2(mat: number[], vec: number[], dest?: number[]): number[];
-    function translate(mat: number[], x: number, y: number): number[];
-    function createTranslate(x: number, y: number, dest?: number[]): number[];
-    function scale(mat: number[], x: number, y: number): number[];
-    function createScale(x: number, y: number, dest?: number[]): number[];
-    function createRotate(angleRad: number, dest?: number[]): number[];
-    function createSkew(angleRadX: number, angleRadY: number, dest?: number[]): number[];
-}
-declare module mat4 {
-    function create(mat?: number[]): number[];
-    function set(mat: number[], dest: number[]): number[];
-    function equal(a: number[], b: number[]): boolean;
-    function identity(dest?: number[]): number[];
-    function inverse(mat: number[], dest?: number[]): number[];
-    function multiply(mat: number[], mat2: number[], dest?: number[]): number[];
-    function transformVec4(mat: number[], vec: number[], dest?: number[]): number[];
-    function toAffineMat3(mat: number[], dest?: number[]): number[];
-    function clone(mat: number[]): number[];
-    function str(mat: number[]): string;
-    function createTranslate(x: number, y: number, z: number, dest?: number[]): number[];
-    function createScale(x: number, y: number, z: number, dest?: number[]): number[];
-    function createPerspective(fieldOfViewY: number, aspectRatio: number, zNearPlane: number, zFarPlane: number, dest?: number[]): number[];
-    function createViewport(width: number, height: number, dest?: number[]): number[];
-    function createRotateX(theta: number, dest?: number[]): number[];
-    function createRotateY(theta: number, dest?: number[]): number[];
-    function createRotateZ(theta: number, dest?: number[]): number[];
-    function translate(mat: number[], x: number, y: number, z: number): number[];
-    function scale(mat: number[], x: number, y: number, z: number): number[];
-}
 declare module minerva {
     enum RectOverlap {
         Out = 0,
@@ -336,7 +290,6 @@ declare module minerva {
         static isContainedIn(src: Rect, test: Rect): boolean;
         static containsPoint(rect1: Rect, p: Point): boolean;
         private static clipmask(clip);
-        static transform4(dest: Rect, projection: number[]): void;
         static extendTo(dest: Rect, x: number, y: number): void;
         static grow(dest: Rect, left: number, top: number, right: number, bottom: number): Rect;
         static shrink(dest: Rect, left: number, top: number, right: number, bottom: number): void;
@@ -2417,6 +2370,48 @@ declare module minerva.engine {
 declare module minerva.engine {
     function process(down: core.Updater[], up: core.Updater[]): boolean;
 }
+interface IMatrix3Static {
+    create(src?: number[]): number[];
+    copyTo(src: number[], dest: number[]): number[];
+    init(dest: number[], m11: number, m12: number, m21: number, m22: number, x0: number, y0: number): number[];
+    identity(dest?: number[]): number[];
+    equal(a: number[], b: number[]): boolean;
+    multiply(a: number[], b: number[], dest?: number[]): number[];
+    inverse(mat: number[], dest?: number[]): number[];
+    transformVec2(mat: number[], vec: number[], dest?: number[]): number[];
+    createTranslate(x: number, y: number, dest?: number[]): number[];
+    translate(mat: number[], x: number, y: number): number[];
+    createScale(sx: number, sy: number, dest?: number[]): number[];
+    scale(mat: number[], sx: number, sy: number): number[];
+    createRotate(angleRad: number, dest?: number[]): number[];
+    createSkew(angleRadX: number, angleRadY: number, dest?: number[]): number[];
+}
+declare module minerva {
+    var mat3: IMatrix3Static;
+}
+declare var mat3: IMatrix3Static;
+interface IMatrix4Static {
+}
+declare module minerva {
+    var mat4: IMatrix4Static;
+}
+declare var mat4: IMatrix4Static;
+interface IVector2Static {
+    create(x: number, y: number): number[];
+    init(x: number, y: number, dest?: number[]): number[];
+}
+declare module minerva {
+    var vec2: IVector2Static;
+}
+declare var vec2: IVector2Static;
+interface IVector4Static {
+    create(x: number, y: number, z: number, w: number): number[];
+    init(x: number, y: number, z: number, w: number, dest?: number[]): number[];
+}
+declare module minerva {
+    var vec4: IVector4Static;
+}
+declare var vec4: IVector4Static;
 declare module minerva.path {
     interface IBoundingBox {
         l: number;

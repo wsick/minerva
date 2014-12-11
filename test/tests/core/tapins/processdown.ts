@@ -161,13 +161,13 @@ module minerva.core.processdown.tapins.tests {
         var vpinput = mock.input();
 
         assert.ok(tapins.processLocalXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(state.localXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+        assert.deepEqual(typedToArray(state.localXform), [1, 0, 0, 1, 0, 0]);
 
         input.dirtyFlags |= DirtyFlags.LocalTransform;
-        input.renderTransform = [1, 0, 5, 0, 2, 0, 0, 0, 1];
+        input.renderTransform = mat3.create([1, 0, 0, 2, 5, 0]);
         state.xformOrigin = new Point(50, 100);
         assert.ok(tapins.processLocalXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(state.localXform), [1, 0, 5, 0, 2, 100, 0, 0, 1]);
+        assert.deepEqual(typedToArray(state.localXform), [1, 0, 0, 2, 5, 100]);
     });
 
     QUnit.test("calcRenderXform", (assert) => {
@@ -177,25 +177,25 @@ module minerva.core.processdown.tapins.tests {
         var vpinput = mock.input();
 
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.renderXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.renderXform), [1, 0, 0, 1, 0, 0]);
 
         input.dirtyFlags |= DirtyFlags.Transform;
         mat3.init(input.carrierXform, 2, 0, 0, 2, 0, 0);
         mat3.init(input.layoutXform, 1, 0, 0, 1, 10, 50);
         mat3.init(state.localXform, -1, 0, 0, 1, 0, 0);
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.renderXform), [-2, 0, 0, 2, -10, 50]);
 
         //Ensure running twice doesn't change renderXform
         mat3.copyTo(output.renderXform, input.renderXform);
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.renderXform), [-2, 0, 0, 2, -10, 50]);
 
         //Ensure running again without a carrier doesn't affect the renderXform
         mat3.copyTo(output.renderXform, input.renderXform);
         input.carrierXform = null;
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.renderXform), [-1, 0, -10, 0, 1, 50, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.renderXform), [-1, 0, 0, 1, -10, 50]);
     });
 
     QUnit.test("calcAbsoluteXform", (assert) => {
@@ -205,13 +205,13 @@ module minerva.core.processdown.tapins.tests {
         var vpinput = mock.input();
 
         assert.ok(tapins.calcAbsoluteXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.absoluteXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.absoluteXform), [1, 0, 0, 1, 0, 0]);
 
         input.dirtyFlags |= DirtyFlags.Transform;
         mat3.init(output.renderXform, 2, 0, 0, 4, 0, 0);
         mat3.init(vpinput.absoluteXform, 1, 0, 0, 1, 50, 100);
         assert.ok(tapins.calcAbsoluteXform(input, state, output, vpinput));
-        assert.deepEqual(typedToArray(output.absoluteXform), [2, 0, 50, 0, 4, 100, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.absoluteXform), [2, 0, 0, 4, 50, 100]);
     });
 
     QUnit.test("processXform", (assert) => {

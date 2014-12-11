@@ -108,10 +108,10 @@ module minerva.core.render.tapins.tests {
         input.totalOpacity = 0.5;
         tapins.prepareContext(input, state, null, rctx, new Rect(), "#4");
         assert.equal(rctx.raw.globalAlpha, 0.5);
-        assert.deepEqual(typedToArray(rctx.currentTransform), [2, 0, 20, 0, 4, 60, 0, 0, 1]);
+        assert.deepEqual(typedToArray(rctx.currentTransform), [2, 0, 0, 4, 20, 60]);
         rctx.restore();
         assert.equal(rctx.raw.globalAlpha, 1.0);
-        assert.deepEqual(typedToArray(rctx.currentTransform), [2, 0, 0, 0, 4, 0, 0, 0, 1]);
+        assert.deepEqual(typedToArray(rctx.currentTransform), [2, 0, 0, 4, 0, 0]);
     });
 
     QUnit.test("applyClip", (assert) => {

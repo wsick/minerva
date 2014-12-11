@@ -88,11 +88,11 @@ module minerva.core.hittest.tapins.tests {
 
         ctx.translate(10, 20);
 
-        mat3.init(data.assets.renderXform, 2, 0, 0, 4, 0, 0);
+        mat3.createScale(2, 4, data.assets.renderXform);
 
         assert.ok(tapins.prepareCtx(data, pos, hitList, ctx, false));
         assert.strictEqual(saved, true);
-        assert.deepEqual(typedToArray(ctx.currentTransform), [2, 0, 10, 0, 4, 20, 0, 0, 1]);
+        assert.deepEqual(typedToArray(ctx.currentTransform), [2, 0, 0, 4, 10, 20]);
     });
 
     QUnit.test("insideClip", (assert) => {

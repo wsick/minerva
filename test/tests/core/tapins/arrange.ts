@@ -291,13 +291,13 @@ module minerva.core.arrange.tapins.tests {
         output.visualOffset = new Point(150, 200);
         input.layoutXform = mat3.identity();
         assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
-        assert.deepEqual(typedToArray(output.layoutXform), [1, 0, 150, 0, 1, 200, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.layoutXform), typedToArray(mat3.createTranslate(150, 200)));
         assert.strictEqual(output.dirtyFlags & DirtyFlags.LocalTransform, DirtyFlags.LocalTransform);
 
         state.arrangedSize.width = 100;
         state.flipHorizontal = true;
         assert.ok(tapins.buildLayoutXform(input, state, output, tree, new Rect()));
-        assert.deepEqual(typedToArray(output.layoutXform), [-1, 0, -250, 0, 1, 200, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.layoutXform), [-1, 0, 0, 1, -250, 200]);
         assert.strictEqual(output.dirtyFlags & DirtyFlags.LocalTransform, DirtyFlags.LocalTransform);
     });
 

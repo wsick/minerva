@@ -347,734 +347,6 @@ var minerva;
     })();
     minerva.Point = Point;
 })(minerva || (minerva = {}));
-var vec2;
-(function (vec2) {
-    var arrayType = (typeof Float32Array !== "undefined") ? Float32Array : Array;
-
-    function createFrom(x, y) {
-        var dest = new arrayType(2);
-        dest[0] = x;
-        dest[1] = y;
-        return dest;
-    }
-    vec2.createFrom = createFrom;
-})(vec2 || (vec2 = {}));
-var vec4;
-(function (vec4) {
-    var arrayType = (typeof Float32Array !== "undefined") ? Float32Array : Array;
-
-    function create(vec) {
-        var dest = new arrayType(4);
-        if (vec) {
-            dest[0] = vec[0];
-            dest[1] = vec[1];
-            dest[2] = vec[2];
-            dest[3] = vec[3];
-        } else {
-            dest[0] = 0;
-            dest[1] = 0;
-            dest[2] = 0;
-            dest[3] = 0;
-        }
-        return dest;
-    }
-    vec4.create = create;
-
-    function createFrom(x, y, z, w) {
-        var dest = new arrayType(4);
-        dest[0] = x;
-        dest[1] = y;
-        dest[2] = z;
-        dest[3] = w;
-        return dest;
-    }
-    vec4.createFrom = createFrom;
-})(vec4 || (vec4 = {}));
-
-var mat3;
-(function (mat3) {
-    var arrayType = (typeof Float32Array !== "undefined") ? Float32Array : Array;
-    var FLOAT_EPSILON = 0.000001;
-
-    function create(mat) {
-        var dest = new arrayType(9);
-
-        if (mat) {
-            dest[0] = mat[0];
-            dest[1] = mat[1];
-            dest[2] = mat[2];
-            dest[3] = mat[3];
-            dest[4] = mat[4];
-            dest[5] = mat[5];
-            dest[6] = mat[6];
-            dest[7] = mat[7];
-            dest[8] = mat[8];
-        } else {
-            dest[0] = dest[1] = dest[2] = dest[3] = dest[4] = dest[5] = dest[6] = dest[7] = dest[8] = 0;
-        }
-
-        return dest;
-    }
-    mat3.create = create;
-
-    function inverse(mat, dest) {
-        var a00 = mat[0], a01 = mat[1], a02 = mat[2], a10 = mat[3], a11 = mat[4], a12 = mat[5], a20 = mat[6], a21 = mat[7], a22 = mat[8], b01 = a22 * a11 - a12 * a21, b11 = -a22 * a10 + a12 * a20, b21 = a21 * a10 - a11 * a20, d = a00 * b01 + a01 * b11 + a02 * b21, id;
-
-        if (!d) {
-            return null;
-        }
-        id = 1 / d;
-
-        if (!dest) {
-            dest = create();
-        }
-
-        dest[0] = b01 * id;
-        dest[1] = (-a22 * a01 + a02 * a21) * id;
-        dest[2] = (a12 * a01 - a02 * a11) * id;
-        dest[3] = b11 * id;
-        dest[4] = (a22 * a00 - a02 * a20) * id;
-        dest[5] = (-a12 * a00 + a02 * a10) * id;
-        dest[6] = b21 * id;
-        dest[7] = (-a21 * a00 + a01 * a20) * id;
-        dest[8] = (a11 * a00 - a01 * a10) * id;
-        return dest;
-    }
-    mat3.inverse = inverse;
-
-    function multiply(mat, mat2, dest) {
-        if (!dest) {
-            dest = mat;
-        }
-
-        var a00 = mat[0], a01 = mat[1], a02 = mat[2], a10 = mat[3], a11 = mat[4], a12 = mat[5], a20 = mat[6], a21 = mat[7], a22 = mat[8], b00 = mat2[0], b01 = mat2[1], b02 = mat2[2], b10 = mat2[3], b11 = mat2[4], b12 = mat2[5], b20 = mat2[6], b21 = mat2[7], b22 = mat2[8];
-
-        dest[0] = b00 * a00 + b01 * a10 + b02 * a20;
-        dest[1] = b00 * a01 + b01 * a11 + b02 * a21;
-        dest[2] = b00 * a02 + b01 * a12 + b02 * a22;
-
-        dest[3] = b10 * a00 + b11 * a10 + b12 * a20;
-        dest[4] = b10 * a01 + b11 * a11 + b12 * a21;
-        dest[5] = b10 * a02 + b11 * a12 + b12 * a22;
-
-        dest[6] = b20 * a00 + b21 * a10 + b22 * a20;
-        dest[7] = b20 * a01 + b21 * a11 + b22 * a21;
-        dest[8] = b20 * a02 + b21 * a12 + b22 * a22;
-
-        return dest;
-    }
-    mat3.multiply = multiply;
-
-    function set(mat, dest) {
-        dest[0] = mat[0];
-        dest[1] = mat[1];
-        dest[2] = mat[2];
-        dest[3] = mat[3];
-        dest[4] = mat[4];
-        dest[5] = mat[5];
-        dest[6] = mat[6];
-        dest[7] = mat[7];
-        dest[8] = mat[8];
-        return dest;
-    }
-    mat3.set = set;
-
-    function equal(a, b) {
-        return a === b || (Math.abs(a[0] - b[0]) < FLOAT_EPSILON && Math.abs(a[1] - b[1]) < FLOAT_EPSILON && Math.abs(a[2] - b[2]) < FLOAT_EPSILON && Math.abs(a[3] - b[3]) < FLOAT_EPSILON && Math.abs(a[4] - b[4]) < FLOAT_EPSILON && Math.abs(a[5] - b[5]) < FLOAT_EPSILON && Math.abs(a[6] - b[6]) < FLOAT_EPSILON && Math.abs(a[7] - b[7]) < FLOAT_EPSILON && Math.abs(a[8] - b[8]) < FLOAT_EPSILON);
-    }
-    mat3.equal = equal;
-
-    function identity(dest) {
-        if (!dest) {
-            dest = mat3.create();
-        }
-        dest[0] = 1;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-        dest[4] = 1;
-        dest[5] = 0;
-        dest[6] = 0;
-        dest[7] = 0;
-        dest[8] = 1;
-        return dest;
-    }
-    mat3.identity = identity;
-
-    function str(mat) {
-        return "[" + mat[0] + ", " + mat[1] + ", " + mat[2] + ", " + mat[3] + ", " + mat[4] + ", " + mat[5] + ", " + mat[6] + ", " + mat[7] + ", " + mat[8] + "]";
-    }
-    mat3.str = str;
-
-    function clone(mat) {
-        if (typeof Float32Array !== "undefined")
-            return new Float32Array(mat);
-        return mat.slice(0);
-    }
-    mat3.clone = clone;
-
-    function toAffineMat4(mat, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-        dest[0] = mat[0];
-        dest[1] = mat[1];
-        dest[2] = 0;
-        dest[3] = mat[2];
-        dest[4] = mat[3];
-        dest[5] = mat[4];
-        dest[6] = 0;
-        dest[7] = mat[5];
-        dest[8] = 0;
-        dest[9] = 0;
-        dest[10] = 1;
-        dest[11] = 0;
-        dest[12] = 0;
-        dest[13] = 0;
-        dest[14] = 0;
-        dest[15] = 1;
-        return dest;
-    }
-    mat3.toAffineMat4 = toAffineMat4;
-
-    function transformVec2(mat, vec, dest) {
-        if (!dest)
-            dest = vec;
-        var x = vec[0], y = vec[1];
-        dest[0] = x * mat[0] + y * mat[3] + mat[2];
-        dest[1] = x * mat[1] + y * mat[4] + mat[5];
-        return dest;
-    }
-    mat3.transformVec2 = transformVec2;
-
-    function translate(mat, x, y) {
-        mat[2] += x;
-        mat[5] += y;
-        return mat;
-    }
-    mat3.translate = translate;
-
-    function createTranslate(x, y, dest) {
-        if (!dest) {
-            dest = mat3.create();
-        }
-        dest[0] = 1;
-        dest[1] = 0;
-        dest[2] = x;
-        dest[3] = 0;
-        dest[4] = 1;
-        dest[5] = y;
-        dest[6] = 0;
-        dest[7] = 0;
-        dest[8] = 1;
-        return dest;
-    }
-    mat3.createTranslate = createTranslate;
-
-    function scale(mat, x, y) {
-        mat[0] *= x;
-        mat[1] *= x;
-        mat[2] *= x;
-
-        mat[3] *= y;
-        mat[4] *= y;
-        mat[5] *= y;
-        return mat;
-    }
-    mat3.scale = scale;
-
-    function createScale(x, y, dest) {
-        if (!dest) {
-            dest = mat3.create();
-        }
-        dest[0] = x;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-        dest[4] = y;
-        dest[5] = 0;
-        dest[6] = 0;
-        dest[7] = 0;
-        dest[8] = 1;
-        return dest;
-    }
-    mat3.createScale = createScale;
-
-    function createRotate(angleRad, dest) {
-        if (!dest) {
-            dest = mat3.create();
-        }
-        var c = Math.cos(angleRad);
-        var s = Math.sin(angleRad);
-        dest[0] = c;
-        dest[1] = -s;
-        dest[2] = 0;
-        dest[3] = s;
-        dest[4] = c;
-        dest[5] = 0;
-        dest[6] = 0;
-        dest[7] = 0;
-        dest[8] = 1;
-        return dest;
-    }
-    mat3.createRotate = createRotate;
-
-    function createSkew(angleRadX, angleRadY, dest) {
-        if (!dest) {
-            dest = mat3.create();
-        }
-        dest[0] = 1;
-        dest[1] = Math.tan(angleRadY);
-        dest[2] = 0;
-        dest[3] = Math.tan(angleRadX);
-        dest[4] = 1;
-        dest[5] = 0;
-        dest[6] = 0;
-        dest[7] = 0;
-        dest[8] = 1;
-        return dest;
-    }
-    mat3.createSkew = createSkew;
-})(mat3 || (mat3 = {}));
-
-var mat4;
-(function (mat4) {
-    var arrayType = (typeof Float32Array !== "undefined") ? Float32Array : Array;
-    var FLOAT_EPSILON = 0.000001;
-
-    function create(mat) {
-        var dest = new arrayType(16);
-
-        if (mat) {
-            dest[0] = mat[0];
-            dest[1] = mat[1];
-            dest[2] = mat[2];
-            dest[3] = mat[3];
-            dest[4] = mat[4];
-            dest[5] = mat[5];
-            dest[6] = mat[6];
-            dest[7] = mat[7];
-            dest[8] = mat[8];
-            dest[9] = mat[9];
-            dest[10] = mat[10];
-            dest[11] = mat[11];
-            dest[12] = mat[12];
-            dest[13] = mat[13];
-            dest[14] = mat[14];
-            dest[15] = mat[15];
-        }
-
-        return dest;
-    }
-    mat4.create = create;
-
-    function set(mat, dest) {
-        dest[0] = mat[0];
-        dest[1] = mat[1];
-        dest[2] = mat[2];
-        dest[3] = mat[3];
-        dest[4] = mat[4];
-        dest[5] = mat[5];
-        dest[6] = mat[6];
-        dest[7] = mat[7];
-        dest[8] = mat[8];
-        dest[9] = mat[9];
-        dest[10] = mat[10];
-        dest[11] = mat[11];
-        dest[12] = mat[12];
-        dest[13] = mat[13];
-        dest[14] = mat[14];
-        dest[15] = mat[15];
-        return dest;
-    }
-    mat4.set = set;
-
-    function equal(a, b) {
-        return a === b || (Math.abs(a[0] - b[0]) < FLOAT_EPSILON && Math.abs(a[1] - b[1]) < FLOAT_EPSILON && Math.abs(a[2] - b[2]) < FLOAT_EPSILON && Math.abs(a[3] - b[3]) < FLOAT_EPSILON && Math.abs(a[4] - b[4]) < FLOAT_EPSILON && Math.abs(a[5] - b[5]) < FLOAT_EPSILON && Math.abs(a[6] - b[6]) < FLOAT_EPSILON && Math.abs(a[7] - b[7]) < FLOAT_EPSILON && Math.abs(a[8] - b[8]) < FLOAT_EPSILON && Math.abs(a[9] - b[9]) < FLOAT_EPSILON && Math.abs(a[10] - b[10]) < FLOAT_EPSILON && Math.abs(a[11] - b[11]) < FLOAT_EPSILON && Math.abs(a[12] - b[12]) < FLOAT_EPSILON && Math.abs(a[13] - b[13]) < FLOAT_EPSILON && Math.abs(a[14] - b[14]) < FLOAT_EPSILON && Math.abs(a[15] - b[15]) < FLOAT_EPSILON);
-    }
-    mat4.equal = equal;
-
-    function identity(dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-        dest[0] = 1;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-        dest[4] = 0;
-        dest[5] = 1;
-        dest[6] = 0;
-        dest[7] = 0;
-        dest[8] = 0;
-        dest[9] = 0;
-        dest[10] = 1;
-        dest[11] = 0;
-        dest[12] = 0;
-        dest[13] = 0;
-        dest[14] = 0;
-        dest[15] = 1;
-        return dest;
-    }
-    mat4.identity = identity;
-
-    function inverse(mat, dest) {
-        if (!dest) {
-            dest = mat;
-        }
-
-        var a00 = mat[0], a01 = mat[1], a02 = mat[2], a03 = mat[3], a10 = mat[4], a11 = mat[5], a12 = mat[6], a13 = mat[7], a20 = mat[8], a21 = mat[9], a22 = mat[10], a23 = mat[11], a30 = mat[12], a31 = mat[13], a32 = mat[14], a33 = mat[15], b00 = a00 * a11 - a01 * a10, b01 = a00 * a12 - a02 * a10, b02 = a00 * a13 - a03 * a10, b03 = a01 * a12 - a02 * a11, b04 = a01 * a13 - a03 * a11, b05 = a02 * a13 - a03 * a12, b06 = a20 * a31 - a21 * a30, b07 = a20 * a32 - a22 * a30, b08 = a20 * a33 - a23 * a30, b09 = a21 * a32 - a22 * a31, b10 = a21 * a33 - a23 * a31, b11 = a22 * a33 - a23 * a32, d = (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06), invDet;
-
-        if (!d) {
-            return null;
-        }
-        invDet = 1 / d;
-
-        dest[0] = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
-        dest[1] = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
-        dest[2] = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
-        dest[3] = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
-        dest[4] = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
-        dest[5] = (a00 * b11 - a02 * b08 + a03 * b07) * invDet;
-        dest[6] = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
-        dest[7] = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
-        dest[8] = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
-        dest[9] = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
-        dest[10] = (a30 * b04 - a31 * b02 + a33 * b00) * invDet;
-        dest[11] = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
-        dest[12] = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
-        dest[13] = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
-        dest[14] = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
-        dest[15] = (a20 * b03 - a21 * b01 + a22 * b00) * invDet;
-
-        return dest;
-    }
-    mat4.inverse = inverse;
-
-    function multiply(mat, mat2, dest) {
-        if (!dest) {
-            dest = mat;
-        }
-
-        var a00 = mat[0], a01 = mat[1], a02 = mat[2], a03 = mat[3];
-        var a10 = mat[4], a11 = mat[5], a12 = mat[6], a13 = mat[7];
-        var a20 = mat[8], a21 = mat[9], a22 = mat[10], a23 = mat[11];
-        var a30 = mat[12], a31 = mat[13], a32 = mat[14], a33 = mat[15];
-
-        var b0 = mat2[0], b1 = mat2[1], b2 = mat2[2], b3 = mat2[3];
-        dest[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        dest[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        dest[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        dest[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-
-        b0 = mat2[4];
-        b1 = mat2[5];
-        b2 = mat2[6];
-        b3 = mat2[7];
-        dest[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        dest[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        dest[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        dest[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-
-        b0 = mat2[8];
-        b1 = mat2[9];
-        b2 = mat2[10];
-        b3 = mat2[11];
-        dest[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        dest[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        dest[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        dest[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-
-        b0 = mat2[12];
-        b1 = mat2[13];
-        b2 = mat2[14];
-        b3 = mat2[15];
-        dest[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        dest[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        dest[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        dest[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-
-        return dest;
-    }
-    mat4.multiply = multiply;
-
-    function transformVec4(mat, vec, dest) {
-        if (!dest) {
-            dest = vec;
-        }
-
-        var x = vec[0], y = vec[1], z = vec[2], w = vec[3];
-        dest[0] = mat[0] * x + mat[1] * y + mat[2] * z + mat[3] * w;
-        dest[1] = mat[4] * x + mat[5] * y + mat[6] * z + mat[7] * w;
-        dest[2] = mat[8] * x + mat[9] * y + mat[10] * z + mat[11] * w;
-        dest[3] = mat[12] * x + mat[13] * y + mat[14] * z + mat[15] * w;
-
-        return dest;
-    }
-    mat4.transformVec4 = transformVec4;
-
-    function toAffineMat3(mat, dest) {
-        if (!dest) {
-            dest = mat3.create();
-        }
-
-        dest[0] = mat[0];
-        dest[1] = mat[1];
-        dest[2] = mat[3];
-        dest[3] = mat[4];
-        dest[4] = mat[5];
-        dest[5] = mat[7];
-        dest[6] = 0;
-        dest[7] = 0;
-        dest[8] = 1;
-
-        return dest;
-    }
-    mat4.toAffineMat3 = toAffineMat3;
-
-    function clone(mat) {
-        if (typeof Float32Array !== "undefined")
-            return new Float32Array(mat);
-        return mat.slice(0);
-    }
-    mat4.clone = clone;
-
-    function str(mat) {
-        return "[" + mat[0] + ", " + mat[1] + ", " + mat[2] + ", " + mat[3] + ", " + mat[4] + ", " + mat[5] + ", " + mat[6] + ", " + mat[7] + ", " + mat[8] + ", " + mat[9] + ", " + mat[10] + ", " + mat[11] + ", " + mat[12] + ", " + mat[13] + ", " + mat[14] + ", " + mat[15] + "]";
-    }
-    mat4.str = str;
-
-    function createTranslate(x, y, z, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-        dest[0] = 1;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-
-        dest[4] = 0;
-        dest[5] = 1;
-        dest[6] = 0;
-        dest[7] = 0;
-
-        dest[8] = 0;
-        dest[9] = 0;
-        dest[10] = 1;
-        dest[11] = 0;
-
-        dest[12] = x;
-        dest[13] = y;
-        dest[14] = z;
-        dest[15] = 1;
-        return dest;
-    }
-    mat4.createTranslate = createTranslate;
-
-    function createScale(x, y, z, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-        dest[0] = x;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-
-        dest[4] = 0;
-        dest[5] = y;
-        dest[6] = 0;
-        dest[7] = 0;
-
-        dest[8] = 0;
-        dest[9] = 0;
-        dest[10] = z;
-        dest[11] = 0;
-
-        dest[12] = 0;
-        dest[13] = 0;
-        dest[14] = 0;
-        dest[15] = 1;
-        return dest;
-    }
-    mat4.createScale = createScale;
-
-    function createPerspective(fieldOfViewY, aspectRatio, zNearPlane, zFarPlane, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-
-        var height = 1.0 / Math.tan(fieldOfViewY / 2.0);
-        var width = height / aspectRatio;
-        var d = zNearPlane - zFarPlane;
-
-        dest[0] = width;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-
-        dest[4] = 0;
-        dest[5] = height;
-        dest[6] = 0;
-        dest[7] = 0;
-
-        dest[8] = 0;
-        dest[9] = 0;
-        dest[10] = zFarPlane / d;
-        dest[11] = -1.0;
-
-        dest[12] = 0;
-        dest[13] = 0;
-        dest[14] = zNearPlane * zFarPlane / d;
-        dest[15] = 0.0;
-        return dest;
-    }
-    mat4.createPerspective = createPerspective;
-
-    function createViewport(width, height, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-        dest[0] = width / 2.0;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-
-        dest[4] = 0;
-        dest[5] = -height / 2.0;
-        dest[6] = 0;
-        dest[7] = 0;
-
-        dest[8] = 0;
-        dest[9] = 0;
-        dest[10] = 1;
-        dest[11] = 0;
-
-        dest[12] = width / 2.0;
-        dest[13] = height / 2.0;
-        dest[14] = 0;
-        dest[15] = 1;
-        return dest;
-    }
-    mat4.createViewport = createViewport;
-
-    function createRotateX(theta, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-
-        var s = Math.sin(theta);
-        var c = Math.cos(theta);
-
-        dest[0] = 1;
-        dest[1] = 0;
-        dest[2] = 0;
-        dest[3] = 0;
-
-        dest[4] = 0;
-        dest[5] = c;
-        dest[6] = s;
-        dest[7] = 0;
-
-        dest[8] = 0;
-        dest[9] = -s;
-        dest[10] = c;
-        dest[11] = 0;
-
-        dest[12] = 0;
-        dest[13] = 0;
-        dest[14] = 0;
-        dest[15] = 1;
-        return dest;
-    }
-    mat4.createRotateX = createRotateX;
-
-    function createRotateY(theta, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-
-        var s = Math.sin(theta);
-        var c = Math.cos(theta);
-
-        dest[0] = c;
-        dest[1] = 0;
-        dest[2] = -s;
-        dest[3] = 0;
-
-        dest[4] = 0;
-        dest[5] = 1;
-        dest[6] = 0;
-        dest[7] = 0;
-
-        dest[8] = s;
-        dest[9] = 0;
-        dest[10] = c;
-        dest[11] = 0;
-
-        dest[12] = 0;
-        dest[13] = 0;
-        dest[14] = 0;
-        dest[15] = 1;
-        return dest;
-    }
-    mat4.createRotateY = createRotateY;
-
-    function createRotateZ(theta, dest) {
-        if (!dest) {
-            dest = mat4.create();
-        }
-
-        var s = Math.sin(theta);
-        var c = Math.cos(theta);
-
-        dest[0] = c;
-        dest[1] = s;
-        dest[2] = 0;
-        dest[3] = 0;
-
-        dest[4] = -s;
-        dest[5] = c;
-        dest[6] = 0;
-        dest[7] = 0;
-
-        dest[8] = 0;
-        dest[9] = 0;
-        dest[10] = 1;
-        dest[11] = 0;
-
-        dest[12] = 0;
-        dest[13] = 0;
-        dest[14] = 0;
-        dest[15] = 1;
-        return dest;
-    }
-    mat4.createRotateZ = createRotateZ;
-
-    function translate(mat, x, y, z) {
-        mat[12] += x;
-        mat[13] += y;
-        mat[14] += z;
-        return mat;
-    }
-    mat4.translate = translate;
-
-    function scale(mat, x, y, z) {
-        mat[0] *= x;
-        mat[4] *= x;
-        mat[8] *= x;
-        mat[12] *= x;
-        mat[1] *= y;
-        mat[5] *= y;
-        mat[9] *= y;
-        mat[13] *= y;
-        mat[2] *= z;
-        mat[6] *= z;
-        mat[10] *= z;
-        mat[14] *= z;
-        return mat;
-    }
-    mat4.scale = scale;
-})(mat4 || (mat4 = {}));
 var minerva;
 (function (minerva) {
     (function (RectOverlap) {
@@ -1199,69 +471,6 @@ var minerva;
             return mask;
         };
 
-        Rect.transform4 = function (dest, projection) {
-            if (!projection)
-                return;
-
-            var x = dest.x;
-            var y = dest.y;
-            var width = dest.width;
-            var height = dest.height;
-
-            var p1 = vec4.createFrom(x, y, 0.0, 1.0);
-            var p2 = vec4.createFrom(x + width, y, 0.0, 1.0);
-            var p3 = vec4.createFrom(x + width, y + height, 0.0, 1.0);
-            var p4 = vec4.createFrom(x, y + height, 0.0, 1.0);
-
-            mat4.transformVec4(projection, p1);
-            mat4.transformVec4(projection, p2);
-            mat4.transformVec4(projection, p3);
-            mat4.transformVec4(projection, p4);
-
-            var vs = 65536.0;
-            var vsr = 1.0 / vs;
-            p1[0] *= vsr;
-            p1[1] *= vsr;
-            p2[0] *= vsr;
-            p2[1] *= vsr;
-            p3[0] *= vsr;
-            p3[1] *= vsr;
-            p4[0] *= vsr;
-            p4[1] *= vsr;
-
-            var cm1 = Rect.clipmask(p1);
-            var cm2 = Rect.clipmask(p2);
-            var cm3 = Rect.clipmask(p3);
-            var cm4 = Rect.clipmask(p4);
-
-            if ((cm1 | cm2 | cm3 | cm4) !== 0) {
-                if ((cm1 & cm2 & cm3 & cm4) === 0) {
-                    dest.x = dest.y = dest.width = dest.height = 0;
-                }
-            } else {
-                var p1w = 1.0 / p1[3];
-                var p2w = 1.0 / p2[3];
-                var p3w = 1.0 / p3[3];
-                var p4w = 1.0 / p4[3];
-                p1[0] *= p1w * vs;
-                p1[1] *= p1w * vs;
-                p2[0] *= p2w * vs;
-                p2[1] *= p2w * vs;
-                p3[0] *= p3w * vs;
-                p3[1] *= p3w * vs;
-                p4[0] *= p4w * vs;
-                p4[1] *= p4w * vs;
-
-                dest.x = p1[0];
-                dest.y = p1[1];
-                dest.width = 0;
-                dest.height = 0;
-                Rect.extendTo(dest, p2[0], p2[1]);
-                Rect.extendTo(dest, p3[0], p3[1]);
-                Rect.extendTo(dest, p4[0], p4[1]);
-            }
-        };
-
         Rect.extendTo = function (dest, x, y) {
             var rx = dest.x;
             var ry = dest.y;
@@ -1321,15 +530,15 @@ var minerva;
             var width = dest.width;
             var height = dest.height;
 
-            var p1 = vec2.createFrom(x, y);
-            var p2 = vec2.createFrom(x + width, y);
-            var p3 = vec2.createFrom(x + width, y + height);
-            var p4 = vec2.createFrom(x, y + height);
+            var p1 = minerva.vec2.create(x, y);
+            var p2 = minerva.vec2.create(x + width, y);
+            var p3 = minerva.vec2.create(x + width, y + height);
+            var p4 = minerva.vec2.create(x, y + height);
 
-            mat3.transformVec2(mat, p1);
-            mat3.transformVec2(mat, p2);
-            mat3.transformVec2(mat, p3);
-            mat3.transformVec2(mat, p4);
+            minerva.mat3.transformVec2(mat, p1);
+            minerva.mat3.transformVec2(mat, p2);
+            minerva.mat3.transformVec2(mat, p3);
+            minerva.mat3.transformVec2(mat, p4);
 
             var l = Math.min(p1[0], p2[0], p3[0], p4[0]);
             var t = Math.min(p1[1], p2[1], p3[1], p4[1]);
@@ -1574,7 +783,7 @@ var minerva;
 
     function findElementsInHostSpace(pos, host) {
         hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
-        var inv = mat3.inverse(host.assets.renderXform, mat3.create());
+        var inv = minerva.mat3.inverse(host.assets.renderXform, minerva.mat3.create());
 
         hitTestCtx.save();
         hitTestCtx.pretransformMatrix(inv);
@@ -1879,7 +1088,7 @@ var minerva;
                     visibility: 0 /* Visible */,
                     opacity: 1.0,
                     isHitTestVisible: true,
-                    renderTransform: mat3.identity(),
+                    renderTransform: minerva.mat3.identity(),
                     renderTransformOrigin: new minerva.Point(),
                     effectPadding: new minerva.Thickness(),
                     previousConstraint: new minerva.Size(),
@@ -1902,10 +1111,10 @@ var minerva;
                     extentsWithChildren: new minerva.Rect(),
                     surfaceBoundsWithChildren: new minerva.Rect(),
                     globalBoundsWithChildren: new minerva.Rect(),
-                    layoutXform: mat3.identity(),
+                    layoutXform: minerva.mat3.identity(),
                     carrierXform: null,
-                    renderXform: mat3.identity(),
-                    absoluteXform: mat3.identity(),
+                    renderXform: minerva.mat3.identity(),
+                    absoluteXform: minerva.mat3.identity(),
                     dirtyRegion: new minerva.Rect(),
                     dirtyFlags: 0,
                     uiFlags: 2 /* RenderVisible */ | 4 /* HitTestVisible */,
@@ -2291,28 +1500,28 @@ var minerva;
                 if (!fromUpdater.tree.surface || (toUpdater && !toUpdater.tree.surface))
                     return null;
 
-                var result = mat3.create();
+                var m = minerva.mat3.create();
+                var a = fromUpdater.assets.absoluteXform;
 
                 if (toUpdater) {
-                    var inverse = mat3.create();
-                    mat3.inverse(toUpdater.assets.absoluteXform, inverse);
-                    mat3.multiply(fromUpdater.assets.absoluteXform, inverse, result);
+                    var invB = minerva.mat3.inverse(toUpdater.assets.absoluteXform, minerva.mat3.create());
+                    minerva.mat3.multiply(a, invB, m);
                 } else {
-                    mat3.set(fromUpdater.assets.absoluteXform, result);
+                    minerva.mat3.copyTo(a, m);
                 }
 
-                return result;
+                return m;
             };
 
             Updater.transformPoint = function (updater, p) {
-                var inverse = mat3.inverse(updater.assets.absoluteXform, mat3.create());
+                var inverse = minerva.mat3.inverse(updater.assets.absoluteXform, minerva.mat3.create());
                 if (!inverse) {
                     console.warn("Could not get inverse of Absolute Transform for UIElement.");
                     return;
                 }
 
-                var p2 = vec2.createFrom(p.x, p.y);
-                mat3.transformVec2(inverse, p2);
+                var p2 = minerva.vec2.create(p.x, p.y);
+                minerva.mat3.transformVec2(inverse, p2);
                 p.x = p2[0];
                 p.y = p2[1];
             };
@@ -2668,7 +1877,7 @@ var minerva;
                         dirtyFlags: 0,
                         uiFlags: 0,
                         layoutSlot: new minerva.Rect(),
-                        layoutXform: mat3.identity(),
+                        layoutXform: minerva.mat3.identity(),
                         layoutClip: new minerva.Rect(),
                         renderSize: new minerva.Size(),
                         lastRenderSize: undefined,
@@ -2689,7 +1898,7 @@ var minerva;
                     minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
                     output.lastRenderSize = input.lastRenderSize;
-                    mat3.set(input.layoutXform, output.layoutXform);
+                    minerva.mat3.copyTo(input.layoutXform, output.layoutXform);
                     minerva.Point.copyTo(input.visualOffset, output.visualOffset);
                 };
 
@@ -2705,7 +1914,7 @@ var minerva;
                     minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
                     input.lastRenderSize = output.lastRenderSize;
-                    mat3.set(output.layoutXform, input.layoutXform);
+                    minerva.mat3.copyTo(output.layoutXform, input.layoutXform);
                     minerva.Point.copyTo(output.visualOffset, input.visualOffset);
                 };
                 return ArrangePipeDef;
@@ -2792,12 +2001,12 @@ var minerva;
             (function (tapins) {
                 tapins.buildLayoutXform = function (input, state, output, tree, finalRect) {
                     var vo = output.visualOffset;
-                    var layoutXform = mat3.createTranslate(vo.x, vo.y, output.layoutXform);
+                    var layoutXform = minerva.mat3.createTranslate(vo.x, vo.y, output.layoutXform);
                     if (state.flipHorizontal) {
-                        mat3.translate(layoutXform, state.arrangedSize.width, 0);
-                        mat3.scale(layoutXform, -1, 1);
+                        minerva.mat3.translate(layoutXform, state.arrangedSize.width, 0);
+                        minerva.mat3.scale(layoutXform, -1, 1);
                     }
-                    if (!mat3.equal(input.layoutXform, output.layoutXform))
+                    if (!minerva.mat3.equal(input.layoutXform, output.layoutXform))
                         output.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                     return true;
                 };
@@ -3886,7 +3095,7 @@ var minerva;
                 ProcessDownPipeDef.prototype.createState = function () {
                     return {
                         xformOrigin: new minerva.Point(),
-                        localXform: mat3.identity(),
+                        localXform: minerva.mat3.identity(),
                         subtreeDownDirty: 0
                     };
                 };
@@ -3898,8 +3107,8 @@ var minerva;
                         totalIsHitTestVisible: false,
                         z: NaN,
                         compositeLayoutClip: new minerva.Rect(),
-                        renderXform: mat3.identity(),
-                        absoluteXform: mat3.identity(),
+                        renderXform: minerva.mat3.identity(),
+                        absoluteXform: minerva.mat3.identity(),
                         dirtyFlags: 0,
                         newUpDirty: 0
                     };
@@ -3915,8 +3124,8 @@ var minerva;
                     output.totalIsHitTestVisible = input.totalIsHitTestVisible;
                     output.z = input.z;
                     minerva.Rect.copyTo(input.compositeLayoutClip, output.compositeLayoutClip);
-                    mat3.set(input.renderXform, output.renderXform);
-                    mat3.set(input.absoluteXform, output.absoluteXform);
+                    minerva.mat3.copyTo(input.renderXform, output.renderXform);
+                    minerva.mat3.copyTo(input.absoluteXform, output.absoluteXform);
                     state.subtreeDownDirty = 0;
                 };
 
@@ -3928,8 +3137,8 @@ var minerva;
                     input.totalIsHitTestVisible = output.totalIsHitTestVisible;
                     input.z = output.z;
                     minerva.Rect.copyTo(output.compositeLayoutClip, input.compositeLayoutClip);
-                    mat3.set(output.renderXform, input.renderXform);
-                    mat3.set(output.absoluteXform, input.absoluteXform);
+                    minerva.mat3.copyTo(output.renderXform, input.renderXform);
+                    minerva.mat3.copyTo(output.absoluteXform, input.absoluteXform);
                 };
                 return ProcessDownPipeDef;
             })(minerva.pipe.TriPipeDef);
@@ -3951,9 +3160,9 @@ var minerva;
                     var abs = output.absoluteXform;
 
                     if (vpinput)
-                        mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
+                        minerva.mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
                     else
-                        mat3.set(output.renderXform, abs);
+                        minerva.mat3.copyTo(output.renderXform, abs);
 
                     return true;
                 };
@@ -3975,10 +3184,10 @@ var minerva;
 
                     var rx = output.renderXform;
                     if (input.carrierXform)
-                        mat3.multiply(input.carrierXform, input.layoutXform, rx);
+                        minerva.mat3.multiply(input.carrierXform, input.layoutXform, rx);
                     else
-                        mat3.set(input.layoutXform, rx);
-                    mat3.multiply(rx, state.localXform, rx);
+                        minerva.mat3.copyTo(input.layoutXform, rx);
+                    minerva.mat3.multiply(rx, state.localXform, rx);
 
                     return true;
                 };
@@ -4081,15 +3290,15 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
                         return true;
 
-                    var local = mat3.identity(state.localXform);
+                    var local = minerva.mat3.identity(state.localXform);
                     var render = input.renderTransform;
                     if (!render)
                         return true;
 
                     var origin = state.xformOrigin;
-                    mat3.translate(local, origin.x, origin.y);
-                    mat3.multiply(local, render, local);
-                    mat3.translate(local, -origin.x, -origin.y);
+                    minerva.mat3.translate(local, origin.x, origin.y);
+                    minerva.mat3.multiply(local, render, local);
+                    minerva.mat3.translate(local, -origin.x, -origin.y);
 
                     return true;
                 };
@@ -4145,10 +3354,10 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
 
-                    if (!mat3.equal(input.renderXform, output.renderXform)) {
+                    if (!minerva.mat3.equal(input.renderXform, output.renderXform)) {
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
                         state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
-                    } else if (!mat3.equal(input.absoluteXform, output.absoluteXform)) {
+                    } else if (!minerva.mat3.equal(input.absoluteXform, output.absoluteXform)) {
                         state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
                     }
 
@@ -4416,9 +3625,9 @@ var minerva;
             var RenderContext = (function () {
                 function RenderContext(ctx) {
                     this.$$transforms = [];
-                    this.currentTransform = mat3.identity();
+                    this.currentTransform = minerva.mat3.identity();
                     Object.defineProperty(this, 'raw', { value: ctx, writable: false });
-                    Object.defineProperty(this, 'currentTransform', { value: mat3.identity(), writable: false });
+                    Object.defineProperty(this, 'currentTransform', { value: minerva.mat3.identity(), writable: false });
                     Object.defineProperty(this, 'hasFillRule', { value: RenderContext.hasFillRule, writable: false });
                 }
                 Object.defineProperty(RenderContext, "hasFillRule", {
@@ -4440,24 +3649,24 @@ var minerva;
                 };
 
                 RenderContext.prototype.save = function () {
-                    this.$$transforms.push(mat3.clone(this.currentTransform));
+                    this.$$transforms.push(minerva.mat3.create(this.currentTransform));
                     this.raw.save();
                 };
 
                 RenderContext.prototype.restore = function () {
                     var old = this.$$transforms.pop();
                     if (old)
-                        mat3.set(old, this.currentTransform);
+                        minerva.mat3.copyTo(old, this.currentTransform);
                     this.raw.restore();
                 };
 
                 RenderContext.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
-                    mat3.set([m11, m12, dx, m21, m22, dy, 0, 0, 1], this.currentTransform);
+                    minerva.mat3.copyTo([m11, m12, m21, m22, dx, dy], this.currentTransform);
                     this.raw.setTransform(m11, m12, m21, m22, dx, dy);
                 };
 
                 RenderContext.prototype.resetTransform = function () {
-                    mat3.identity(this.currentTransform);
+                    minerva.mat3.identity(this.currentTransform);
                     var raw = this.raw;
                     if (raw.resetTransform)
                         raw.resetTransform();
@@ -4465,37 +3674,37 @@ var minerva;
 
                 RenderContext.prototype.transform = function (m11, m12, m21, m22, dx, dy) {
                     var ct = this.currentTransform;
-                    mat3.multiply(ct, mat3.create([m11, m12, dx, m21, m22, dy, 0, 0, 1]), ct);
+                    minerva.mat3.multiply(ct, minerva.mat3.create([m11, m12, m21, m22, dx, dy]), ct);
                     this.raw.transform(m11, m12, m21, m22, dx, dy);
                 };
 
                 RenderContext.prototype.scale = function (x, y) {
-                    mat3.scale(this.currentTransform, x, y);
+                    minerva.mat3.scale(this.currentTransform, x, y);
                     this.raw.scale(x, y);
                 };
 
                 RenderContext.prototype.rotate = function (angle) {
                     var ct = this.currentTransform;
-                    var r = mat3.createRotate(angle);
-                    mat3.multiply(ct, r, ct);
+                    var r = minerva.mat3.createRotate(angle);
+                    minerva.mat3.multiply(ct, r, ct);
                     this.raw.rotate(angle);
                 };
 
                 RenderContext.prototype.translate = function (x, y) {
-                    mat3.translate(this.currentTransform, x, y);
+                    minerva.mat3.translate(this.currentTransform, x, y);
                     this.raw.translate(x, y);
                 };
 
                 RenderContext.prototype.transformMatrix = function (mat) {
                     var ct = this.currentTransform;
-                    mat3.multiply(ct, mat, ct);
-                    this.raw.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
+                    minerva.mat3.multiply(ct, mat, ct);
+                    this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
 
                 RenderContext.prototype.pretransformMatrix = function (mat) {
                     var ct = this.currentTransform;
-                    mat3.multiply(mat, ct, ct);
-                    this.raw.setTransform(ct[0], ct[1], ct[3], ct[4], ct[2], ct[5]);
+                    minerva.mat3.multiply(mat, ct, ct);
+                    this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
 
                 RenderContext.prototype.clipGeometry = function (geom) {
@@ -7100,7 +6309,7 @@ var minerva;
                     assets.source = null;
                     assets.stretch = 2 /* Uniform */;
                     assets.overlap = 1 /* In */;
-                    assets.imgXform = mat3.identity();
+                    assets.imgXform = minerva.mat3.identity();
 
                     _super.prototype.init.call(this);
                 };
@@ -7536,7 +6745,7 @@ var minerva;
 
                     ImageProcessDownPipeDef.prototype.createOutput = function () {
                         var output = _super.prototype.createOutput.call(this);
-                        output.imgXform = mat3.identity();
+                        output.imgXform = minerva.mat3.identity();
                         output.overlap = 1 /* In */;
                         return output;
                     };
@@ -7544,13 +6753,13 @@ var minerva;
                     ImageProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
                         _super.prototype.prepare.call(this, input, state, output, vpinput, tree);
                         output.overlap = input.overlap;
-                        mat3.set(input.imgXform, output.imgXform);
+                        minerva.mat3.copyTo(input.imgXform, output.imgXform);
                     };
 
                     ImageProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
                         _super.prototype.flush.call(this, input, state, output, vpinput, tree);
                         input.overlap = output.overlap;
-                        mat3.set(output.imgXform, input.imgXform);
+                        minerva.mat3.copyTo(output.imgXform, input.imgXform);
                     };
                     return ImageProcessDownPipeDef;
                 })(minerva.core.processdown.ProcessDownPipeDef);
@@ -7586,7 +6795,7 @@ var minerva;
 
                         var xform = output.imgXform;
                         if (input.stretch === 1 /* Fill */) {
-                            mat3.createScale(sx, sy, xform);
+                            minerva.mat3.createScale(sx, sy, xform);
                             return true;
                         }
 
@@ -7606,8 +6815,8 @@ var minerva;
 
                         var dy = (h - (scale * sh)) / 2;
 
-                        mat3.createScale(scale, scale, xform);
-                        mat3.translate(xform, dx, dy);
+                        minerva.mat3.createScale(scale, scale, xform);
+                        minerva.mat3.translate(xform, dx, dy);
 
                         return true;
                     }
@@ -7665,7 +6874,7 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.ImageMetrics) === 0)
                             return true;
 
-                        mat3.identity(output.imgXform);
+                        minerva.mat3.identity(output.imgXform);
                         output.overlap = 1 /* In */;
 
                         var imgRect = state.imgRect;
@@ -7982,7 +7191,7 @@ var minerva;
                     }
                     this.tree.popupChild = child;
                     if (child) {
-                        child.assets.carrierXform = mat3.identity();
+                        child.assets.carrierXform = minerva.mat3.identity();
                     }
                 };
 
@@ -8056,7 +7265,7 @@ var minerva;
 
                 function tweenOffset(child, tweenX, tweenY) {
                     if (child.assets.carrierXform) {
-                        mat3.translate(child.assets.carrierXform, tweenX, tweenY);
+                        minerva.mat3.translate(child.assets.carrierXform, tweenX, tweenY);
                     }
                 }
             })(popup.reactTo || (popup.reactTo = {}));
@@ -8154,9 +7363,9 @@ var minerva;
 
                         var carrier = child.assets.carrierXform;
                         if (!carrier)
-                            carrier = child.assets.carrierXform || mat3.create();
-                        mat3.set(output.absoluteXform, carrier);
-                        mat3.translate(carrier, input.horizontalOffset, input.verticalOffset);
+                            carrier = child.assets.carrierXform || minerva.mat3.create();
+                        minerva.mat3.copyTo(output.absoluteXform, carrier);
+                        minerva.mat3.translate(carrier, input.horizontalOffset, input.verticalOffset);
 
                         minerva.core.Updater.$$addDownDirty(child);
 
@@ -10590,6 +9799,307 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var FLOAT_EPSILON = 0.000001;
+    var createTypedArray;
+
+    if (typeof Float32Array !== "undefined") {
+        createTypedArray = function (length) {
+            return new Float32Array(length);
+        };
+    } else {
+        createTypedArray = function (length) {
+            return new Array(length);
+        };
+    }
+
+    minerva.mat3 = {
+        create: function (src) {
+            var dest = createTypedArray(6);
+
+            if (src) {
+                dest[0] = src[0];
+                dest[1] = src[1];
+                dest[2] = src[2];
+                dest[3] = src[3];
+                dest[4] = src[4];
+                dest[5] = src[5];
+            } else {
+                dest[0] = dest[1] = dest[2] = dest[3] = dest[4] = dest[5] = 0;
+            }
+
+            return dest;
+        },
+        copyTo: function (src, dest) {
+            dest[0] = src[0];
+            dest[1] = src[1];
+            dest[2] = src[2];
+            dest[3] = src[3];
+            dest[4] = src[4];
+            dest[5] = src[5];
+            return dest;
+        },
+        init: function (dest, m11, m12, m21, m22, x0, y0) {
+            dest[0] = m11;
+            dest[1] = m12;
+            dest[2] = m21;
+            dest[3] = m22;
+            dest[4] = x0;
+            dest[5] = y0;
+            return dest;
+        },
+        identity: function (dest) {
+            if (!dest)
+                dest = minerva.mat3.create();
+            dest[0] = 1;
+            dest[1] = 0;
+            dest[2] = 0;
+            dest[3] = 1;
+            dest[4] = 0;
+            dest[5] = 0;
+            return dest;
+        },
+        equal: function (a, b) {
+            return a === b || (Math.abs(a[0] - b[0]) < FLOAT_EPSILON && Math.abs(a[1] - b[1]) < FLOAT_EPSILON && Math.abs(a[2] - b[2]) < FLOAT_EPSILON && Math.abs(a[3] - b[3]) < FLOAT_EPSILON && Math.abs(a[4] - b[4]) < FLOAT_EPSILON && Math.abs(a[5] - b[5]) < FLOAT_EPSILON);
+        },
+        multiply: function (a, b, dest) {
+            if (!dest)
+                dest = a;
+            var a11 = a[0], a12 = a[1], a21 = a[2], a22 = a[3], ax0 = a[4], ay0 = a[5], b11 = b[0], b12 = b[1], b21 = b[2], b22 = b[3], bx0 = b[4], by0 = b[5];
+
+            dest[0] = a11 * b11 + a12 * b21;
+            dest[1] = a11 * b12 + a12 * b22;
+
+            dest[2] = a21 * b11 + a22 * b21;
+            dest[3] = a21 * b12 + a22 * b22;
+
+            dest[4] = ax0 * b11 + ay0 * b21 + bx0;
+            dest[5] = ax0 * b12 + ay0 * b22 + by0;
+
+            return dest;
+        },
+        inverse: function (mat, dest) {
+            if (Math.abs(mat[1]) < FLOAT_EPSILON && Math.abs(mat[2]) < FLOAT_EPSILON)
+                return simple_inverse(mat, dest);
+            else
+                return complex_inverse(mat, dest);
+        },
+        transformVec2: function (mat, vec, dest) {
+            if (!dest)
+                dest = vec;
+            var x = vec[0], y = vec[1];
+            dest[0] = (mat[0] * x) + (mat[2] * y) + mat[4];
+            dest[1] = (mat[1] * x) + (mat[3] * y) + mat[5];
+            return dest;
+        },
+        createTranslate: function (x, y, dest) {
+            if (!dest)
+                dest = minerva.mat3.create();
+            dest[0] = 1;
+            dest[1] = 0;
+            dest[2] = 0;
+            dest[3] = 1;
+            dest[4] = x;
+            dest[5] = y;
+            return dest;
+        },
+        translate: function (mat, x, y) {
+            mat[4] += x;
+            mat[5] += y;
+            return mat;
+        },
+        createScale: function (sx, sy, dest) {
+            if (!dest)
+                dest = minerva.mat3.create();
+            dest[0] = sx;
+            dest[1] = 0;
+            dest[2] = 0;
+            dest[3] = sy;
+            dest[4] = 0;
+            dest[5] = 0;
+            return dest;
+        },
+        scale: function (mat, sx, sy) {
+            mat[0] *= sx;
+            mat[2] *= sx;
+            mat[4] *= sx;
+
+            mat[1] *= sy;
+            mat[3] *= sy;
+            mat[5] *= sy;
+            return mat;
+        },
+        createRotate: function (angleRad, dest) {
+            if (!dest)
+                dest = minerva.mat3.create();
+            var c = Math.cos(angleRad);
+            var s = Math.sin(angleRad);
+            dest[0] = c;
+            dest[1] = s;
+            dest[2] = -s;
+            dest[3] = c;
+            dest[4] = 0;
+            dest[5] = 0;
+            return dest;
+        },
+        createSkew: function (angleRadX, angleRadY, dest) {
+            if (!dest)
+                dest = minerva.mat3.create();
+            dest[0] = 1;
+            dest[1] = Math.tan(angleRadY);
+            dest[2] = Math.tan(angleRadX);
+            dest[3] = 1;
+            dest[4] = 0;
+            dest[5] = 0;
+            return dest;
+        }
+    };
+
+    function simple_inverse(mat, dest) {
+        var m11 = mat[0];
+        if (Math.abs(m11) < FLOAT_EPSILON)
+            return null;
+
+        var m22 = mat[3];
+        if (Math.abs(m22) < FLOAT_EPSILON)
+            return null;
+
+        if (!dest) {
+            dest = mat;
+        } else {
+            dest[1] = mat[1];
+            dest[2] = mat[2];
+        }
+
+        var x0 = -mat[4];
+        var y0 = -mat[5];
+        if (Math.abs(m11 - 1) < FLOAT_EPSILON) {
+            m11 = 1 / m11;
+            x0 *= m11;
+        }
+        if (Math.abs(m22 - 1) < FLOAT_EPSILON) {
+            m22 = 1 / m22;
+            y0 *= m22;
+        }
+
+        dest[0] = m11;
+        dest[3] = m22;
+        dest[4] = x0;
+        dest[5] = y0;
+        return dest;
+    }
+
+    function complex_inverse(mat, dest) {
+        if (!dest)
+            dest = mat;
+
+        var m11 = mat[0], m12 = mat[1], m21 = mat[2], m22 = mat[3];
+
+        var det = m11 * m22 - m12 * m21;
+        if (det === 0 || !isFinite(det))
+            return null;
+        var id = 1 / det;
+
+        var x0 = mat[4], y0 = mat[5];
+
+        dest[0] = m22 * id;
+        dest[1] = -m12 * id;
+        dest[2] = -m21 * id;
+        dest[3] = m11 * id;
+        dest[4] = (m21 * y0 - m22 * x0) * id;
+        dest[5] = (m12 * x0 - m11 * y0) * id;
+        return dest;
+    }
+})(minerva || (minerva = {}));
+var mat3 = minerva.mat3;
+var minerva;
+(function (minerva) {
+    var FLOAT_EPSILON = 0.000001;
+    var createTypedArray;
+
+    if (typeof Float32Array !== "undefined") {
+        createTypedArray = function (length) {
+            return new Float32Array(length);
+        };
+    } else {
+        createTypedArray = function (length) {
+            return new Array(length);
+        };
+    }
+
+    minerva.mat4 = {};
+})(minerva || (minerva = {}));
+
+var mat4 = minerva.mat4;
+var minerva;
+(function (minerva) {
+    var createTypedArray;
+
+    if (typeof Float32Array !== "undefined") {
+        createTypedArray = function (length) {
+            return new Float32Array(length);
+        };
+    } else {
+        createTypedArray = function (length) {
+            return new Array(length);
+        };
+    }
+
+    minerva.vec2 = {
+        create: function (x, y) {
+            var dest = createTypedArray(2);
+            dest[0] = x;
+            dest[1] = y;
+            return dest;
+        },
+        init: function (x, y, dest) {
+            if (!dest)
+                dest = createTypedArray(2);
+            dest[0] = x;
+            dest[1] = y;
+            return dest;
+        }
+    };
+})(minerva || (minerva = {}));
+
+var vec2 = minerva.vec2;
+var minerva;
+(function (minerva) {
+    var createTypedArray;
+
+    if (typeof Float32Array !== "undefined") {
+        createTypedArray = function (length) {
+            return new Float32Array(length);
+        };
+    } else {
+        createTypedArray = function (length) {
+            return new Array(length);
+        };
+    }
+
+    minerva.vec4 = {
+        create: function (x, y, z, w) {
+            var dest = createTypedArray(4);
+            dest[0] = x;
+            dest[1] = y;
+            dest[2] = z;
+            dest[3] = w;
+            return dest;
+        },
+        init: function (x, y, z, w, dest) {
+            if (!dest)
+                dest = createTypedArray(4);
+            dest[0] = x;
+            dest[1] = y;
+            dest[2] = z;
+            dest[3] = w;
+            return dest;
+        }
+    };
+})(minerva || (minerva = {}));
+
+var vec4 = minerva.vec4;
+var minerva;
+(function (minerva) {
     (function (_path) {
         var Path = (function () {
             function Path() {
@@ -12108,7 +11618,7 @@ var minerva;
 
                     var assets = this.assets;
                     assets.stretch = 0 /* None */;
-                    assets.stretchXform = mat3.identity();
+                    assets.stretchXform = minerva.mat3.identity();
 
                     _super.prototype.init.call(this);
                 };
@@ -12390,18 +11900,18 @@ var minerva;
                     }
                     PathArrangePipeDef.prototype.createOutput = function () {
                         var output = _super.prototype.createOutput.call(this);
-                        output.stretchXform = mat3.identity();
+                        output.stretchXform = minerva.mat3.identity();
                         return output;
                     };
 
                     PathArrangePipeDef.prototype.prepare = function (input, state, output) {
-                        mat3.set(input.stretchXform, output.stretchXform);
+                        minerva.mat3.copyTo(input.stretchXform, output.stretchXform);
                         _super.prototype.prepare.call(this, input, state, output);
                     };
 
                     PathArrangePipeDef.prototype.flush = function (input, state, output) {
                         _super.prototype.flush.call(this, input, state, output);
-                        mat3.set(output.stretchXform, input.stretchXform);
+                        minerva.mat3.copyTo(output.stretchXform, input.stretchXform);
                     };
                     return PathArrangePipeDef;
                 })(shapes.shape.arrange.ShapeArrangePipeDef);
@@ -12427,8 +11937,8 @@ var minerva;
                         var xform = output.stretchXform;
                         var nb = input.naturalBounds;
                         var rs = output.renderSize;
-                        mat3.createTranslate(-nb.x, -nb.y, xform);
-                        mat3.scale(xform, rs.width / nb.width, rs.height / nb.height);
+                        minerva.mat3.createTranslate(-nb.x, -nb.y, xform);
+                        minerva.mat3.scale(xform, rs.width / nb.width, rs.height / nb.height);
 
                         return true;
                     }

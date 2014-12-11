@@ -163,19 +163,19 @@ module minerva.controls.image.processdown.tests {
         state.paintRect = new Rect(0, 0, 100, 200);
         state.imgRect = new Rect(25, 25, 50, 50);
         assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
-        assert.deepEqual(typedToArray(output.imgXform), [1, 0, 25, 0, 1, 75, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.imgXform), [1, 0, 0, 1, 25, 75]);
 
         input.stretch = Stretch.Uniform;
         assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
-        assert.deepEqual(typedToArray(output.imgXform), [2, 0, 0, 0, 2, 50, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.imgXform), [2, 0, 0, 2, 0, 50]);
 
         input.stretch = Stretch.UniformToFill;
         assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
-        assert.deepEqual(typedToArray(output.imgXform), [4, 0, -50, 0, 4, 0, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.imgXform), [4, 0, 0, 4, -50, 0]);
 
         input.stretch = Stretch.Fill;
         assert.ok(tapins.calcImageTransform(input, state, output, vpinput, null));
-        assert.deepEqual(typedToArray(output.imgXform), [2, 0, 0, 0, 4, 0, 0, 0, 1]);
+        assert.deepEqual(typedToArray(output.imgXform), [2, 0, 0, 4, 0, 0]);
     });
 
     QUnit.test("calcOverlap", (assert) => {

@@ -4,7 +4,7 @@ module minerva.core.processdown.tapins {
             return true;
 
         var abs = output.absoluteXform;
-        //abs = vp abs * render
+        //abs = render * vp abs
         if (vpinput)
             mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
         else
