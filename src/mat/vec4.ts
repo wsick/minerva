@@ -7,7 +7,7 @@ module minerva {
 
     if (typeof Float32Array !== "undefined") {
         createTypedArray = function (length: number): number[] {
-            return <number[]>new Float32Array(length);
+            return <number[]><any>new Float32Array(length);
         };
     } else {
         createTypedArray = function (length: number): number[] {
