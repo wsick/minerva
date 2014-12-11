@@ -88,7 +88,7 @@ module minerva.core.hittest.tapins.tests {
 
         ctx.translate(10, 20);
 
-        mat3.set([2, 0, 0, 0, 4, 0, 0, 0, 1], data.assets.renderXform);
+        mat3.init(data.assets.renderXform, 2, 0, 0, 4, 0, 0);
 
         assert.ok(tapins.prepareCtx(data, pos, hitList, ctx, false));
         assert.strictEqual(saved, true);

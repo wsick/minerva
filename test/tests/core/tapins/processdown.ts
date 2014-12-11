@@ -53,13 +53,13 @@ module minerva.core.processdown.tapins.tests {
                 newUpDirty: 0
             };
         },
-        tree: function(children: Updater[]): IUpdaterTree {
+        tree: function (children: Updater[]): IUpdaterTree {
             var tree = new UpdaterTree();
-            tree.walk = function(): IWalker<Updater> {
+            tree.walk = function (): IWalker<Updater> {
                 var i = -1;
                 return {
                     current: undefined,
-                    step: function(): boolean {
+                    step: function (): boolean {
                         i++;
                         this.current = children[i];
                         return this.current !== undefined;
@@ -180,19 +180,19 @@ module minerva.core.processdown.tapins.tests {
         assert.deepEqual(typedToArray(output.renderXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
 
         input.dirtyFlags |= DirtyFlags.Transform;
-        mat3.set([2, 0, 0, 0, 2, 0, 0, 0, 1], input.carrierXform);
-        mat3.set([1, 0, 10, 0, 1, 50, 0, 0, 1], input.layoutXform);
-        mat3.set([-1, 0, 0, 0, 1, 0, 0, 0, 1], state.localXform);
+        mat3.init(input.carrierXform, 2, 0, 0, 2, 0, 0);
+        mat3.init(input.layoutXform, 1, 0, 0, 1, 10, 50);
+        mat3.init(state.localXform, -1, 0, 0, 1, 0, 0);
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
 
         //Ensure running twice doesn't change renderXform
-        mat3.set(output.renderXform, input.renderXform);
+        mat3.copyTo(output.renderXform, input.renderXform);
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-2, 0, -10, 0, 2, 50, 0, 0, 1]);
 
         //Ensure running again without a carrier doesn't affect the renderXform
-        mat3.set(output.renderXform, input.renderXform);
+        mat3.copyTo(output.renderXform, input.renderXform);
         input.carrierXform = null;
         assert.ok(tapins.calcRenderXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.renderXform), [-1, 0, -10, 0, 1, 50, 0, 0, 1]);
@@ -208,8 +208,8 @@ module minerva.core.processdown.tapins.tests {
         assert.deepEqual(typedToArray(output.absoluteXform), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
 
         input.dirtyFlags |= DirtyFlags.Transform;
-        mat3.set([2, 0, 0, 0, 4, 0, 0, 0, 1], output.renderXform);
-        mat3.set([1, 0, 50, 0, 1, 100, 0, 0, 1], vpinput.absoluteXform);
+        mat3.init(output.renderXform, 2, 0, 0, 4, 0, 0);
+        mat3.init(vpinput.absoluteXform, 1, 0, 0, 1, 50, 100);
         assert.ok(tapins.calcAbsoluteXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(output.absoluteXform), [2, 0, 50, 0, 4, 100, 0, 0, 1]);
     });
@@ -274,7 +274,7 @@ module minerva.core.processdown.tapins.tests {
 
         var added: Updater[] = [];
         var oldAddDownDirty = Updater.$$addDownDirty;
-        Updater.$$addDownDirty = function(updater: Updater) {
+        Updater.$$addDownDirty = function (updater: Updater) {
             added.push(updater);
         };
 

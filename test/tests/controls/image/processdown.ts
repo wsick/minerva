@@ -23,10 +23,6 @@ module minerva.controls.image.processdown.tests {
                 carrierXform: mat3.identity(),
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
-                carrierProjection: mat4.identity(),
-                localProjection: mat4.identity(),
-                absoluteProjection: mat4.identity(),
-                totalHasRenderProjection: false,
                 dirtyFlags: 0,
                 //ISized
                 width: NaN,
@@ -48,7 +44,6 @@ module minerva.controls.image.processdown.tests {
             return {
                 xformOrigin: new Point(),
                 localXform: mat3.identity(),
-                renderAsProjection: mat4.identity(),
                 subtreeDownDirty: 0,
                 //IMAGE
                 imgRect: new Rect(),
@@ -67,8 +62,6 @@ module minerva.controls.image.processdown.tests {
                 compositeLayoutClip: new Rect(),
                 renderXform: mat3.identity(),
                 absoluteXform: mat3.identity(),
-                localProjection: mat4.identity(),
-                absoluteProjection: mat4.identity(),
                 totalHasRenderProjection: false,
                 dirtyFlags: 0,
                 newUpDirty: 0,
@@ -202,13 +195,13 @@ module minerva.controls.image.processdown.tests {
 
         state.imgRect = new Rect(0, 0, 50, 100);
         state.paintRect = new Rect(0, 0, 50, 100);
-        mat3.set([1, 0, 50, 0, 1, 100, 0, 0, 1], output.imgXform);
+        mat3.init(output.imgXform, 1, 0, 0, 1, 50, 100);
         assert.ok(tapins.calcOverlap(input, state, output, vpinput, null));
         assert.strictEqual(output.overlap, RectOverlap.Out);
 
         state.imgRect = new Rect(0, 0, 50, 100);
         state.paintRect = new Rect(0, 0, 50, 100);
-        mat3.set([1, 0, 10, 0, 1, 20, 0, 0, 1], output.imgXform);
+        mat3.init(output.imgXform, 1, 0, 0, 1, 10, 20);
         assert.ok(tapins.calcOverlap(input, state, output, vpinput, null));
         assert.strictEqual(output.overlap, RectOverlap.Part);
     });
