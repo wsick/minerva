@@ -1,3 +1,3 @@
 module minerva {
-    export var version = '0.3.0';
+    export var version = '0.3.1';
 }

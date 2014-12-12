@@ -119,6 +119,8 @@ module minerva.core {
         onDetached () {
             reactTo.helpers.invalidateParent(this);
             this.invalidateMeasure();
+            if (this.tree.visualParent)
+                this.tree.visualParent.invalidateMeasure();
 
             var ls = this.assets.layoutSlot;
             ls.x = ls.y = ls.width = ls.height = 0;
