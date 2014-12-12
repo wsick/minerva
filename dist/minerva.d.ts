@@ -289,12 +289,12 @@ declare module minerva {
         static union(dest: Rect, rect2: Rect): void;
         static isContainedIn(src: Rect, test: Rect): boolean;
         static containsPoint(rect1: Rect, p: Point): boolean;
-        private static clipmask(clip);
         static extendTo(dest: Rect, x: number, y: number): void;
         static grow(dest: Rect, left: number, top: number, right: number, bottom: number): Rect;
         static shrink(dest: Rect, left: number, top: number, right: number, bottom: number): void;
         static rectIn(rect1: Rect, rect2: Rect): RectOverlap;
         static transform(dest: Rect, mat: number[]): Rect;
+        static transform4(dest: Rect, projection: number[]): void;
     }
 }
 declare module minerva {
@@ -2391,11 +2391,27 @@ declare module minerva {
 }
 declare var mat3: IMatrix3Static;
 interface IMatrix4Static {
+    create(src?: number[]): number[];
+    copyTo(src: number[], dest: number[]): number[];
+    identity(dest?: number[]): number[];
+    equal(a: number[], b: number[]): boolean;
+    multiply(a: number[], b: number[], dest?: number[]): number[];
+    inverse(mat: number[], dest?: number[]): number[];
+    transformVec4(mat: number[], vec: number[], dest?: number[]): number[];
+    createTranslate(x: number, y: number, z: number, dest?: number[]): number[];
+    createScale(x: number, y: number, z: number, dest?: number[]): number[];
+    createRotateX(theta: number, dest?: number[]): number[];
+    createRotateY(theta: number, dest?: number[]): number[];
+    createRotateZ(theta: number, dest?: number[]): number[];
+    createPerspective(fieldOfViewY: number, aspectRatio: number, zNearPlane: number, zFarPlane: number, dest?: number[]): number[];
+    createViewport(width: number, height: number, dest?: number[]): number[];
 }
 declare module minerva {
     var mat4: IMatrix4Static;
 }
 declare var mat4: IMatrix4Static;
+declare module minerva {
+}
 interface IVector2Static {
     create(x: number, y: number): number[];
     init(x: number, y: number, dest?: number[]): number[];

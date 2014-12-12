@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.2.6';
+    minerva.version = '0.3.0';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -452,25 +452,6 @@ var minerva;
             return rect1.x <= p.x && rect1.y <= p.y && (rect1.x + rect1.width) >= p.x && (rect1.y + rect1.height) >= p.y;
         };
 
-        Rect.clipmask = function (clip) {
-            var mask = 0;
-
-            if (-clip[0] + clip[3] < 0)
-                mask |= (1 << 0);
-            if (clip[0] + clip[3] < 0)
-                mask |= (1 << 1);
-            if (-clip[1] + clip[3] < 0)
-                mask |= (1 << 2);
-            if (clip[1] + clip[3] < 0)
-                mask |= (1 << 3);
-            if (clip[2] + clip[3] < 0)
-                mask |= (1 << 4);
-            if (-clip[2] + clip[3] < 0)
-                mask |= (1 << 5);
-
-            return mask;
-        };
-
         Rect.extendTo = function (dest, x, y) {
             var rx = dest.x;
             var ry = dest.y;
@@ -550,6 +531,9 @@ var minerva;
             dest.width = r - l;
             dest.height = b - t;
             return dest;
+        };
+
+        Rect.transform4 = function (dest, projection) {
         };
         return Rect;
     })();
@@ -10013,6 +9997,26 @@ var minerva;
 var mat3 = minerva.mat3;
 var minerva;
 (function (minerva) {
+    var Indexes;
+    (function (Indexes) {
+        Indexes[Indexes["M11"] = 0] = "M11";
+        Indexes[Indexes["M12"] = 1] = "M12";
+        Indexes[Indexes["M13"] = 2] = "M13";
+        Indexes[Indexes["M14"] = 3] = "M14";
+        Indexes[Indexes["M21"] = 4] = "M21";
+        Indexes[Indexes["M22"] = 5] = "M22";
+        Indexes[Indexes["M23"] = 6] = "M23";
+        Indexes[Indexes["M24"] = 7] = "M24";
+        Indexes[Indexes["M31"] = 8] = "M31";
+        Indexes[Indexes["M32"] = 9] = "M32";
+        Indexes[Indexes["M33"] = 10] = "M33";
+        Indexes[Indexes["M34"] = 11] = "M34";
+        Indexes[Indexes["OffsetX"] = 12] = "OffsetX";
+        Indexes[Indexes["OffsetY"] = 13] = "OffsetY";
+        Indexes[Indexes["OffsetZ"] = 14] = "OffsetZ";
+        Indexes[Indexes["M44"] = 15] = "M44";
+    })(Indexes || (Indexes = {}));
+
     var FLOAT_EPSILON = 0.000001;
     var createTypedArray;
 
@@ -10026,10 +10030,368 @@ var minerva;
         };
     }
 
-    minerva.mat4 = {};
+    minerva.mat4 = {
+        create: function (src) {
+            var dest = createTypedArray(16);
+
+            if (src) {
+                dest[0 /* M11 */] = src[0 /* M11 */];
+                dest[1 /* M12 */] = src[1 /* M12 */];
+                dest[2 /* M13 */] = src[2 /* M13 */];
+                dest[3 /* M14 */] = src[3 /* M14 */];
+                dest[4 /* M21 */] = src[4 /* M21 */];
+                dest[5 /* M22 */] = src[5 /* M22 */];
+                dest[6 /* M23 */] = src[6 /* M23 */];
+                dest[7 /* M24 */] = src[7 /* M24 */];
+                dest[8 /* M31 */] = src[8 /* M31 */];
+                dest[9 /* M32 */] = src[9 /* M32 */];
+                dest[10 /* M33 */] = src[10 /* M33 */];
+                dest[11 /* M34 */] = src[11 /* M34 */];
+                dest[12 /* OffsetX */] = src[12 /* OffsetX */];
+                dest[13 /* OffsetY */] = src[13 /* OffsetY */];
+                dest[14 /* OffsetZ */] = src[14 /* OffsetZ */];
+                dest[15 /* M44 */] = src[15 /* M44 */];
+            }
+
+            return dest;
+        },
+        copyTo: function (src, dest) {
+            dest[0 /* M11 */] = src[0 /* M11 */];
+            dest[1 /* M12 */] = src[1 /* M12 */];
+            dest[2 /* M13 */] = src[2 /* M13 */];
+            dest[3 /* M14 */] = src[3 /* M14 */];
+            dest[4 /* M21 */] = src[4 /* M21 */];
+            dest[5 /* M22 */] = src[5 /* M22 */];
+            dest[6 /* M23 */] = src[6 /* M23 */];
+            dest[7 /* M24 */] = src[7 /* M24 */];
+            dest[8 /* M31 */] = src[8 /* M31 */];
+            dest[9 /* M32 */] = src[9 /* M32 */];
+            dest[10 /* M33 */] = src[10 /* M33 */];
+            dest[11 /* M34 */] = src[11 /* M34 */];
+            dest[12 /* OffsetX */] = src[12 /* OffsetX */];
+            dest[13 /* OffsetY */] = src[13 /* OffsetY */];
+            dest[14 /* OffsetZ */] = src[14 /* OffsetZ */];
+            dest[15 /* M44 */] = src[15 /* M44 */];
+            return dest;
+        },
+        identity: function (dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+            dest[0 /* M11 */] = 1;
+            dest[1 /* M12 */] = 0;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+            dest[4 /* M21 */] = 0;
+            dest[5 /* M22 */] = 1;
+            dest[6 /* M23 */] = 0;
+            dest[7 /* M24 */] = 0;
+            dest[8 /* M31 */] = 0;
+            dest[9 /* M32 */] = 0;
+            dest[10 /* M33 */] = 1;
+            dest[11 /* M34 */] = 0;
+            dest[12 /* OffsetX */] = 0;
+            dest[13 /* OffsetY */] = 0;
+            dest[14 /* OffsetZ */] = 0;
+            dest[15 /* M44 */] = 1;
+            return dest;
+        },
+        equal: function (a, b) {
+            return a === b || (Math.abs(a[0 /* M11 */] - b[0 /* M11 */]) < FLOAT_EPSILON && Math.abs(a[1 /* M12 */] - b[1 /* M12 */]) < FLOAT_EPSILON && Math.abs(a[2 /* M13 */] - b[2 /* M13 */]) < FLOAT_EPSILON && Math.abs(a[3 /* M14 */] - b[3 /* M14 */]) < FLOAT_EPSILON && Math.abs(a[4 /* M21 */] - b[4 /* M21 */]) < FLOAT_EPSILON && Math.abs(a[5 /* M22 */] - b[5 /* M22 */]) < FLOAT_EPSILON && Math.abs(a[6 /* M23 */] - b[6 /* M23 */]) < FLOAT_EPSILON && Math.abs(a[7 /* M24 */] - b[7 /* M24 */]) < FLOAT_EPSILON && Math.abs(a[8 /* M31 */] - b[8 /* M31 */]) < FLOAT_EPSILON && Math.abs(a[9 /* M32 */] - b[9 /* M32 */]) < FLOAT_EPSILON && Math.abs(a[10 /* M33 */] - b[10 /* M33 */]) < FLOAT_EPSILON && Math.abs(a[11 /* M34 */] - b[11 /* M34 */]) < FLOAT_EPSILON && Math.abs(a[12 /* OffsetX */] - b[12 /* OffsetX */]) < FLOAT_EPSILON && Math.abs(a[13 /* OffsetY */] - b[13 /* OffsetY */]) < FLOAT_EPSILON && Math.abs(a[14 /* OffsetZ */] - b[14 /* OffsetZ */]) < FLOAT_EPSILON && Math.abs(a[15 /* M44 */] - b[15 /* M44 */]) < FLOAT_EPSILON);
+        },
+        multiply: function (a, b, dest) {
+            if (!dest)
+                dest = a;
+            var m11 = a[0 /* M11 */], m12 = a[1 /* M12 */], m13 = a[2 /* M13 */], m14 = a[3 /* M14 */], m21 = a[4 /* M21 */], m22 = a[5 /* M22 */], m23 = a[6 /* M23 */], m24 = a[7 /* M24 */], m31 = a[8 /* M31 */], m32 = a[9 /* M32 */], m33 = a[10 /* M33 */], m34 = a[11 /* M34 */], mx0 = a[12 /* OffsetX */], my0 = a[13 /* OffsetY */], mz0 = a[14 /* OffsetZ */], m44 = a[15 /* M44 */];
+
+            var n11 = b[0 /* M11 */], n12 = b[1 /* M12 */], n13 = b[2 /* M13 */], n14 = b[3 /* M14 */], n21 = b[4 /* M21 */], n22 = b[5 /* M22 */], n23 = b[6 /* M23 */], n24 = b[7 /* M24 */], n31 = b[8 /* M31 */], n32 = b[9 /* M32 */], n33 = b[10 /* M33 */], n34 = b[11 /* M34 */], nx0 = b[12 /* OffsetX */], ny0 = b[13 /* OffsetY */], nz0 = b[14 /* OffsetZ */], n44 = b[15 /* M44 */];
+
+            dest[0 /* M11 */] = m11 * n11 + m12 * n21 + m13 * n31 + m14 * nx0;
+            dest[1 /* M12 */] = m11 * n12 + m12 * n22 + m13 * n32 + m14 * ny0;
+            dest[2 /* M13 */] = m11 * n13 + m12 * n23 + m13 * n33 + m14 * nz0;
+            dest[3 /* M14 */] = m11 * n14 + m12 * n24 + m13 * n34 + m14 * n44;
+            dest[4 /* M21 */] = m21 * n11 + m22 * n21 + m23 * n31 + m24 * nx0;
+            dest[5 /* M22 */] = m21 * n12 + m22 * n22 + m23 * n32 + m24 * ny0;
+            dest[6 /* M23 */] = m21 * n13 + m22 * n23 + m23 * n33 + m24 * nz0;
+            dest[7 /* M24 */] = m21 * n14 + m22 * n24 + m23 * n34 + m24 * n44;
+            dest[8 /* M31 */] = m31 * n11 + m32 * n21 + m33 * n31 + m34 * nx0;
+            dest[9 /* M32 */] = m31 * n12 + m32 * n22 + m33 * n32 + m34 * ny0;
+            dest[10 /* M33 */] = m31 * n13 + m32 * n23 + m33 * n33 + m34 * nz0;
+            dest[11 /* M34 */] = m31 * n14 + m32 * n24 + m33 * n34 + m34 * n44;
+            dest[12 /* OffsetX */] = mx0 * n11 + my0 * n21 + mz0 * n31 + m44 * nx0;
+            dest[13 /* OffsetY */] = mx0 * n12 + my0 * n22 + mz0 * n32 + m44 * ny0;
+            dest[14 /* OffsetZ */] = mx0 * n13 + my0 * n23 + mz0 * n33 + m44 * nz0;
+            dest[15 /* M44 */] = mx0 * n14 + my0 * n24 + mz0 * n34 + m44 * n44;
+            return dest;
+        },
+        inverse: function (mat, dest) {
+            if (!dest)
+                dest = mat;
+
+            var a00 = mat[0 /* M11 */], a01 = mat[1 /* M12 */], a02 = mat[2 /* M13 */], a03 = mat[3 /* M14 */], a10 = mat[4 /* M21 */], a11 = mat[5 /* M22 */], a12 = mat[6 /* M23 */], a13 = mat[7 /* M24 */], a20 = mat[8 /* M31 */], a21 = mat[9 /* M32 */], a22 = mat[10 /* M33 */], a23 = mat[11 /* M34 */], a30 = mat[12 /* OffsetX */], a31 = mat[13 /* OffsetY */], a32 = mat[14 /* OffsetZ */], a33 = mat[15 /* M44 */], b00 = a00 * a11 - a01 * a10, b01 = a00 * a12 - a02 * a10, b02 = a00 * a13 - a03 * a10, b03 = a01 * a12 - a02 * a11, b04 = a01 * a13 - a03 * a11, b05 = a02 * a13 - a03 * a12, b06 = a20 * a31 - a21 * a30, b07 = a20 * a32 - a22 * a30, b08 = a20 * a33 - a23 * a30, b09 = a21 * a32 - a22 * a31, b10 = a21 * a33 - a23 * a31, b11 = a22 * a33 - a23 * a32;
+
+            var d = (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+            if (!isFinite(d) || !d)
+                return null;
+            var id = 1 / d;
+
+            dest[0 /* M11 */] = (a11 * b11 - a12 * b10 + a13 * b09) * id;
+            dest[1 /* M12 */] = (-a01 * b11 + a02 * b10 - a03 * b09) * id;
+            dest[2 /* M13 */] = (a31 * b05 - a32 * b04 + a33 * b03) * id;
+            dest[3 /* M14 */] = (-a21 * b05 + a22 * b04 - a23 * b03) * id;
+            dest[4 /* M21 */] = (-a10 * b11 + a12 * b08 - a13 * b07) * id;
+            dest[5 /* M22 */] = (a00 * b11 - a02 * b08 + a03 * b07) * id;
+            dest[6 /* M23 */] = (-a30 * b05 + a32 * b02 - a33 * b01) * id;
+            dest[7 /* M24 */] = (a20 * b05 - a22 * b02 + a23 * b01) * id;
+            dest[8 /* M31 */] = (a10 * b10 - a11 * b08 + a13 * b06) * id;
+            dest[9 /* M32 */] = (-a00 * b10 + a01 * b08 - a03 * b06) * id;
+            dest[10 /* M33 */] = (a30 * b04 - a31 * b02 + a33 * b00) * id;
+            dest[11 /* M34 */] = (-a20 * b04 + a21 * b02 - a23 * b00) * id;
+            dest[12 /* OffsetX */] = (-a10 * b09 + a11 * b07 - a12 * b06) * id;
+            dest[13 /* OffsetY */] = (a00 * b09 - a01 * b07 + a02 * b06) * id;
+            dest[14 /* OffsetZ */] = (-a30 * b03 + a31 * b01 - a32 * b00) * id;
+            dest[15 /* M44 */] = (a20 * b03 - a21 * b01 + a22 * b00) * id;
+
+            return dest;
+        },
+        transformVec4: function (mat, vec, dest) {
+            if (!dest)
+                dest = vec;
+
+            var x = vec[0], y = vec[1], z = vec[2], w = vec[3];
+
+            var m11 = mat[0 /* M11 */], m12 = mat[1 /* M12 */], m13 = mat[2 /* M13 */], m14 = mat[3 /* M14 */], m21 = mat[4 /* M21 */], m22 = mat[5 /* M22 */], m23 = mat[6 /* M23 */], m24 = mat[7 /* M24 */], m31 = mat[8 /* M31 */], m32 = mat[9 /* M32 */], m33 = mat[10 /* M33 */], m34 = mat[11 /* M34 */], mx0 = mat[12 /* OffsetX */], my0 = mat[13 /* OffsetY */], mz0 = mat[14 /* OffsetZ */], m44 = mat[15 /* M44 */];
+
+            dest[0] = m11 * x + m12 * y + m13 * z + m14 * w;
+            dest[1] = m21 * x + m22 * y + m23 * z + m24 * w;
+            dest[2] = m31 * x + m32 * y + m33 * z + m34 * w;
+            dest[3] = mx0 * x + my0 * y + mz0 * z + m44 * w;
+
+            return dest;
+        },
+        createTranslate: function (x, y, z, dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+
+            dest[0 /* M11 */] = 1;
+            dest[1 /* M12 */] = 0;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+
+            dest[4 /* M21 */] = 0;
+            dest[5 /* M22 */] = 1;
+            dest[6 /* M23 */] = 0;
+            dest[7 /* M24 */] = 0;
+
+            dest[8 /* M31 */] = 0;
+            dest[9 /* M32 */] = 0;
+            dest[10 /* M33 */] = 1;
+            dest[11 /* M34 */] = 0;
+
+            dest[12 /* OffsetX */] = x;
+            dest[13 /* OffsetY */] = y;
+            dest[14 /* OffsetZ */] = z;
+            dest[15 /* M44 */] = 1;
+
+            return dest;
+        },
+        createScale: function (x, y, z, dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+
+            dest[0 /* M11 */] = x;
+            dest[1 /* M12 */] = 0;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+
+            dest[0 /* M11 */] = 0;
+            dest[1 /* M12 */] = y;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+
+            dest[8 /* M31 */] = 0;
+            dest[9 /* M32 */] = 0;
+            dest[10 /* M33 */] = z;
+            dest[11 /* M34 */] = 0;
+
+            dest[12 /* OffsetX */] = 0;
+            dest[13 /* OffsetY */] = 0;
+            dest[14 /* OffsetZ */] = 0;
+            dest[15 /* M44 */] = 1;
+
+            return dest;
+        },
+        createRotateX: function (theta, dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+
+            var s = Math.sin(theta);
+            var c = Math.cos(theta);
+
+            dest[0 /* M11 */] = 1;
+            dest[1 /* M12 */] = 0;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+
+            dest[4 /* M21 */] = 0;
+            dest[5 /* M22 */] = c;
+            dest[6 /* M23 */] = s;
+            dest[7 /* M24 */] = 0;
+
+            dest[8 /* M31 */] = 0;
+            dest[9 /* M32 */] = -s;
+            dest[10 /* M33 */] = c;
+            dest[11 /* M34 */] = 0;
+
+            dest[12 /* OffsetX */] = 0;
+            dest[13 /* OffsetY */] = 0;
+            dest[14 /* OffsetZ */] = 0;
+            dest[15 /* M44 */] = 1;
+
+            return dest;
+        },
+        createRotateY: function (theta, dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+
+            var s = Math.sin(theta);
+            var c = Math.cos(theta);
+
+            dest[0 /* M11 */] = c;
+            dest[1 /* M12 */] = 0;
+            dest[2 /* M13 */] = -s;
+            dest[3 /* M14 */] = 0;
+
+            dest[4 /* M21 */] = 0;
+            dest[5 /* M22 */] = 1;
+            dest[6 /* M23 */] = 0;
+            dest[7 /* M24 */] = 0;
+
+            dest[8 /* M31 */] = s;
+            dest[9 /* M32 */] = 0;
+            dest[10 /* M33 */] = c;
+            dest[11 /* M34 */] = 0;
+
+            dest[12 /* OffsetX */] = 0;
+            dest[13 /* OffsetY */] = 0;
+            dest[14 /* OffsetZ */] = 0;
+            dest[15 /* M44 */] = 1;
+
+            return dest;
+        },
+        createRotateZ: function (theta, dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+
+            var s = Math.sin(theta);
+            var c = Math.cos(theta);
+
+            dest[0 /* M11 */] = c;
+            dest[1 /* M12 */] = s;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+
+            dest[4 /* M21 */] = -s;
+            dest[5 /* M22 */] = c;
+            dest[6 /* M23 */] = 0;
+            dest[7 /* M24 */] = 0;
+
+            dest[8 /* M31 */] = 0;
+            dest[9 /* M32 */] = 0;
+            dest[10 /* M33 */] = 1;
+            dest[11 /* M34 */] = 0;
+
+            dest[12 /* OffsetX */] = 0;
+            dest[13 /* OffsetY */] = 0;
+            dest[14 /* OffsetZ */] = 0;
+            dest[15 /* M44 */] = 1;
+
+            return dest;
+        },
+        createPerspective: function (fieldOfViewY, aspectRatio, zNearPlane, zFarPlane, dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+
+            var height = 1.0 / Math.tan(fieldOfViewY / 2.0);
+            var width = height / aspectRatio;
+            var d = zNearPlane - zFarPlane;
+
+            dest[0 /* M11 */] = width;
+            dest[1 /* M12 */] = 0;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+
+            dest[4 /* M21 */] = 0;
+            dest[5 /* M22 */] = height;
+            dest[6 /* M23 */] = 0;
+            dest[7 /* M24 */] = 0;
+
+            dest[8 /* M31 */] = 0;
+            dest[9 /* M32 */] = 0;
+            dest[10 /* M33 */] = zFarPlane / d;
+            dest[11 /* M34 */] = -1.0;
+
+            dest[12 /* OffsetX */] = 0;
+            dest[13 /* OffsetY */] = 0;
+            dest[14 /* OffsetZ */] = zNearPlane * zFarPlane / d;
+            dest[15 /* M44 */] = 0.0;
+
+            return dest;
+        },
+        createViewport: function (width, height, dest) {
+            if (!dest)
+                dest = minerva.mat4.create();
+
+            dest[0 /* M11 */] = width / 2.0;
+            dest[1 /* M12 */] = 0;
+            dest[2 /* M13 */] = 0;
+            dest[3 /* M14 */] = 0;
+
+            dest[4 /* M21 */] = 0;
+            dest[5 /* M22 */] = -height / 2.0;
+            dest[6 /* M23 */] = 0;
+            dest[7 /* M24 */] = 0;
+
+            dest[8 /* M31 */] = 0;
+            dest[9 /* M32 */] = 0;
+            dest[10 /* M33 */] = 1;
+            dest[11 /* M34 */] = 0;
+
+            dest[12 /* OffsetX */] = width / 2.0;
+            dest[13 /* OffsetY */] = height / 2.0;
+            dest[14 /* OffsetZ */] = 0;
+            dest[15 /* M44 */] = 1;
+
+            return dest;
+        }
+    };
 })(minerva || (minerva = {}));
 
 var mat4 = minerva.mat4;
+var minerva;
+(function (minerva) {
+    minerva.Rect.transform4 = function (dest, projection) {
+        console.warn("[Rect.transform4] Not implemented");
+    };
+
+    function clipmask(clip) {
+        var mask = 0;
+
+        if (-clip[0] + clip[3] < 0)
+            mask |= (1 << 0);
+        if (clip[0] + clip[3] < 0)
+            mask |= (1 << 1);
+        if (-clip[1] + clip[3] < 0)
+            mask |= (1 << 2);
+        if (clip[1] + clip[3] < 0)
+            mask |= (1 << 3);
+        if (clip[2] + clip[3] < 0)
+            mask |= (1 << 4);
+        if (-clip[2] + clip[3] < 0)
+            mask |= (1 << 5);
+
+        return mask;
+    }
+})(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     var createTypedArray;
