@@ -1,9 +1,16 @@
+/// <reference path="mat/vec2" />
+
 module minerva {
     export enum RectOverlap {
         Out,
         In,
         Part,
     }
+
+    var p1 = vec2.create(0, 0);
+    var p2 = vec2.create(0, 0);
+    var p3 = vec2.create(0, 0);
+    var p4 = vec2.create(0, 0);
 
     export class Rect implements IPoint, ISize {
         x: number;
@@ -174,10 +181,10 @@ module minerva {
             var width = dest.width;
             var height = dest.height;
 
-            var p1 = vec2.create(x, y);
-            var p2 = vec2.create(x + width, y);
-            var p3 = vec2.create(x + width, y + height);
-            var p4 = vec2.create(x, y + height);
+            vec2.init(x, y, p1);
+            vec2.init(x + width, y, p2);
+            vec2.init(x + width, y + height, p3);
+            vec2.init(x, y + height, p4);
 
             mat3.transformVec2(mat, p1);
             mat3.transformVec2(mat, p2);

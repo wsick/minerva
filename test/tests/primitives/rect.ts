@@ -88,4 +88,14 @@ module tests.primitives.rect {
         r2 = new Rect(0, 0, 100, 100);
         assert.ok(Rect.isContainedIn(r1, r2));
     });
+
+    QUnit.test("transform", (assert) => {
+        var r1 = new Rect(0, 0, 100, 100);
+        Rect.transform(r1, mat3.createTranslate(25, 50));
+        assert.deepEqual(r1, new Rect(25, 50, 100, 100));
+
+        var r2 = new Rect(50, 50, 100, 100);
+        Rect.transform(r2, mat3.createScale(2, 4));
+        assert.deepEqual(r2, new Rect(100, 200, 200, 400));
+    });
 }

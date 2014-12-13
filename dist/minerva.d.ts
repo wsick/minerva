@@ -266,6 +266,14 @@ declare module minerva {
         static copyTo(src: IPoint, dest: IPoint): void;
     }
 }
+interface IVector2Static {
+    create(x: number, y: number): number[];
+    init(x: number, y: number, dest?: number[]): number[];
+}
+declare module minerva {
+    var vec2: IVector2Static;
+}
+declare var vec2: IVector2Static;
 declare module minerva {
     enum RectOverlap {
         Out = 0,
@@ -2412,14 +2420,6 @@ declare module minerva {
 declare var mat4: IMatrix4Static;
 declare module minerva {
 }
-interface IVector2Static {
-    create(x: number, y: number): number[];
-    init(x: number, y: number, dest?: number[]): number[];
-}
-declare module minerva {
-    var vec2: IVector2Static;
-}
-declare var vec2: IVector2Static;
 interface IVector4Static {
     create(x: number, y: number, z: number, w: number): number[];
     init(x: number, y: number, z: number, w: number, dest?: number[]): number[];

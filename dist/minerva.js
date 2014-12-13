@@ -349,12 +349,49 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var createTypedArray;
+
+    if (typeof Float32Array !== "undefined") {
+        createTypedArray = function (length) {
+            return new Float32Array(length);
+        };
+    } else {
+        createTypedArray = function (length) {
+            return new Array(length);
+        };
+    }
+
+    minerva.vec2 = {
+        create: function (x, y) {
+            var dest = createTypedArray(2);
+            dest[0] = x;
+            dest[1] = y;
+            return dest;
+        },
+        init: function (x, y, dest) {
+            if (!dest)
+                dest = createTypedArray(2);
+            dest[0] = x;
+            dest[1] = y;
+            return dest;
+        }
+    };
+})(minerva || (minerva = {}));
+
+var vec2 = minerva.vec2;
+var minerva;
+(function (minerva) {
     (function (RectOverlap) {
         RectOverlap[RectOverlap["Out"] = 0] = "Out";
         RectOverlap[RectOverlap["In"] = 1] = "In";
         RectOverlap[RectOverlap["Part"] = 2] = "Part";
     })(minerva.RectOverlap || (minerva.RectOverlap = {}));
     var RectOverlap = minerva.RectOverlap;
+
+    var p1 = minerva.vec2.create(0, 0);
+    var p2 = minerva.vec2.create(0, 0);
+    var p3 = minerva.vec2.create(0, 0);
+    var p4 = minerva.vec2.create(0, 0);
 
     var Rect = (function () {
         function Rect(x, y, width, height) {
@@ -511,10 +548,10 @@ var minerva;
             var width = dest.width;
             var height = dest.height;
 
-            var p1 = minerva.vec2.create(x, y);
-            var p2 = minerva.vec2.create(x + width, y);
-            var p3 = minerva.vec2.create(x + width, y + height);
-            var p4 = minerva.vec2.create(x, y + height);
+            minerva.vec2.init(x, y, p1);
+            minerva.vec2.init(x + width, y, p2);
+            minerva.vec2.init(x + width, y + height, p3);
+            minerva.vec2.init(x, y + height, p4);
 
             minerva.mat3.transformVec2(mat, p1);
             minerva.mat3.transformVec2(mat, p2);
@@ -10394,38 +10431,6 @@ var minerva;
         return mask;
     }
 })(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var createTypedArray;
-
-    if (typeof Float32Array !== "undefined") {
-        createTypedArray = function (length) {
-            return new Float32Array(length);
-        };
-    } else {
-        createTypedArray = function (length) {
-            return new Array(length);
-        };
-    }
-
-    minerva.vec2 = {
-        create: function (x, y) {
-            var dest = createTypedArray(2);
-            dest[0] = x;
-            dest[1] = y;
-            return dest;
-        },
-        init: function (x, y, dest) {
-            if (!dest)
-                dest = createTypedArray(2);
-            dest[0] = x;
-            dest[1] = y;
-            return dest;
-        }
-    };
-})(minerva || (minerva = {}));
-
-var vec2 = minerva.vec2;
 var minerva;
 (function (minerva) {
     var createTypedArray;
