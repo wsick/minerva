@@ -10528,8 +10528,10 @@ var minerva;
                 this.$$endY = y;
             };
 
-            Path.prototype.ellipticalArc = function (width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
-                this.$$entries.push(_path.segments.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
+            Path.prototype.ellipticalArc = function (rx, ry, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
+                this.$$entries.push(_path.segments.ellipticalArc(rx, ry, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
+                this.$$endX = ex;
+                this.$$endY = ey;
             };
 
             Path.prototype.arc = function (x, y, r, sAngle, eAngle, aClockwise) {
@@ -11409,40 +11411,190 @@ var minerva;
 var minerva;
 (function (minerva) {
     (function (path) {
-        (function (segments) {
-            function ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
+        (function (_segments) {
+            function ellipticalArc(rx, ry, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
                 return {
                     sx: null,
                     sy: null,
                     isSingle: false,
-                    width: width,
-                    height: height,
+                    rx: rx,
+                    ry: ry,
                     rotationAngle: rotationAngle,
                     isLargeArcFlag: isLargeArcFlag,
                     sweepDirectionFlag: sweepDirectionFlag,
                     ex: ex,
                     ey: ey,
+                    sub: null,
                     draw: function (ctx) {
-                        console.warn("[NOT IMPLEMENTED] Draw Elliptical Arc");
+                        this.sub = this.sub || buildSegments(this);
+                        for (var i = 0, sub = this.sub, len = sub.length; i < len; i++) {
+                            sub[i].draw(ctx);
+                        }
                     },
                     extendFillBox: function (box) {
-                        console.warn("[NOT IMPLEMENTED] Measure Elliptical Arc");
+                        this.sub = this.sub || buildSegments(this);
+                        for (var i = 0, sub = this.sub, len = sub.length; i < len; i++) {
+                            sub[i].extendFillBox(box);
+                        }
                     },
                     extendStrokeBox: function (box, pars) {
-                        console.warn("[NOT IMPLEMENTED] Measure Elliptical Arc (with stroke)");
+                        this.sub = this.sub || buildSegments(this);
+                        for (var i = 0, sub = this.sub, len = sub.length; i < len; i++) {
+                            sub[i].extendStrokeBox(box, pars);
+                        }
                     },
                     toString: function () {
-                        return "A" + width.toString() + "," + height.toString() + " " + rotationAngle.toString() + " " + isLargeArcFlag.toString() + " " + sweepDirectionFlag.toString() + " " + ex.toString() + "," + ey.toString();
+                        return "A" + rx.toString() + "," + ry.toString() + " " + rotationAngle.toString() + " " + isLargeArcFlag.toString() + " " + sweepDirectionFlag.toString() + " " + ex.toString() + "," + ey.toString();
                     },
                     getStartVector: function () {
-                        return null;
+                        this.sub = this.sub || buildSegments(this);
+                        var sub = this.sub[0];
+                        return sub ? sub.getStartVector() : [0, 0];
                     },
                     getEndVector: function () {
-                        return null;
+                        this.sub = this.sub || buildSegments(this);
+                        var sub = this.sub[this.sub.length - 1];
+                        return sub ? sub.getEndVector() : [0, 0];
                     }
                 };
             }
-            segments.ellipticalArc = ellipticalArc;
+            _segments.ellipticalArc = ellipticalArc;
+
+            var NO_DRAW_EPSILON = 0.000002;
+            var ZERO_EPSILON = 0.000019;
+            var SMALL_EPSILON = 0.000117;
+
+            function buildSegments(ea) {
+                var segments = [];
+
+                var sx = ea.sx, sy = ea.sy, ex = ea.ex, ey = ea.ey, rx = ea.rx, ry = ea.ry;
+
+                if (Math.abs(ex - sx) < NO_DRAW_EPSILON && Math.abs(ey - sy) < NO_DRAW_EPSILON)
+                    return segments;
+
+                if (Math.abs(rx) < ZERO_EPSILON || Math.abs(ry) < ZERO_EPSILON) {
+                    segments.push(_segments.line(ex, ey));
+                    return segments;
+                }
+
+                if (Math.abs(rx) < SMALL_EPSILON || Math.abs(ry) < SMALL_EPSILON) {
+                    return segments;
+                }
+
+                rx = Math.abs(rx);
+                ry = Math.abs(ry);
+
+                var angle = ea.rotationAngle * Math.PI / 180.0;
+
+                var cos_phi = Math.cos(angle);
+                var sin_phi = Math.sin(angle);
+                var dx2 = (sx - ex) / 2.0;
+                var dy2 = (sy - ey) / 2.0;
+                var x1p = cos_phi * dx2 + sin_phi * dy2;
+                var y1p = cos_phi * dy2 - sin_phi * dx2;
+                var x1p2 = x1p * x1p;
+                var y1p2 = y1p * y1p;
+                var rx2 = rx * rx;
+                var ry2 = ry * ry;
+
+                var lambda = (x1p2 / rx2) + (y1p2 / ry2);
+                if (lambda > 1.0) {
+                    var lambda_root = Math.sqrt(lambda);
+                    rx *= lambda_root;
+                    ry *= lambda_root;
+
+                    rx2 = rx * rx;
+                    ry2 = ry * ry;
+                }
+
+                var cxp, cyp, cx, cy;
+                var c = (rx2 * ry2) - (rx2 * y1p2) - (ry2 * x1p2);
+
+                var large = ea.isLargeArcFlag === true;
+                var sweep = ea.sweepDirectionFlag === 1 /* Clockwise */;
+
+                if (c < 0.0) {
+                    var scale = Math.sqrt(1.0 - c / (rx2 * ry2));
+                    rx *= scale;
+                    ry *= scale;
+
+                    rx2 = rx * rx;
+                    ry2 = ry * ry;
+
+                    cxp = 0.0;
+                    cyp = 0.0;
+
+                    cx = 0.0;
+                    cy = 0.0;
+                } else {
+                    c = Math.sqrt(c / ((rx2 * y1p2) + (ry2 * x1p2)));
+
+                    if (large === sweep)
+                        c = -c;
+
+                    cxp = c * (rx * y1p / ry);
+                    cyp = c * (-ry * x1p / rx);
+
+                    cx = cos_phi * cxp - sin_phi * cyp;
+                    cy = sin_phi * cxp + cos_phi * cyp;
+                }
+
+                cx += (sx + ex) / 2.0;
+                cy += (sy + ey) / 2.0;
+
+                var at = Math.atan2(((y1p - cyp) / ry), ((x1p - cxp) / rx));
+                var theta1 = (at < 0.0) ? 2.0 * Math.PI + at : at;
+
+                var nat = Math.atan2(((-y1p - cyp) / ry), ((-x1p - cxp) / rx));
+                var delta_theta = (nat < at) ? 2.0 * Math.PI - at + nat : nat - at;
+
+                if (sweep) {
+                    if (delta_theta < 0.0)
+                        delta_theta += 2.0 * Math.PI;
+                } else {
+                    if (delta_theta > 0.0)
+                        delta_theta -= 2.0 * Math.PI;
+                }
+
+                var segment_count = Math.floor(Math.abs(delta_theta / (Math.PI / 2))) + 1;
+                var delta = delta_theta / segment_count;
+
+                var bcp = 4.0 / 3 * (1 - Math.cos(delta / 2)) / Math.sin(delta / 2);
+
+                var cos_phi_rx = cos_phi * rx;
+                var cos_phi_ry = cos_phi * ry;
+                var sin_phi_rx = sin_phi * rx;
+                var sin_phi_ry = sin_phi * ry;
+
+                var cos_theta1 = Math.cos(theta1);
+                var sin_theta1 = Math.sin(theta1);
+
+                for (var i = 0; i < segment_count; ++i) {
+                    var theta2 = theta1 + delta;
+                    var cos_theta2 = Math.cos(theta2);
+                    var sin_theta2 = Math.sin(theta2);
+
+                    var c1x = sx - bcp * (cos_phi_rx * sin_theta1 + sin_phi_ry * cos_theta1);
+                    var c1y = sy + bcp * (cos_phi_ry * cos_theta1 - sin_phi_rx * sin_theta1);
+
+                    var cur_ex = cx + (cos_phi_rx * cos_theta2 - sin_phi_ry * sin_theta2);
+                    var cur_ey = cy + (sin_phi_rx * cos_theta2 + cos_phi_ry * sin_theta2);
+
+                    var c2x = cur_ex + bcp * (cos_phi_rx * sin_theta2 + sin_phi_ry * cos_theta2);
+                    var c2y = cur_ey + bcp * (sin_phi_rx * sin_theta2 - cos_phi_ry * cos_theta2);
+
+                    segments.push(_segments.cubicBezier(c1x, c1y, c2x, c2y, cur_ex, cur_ey));
+
+                    sx = cur_ex;
+                    sy = cur_ey;
+                    theta1 = theta2;
+
+                    cos_theta1 = cos_theta2;
+                    sin_theta1 = sin_theta2;
+                }
+
+                return segments;
+            }
         })(path.segments || (path.segments = {}));
         var segments = path.segments;
     })(minerva.path || (minerva.path = {}));

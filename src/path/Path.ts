@@ -49,8 +49,10 @@ module minerva.path {
             this.$$endY = y;
         }
 
-        ellipticalArc (width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number) {
-            this.$$entries.push(segments.ellipticalArc(width, height, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
+        ellipticalArc (rx: number, ry: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number) {
+            this.$$entries.push(segments.ellipticalArc(rx, ry, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
+            this.$$endX = ex;
+            this.$$endY = ey;
         }
 
         arc (x: number, y: number, r: number, sAngle: number, eAngle: number, aClockwise: boolean) {
@@ -325,7 +327,7 @@ module minerva.path {
         //distance from join point and miter tip
         var miterLen = hs * miterRatio;
 
-        var tip = { x: x + miterLen * cv[0], y: y + miterLen * cv[1] }
+        var tip = {x: x + miterLen * cv[0], y: y + miterLen * cv[1]}
         return [
             tip,
             tip
@@ -353,8 +355,8 @@ module minerva.path {
         }
 
         return [
-            { x: x - hs * avo[0], y: y - hs * avo[1] },
-            { x: x - hs * bvo[0], y: y - hs * bvo[1] }
+            {x: x - hs * avo[0], y: y - hs * avo[1]},
+            {x: x - hs * bvo[0], y: y - hs * bvo[1]}
         ];
     }
 }

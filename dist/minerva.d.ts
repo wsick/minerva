@@ -2471,7 +2471,7 @@ declare module minerva.path {
         public quadraticBezier(cpx: number, cpy: number, x: number, y: number): void;
         public cubicBezier(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
         public ellipse(x: number, y: number, width: number, height: number): void;
-        public ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): void;
+        public ellipticalArc(rx: number, ry: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): void;
         public arc(x: number, y: number, r: number, sAngle: number, eAngle: number, aClockwise: boolean): void;
         public arcTo(cpx: number, cpy: number, x: number, y: number, radius: number): void;
         public rect(x: number, y: number, width: number, height: number): void;
@@ -2543,15 +2543,15 @@ declare module minerva.path.segments {
 }
 declare module minerva.path.segments {
     interface IEllipticalArc extends IPathSegment {
-        width: number;
-        height: number;
+        rx: number;
+        ry: number;
         rotationAngle: number;
         isLargeArcFlag: boolean;
         sweepDirectionFlag: SweepDirection;
         ex: number;
         ey: number;
     }
-    function ellipticalArc(width: number, height: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): IEllipticalArc;
+    function ellipticalArc(rx: number, ry: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): IEllipticalArc;
 }
 declare module minerva.path.segments {
     interface ILine extends IPathSegment {
