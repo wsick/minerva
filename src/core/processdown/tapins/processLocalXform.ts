@@ -10,7 +10,7 @@ module minerva.core.processdown.tapins {
 
         var origin = state.xformOrigin;
         mat3.translate(local, origin.x, origin.y);
-        mat3.multiply(local, render, local); //local = local * render
+        mat3.multiply(local, render.getRaw(), local); //local = local * render
         mat3.translate(local, -origin.x, -origin.y);
 
         return true;

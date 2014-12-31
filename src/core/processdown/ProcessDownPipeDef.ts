@@ -6,7 +6,7 @@ module minerva.core.processdown {
         visibility: Visibility;
         opacity: number;
         isHitTestVisible: boolean;
-        renderTransform: number[];
+        renderTransform: ITransform;
         renderTransformOrigin: Point;
         actualWidth: number;
         actualHeight: number;

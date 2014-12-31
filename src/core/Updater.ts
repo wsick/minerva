@@ -33,7 +33,7 @@ module minerva.core {
             visibility: Visibility.Visible,
             opacity: 1.0,
             isHitTestVisible: true,
-            renderTransform: mat3.identity(),
+            renderTransform: null,
             renderTransformOrigin: new Point(),
             effectPadding: new Thickness(),
 

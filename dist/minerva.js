@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.3.3';
+    minerva.version = '0.4.0';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -1109,7 +1109,7 @@ var minerva;
                     visibility: 0 /* Visible */,
                     opacity: 1.0,
                     isHitTestVisible: true,
-                    renderTransform: minerva.mat3.identity(),
+                    renderTransform: null,
                     renderTransformOrigin: new minerva.Point(),
                     effectPadding: new minerva.Thickness(),
                     previousConstraint: new minerva.Size(),
@@ -3320,7 +3320,7 @@ var minerva;
 
                     var origin = state.xformOrigin;
                     minerva.mat3.translate(local, origin.x, origin.y);
-                    minerva.mat3.multiply(local, render, local);
+                    minerva.mat3.multiply(local, render.getRaw(), local);
                     minerva.mat3.translate(local, -origin.x, -origin.y);
 
                     return true;

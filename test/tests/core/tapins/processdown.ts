@@ -14,7 +14,7 @@ module minerva.core.processdown.tapins.tests {
                 visibility: Visibility.Visible,
                 opacity: 1.0,
                 isHitTestVisible: true,
-                renderTransform: mat3.identity(),
+                renderTransform: null,
                 renderTransformOrigin: new Point(),
                 projection: null,
                 actualWidth: 0,
@@ -164,7 +164,11 @@ module minerva.core.processdown.tapins.tests {
         assert.deepEqual(typedToArray(state.localXform), [1, 0, 0, 1, 0, 0]);
 
         input.dirtyFlags |= DirtyFlags.LocalTransform;
-        input.renderTransform = mat3.create([1, 0, 0, 2, 5, 0]);
+        input.renderTransform = {
+            getRaw () {
+                return mat3.create([1, 0, 0, 2, 5, 0]);
+            }
+        };
         state.xformOrigin = new Point(50, 100);
         assert.ok(tapins.processLocalXform(input, state, output, vpinput));
         assert.deepEqual(typedToArray(state.localXform), [1, 0, 0, 2, 5, 100]);

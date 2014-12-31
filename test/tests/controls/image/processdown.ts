@@ -7,7 +7,7 @@ module minerva.controls.image.processdown.tests {
                 visibility: Visibility.Visible,
                 opacity: 1.0,
                 isHitTestVisible: true,
-                renderTransform: mat3.identity(),
+                renderTransform: null,
                 renderTransformOrigin: new Point(),
                 projection: null,
                 actualWidth: 0,

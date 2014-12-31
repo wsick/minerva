@@ -224,6 +224,11 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface ITransform {
+        getRaw(): number[];
+    }
+}
+declare module minerva {
     interface IVirtualizingContainerOwner {
         itemCount: number;
         createGenerator(index: number, count: number): IVirtualizingGenerator;
@@ -893,7 +898,7 @@ declare module minerva.core.processdown {
         visibility: Visibility;
         opacity: number;
         isHitTestVisible: boolean;
-        renderTransform: number[];
+        renderTransform: ITransform;
         renderTransformOrigin: Point;
         actualWidth: number;
         actualHeight: number;
