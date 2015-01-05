@@ -1,0 +1,10 @@
+{
+  "name": "minerva",
+  "client": "fayde.json",
+  "type": "lib",
+  "dist": "dist/minerva.js",
+  "library": {
+    "type": "export",
+    "exports": "minerva"
+  }
+}
