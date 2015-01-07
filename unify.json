@@ -6,5 +6,6 @@
   "library": {
     "type": "export",
     "exports": "minerva"
-  }
+  },
+  "typings": ["dist/minerva.d.ts"]
 }

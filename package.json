@@ -1,6 +1,6 @@
 {
   "name": "minerva",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Microservices Pipeline Presentation framework",
   "main": "Gruntfile.js",
   "directories": {
