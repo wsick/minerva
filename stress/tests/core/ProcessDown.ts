@@ -22,7 +22,7 @@ class ProcessDown extends StressTest {
         this.parentUpdater.assets.compositeLayoutClip = new Rect(20, 20, 50, 50);
 
         var assets = this.updater.assets;
-        assets.renderTransform = mat3.createTranslate(1, 2);
+        assets.renderTransform = { getRaw () { return mat3.createTranslate(1, 2); } };
         assets.renderTransformOrigin = new Point(0.5, 0.5);
         assets.carrierXform = mat3.createScale(2, 2);
         assets.dirtyFlags |= (DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.LocalTransform);
