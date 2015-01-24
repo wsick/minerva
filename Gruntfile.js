@@ -193,6 +193,7 @@ module.exports = function (grunt) {
     setup(grunt);
     version(grunt);
     grunt.registerTask('lib:reset', ['clean', 'setup', 'symlink:test', 'symlink:stress']);
+    grunt.registerTask('dist:nobump', ['version:apply', 'typescript:build', 'uglify:dist']);
     grunt.registerTask('dist:upbuild', ['version:bump:build', 'version:apply', 'typescript:build', 'uglify:dist']);
     grunt.registerTask('dist:upminor', ['version:bump:minor', 'version:apply', 'typescript:build', 'uglify:dist']);
     grunt.registerTask('dist:upmajor', ['version:bump:major', 'version:apply', 'typescript:build', 'uglify:dist']);
