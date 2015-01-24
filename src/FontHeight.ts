@@ -22,6 +22,7 @@ module minerva.fontHeight {
     var dummy: HTMLElement;
 
     function measure (serial: string): number {
+        perfex.timer.start('MeasureFontHeight', serial);
         if (!dummy) {
             dummy = document.createElement("div");
             dummy.appendChild(document.createTextNode("M"));
@@ -31,6 +32,7 @@ module minerva.fontHeight {
         dummy.style.font = serial;
         var result = dummy.offsetHeight;
         dummy.style.display = "none";
+        perfex.timer.stop();
         return result;
     }
 }

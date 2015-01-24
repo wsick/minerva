@@ -298,6 +298,7 @@ var minerva;
         var dummy;
 
         function measure(serial) {
+            perfex.timer.start('MeasureFontHeight', serial);
             if (!dummy) {
                 dummy = document.createElement("div");
                 dummy.appendChild(document.createTextNode("M"));
@@ -307,6 +308,7 @@ var minerva;
             dummy.style.font = serial;
             var result = dummy.offsetHeight;
             dummy.style.display = "none";
+            perfex.timer.stop();
             return result;
         }
     })(minerva.fontHeight || (minerva.fontHeight = {}));
@@ -11924,6 +11926,30 @@ var minerva;
     })(minerva.path || (minerva.path = {}));
     var path = minerva.path;
 })(minerva || (minerva = {}));
+(function (context) {
+    if (!context.perfex) {
+        context.perfex = {};
+    }
+    if (!context.perfex.timer) {
+        context.perfex.timer = {
+            all: [],
+            reset: function () {
+            },
+            start: function (tag) {
+            },
+            stop: function () {
+            }
+        };
+    }
+    if (!context.perfex.phases) {
+        context.perfex.phases = {
+            current: null,
+            all: [],
+            start: function (tag) {
+            }
+        };
+    }
+})(window);
 var minerva;
 (function (minerva) {
     (function (shapes) {

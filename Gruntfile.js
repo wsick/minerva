@@ -67,6 +67,7 @@ module.exports = function (grunt) {
         typescript: {
             build: {
                 src: [
+                    'lib/perfex/dist/perfex.d.ts',
                     'src/_Version.ts',
                     'src/*.ts',
                     'src/pipe/*.ts',
@@ -83,6 +84,7 @@ module.exports = function (grunt) {
             },
             test: {
                 src: [
+                    'lib/perfex/dist/perfex.d.ts',
                     'dist/minerva.d.ts',
                     'test/**/*.ts',
                     '!test/lib/**/*.ts',
@@ -97,6 +99,7 @@ module.exports = function (grunt) {
             },
             stress: {
                 src: [
+                    'lib/perfex/dist/perfex.d.ts',
                     'dist/minerva.d.ts',
                     'stress/**/*.ts',
                     '!stress/lib/**/*.ts',
