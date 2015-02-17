@@ -1,7 +1,6 @@
-var version = require('./build/version'),
-    setup = require('./build/setup'),
-    path = require('path'),
-    connect_livereload = require('connect-livereload');
+var path = require('path'),
+    connect_livereload = require('connect-livereload'),
+    gunify = require('grunt-fayde-unify');
 
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-typescript');
@@ -12,18 +11,27 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-open');
+    grunt.loadNpmTasks('grunt-bower-install-simple');
+    var unify = gunify(grunt);
 
-    var meta = {
-        name: 'minerva'
-    };
     var ports = {
         stress: 9001,
         livereload: 19001
     };
+    var meta = {
+        name: 'minerva'
+    };
+
     var dirs = {
+        test: {
+            root: 'test',
+            build: 'test/.build',
+            lib: 'test/lib'
+        },
         stress: {
-            build: './stress/.build',
-            root: './stress'
+            root: 'stress',
+            build: 'stress/.build',
+            lib: 'stress/lib'
         }
     };
 
@@ -32,16 +40,18 @@ module.exports = function (grunt) {
     }
 
     grunt.initConfig({
-        meta: meta,
         ports: ports,
+        meta: meta,
         dirs: dirs,
+        pkg: grunt.file.readJSON('./package.json'),
         clean: {
-            test: ['test/.build', 'test/lib'],
-            stress: ['stress/.build', 'stress/lib']
+            bower: ['./lib'],
+            test: [dirs.test.build, dirs.test.lib],
+            stress: [dirs.stress.build, dirs.stress.lib]
         },
-        setup: {
-            fayde: {
-                cwd: '.'
+        "bower-install-simple": {
+            lib: {
+                directory: "lib"
             }
         },
         symlink: {
@@ -50,31 +60,49 @@ module.exports = function (grunt) {
             },
             test: {
                 files: [
-                    {src: './lib/qunit', dest: './test/lib/qunit'},
-                    {src: './dist', dest: './test/lib/minerva/dist'},
-                    {src: './src', dest: './test/lib/minerva/src'}
+                    {
+                        expand: true,
+                        src: ['themes/', 'dist/', 'src/'],
+                        dest: '<%= dirs.test.lib %>/<%= meta.name %>'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'lib/',
+                        src: ['*'],
+                        dest: dirs.test.lib,
+                        filter: 'isDirectory'
+                    }
                 ]
             },
             stress: {
                 files: [
-                    {src: './lib/requirejs', dest: './stress/lib/requirejs'},
-                    {src: './lib/requirejs-text', dest: './stress/lib/requirejs-text'},
-                    {src: './dist', dest: './stress/lib/minerva/dist'},
-                    {src: './src', dest: './stress/lib/minerva/src'}
+                    {
+                        expand: true,
+                        src: ['dist/', 'src/'],
+                        dest: '<%= dirs.stress.lib %>/<%= meta.name %>'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'lib/',
+                        src: ['*', '!qunit'],
+                        dest: dirs.stress.lib,
+                        filter: 'isDirectory'
+                    }
                 ]
             }
         },
         typescript: {
             build: {
                 src: [
+                    'typings/**/*.d.ts',
                     'src/_Version.ts',
                     'src/*.ts',
                     'src/pipe/*.ts',
                     'src/core/*.ts',
                     'src/core/**/*.ts',
                     'src/**/*.ts'
-                ],
-                dest: 'dist/<%= meta.name %>.js',
+                ].concat(unify.typings({includeSelf: false})),
+                dest: './dist/<%= meta.name %>.js',
                 options: {
                     target: 'es5',
                     declaration: true,
@@ -83,36 +111,35 @@ module.exports = function (grunt) {
             },
             test: {
                 src: [
-                    'dist/minerva.d.ts',
-                    'test/**/*.ts',
-                    '!test/lib/**/*.ts',
-                    'typings/*.d.ts'
-                ],
-                dest: 'test/.build',
+                    'typings/**/*.d.ts',
+                    '<%= dirs.test.root %>/**/*.ts',
+                    '!<%= dirs.test.lib %>/**/*.ts'
+                ].concat(unify.typings()),
+                dest: dirs.test.build,
                 options: {
                     target: 'es5',
-                    basePath: 'test/tests',
+                    basePath: dirs.test.root,
+                    module: 'amd',
                     sourceMap: true
                 }
             },
             stress: {
                 src: [
-                    'dist/minerva.d.ts',
-                    'stress/**/*.ts',
-                    '!stress/lib/**/*.ts',
-                    'typings/*.d.ts'
-                ],
-                dest: 'stress/.build',
+                    'typings/*.d.ts',
+                    '<%= dirs.stress.root %>/**/*.ts',
+                    '!<%= dirs.stress.lib %>/**/*.ts'
+                ].concat(unify.typings()),
+                dest: dirs.stress.build,
                 options: {
                     target: 'es5',
-                    basePath: 'stress',
+                    basePath: dirs.stress.root,
                     module: 'amd',
                     sourceMap: true
                 }
             }
         },
         qunit: {
-            all: ['test/*.html']
+            all: ['<%= dirs.test.root %>/*.html']
         },
         connect: {
             stress: {
@@ -121,17 +148,12 @@ module.exports = function (grunt) {
                     base: dirs.stress.root,
                     middleware: function (connect) {
                         return [
-                            connect_livereload({port: ports.livereload}),
+                            connect_livereload({ port: ports.livereload }),
                             mount(connect, dirs.stress.build),
                             mount(connect, dirs.stress.root)
                         ];
                     }
                 }
-            }
-        },
-        open: {
-            stress: {
-                path: 'http://localhost:<%= ports.stress %>/index.html'
             }
         },
         watch: {
@@ -146,11 +168,11 @@ module.exports = function (grunt) {
                 files: [
                     '<%= dirs.stress.root %>/*.ts',
                     '<%= dirs.stress.root %>/**/*.ts',
-                    '!<%= dirs.stress.root %>/lib/**/*.ts'
+                    '!<%= dirs.stress.lib %>/**/*.ts'
                 ],
                 tasks: ['typescript:stress']
             },
-            stress: {
+            stressjs: {
                 files: [
                     '<%= dirs.stress.root %>/tests.json',
                     '<%= dirs.stress.root %>/index.html',
@@ -162,11 +184,14 @@ module.exports = function (grunt) {
                 }
             }
         },
-        version: {
-            bump: {},
-            apply: {
-                src: './build/_VersionTemplate._ts',
-                dest: './src/_Version.ts'
+        open: {
+            stress: {
+                path: 'http://localhost:<%= ports.stress %>/default.html'
+            }
+        },
+        "version-apply": {
+            options: {
+                label: 'version'
             }
         },
         uglify: {
@@ -187,10 +212,8 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['typescript:build']);
     grunt.registerTask('test', ['typescript:build', 'typescript:test', 'qunit']);
     grunt.registerTask('stress', ['typescript:build', 'typescript:stress', 'connect', 'open', 'watch']);
-    setup(grunt);
-    version(grunt);
-    grunt.registerTask('lib:reset', ['clean', 'setup', 'symlink:test', 'symlink:stress']);
-    grunt.registerTask('dist:upbuild', ['version:bump:build', 'version:apply', 'typescript:build', 'uglify:dist']);
-    grunt.registerTask('dist:upminor', ['version:bump:minor', 'version:apply', 'typescript:build', 'uglify:dist']);
-    grunt.registerTask('dist:upmajor', ['version:bump:major', 'version:apply', 'typescript:build', 'uglify:dist']);
+    grunt.registerTask('lib:reset', ['clean', 'bower-install-simple', 'symlink:test', 'symlink:stress']);
+    grunt.registerTask('dist:upbuild', ['bump-build', 'version-apply', 'typescript:build', 'uglify:dist']);
+    grunt.registerTask('dist:upminor', ['bump-minor', 'version-apply', 'typescript:build', 'uglify:dist']);
+    grunt.registerTask('dist:upmajor', ['bump-major', 'version-apply', 'typescript:build', 'uglify:dist']);
 };
