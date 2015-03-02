@@ -76,9 +76,11 @@ module minerva.core {
         tree: IUpdaterTree = null;
 
         constructor () {
+            perfex.timer.start("CreateUpdater", null);
             this.setMeasureBinder()
                 .setArrangeBinder()
                 .init();
+            perfex.timer.stop();
         }
 
         init () {

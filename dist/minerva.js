@@ -31,15 +31,12 @@ var minerva;
         CornerRadius.isEmpty = function (cr) {
             return cr.topLeft === 0 && cr.topRight === 0 && cr.bottomRight === 0 && cr.bottomLeft === 0;
         };
-
         CornerRadius.isEqual = function (cr1, cr2) {
             return cr1.topLeft === cr2.topLeft && cr1.topRight === cr2.topRight && cr1.bottomRight === cr2.bottomRight && cr1.bottomLeft === cr2.bottomLeft;
         };
-
         CornerRadius.clear = function (dest) {
             dest.topLeft = dest.topRight = dest.bottomRight = dest.bottomLeft = 0;
         };
-
         CornerRadius.copyTo = function (cr2, dest) {
             dest.topLeft = cr2.topLeft;
             dest.topRight = cr2.topRight;
@@ -57,14 +54,12 @@ var minerva;
         Orientation[Orientation["Vertical"] = 1] = "Vertical";
     })(minerva.Orientation || (minerva.Orientation = {}));
     var Orientation = minerva.Orientation;
-
     (function (PenLineJoin) {
         PenLineJoin[PenLineJoin["Miter"] = 0] = "Miter";
         PenLineJoin[PenLineJoin["Bevel"] = 1] = "Bevel";
         PenLineJoin[PenLineJoin["Round"] = 2] = "Round";
     })(minerva.PenLineJoin || (minerva.PenLineJoin = {}));
     var PenLineJoin = minerva.PenLineJoin;
-
     (function (PenLineCap) {
         PenLineCap[PenLineCap["Flat"] = 0] = "Flat";
         PenLineCap[PenLineCap["Square"] = 1] = "Square";
@@ -72,13 +67,11 @@ var minerva;
         PenLineCap[PenLineCap["Triangle"] = 3] = "Triangle";
     })(minerva.PenLineCap || (minerva.PenLineCap = {}));
     var PenLineCap = minerva.PenLineCap;
-
     (function (FillRule) {
         FillRule[FillRule["EvenOdd"] = 0] = "EvenOdd";
         FillRule[FillRule["NonZero"] = 1] = "NonZero";
     })(minerva.FillRule || (minerva.FillRule = {}));
     var FillRule = minerva.FillRule;
-
     (function (Stretch) {
         Stretch[Stretch["None"] = 0] = "None";
         Stretch[Stretch["Fill"] = 1] = "Fill";
@@ -86,19 +79,16 @@ var minerva;
         Stretch[Stretch["UniformToFill"] = 3] = "UniformToFill";
     })(minerva.Stretch || (minerva.Stretch = {}));
     var Stretch = minerva.Stretch;
-
     (function (FlowDirection) {
         FlowDirection[FlowDirection["LeftToRight"] = 0] = "LeftToRight";
         FlowDirection[FlowDirection["RightToLeft"] = 1] = "RightToLeft";
     })(minerva.FlowDirection || (minerva.FlowDirection = {}));
     var FlowDirection = minerva.FlowDirection;
-
     (function (LineStackingStrategy) {
         LineStackingStrategy[LineStackingStrategy["MaxHeight"] = 0] = "MaxHeight";
         LineStackingStrategy[LineStackingStrategy["BlockLineHeight"] = 1] = "BlockLineHeight";
     })(minerva.LineStackingStrategy || (minerva.LineStackingStrategy = {}));
     var LineStackingStrategy = minerva.LineStackingStrategy;
-
     (function (TextAlignment) {
         TextAlignment[TextAlignment["Left"] = 0] = "Left";
         TextAlignment[TextAlignment["Center"] = 1] = "Center";
@@ -106,25 +96,21 @@ var minerva;
         TextAlignment[TextAlignment["Justify"] = 3] = "Justify";
     })(minerva.TextAlignment || (minerva.TextAlignment = {}));
     var TextAlignment = minerva.TextAlignment;
-
     (function (TextTrimming) {
         TextTrimming[TextTrimming["None"] = 0] = "None";
     })(minerva.TextTrimming || (minerva.TextTrimming = {}));
     var TextTrimming = minerva.TextTrimming;
-
     (function (TextWrapping) {
         TextWrapping[TextWrapping["NoWrap"] = 0] = "NoWrap";
         TextWrapping[TextWrapping["Wrap"] = 1] = "Wrap";
         TextWrapping[TextWrapping["WrapWithOverflow"] = 2] = "WrapWithOverflow";
     })(minerva.TextWrapping || (minerva.TextWrapping = {}));
     var TextWrapping = minerva.TextWrapping;
-
     (function (TextDecorations) {
         TextDecorations[TextDecorations["None"] = 0] = "None";
         TextDecorations[TextDecorations["Underline"] = 1] = "Underline";
     })(minerva.TextDecorations || (minerva.TextDecorations = {}));
     var TextDecorations = minerva.TextDecorations;
-
     (function (FontWeight) {
         FontWeight[FontWeight["Thin"] = 100] = "Thin";
         FontWeight[FontWeight["ExtraLight"] = 200] = "ExtraLight";
@@ -138,7 +124,6 @@ var minerva;
         FontWeight[FontWeight["ExtraBlack"] = 950] = "ExtraBlack";
     })(minerva.FontWeight || (minerva.FontWeight = {}));
     var FontWeight = minerva.FontWeight;
-
     (function (SweepDirection) {
         SweepDirection[SweepDirection["Counterclockwise"] = 0] = "Counterclockwise";
         SweepDirection[SweepDirection["Clockwise"] = 1] = "Clockwise";
@@ -163,21 +148,17 @@ var minerva;
         DirtyFlags[DirtyFlags["Invalidate"] = 1 << 22] = "Invalidate";
         DirtyFlags[DirtyFlags["InUpDirtyList"] = 1 << 30] = "InUpDirtyList";
         DirtyFlags[DirtyFlags["InDownDirtyList"] = 1 << 31] = "InDownDirtyList";
-
         DirtyFlags[DirtyFlags["DownDirtyState"] = DirtyFlags.Transform | DirtyFlags.LocalTransform | DirtyFlags.Clip | DirtyFlags.LocalClip | DirtyFlags.LayoutClip | DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.ImageMetrics] = "DownDirtyState";
         DirtyFlags[DirtyFlags["UpDirtyState"] = DirtyFlags.Bounds | DirtyFlags.NewBounds | DirtyFlags.Invalidate] = "UpDirtyState";
-
         DirtyFlags[DirtyFlags["PropagateDown"] = DirtyFlags.RenderVisibility | DirtyFlags.HitTestVisibility | DirtyFlags.Transform | DirtyFlags.LayoutClip] = "PropagateDown";
     })(minerva.DirtyFlags || (minerva.DirtyFlags = {}));
     var DirtyFlags = minerva.DirtyFlags;
     (function (UIFlags) {
         UIFlags[UIFlags["None"] = 0] = "None";
-
         UIFlags[UIFlags["RenderVisible"] = 0x02] = "RenderVisible";
         UIFlags[UIFlags["HitTestVisible"] = 0x04] = "HitTestVisible";
         UIFlags[UIFlags["TotalRenderVisible"] = 0x08] = "TotalRenderVisible";
         UIFlags[UIFlags["TotalHitTestVisible"] = 0x10] = "TotalHitTestVisible";
-
         UIFlags[UIFlags["MeasureHint"] = 0x800] = "MeasureHint";
         UIFlags[UIFlags["ArrangeHint"] = 0x1000] = "ArrangeHint";
         UIFlags[UIFlags["SizeHint"] = 0x2000] = "SizeHint";
@@ -193,6 +174,7 @@ var minerva;
     })(minerva.ShapeFlags || (minerva.ShapeFlags = {}));
     var ShapeFlags = minerva.ShapeFlags;
 })(minerva || (minerva = {}));
+/// <reference path="Enums.ts" />
 var minerva;
 (function (minerva) {
     var FontStyle = {
@@ -211,7 +193,10 @@ var minerva;
         ExtraExpanded: "extra-expanded",
         UltraExpanded: "ultra-expanded"
     };
-
+    /// References
+    //  Font-face generator: http://www.flaticon.com/font-face
+    //  How to use: http://stackoverflow.com/questions/14399484/how-to-render-segoe-ui-font-in-different-navigators-and-oss
+    //  Font Share: http://www.cssfontstack.com/
     var Font = (function () {
         function Font() {
             this.family = Font.DEFAULT_FAMILY;
@@ -235,21 +220,17 @@ var minerva;
             }
             return changed;
         };
-
         Font.prototype.toHtml5Object = function () {
             return this.$$cachedObj = this.$$cachedObj || translateFont(this);
         };
-
         Font.prototype.getHeight = function () {
             if (this.$$cachedHeight == null)
                 this.$$cachedHeight = measureFontHeight(this);
             return this.$$cachedHeight;
         };
-
         Font.prototype.getAscender = function () {
             return 0;
         };
-
         Font.prototype.getDescender = function () {
             return 0;
         };
@@ -261,8 +242,11 @@ var minerva;
         return Font;
     })();
     minerva.Font = Font;
-
     function translateFont(font) {
+        //Format: font-style font-variant font-weight font-size/line-height font-family
+        //Font Styles: normal, italic, oblique
+        //Font Variants: normal, small-caps
+        //Font Weights: normal, bold, bolder, lighter, 100, 200, 300, 400, 500, 600, 700, 800, 900
         var s = "";
         s += font.style.toString() + " ";
         s += "normal ";
@@ -271,9 +255,7 @@ var minerva;
         s += font.family.toString();
         return s;
     }
-
     var dummy;
-
     function measureFontHeight(font) {
         if (!dummy) {
             dummy = document.createElement("div");
@@ -289,6 +271,23 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    /*
+     function isBrushTransparent (brush: IBrush) {
+     if (!brush)
+     return true;
+     if (brush instanceof Media.SolidColorBrush)
+     return (<Media.SolidColorBrush>brush).Color.A < 1.0;
+     if (brush instanceof Media.LinearGradientBrush) {
+     var enumerator = (<Media.LinearGradientBrush>brush).GradientStops.getEnumerator();
+     while (enumerator.moveNext()) {
+     if (enumerator.current.Color.A < 1.0)
+     return true;
+     }
+     return false;
+     }
+     return true;
+     }
+     */
     var FakeBrush = (function () {
         function FakeBrush(raw) {
             this.raw = raw;
@@ -296,10 +295,8 @@ var minerva;
         FakeBrush.prototype.isTransparent = function () {
             return false;
         };
-
         FakeBrush.prototype.setupBrush = function (ctx, region) {
         };
-
         FakeBrush.prototype.toHtml5Object = function () {
             return this.raw;
         };
@@ -338,7 +335,6 @@ var minerva;
         Point.isEqual = function (p1, p2) {
             return p1.x === p2.x && p1.y === p2.y;
         };
-
         Point.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
@@ -350,17 +346,16 @@ var minerva;
 var minerva;
 (function (minerva) {
     var createTypedArray;
-
     if (typeof Float32Array !== "undefined") {
         createTypedArray = function (length) {
             return new Float32Array(length);
         };
-    } else {
+    }
+    else {
         createTypedArray = function (length) {
             return new Array(length);
         };
     }
-
     minerva.vec2 = {
         create: function (x, y) {
             var dest = createTypedArray(2);
@@ -377,8 +372,8 @@ var minerva;
         }
     };
 })(minerva || (minerva = {}));
-
 var vec2 = minerva.vec2;
+/// <reference path="mat/vec2" />
 var minerva;
 (function (minerva) {
     (function (RectOverlap) {
@@ -387,12 +382,10 @@ var minerva;
         RectOverlap[RectOverlap["Part"] = 2] = "Part";
     })(minerva.RectOverlap || (minerva.RectOverlap = {}));
     var RectOverlap = minerva.RectOverlap;
-
     var p1 = minerva.vec2.create(0, 0);
     var p2 = minerva.vec2.create(0, 0);
     var p3 = minerva.vec2.create(0, 0);
     var p4 = minerva.vec2.create(0, 0);
-
     var Rect = (function () {
         function Rect(x, y, width, height) {
             this.x = x == null ? 0 : x;
@@ -403,26 +396,21 @@ var minerva;
         Rect.getBottom = function (rect) {
             return rect.y + rect.height;
         };
-
         Rect.getRight = function (rect) {
             return rect.x + rect.width;
         };
-
         Rect.isEqual = function (rect1, rect2) {
             return rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height;
         };
-
         Rect.isEmpty = function (src) {
             return src.width === 0 || src.height === 0;
         };
-
         Rect.copyTo = function (src, dest) {
             dest.x = src.x;
             dest.y = src.y;
             dest.width = src.width;
             dest.height = src.height;
         };
-
         Rect.roundOut = function (dest) {
             var x = Math.floor(dest.x);
             var y = Math.floor(dest.y);
@@ -431,7 +419,6 @@ var minerva;
             dest.x = x;
             dest.y = y;
         };
-
         Rect.roundIn = function (dest) {
             var x = Math.ceil(dest.x);
             var y = Math.ceil(dest.y);
@@ -441,7 +428,6 @@ var minerva;
             dest.y = y;
             return dest;
         };
-
         Rect.intersection = function (dest, rect2) {
             var x = Math.max(dest.x, rect2.x);
             var y = Math.max(dest.y, rect2.y);
@@ -450,7 +436,6 @@ var minerva;
             dest.x = x;
             dest.y = y;
         };
-
         Rect.union = function (dest, rect2) {
             if (rect2.width <= 0 || rect2.height <= 0)
                 return;
@@ -458,7 +443,6 @@ var minerva;
                 Rect.copyTo(rect2, dest);
                 return;
             }
-
             var x = Math.min(dest.x, rect2.x);
             var y = Math.min(dest.y, rect2.y);
             dest.width = Math.max(dest.x + dest.width, rect2.x + rect2.width) - x;
@@ -466,46 +450,38 @@ var minerva;
             dest.x = x;
             dest.y = y;
         };
-
         Rect.isContainedIn = function (src, test) {
             var sl = src.x;
             var st = src.y;
             var sr = src.x + src.width;
             var sb = src.y + src.height;
-
             var tl = test.x;
             var tt = test.y;
             var tr = test.x + test.width;
             var tb = test.y + test.height;
-
             if (sl < tl || st < tt || sl > tr || st > tb)
                 return false;
             if (sr < tl || sb < tt || sr > tr || sb > tb)
                 return false;
             return true;
         };
-
         Rect.containsPoint = function (rect1, p) {
             return rect1.x <= p.x && rect1.y <= p.y && (rect1.x + rect1.width) >= p.x && (rect1.y + rect1.height) >= p.y;
         };
-
         Rect.extendTo = function (dest, x, y) {
             var rx = dest.x;
             var ry = dest.y;
             var rw = dest.width;
             var rh = dest.height;
-
             if (x < rx || x > (rx + rw))
                 rw = Math.max(Math.abs(x - rx), Math.abs(x - rx - rw));
             if (y < ry || y > (ry + rh))
                 rh = Math.max(Math.abs(y - ry), Math.abs(y - ry - rh));
-
             dest.x = Math.min(rx, x);
             dest.y = Math.min(ry, y);
             dest.width = rw;
             dest.height = rh;
         };
-
         Rect.grow = function (dest, left, top, right, bottom) {
             dest.x -= left;
             dest.y -= top;
@@ -517,7 +493,6 @@ var minerva;
                 dest.height = 0;
             return dest;
         };
-
         Rect.shrink = function (dest, left, top, right, bottom) {
             dest.x += left;
             dest.y += top;
@@ -528,8 +503,8 @@ var minerva;
             if (dest.height < 0)
                 dest.height = 0;
         };
-
         Rect.rectIn = function (rect1, rect2) {
+            //TODO: Implement without creating Rect
             var copy = new Rect();
             Rect.copyTo(rect1, copy);
             Rect.intersection(copy, rect2);
@@ -539,7 +514,6 @@ var minerva;
                 return 1 /* In */;
             return 2 /* Part */;
         };
-
         Rect.transform = function (dest, mat) {
             if (!mat)
                 return dest;
@@ -547,30 +521,26 @@ var minerva;
             var y = dest.y;
             var width = dest.width;
             var height = dest.height;
-
             minerva.vec2.init(x, y, p1);
             minerva.vec2.init(x + width, y, p2);
             minerva.vec2.init(x + width, y + height, p3);
             minerva.vec2.init(x, y + height, p4);
-
             minerva.mat3.transformVec2(mat, p1);
             minerva.mat3.transformVec2(mat, p2);
             minerva.mat3.transformVec2(mat, p3);
             minerva.mat3.transformVec2(mat, p4);
-
             var l = Math.min(p1[0], p2[0], p3[0], p4[0]);
             var t = Math.min(p1[1], p2[1], p3[1], p4[1]);
             var r = Math.max(p1[0], p2[0], p3[0], p4[0]);
             var b = Math.max(p1[1], p2[1], p3[1], p4[1]);
-
             dest.x = l;
             dest.y = t;
             dest.width = r - l;
             dest.height = b - t;
             return dest;
         };
-
         Rect.transform4 = function (dest, projection) {
+            //See mat/transform4.ts
         };
         return Rect;
     })();
@@ -587,20 +557,16 @@ var minerva;
             dest.width = src.width;
             dest.height = src.height;
         };
-
         Size.isEqual = function (size1, size2) {
             return size1.width === size2.width && size1.height === size2.height;
         };
-
         Size.min = function (dest, size2) {
             dest.width = Math.min(dest.width, size2.width);
             dest.height = Math.min(dest.height, size2.height);
         };
-
         Size.isUndef = function (size) {
             return isNaN(size.width) && isNaN(size.height);
         };
-
         Size.undef = function (size) {
             size.width = NaN;
             size.height = NaN;
@@ -624,22 +590,18 @@ var minerva;
             dest.right += t2.right;
             dest.bottom += t2.bottom;
         };
-
         Thickness.copyTo = function (thickness, dest) {
             dest.left = thickness.left;
             dest.top = thickness.top;
             dest.right = thickness.right;
             dest.bottom = thickness.bottom;
         };
-
         Thickness.isEmpty = function (thickness) {
             return thickness.left === 0 && thickness.top === 0 && thickness.right === 0 && thickness.bottom === 0;
         };
-
         Thickness.isBalanced = function (thickness) {
             return thickness.left === thickness.top && thickness.left === thickness.right && thickness.left === thickness.bottom;
         };
-
         Thickness.shrinkSize = function (thickness, dest) {
             var w = dest.width;
             var h = dest.height;
@@ -651,7 +613,6 @@ var minerva;
             dest.height = h > 0 ? h : 0;
             return dest;
         };
-
         Thickness.shrinkRect = function (thickness, dest) {
             dest.x += thickness.left;
             dest.y += thickness.top;
@@ -662,14 +623,12 @@ var minerva;
             if (dest.height < 0)
                 dest.height = 0;
         };
-
         Thickness.shrinkCornerRadius = function (thickness, dest) {
             dest.topLeft = Math.max(dest.topLeft - Math.max(thickness.left, thickness.top) * 0.5, 0);
             dest.topRight = Math.max(dest.topRight - Math.max(thickness.right, thickness.top) * 0.5, 0);
             dest.bottomRight = Math.max(dest.bottomRight - Math.max(thickness.right, thickness.bottom) * 0.5, 0);
             dest.bottomLeft = Math.max(dest.bottomLeft - Math.max(thickness.left, thickness.bottom) * 0.5, 0);
         };
-
         Thickness.growSize = function (thickness, dest) {
             var w = dest.width;
             var h = dest.height;
@@ -681,7 +640,6 @@ var minerva;
             dest.height = h > 0 ? h : 0;
             return dest;
         };
-
         Thickness.growRect = function (thickness, dest) {
             dest.x -= thickness.left;
             dest.y -= thickness.top;
@@ -692,7 +650,6 @@ var minerva;
             if (dest.height < 0)
                 dest.height = 0;
         };
-
         Thickness.growCornerRadius = function (thickness, dest) {
             dest.topLeft = dest.topLeft ? Math.max(dest.topLeft + Math.max(thickness.left, thickness.top) * 0.5, 0) : 0;
             dest.topRight = dest.topRight ? Math.max(dest.topRight + Math.max(thickness.right, thickness.top) * 0.5, 0) : 0;
@@ -705,21 +662,20 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var Vector;
     (function (Vector) {
         var EPSILON = 1e-10;
-
         function create(x, y) {
             return [x, y];
         }
         Vector.create = create;
-
         function reverse(v) {
             v[0] = -v[0];
             v[1] = -v[1];
             return v;
         }
         Vector.reverse = reverse;
-
+        /// Equivalent of rotating 90 degrees clockwise (screen space)
         function orthogonal(v) {
             var x = v[0], y = v[1];
             v[0] = -y;
@@ -727,7 +683,6 @@ var minerva;
             return v;
         }
         Vector.orthogonal = orthogonal;
-
         function normalize(v) {
             var x = v[0], y = v[1];
             var len = Math.sqrt(x * x + y * y);
@@ -736,7 +691,7 @@ var minerva;
             return v;
         }
         Vector.normalize = normalize;
-
+        /// Rotates a vector(v) by angle(theta) clockwise(screen space) ...which is counter-clockwise in coordinate space
         function rotate(v, theta) {
             var c = Math.cos(theta);
             var s = Math.sin(theta);
@@ -747,7 +702,7 @@ var minerva;
             return v;
         }
         Vector.rotate = rotate;
-
+        /// Returns smallest angle (in radians) between 2 vectors
         function angleBetween(u, v) {
             var ux = u[0], uy = u[1], vx = v[0], vy = v[1];
             var num = ux * vx + uy * vy;
@@ -755,7 +710,7 @@ var minerva;
             return Math.acos(num / den);
         }
         Vector.angleBetween = angleBetween;
-
+        /// By rotating from vector(v1) to vector(v2), tests whether that angle is clockwise (screen space)
         function isClockwiseTo(v1, v2) {
             var theta = angleBetween(v1, v2);
             var nv1 = normalize(v1.slice(0));
@@ -766,29 +721,25 @@ var minerva;
             return nx < EPSILON && ny < EPSILON;
         }
         Vector.isClockwiseTo = isClockwiseTo;
-
+        /// Finds intersection of v1(s1 + t(d1)) and v2(s2 + t(d2))
         function intersection(s1, d1, s2, d2) {
             var x1 = s1[0];
             var y1 = s1[1];
             var x2 = x1 + d1[0];
             var y2 = y1 + d1[1];
-
             var x3 = s2[0];
             var y3 = s2[1];
             var x4 = x3 + d2[0];
             var y4 = y3 + d2[1];
-
             var det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
             if (det === 0)
                 return null;
-
             var xn = ((x1 * y2 - y1 * x2) * (x3 - x4)) - ((x1 - x2) * (x3 * y4 - y3 * x4));
             var yn = ((x1 * y2 - y1 * x2) * (y3 - y4)) - ((y1 - y2) * (x3 * y4 - y3 * x4));
             return [xn / det, yn / det];
         }
         Vector.intersection = intersection;
-    })(minerva.Vector || (minerva.Vector = {}));
-    var Vector = minerva.Vector;
+    })(Vector = minerva.Vector || (minerva.Vector = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -801,11 +752,9 @@ var minerva;
 var minerva;
 (function (minerva) {
     var hitTestCtx = null;
-
     function findElementsInHostSpace(pos, host) {
         hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
         var inv = minerva.mat3.inverse(host.assets.renderXform, minerva.mat3.create());
-
         hitTestCtx.save();
         hitTestCtx.pretransformMatrix(inv);
         var list = [];
@@ -818,7 +767,6 @@ var minerva;
 var minerva;
 (function (minerva) {
     minerva.errors = [];
-
     function layoutError(tree, pipedef, message) {
         minerva.errors.push({
             tree: tree,
@@ -840,6 +788,7 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var pipe;
     (function (pipe) {
         var ITriPipe = (function () {
             function ITriPipe() {
@@ -847,7 +796,6 @@ var minerva;
             return ITriPipe;
         })();
         pipe.ITriPipe = ITriPipe;
-
         function createTriPipe(pipedef) {
             return {
                 def: pipedef,
@@ -856,11 +804,11 @@ var minerva;
             };
         }
         pipe.createTriPipe = createTriPipe;
-    })(minerva.pipe || (minerva.pipe = {}));
-    var pipe = minerva.pipe;
+    })(pipe = minerva.pipe || (minerva.pipe = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var pipe;
     (function (pipe) {
         var PipeDef = (function () {
             function PipeDef() {
@@ -872,7 +820,6 @@ var minerva;
                 this.$$tapins.push(tapin);
                 return this;
             };
-
             PipeDef.prototype.addTapinBefore = function (before, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
@@ -880,13 +827,13 @@ var minerva;
                 if (index === -1) {
                     names.unshift(name);
                     tapins.unshift(tapin);
-                } else {
+                }
+                else {
                     names.splice(index, 0, name);
                     tapins.splice(index, 0, tapin);
                 }
                 return this;
             };
-
             PipeDef.prototype.addTapinAfter = function (after, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
@@ -894,13 +841,13 @@ var minerva;
                 if (index === -1 || index === names.length - 1) {
                     names.push(name);
                     tapins.push(tapin);
-                } else {
+                }
+                else {
                     names.splice(index + 1, 0, name);
                     tapins.splice(index + 1, 0, tapin);
                 }
                 return this;
             };
-
             PipeDef.prototype.replaceTapin = function (name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
@@ -910,7 +857,6 @@ var minerva;
                 tapins[index] = tapin;
                 return this;
             };
-
             PipeDef.prototype.removeTapin = function (name) {
                 var names = this.$$names;
                 var index = names.indexOf(name);
@@ -920,16 +866,13 @@ var minerva;
                 this.$$tapins.splice(index, 1);
                 return this;
             };
-
             PipeDef.prototype.run = function (data) {
                 var contexts = [];
-                for (var _i = 0; _i < (arguments.length - 1); _i++) {
-                    contexts[_i] = arguments[_i + 1];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    contexts[_i - 1] = arguments[_i];
                 }
                 contexts.unshift(data);
-
                 this.prepare.apply(this, contexts);
-
                 var flag = true;
                 for (var i = 0, tapins = this.$$tapins, len = tapins.length; i < len; i++) {
                     if (!tapins[i].apply(this, contexts)) {
@@ -937,33 +880,29 @@ var minerva;
                         break;
                     }
                 }
-
                 this.flush.apply(this, contexts);
-
                 return flag;
             };
-
             PipeDef.prototype.prepare = function (data) {
                 var contexts = [];
-                for (var _i = 0; _i < (arguments.length - 1); _i++) {
-                    contexts[_i] = arguments[_i + 1];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    contexts[_i - 1] = arguments[_i];
                 }
             };
-
             PipeDef.prototype.flush = function (data) {
                 var contexts = [];
-                for (var _i = 0; _i < (arguments.length - 1); _i++) {
-                    contexts[_i] = arguments[_i + 1];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    contexts[_i - 1] = arguments[_i];
                 }
             };
             return PipeDef;
         })();
         pipe.PipeDef = PipeDef;
-    })(minerva.pipe || (minerva.pipe = {}));
-    var pipe = minerva.pipe;
+    })(pipe = minerva.pipe || (minerva.pipe = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var pipe;
     (function (pipe) {
         var TriPipeDef = (function () {
             function TriPipeDef() {
@@ -975,7 +914,6 @@ var minerva;
                 this.$$tapins.push(tapin);
                 return this;
             };
-
             TriPipeDef.prototype.addTapinBefore = function (before, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
@@ -983,13 +921,13 @@ var minerva;
                 if (index === -1) {
                     names.unshift(name);
                     tapins.unshift(tapin);
-                } else {
+                }
+                else {
                     names.splice(index, 0, name);
                     tapins.splice(index, 0, tapin);
                 }
                 return this;
             };
-
             TriPipeDef.prototype.addTapinAfter = function (after, name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
@@ -997,13 +935,13 @@ var minerva;
                 if (index === -1 || index === names.length - 1) {
                     names.push(name);
                     tapins.push(tapin);
-                } else {
+                }
+                else {
                     names.splice(index + 1, 0, name);
                     tapins.splice(index + 1, 0, tapin);
                 }
                 return this;
             };
-
             TriPipeDef.prototype.replaceTapin = function (name, tapin) {
                 var names = this.$$names;
                 var tapins = this.$$tapins;
@@ -1013,7 +951,6 @@ var minerva;
                 tapins[index] = tapin;
                 return this;
             };
-
             TriPipeDef.prototype.removeTapin = function (name) {
                 var names = this.$$names;
                 var index = names.indexOf(name);
@@ -1023,18 +960,15 @@ var minerva;
                 this.$$tapins.splice(index, 1);
                 return this;
             };
-
             TriPipeDef.prototype.run = function (input, state, output) {
                 var contexts = [];
-                for (var _i = 0; _i < (arguments.length - 3); _i++) {
-                    contexts[_i] = arguments[_i + 3];
+                for (var _i = 3; _i < arguments.length; _i++) {
+                    contexts[_i - 3] = arguments[_i];
                 }
                 contexts.unshift(output);
                 contexts.unshift(state);
                 contexts.unshift(input);
-
                 this.prepare.apply(this, contexts);
-
                 var flag = true;
                 for (var i = 0, tapins = this.$$tapins, len = tapins.length; i < len; i++) {
                     if (!tapins[i].apply(this, contexts)) {
@@ -1042,41 +976,35 @@ var minerva;
                         break;
                     }
                 }
-
                 this.flush.apply(this, contexts);
-
                 return flag;
             };
-
             TriPipeDef.prototype.createState = function () {
                 return null;
             };
-
             TriPipeDef.prototype.createOutput = function () {
                 return null;
             };
-
             TriPipeDef.prototype.prepare = function (input, state, output) {
                 var contexts = [];
-                for (var _i = 0; _i < (arguments.length - 3); _i++) {
-                    contexts[_i] = arguments[_i + 3];
+                for (var _i = 3; _i < arguments.length; _i++) {
+                    contexts[_i - 3] = arguments[_i];
                 }
             };
-
             TriPipeDef.prototype.flush = function (input, state, output) {
                 var contexts = [];
-                for (var _i = 0; _i < (arguments.length - 3); _i++) {
-                    contexts[_i] = arguments[_i + 3];
+                for (var _i = 3; _i < arguments.length; _i++) {
+                    contexts[_i - 3] = arguments[_i];
                 }
             };
             return TriPipeDef;
         })();
         pipe.TriPipeDef = TriPipeDef;
-    })(minerva.pipe || (minerva.pipe = {}));
-    var pipe = minerva.pipe;
+    })(pipe = minerva.pipe || (minerva.pipe = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
         var Updater = (function () {
             function Updater() {
@@ -1142,7 +1070,9 @@ var minerva;
                     forceInvalidate: false
                 };
                 this.tree = null;
+                perfex.timer.start("CreateUpdater", null);
                 this.setMeasureBinder().setArrangeBinder().init();
+                perfex.timer.stop();
             }
             Updater.prototype.init = function () {
                 this.setTree(this.tree);
@@ -1163,32 +1093,27 @@ var minerva;
                 if (!this.$$hittest.data.tree)
                     this.$$hittest.data.tree = this.tree;
             };
-
             Updater.prototype.setTree = function (tree) {
                 this.tree = tree || new core.UpdaterTree();
                 return this;
             };
-
             Updater.prototype.getAttachedValue = function (name) {
                 return this.$$attached[name];
             };
-
             Updater.prototype.setAttachedValue = function (name, value) {
                 this.$$attached[name] = value;
             };
-
+            /////// TREE
             Updater.prototype.onDetached = function () {
                 core.reactTo.helpers.invalidateParent(this);
                 this.invalidateMeasure();
                 if (this.tree.visualParent)
                     this.tree.visualParent.invalidateMeasure();
-
                 var ls = this.assets.layoutSlot;
                 ls.x = ls.y = ls.width = ls.height = 0;
                 var lc = this.assets.layoutClip;
                 lc.x = lc.y = lc.width = lc.height = 0;
             };
-
             Updater.prototype.onAttached = function () {
                 var assets = this.assets;
                 minerva.Size.undef(assets.previousConstraint);
@@ -1202,7 +1127,6 @@ var minerva;
                 if ((assets.uiFlags & 8192 /* SizeHint */) > 0 || assets.lastRenderSize !== undefined)
                     Updater.$$propagateUiFlagsUp(this, 8192 /* SizeHint */);
             };
-
             Updater.prototype.setVisualParent = function (visualParent) {
                 if (!visualParent && this.tree.visualParent) {
                     this.onDetached();
@@ -1216,7 +1140,6 @@ var minerva;
                 }
                 return this;
             };
-
             Updater.prototype.setSurface = function (surface) {
                 var cur;
                 var newUps = [];
@@ -1236,20 +1159,17 @@ var minerva;
                             newUps.push(cur);
                     }
                 }
-
                 while ((cur = newUps.pop()) != null) {
                     cur.$$inUpDirty = true;
                     surface.addUpDirty(cur);
                 }
                 return this;
             };
-
             Updater.prototype.walkDeep = function (dir) {
                 var last = undefined;
                 var walkList = [this];
                 dir = dir || 0 /* Forward */;
                 var revdir = (dir === 0 /* Forward */ || dir === 2 /* ZForward */) ? dir + 1 : dir - 1;
-
                 return {
                     current: undefined,
                     step: function () {
@@ -1258,7 +1178,6 @@ var minerva;
                                 walkList.unshift(subwalker.current);
                             }
                         }
-
                         this.current = last = walkList.shift();
                         return this.current !== undefined;
                     },
@@ -1267,7 +1186,7 @@ var minerva;
                     }
                 };
             };
-
+            /////// PREPARE PIPES
             Updater.prototype.setMeasurePipe = function (pipedef) {
                 if (this.$$measure)
                     return this;
@@ -1275,12 +1194,10 @@ var minerva;
                 this.$$measure = minerva.pipe.createTriPipe(def);
                 return this;
             };
-
             Updater.prototype.setMeasureBinder = function (mb) {
                 this.$$measureBinder = mb || new core.measure.MeasureBinder();
                 return this;
             };
-
             Updater.prototype.setArrangePipe = function (pipedef) {
                 if (this.$$arrange)
                     return this;
@@ -1288,12 +1205,10 @@ var minerva;
                 this.$$arrange = minerva.pipe.createTriPipe(def);
                 return this;
             };
-
             Updater.prototype.setArrangeBinder = function (ab) {
                 this.$$arrangeBinder = ab || new core.arrange.ArrangeBinder();
                 return this;
             };
-
             Updater.prototype.setSizingPipe = function (pipedef) {
                 if (this.$$sizing)
                     return this;
@@ -1303,7 +1218,6 @@ var minerva;
                 this.$$sizing = minerva.pipe.createTriPipe(def);
                 return this;
             };
-
             Updater.prototype.setProcessDownPipe = function (pipedef) {
                 var def = pipedef;
                 if (!def)
@@ -1311,7 +1225,6 @@ var minerva;
                 this.$$processdown = minerva.pipe.createTriPipe(def);
                 return this;
             };
-
             Updater.prototype.setProcessUpPipe = function (pipedef) {
                 if (this.$$processup)
                     return this;
@@ -1321,7 +1234,6 @@ var minerva;
                 this.$$processup = minerva.pipe.createTriPipe(def);
                 return this;
             };
-
             Updater.prototype.setRenderPipe = function (pipedef) {
                 if (this.$$render)
                     return this;
@@ -1329,7 +1241,6 @@ var minerva;
                 this.$$render = minerva.pipe.createTriPipe(def);
                 return this;
             };
-
             Updater.prototype.setHitTestPipe = function (pipedef) {
                 if (this.$$hittest)
                     return this;
@@ -1347,11 +1258,10 @@ var minerva;
                 };
                 return this;
             };
-
+            /////// RUN PIPES
             Updater.prototype.doMeasure = function () {
                 this.$$measureBinder.bind(this);
             };
-
             Updater.prototype.measure = function (availableSize) {
                 var pipe = this.$$measure;
                 var output = pipe.output;
@@ -1364,11 +1274,9 @@ var minerva;
                     Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
                 return success;
             };
-
             Updater.prototype.doArrange = function () {
                 this.$$arrangeBinder.bind(this);
             };
-
             Updater.prototype.arrange = function (finalRect) {
                 var pipe = this.$$arrange;
                 var output = pipe.output;
@@ -1381,7 +1289,6 @@ var minerva;
                     Updater.$$propagateUiFlagsUp(this, output.newUiFlags);
                 return success;
             };
-
             Updater.prototype.sizing = function (oldSize, newSize) {
                 var pipe = this.$$sizing;
                 var assets = this.assets;
@@ -1394,7 +1301,6 @@ var minerva;
                 assets.lastRenderSize = undefined;
                 return success;
             };
-
             Updater.prototype.processDown = function () {
                 if (!this.tree.surface)
                     this.$$inDownDirty = false;
@@ -1402,9 +1308,9 @@ var minerva;
                     return true;
                 var vp = this.tree.visualParent;
                 if (vp && vp.$$inDownDirty) {
+                    //OPTIMIZATION: uie is overzealous. His parent will invalidate him later
                     return false;
                 }
-
                 var pipe = this.$$processdown;
                 var success = pipe.def.run(this.assets, pipe.state, pipe.output, vp ? vp.assets : null, this.tree);
                 this.$$inDownDirty = false;
@@ -1412,49 +1318,42 @@ var minerva;
                     Updater.$$addUpDirty(this);
                 return success;
             };
-
             Updater.prototype.processUp = function () {
                 if (!this.tree.surface)
                     this.$$inUpDirty = false;
                 if (!this.$$inUpDirty)
                     return true;
-
                 var pipe = this.$$processup;
                 var success = pipe.def.run(this.assets, pipe.state, pipe.output, this.tree);
                 this.$$inUpDirty = false;
                 return success;
             };
-
             Updater.prototype.render = function (ctx, region) {
                 var pipe = this.$$render;
                 return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
             };
-
             Updater.prototype.hitTest = function (pos, list, ctx, includeAll) {
                 var pipe = this.$$hittest;
                 return pipe.def.run(pipe.data, pos, list, ctx, includeAll === true);
             };
-
+            /////// SIZE UPDATES
             Updater.prototype.onSizeChanged = function (oldSize, newSize) {
                 this.$$sizeupdater.onSizeChanged(oldSize, newSize);
             };
-
             Updater.prototype.setSizeUpdater = function (updater) {
                 this.$$sizeupdater = updater || minerva.NO_SIZE_UPDATER;
             };
-
+            /////// INVALIDATES
             Updater.prototype.invalidateMeasure = function () {
                 this.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
                 Updater.$$propagateUiFlagsUp(this, 2048 /* MeasureHint */);
                 return this;
             };
-
             Updater.prototype.invalidateArrange = function () {
                 this.assets.dirtyFlags |= minerva.DirtyFlags.Arrange;
                 Updater.$$propagateUiFlagsUp(this, 4096 /* ArrangeHint */);
                 return this;
             };
-
             Updater.prototype.updateBounds = function (forceRedraw) {
                 var assets = this.assets;
                 assets.dirtyFlags |= minerva.DirtyFlags.Bounds;
@@ -1463,7 +1362,6 @@ var minerva;
                     assets.forceInvalidate = true;
                 return this;
             };
-
             Updater.prototype.fullInvalidate = function (invTransforms) {
                 var assets = this.assets;
                 this.invalidate(assets.surfaceBoundsWithChildren);
@@ -1474,7 +1372,6 @@ var minerva;
                 this.updateBounds(true);
                 return this;
             };
-
             Updater.prototype.invalidate = function (region) {
                 var assets = this.assets;
                 if (!assets.totalIsRenderVisible || (assets.totalOpacity * 255) < 0.5)
@@ -1486,7 +1383,6 @@ var minerva;
                 minerva.Rect.union(assets.dirtyRegion, region);
                 return this;
             };
-
             Updater.prototype.findChildInList = function (list) {
                 for (var i = 0, len = list.length; i < len; i++) {
                     if (list[i].tree.visualParent === this)
@@ -1494,7 +1390,7 @@ var minerva;
                 }
                 return -1;
             };
-
+            /////// STATIC HELPERS
             Updater.$$addUpDirty = function (updater) {
                 var surface = updater.tree.surface;
                 if (surface && !updater.$$inUpDirty) {
@@ -1502,7 +1398,6 @@ var minerva;
                     updater.$$inUpDirty = true;
                 }
             };
-
             Updater.$$addDownDirty = function (updater) {
                 var surface = updater.tree.surface;
                 if (surface && !updater.$$inDownDirty) {
@@ -1510,7 +1405,6 @@ var minerva;
                     updater.$$inDownDirty = true;
                 }
             };
-
             Updater.$$propagateUiFlagsUp = function (updater, flags) {
                 updater.assets.uiFlags |= flags;
                 var vpu = updater;
@@ -1518,31 +1412,31 @@ var minerva;
                     vpu.assets.uiFlags |= flags;
                 }
             };
-
             Updater.transformToVisual = function (fromUpdater, toUpdater) {
                 if (!fromUpdater.tree.surface || (toUpdater && !toUpdater.tree.surface))
                     return null;
-
+                //1. invert transform from input element to top level
+                //2. transform back down to this element
                 var m = minerva.mat3.create();
                 var a = fromUpdater.assets.absoluteXform;
-
+                // A = From, B = To, M = what we want
+                // A = M * B
+                // => M = A * inv(B)
                 if (toUpdater) {
                     var invB = minerva.mat3.inverse(toUpdater.assets.absoluteXform, minerva.mat3.create());
-                    minerva.mat3.multiply(a, invB, m);
-                } else {
-                    minerva.mat3.copyTo(a, m);
+                    minerva.mat3.multiply(a, invB, m); //M = A * inv(B)
                 }
-
+                else {
+                    minerva.mat3.copyTo(a, m); //M = A
+                }
                 return m;
             };
-
             Updater.transformPoint = function (updater, p) {
                 var inverse = minerva.mat3.inverse(updater.assets.absoluteXform, minerva.mat3.create());
                 if (!inverse) {
                     console.warn("Could not get inverse of Absolute Transform for UIElement.");
                     return;
                 }
-
                 var p2 = minerva.vec2.create(p.x, p.y);
                 minerva.mat3.transformVec2(inverse, p2);
                 p.x = p2[0];
@@ -1551,11 +1445,11 @@ var minerva;
             return Updater;
         })();
         core.Updater = Updater;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
         var NO_VO = {
             updateBounds: function () {
@@ -1563,7 +1457,6 @@ var minerva;
             invalidate: function (region) {
             }
         };
-
         var UpdaterTree = (function () {
             function UpdaterTree() {
                 this.isTop = false;
@@ -1584,7 +1477,6 @@ var minerva;
                 enumerable: true,
                 configurable: true
             });
-
             UpdaterTree.prototype.walk = function (direction) {
                 var visited = false;
                 var _this = this;
@@ -1599,76 +1491,62 @@ var minerva;
                     }
                 };
             };
-
             UpdaterTree.prototype.onChildAttached = function (child) {
                 this.subtree = child;
             };
-
             UpdaterTree.prototype.onChildDetached = function (child) {
                 this.subtree = null;
             };
-
             UpdaterTree.prototype.setTemplateApplier = function (applier) {
                 this.applyTemplate = applier;
             };
-
             UpdaterTree.prototype.applyTemplate = function () {
                 return false;
             };
             return UpdaterTree;
         })();
         core.UpdaterTree = UpdaterTree;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var helpers;
         (function (helpers) {
             function coerceSize(size, assets) {
                 var cw = Math.max(assets.minWidth, size.width);
                 var ch = Math.max(assets.minHeight, size.height);
-
                 if (!isNaN(assets.width))
                     cw = assets.width;
-
                 if (!isNaN(assets.height))
                     ch = assets.height;
-
                 cw = Math.max(Math.min(cw, assets.maxWidth), assets.minWidth);
                 ch = Math.max(Math.min(ch, assets.maxHeight), assets.minHeight);
-
                 if (assets.useLayoutRounding) {
                     cw = Math.round(cw);
                     ch = Math.round(ch);
                 }
-
                 size.width = cw;
                 size.height = ch;
             }
             helpers.coerceSize = coerceSize;
-
             function intersectBoundsWithClipPath(dest, src, thickness, xform, clip, layoutClip) {
                 minerva.Rect.copyTo(src, dest);
                 minerva.Thickness.growRect(thickness, dest);
-
                 if (clip)
                     minerva.Rect.intersection(dest, clip.GetBounds());
                 if (!minerva.Rect.isEmpty(layoutClip))
                     minerva.Rect.intersection(dest, layoutClip);
-
                 if (xform)
                     minerva.Rect.transform(dest, xform);
             }
             helpers.intersectBoundsWithClipPath = intersectBoundsWithClipPath;
-
             var offset = new minerva.Point();
-
             function renderLayoutClip(ctx, assets, tree) {
                 var lc;
                 offset.x = 0;
                 offset.y = 0;
-
                 var raw = ctx.raw;
                 var cur;
                 while (assets) {
@@ -1678,15 +1556,12 @@ var minerva;
                         raw.rect(lc.x, lc.y, lc.width, lc.height);
                         raw.clip();
                     }
-
                     if (assets.breakLayoutClip)
                         break;
-
                     var vo = assets.visualOffset;
                     offset.x += vo.x;
                     offset.y += vo.y;
                     ctx.translate(-vo.x, -vo.y);
-
                     if (!tree)
                         break;
                     cur = tree.visualParent;
@@ -1696,21 +1571,21 @@ var minerva;
                 ctx.translate(offset.x, offset.y);
             }
             helpers.renderLayoutClip = renderLayoutClip;
-        })(core.helpers || (core.helpers = {}));
-        var helpers = core.helpers;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(helpers = core.helpers || (core.helpers = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var reactTo;
         (function (reactTo) {
+            var helpers;
             (function (helpers) {
                 function invalidateParent(updater) {
                     updater.tree.visualOwner.invalidate(updater.assets.surfaceBoundsWithChildren);
                 }
                 helpers.invalidateParent = invalidateParent;
-
                 function sizeChanged(updater) {
                     var vp = updater.tree.visualParent;
                     if (vp)
@@ -1719,81 +1594,78 @@ var minerva;
                     updater.fullInvalidate(origin.x !== 0.0 || origin.y !== 0).invalidateMeasure().invalidateArrange();
                 }
                 helpers.sizeChanged = sizeChanged;
-
                 function alignmentChanged(updater) {
                     updater.invalidateArrange();
                     updater.fullInvalidate(true);
                 }
                 helpers.alignmentChanged = alignmentChanged;
-            })(reactTo.helpers || (reactTo.helpers = {}));
-            var helpers = reactTo.helpers;
-
+            })(helpers = reactTo.helpers || (reactTo.helpers = {}));
+            /// UI ELEMENT
             function isHitTestVisible(updater, oldValue, newValue) {
                 updater.assets.dirtyFlags |= minerva.DirtyFlags.HitTestVisibility;
                 core.Updater.$$addDownDirty(updater);
             }
             reactTo.isHitTestVisible = isHitTestVisible;
-
             function useLayoutRounding(updater, oldValue, newValue) {
                 updater.invalidateMeasure();
                 updater.invalidateArrange();
             }
             reactTo.useLayoutRounding = useLayoutRounding;
-
             function opacity(updater, oldValue, newValue) {
                 updater.assets.dirtyFlags |= minerva.DirtyFlags.RenderVisibility;
                 core.Updater.$$addDownDirty(updater);
                 helpers.invalidateParent(updater);
             }
             reactTo.opacity = opacity;
-
             function visibility(updater, oldValue, newValue) {
                 updater.assets.dirtyFlags |= minerva.DirtyFlags.RenderVisibility;
                 core.Updater.$$addDownDirty(updater);
                 helpers.invalidateParent(updater);
-
                 updater.invalidateMeasure();
                 var vp = updater.tree.visualParent;
                 if (vp)
-                    vp.invalidateMeasure();
+                    vp.invalidateMeasure(); //TODO: Can we get rid of this?
             }
             reactTo.visibility = visibility;
-
             function effect(updater, oldValue, newValue) {
                 helpers.invalidateParent(updater);
                 var changed = (newValue) ? newValue.GetPadding(updater.assets.effectPadding) : false;
                 if (changed)
                     updater.updateBounds();
-
+                //TODO: This if statement looks stupid
                 if (oldValue !== newValue && updater.tree.surface) {
                     updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                     core.Updater.$$addDownDirty(updater);
                 }
             }
             reactTo.effect = effect;
-
             function clip(updater, oldValue, newValue) {
                 var assets = updater.assets;
-
+                /*
+                 TODO: Should we reincorporate ClipBounds?
+                 var cb = assets.clipBounds;
+                 if (!newValue)
+                 cb.x = cb.y = cb.width = cb.height = 0;
+                 else
+                 Rect.copyTo(newValue.GetBounds(), cb);
+                 */
                 helpers.invalidateParent(updater);
                 updater.updateBounds(true);
                 assets.dirtyFlags |= minerva.DirtyFlags.LocalClip;
                 core.Updater.$$addDownDirty(updater);
             }
             reactTo.clip = clip;
-
             function renderTransform(updater, oldValue, newValue) {
                 updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                 core.Updater.$$addDownDirty(updater);
             }
             reactTo.renderTransform = renderTransform;
-
             function renderTransformOrigin(updater, oldValue, newValue) {
                 updater.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                 core.Updater.$$addDownDirty(updater);
             }
             reactTo.renderTransformOrigin = renderTransformOrigin;
-
+            /// FRAMEWORK ELEMENT
             reactTo.width = helpers.sizeChanged;
             reactTo.height = helpers.sizeChanged;
             reactTo.minWidth = helpers.sizeChanged;
@@ -1802,17 +1674,16 @@ var minerva;
             reactTo.maxHeight = helpers.sizeChanged;
             reactTo.margin = helpers.sizeChanged;
             reactTo.flowDirection = helpers.sizeChanged;
-
             reactTo.horizontalAlignment = helpers.alignmentChanged;
             reactTo.verticalAlignment = helpers.alignmentChanged;
-        })(core.reactTo || (core.reactTo = {}));
-        var reactTo = core.reactTo;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(reactTo = core.reactTo || (core.reactTo = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
             var ArrangeBinder = (function () {
                 function ArrangeBinder() {
@@ -1826,15 +1697,14 @@ var minerva;
                         this.expandViewport(last, assets, tree);
                         this.shiftViewport(last, updater);
                     }
-
                     if (last) {
                         return updater.arrange(last);
-                    } else if (tree.visualParent) {
+                    }
+                    else if (tree.visualParent) {
                         tree.visualParent.invalidateArrange();
                     }
                     return false;
                 };
-
                 ArrangeBinder.prototype.expandViewport = function (viewport, assets, tree) {
                     if (tree.isLayoutContainer) {
                         minerva.Size.copyTo(assets.desiredSize, viewport);
@@ -1843,28 +1713,28 @@ var minerva;
                             if (!minerva.Size.isUndef(measure)) {
                                 viewport.width = Math.max(viewport.width, measure.width);
                                 viewport.height = Math.max(viewport.height, measure.height);
-                            } else {
+                            }
+                            else {
                                 viewport.width = tree.surface.width;
                                 viewport.height = tree.surface.height;
                             }
                         }
-                    } else {
+                    }
+                    else {
                         viewport.width = assets.actualWidth;
                         viewport.height = assets.actualHeight;
                     }
                 };
-
                 ArrangeBinder.prototype.shiftViewport = function (viewport, updater) {
+                    //NOTE: Coercing undefined, null, NaN, and 0 to 0
                     viewport.x = updater.getAttachedValue("Canvas.Left") || 0;
                     viewport.y = updater.getAttachedValue("Canvas.Top") || 0;
                 };
                 return ArrangeBinder;
             })();
             arrange.ArrangeBinder = ArrangeBinder;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -1874,7 +1744,9 @@ var __extends = this.__extends || function (d, b) {
 };
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
             var ArrangePipeDef = (function (_super) {
                 __extends(ArrangePipeDef, _super);
@@ -1894,7 +1766,6 @@ var minerva;
                         flipHorizontal: false
                     };
                 };
-
                 ArrangePipeDef.prototype.createOutput = function () {
                     return {
                         dirtyFlags: 0,
@@ -1912,11 +1783,9 @@ var minerva;
                         newUiFlags: 0
                     };
                 };
-
                 ArrangePipeDef.prototype.prepare = function (input, state, output) {
                     output.origDirtyFlags = output.dirtyFlags = input.dirtyFlags;
                     output.origUiFlags = output.uiFlags = input.uiFlags;
-
                     minerva.Rect.copyTo(input.layoutSlot, output.layoutSlot);
                     minerva.Rect.copyTo(input.layoutClip, output.layoutClip);
                     minerva.Size.copyTo(input.renderSize, output.renderSize);
@@ -1924,7 +1793,6 @@ var minerva;
                     minerva.mat3.copyTo(input.layoutXform, output.layoutXform);
                     minerva.Point.copyTo(input.visualOffset, output.visualOffset);
                 };
-
                 ArrangePipeDef.prototype.flush = function (input, state, output) {
                     var newDirty = (output.dirtyFlags | input.dirtyFlags) & ~output.origDirtyFlags;
                     output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
@@ -1932,7 +1800,6 @@ var minerva;
                     output.newUiFlags = (output.uiFlags | input.uiFlags) & ~output.origUiFlags;
                     input.dirtyFlags = output.dirtyFlags;
                     input.uiFlags = output.uiFlags;
-
                     minerva.Rect.copyTo(output.layoutSlot, input.layoutSlot);
                     minerva.Rect.copyTo(output.layoutClip, input.layoutClip);
                     minerva.Size.copyTo(output.renderSize, input.renderSize);
@@ -1943,15 +1810,16 @@ var minerva;
                 return ArrangePipeDef;
             })(minerva.pipe.TriPipeDef);
             arrange.ArrangePipeDef = ArrangePipeDef;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.applyRounding = function (input, state, output, tree, finalRect) {
                     var fr = state.finalRect;
@@ -1960,38 +1828,36 @@ var minerva;
                         fr.y = Math.round(finalRect.y);
                         fr.width = Math.round(finalRect.width);
                         fr.height = Math.round(finalRect.height);
-                    } else {
+                    }
+                    else {
                         minerva.Rect.copyTo(finalRect, fr);
                     }
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 var testRect = new minerva.Rect();
                 var fwClip = new minerva.Rect();
                 tapins.buildLayoutClip = function (input, state, output, tree, finalRect) {
                     var lc = output.layoutClip;
                     minerva.Rect.copyTo(state.finalRect, lc);
-
                     var vo = output.visualOffset;
                     lc.x = Math.max(lc.x - vo.x, 0);
                     lc.y = Math.max(lc.y - vo.y, 0);
-
                     if (input.useLayoutRounding) {
                         lc.x = Math.round(lc.x);
                         lc.y = Math.round(lc.y);
                     }
-
                     testRect.x = testRect.y = 0;
                     var as = state.arrangedSize;
                     minerva.Size.copyTo(as, testRect);
@@ -2000,27 +1866,26 @@ var minerva;
                         fwClip.width = fwClip.height = Number.POSITIVE_INFINITY;
                         core.helpers.coerceSize(fwClip, input);
                         minerva.Rect.intersection(lc, fwClip);
-                    } else {
+                    }
+                    else {
                         lc.x = lc.y = lc.width = lc.height = 0;
                     }
-
                     if (!minerva.Rect.isEqual(output.layoutClip, input.layoutClip)) {
                         output.dirtyFlags |= minerva.DirtyFlags.LayoutClip;
                     }
-
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.buildLayoutXform = function (input, state, output, tree, finalRect) {
                     var vo = output.visualOffset;
@@ -2033,17 +1898,17 @@ var minerva;
                         output.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.buildRenderSize = function (input, state, output, tree, finalRect) {
                     minerva.Size.copyTo(state.arrangedSize, output.renderSize);
@@ -2055,58 +1920,66 @@ var minerva;
                     }
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.calcFlip = function (input, state, output, tree, finalRect) {
+                    /* TODO: IMPLEMENT
+                     var flipHoriz = false;
+                     var flowDirection = fe.FlowDirection;
+                     var visualParentNode = <FENode>node.VisualParentNode;
+                     if (visualParentNode)
+                     flipHoriz = visualParentNode.XObject.FlowDirection !== flowDirection;
+                     else if (node.ParentNode instanceof Controls.Primitives.PopupNode)
+                     flipHoriz = (<Controls.Primitives.PopupNode>node.ParentNode).XObject.FlowDirection !== flowDirection;
+                     else
+                     flipHoriz = flowDirection === FlowDirection.RightToLeft;
+                     */
                     state.flipHorizontal = false;
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.calcStretched = function (input, state, output, tree, finalRect) {
                     minerva.Rect.copyTo(finalRect, output.layoutSlot);
-
                     var fr = state.finalRect;
                     minerva.Thickness.shrinkRect(input.margin, fr);
-
                     var stretched = state.stretched;
                     stretched.width = fr.width;
                     stretched.height = fr.height;
                     core.helpers.coerceSize(stretched, input);
-
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.calcVisualOffset = function (input, state, output, tree, finalRect) {
                     var vo = output.visualOffset;
@@ -2114,7 +1987,6 @@ var minerva;
                     var constrained = state.constrained;
                     vo.x = fr.x;
                     vo.y = fr.y;
-
                     if (!tree.isTop) {
                         switch (input.horizontalAlignment) {
                             case 0 /* Left */:
@@ -2129,7 +2001,6 @@ var minerva;
                                 vo.x += Math.max((fr.width - constrained.width) * 0.5, 0);
                                 break;
                         }
-
                         switch (input.verticalAlignment) {
                             case 0 /* Top */:
                                 break;
@@ -2144,58 +2015,52 @@ var minerva;
                                 break;
                         }
                     }
-
                     if (input.useLayoutRounding) {
                         vo.x = Math.round(vo.x);
                         vo.y = Math.round(vo.y);
                     }
-
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.checkNeedArrange = function (input, state, output, tree, finalRect) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Arrange) > 0)
                         return true;
                     return !minerva.Rect.isEqual(output.layoutSlot, state.finalRect);
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, tree, finalRect) {
                     output.dirtyFlags &= ~minerva.DirtyFlags.Arrange;
-
                     var as = state.arrangedSize;
                     if (input.horizontalAlignment === 3 /* Stretch */)
                         as.width = Math.max(as.width, state.framework.width);
-
                     if (input.verticalAlignment === 3 /* Stretch */)
                         as.height = Math.max(as.height, state.framework.height);
-
                     if (input.useLayoutRounding) {
                         as.width = Math.round(as.width);
                         as.height = Math.round(as.height);
                     }
-
                     var constrained = state.constrained;
                     minerva.Size.copyTo(as, constrained);
                     core.helpers.coerceSize(constrained, input);
@@ -2203,42 +2068,40 @@ var minerva;
                     constrained.height = Math.min(constrained.height, as.height);
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, finalRect) {
                     var cr = state.childRect;
                     cr.x = cr.y = 0;
                     minerva.Size.copyTo(state.finalSize, cr);
-
                     for (var walker = tree.walk(); walker.step();) {
                         var child = walker.current;
                         child.arrange(state.childRect);
                     }
-
                     minerva.Size.copyTo(cr, state.arrangedSize);
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, tree, finalRect) {
                     var lc = output.layoutClip;
@@ -2247,48 +2110,44 @@ var minerva;
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.prepareOverride = function (input, state, output, tree, finalRect) {
                     var framework = state.framework;
                     framework.width = 0;
                     framework.height = 0;
                     core.helpers.coerceSize(framework, input);
-
                     if (input.horizontalAlignment === 3 /* Stretch */)
                         framework.width = Math.max(framework.width, state.stretched.width);
-
                     if (input.verticalAlignment === 3 /* Stretch */)
                         framework.height = Math.max(framework.height, state.stretched.height);
-
                     var fs = state.finalSize;
                     var hd = input.hiddenDesire;
                     fs.width = Math.max(hd.width, framework.width);
                     fs.height = Math.max(hd.height, framework.height);
-
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.validateFinalRect = function (input, state, output, tree, finalRect) {
                     var fr = state.finalRect;
@@ -2298,17 +2157,17 @@ var minerva;
                     }
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var arrange;
         (function (arrange) {
+            var tapins;
             (function (tapins) {
                 tapins.validateVisibility = function (input, state, output, tree, finalRect) {
                     if (input.visibility !== 0 /* Visible */) {
@@ -2317,16 +2176,15 @@ var minerva;
                     }
                     return true;
                 };
-            })(arrange.tapins || (arrange.tapins = {}));
-            var tapins = arrange.tapins;
-        })(core.arrange || (core.arrange = {}));
-        var arrange = core.arrange;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = arrange.tapins || (arrange.tapins = {}));
+        })(arrange = core.arrange || (core.arrange = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
             var DraftPipeDef = (function (_super) {
                 __extends(DraftPipeDef, _super);
@@ -2336,77 +2194,75 @@ var minerva;
                 }
                 DraftPipeDef.prototype.prepare = function (data) {
                 };
-
                 DraftPipeDef.prototype.flush = function (data) {
                 };
                 return DraftPipeDef;
             })(minerva.pipe.PipeDef);
             draft.DraftPipeDef = DraftPipeDef;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.arrange = function (data) {
                     if (data.flag !== 4096 /* ArrangeHint */)
                         return true;
-
                     if (data.arrangeList.length <= 0)
                         return false;
-
                     var updater;
                     while ((updater = data.arrangeList.shift()) != null) {
                         updater.doArrange();
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.determinePhase = function (data) {
                     data.flag = 0 /* None */;
                     var assets = data.assets;
                     if (assets.visibility !== 0 /* Visible */)
                         return true;
-
                     if ((assets.uiFlags & 2048 /* MeasureHint */) > 0) {
                         data.flag = 2048 /* MeasureHint */;
-                    } else if ((assets.uiFlags & 4096 /* ArrangeHint */) > 0) {
+                    }
+                    else if ((assets.uiFlags & 4096 /* ArrangeHint */) > 0) {
                         data.flag = 4096 /* ArrangeHint */;
-                    } else if ((assets.uiFlags & 8192 /* SizeHint */) > 0) {
+                    }
+                    else if ((assets.uiFlags & 8192 /* SizeHint */) > 0) {
                         data.flag = 8192 /* SizeHint */;
-                    } else {
+                    }
+                    else {
                         return false;
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.flushPrevious = function (data) {
                     var updater;
@@ -2418,73 +2274,67 @@ var minerva;
                     }
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.measure = function (data) {
                     if (data.flag !== 2048 /* MeasureHint */)
                         return true;
-
                     if (data.measureList.length <= 0)
                         return false;
-
                     var updater;
                     while ((updater = data.measureList.shift()) != null) {
                         updater.doMeasure();
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.notifyResize = function (data) {
                     if (data.flag !== 8192 /* SizeHint */)
                         return true;
                     if (data.sizingUpdates.length <= 0)
                         return true;
-
                     var update;
                     while ((update = data.sizingUpdates.pop()) != null) {
                         update.updater.onSizeChanged(update.oldSize, update.newSize);
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.prepareArrange = function (data) {
                     if (data.flag !== 4096 /* ArrangeHint */)
                         return true;
-
                     for (var walker = data.updater.walkDeep(); walker.step();) {
                         var assets = walker.current.assets;
                         if (assets.visibility !== 0 /* Visible */) {
@@ -2495,36 +2345,32 @@ var minerva;
                             walker.skipBranch();
                             continue;
                         }
-
                         assets.uiFlags &= ~4096 /* ArrangeHint */;
                         if ((assets.dirtyFlags & minerva.DirtyFlags.Arrange) > 0)
                             data.arrangeList.push(walker.current);
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.prepareMeasure = function (data) {
                     if (data.flag !== 2048 /* MeasureHint */)
                         return true;
-
                     var last = data.assets.previousConstraint;
                     if (data.tree.isContainer && (minerva.Size.isUndef(last) || (!minerva.Size.isEqual(last, data.surfaceSize)))) {
                         data.assets.dirtyFlags |= minerva.DirtyFlags.Measure;
                         minerva.Size.copyTo(data.surfaceSize, data.assets.previousConstraint);
                     }
-
                     for (var walker = data.updater.walkDeep(); walker.step();) {
                         var assets = walker.current.assets;
                         if (assets.visibility !== 0 /* Visible */) {
@@ -2535,30 +2381,27 @@ var minerva;
                             walker.skipBranch();
                             continue;
                         }
-
                         assets.uiFlags &= ~2048 /* MeasureHint */;
                         if ((assets.dirtyFlags & minerva.DirtyFlags.Measure) > 0)
                             data.measureList.push(walker.current);
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.prepareSizing = function (data) {
                     if (data.flag !== 8192 /* SizeHint */)
                         return true;
-
                     for (var walker = data.updater.walkDeep(); walker.step();) {
                         var assets = walker.current.assets;
                         if (assets.visibility !== 0 /* Visible */) {
@@ -2569,33 +2412,29 @@ var minerva;
                             walker.skipBranch();
                             continue;
                         }
-
                         assets.uiFlags &= ~8192 /* SizeHint */;
                         if (assets.lastRenderSize !== undefined)
                             data.sizingList.push(walker.current);
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var draft;
         (function (draft) {
+            var tapins;
             (function (tapins) {
                 tapins.sizing = function (data) {
                     if (data.flag !== 8192 /* SizeHint */)
                         return true;
-
                     if (data.sizingList.length <= 0)
                         return false;
-
                     var updater;
                     var oldSize = new minerva.Size();
                     var newSize = new minerva.Size();
@@ -2611,19 +2450,17 @@ var minerva;
                             newSize = new minerva.Size();
                         }
                     }
-
                     return true;
                 };
-            })(draft.tapins || (draft.tapins = {}));
-            var tapins = draft.tapins;
-        })(core.draft || (core.draft = {}));
-        var draft = core.draft;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = draft.tapins || (draft.tapins = {}));
+        })(draft = core.draft || (core.draft = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
             var HitTestPipeDef = (function (_super) {
                 __extends(HitTestPipeDef, _super);
@@ -2634,74 +2471,73 @@ var minerva;
                 return HitTestPipeDef;
             })(minerva.pipe.PipeDef);
             hittest.HitTestPipeDef = HitTestPipeDef;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function canHit(data, pos, hitList, ctx, includeAll) {
                     var assets = data.assets;
                     return !!assets.totalIsRenderVisible && !!assets.totalIsHitTestVisible;
                 }
                 tapins.canHit = canHit;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function canHitInside(data, pos, hitList, ctx, includeAll) {
                     if (data.hitChildren)
                         return true;
-
                     hitList.shift();
                     ctx.restore();
                     return false;
                 }
                 tapins.canHitInside = canHitInside;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function completeCtx(data, pos, hitList, ctx, includeAll) {
                     ctx.restore();
                     return true;
                 }
                 tapins.completeCtx = completeCtx;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function insideChildren(data, pos, hitList, ctx, includeAll) {
                     hitList.unshift(data.updater);
-
                     var hit = false;
                     for (var walker = data.tree.walk(3 /* ZReverse */); walker.step();) {
                         hit = walker.current.hitTest(pos, hitList, ctx, includeAll) || hit;
@@ -2709,92 +2545,83 @@ var minerva;
                             break;
                     }
                     data.hitChildren = hit;
-
                     return true;
                 }
                 tapins.insideChildren = insideChildren;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function insideClip(data, pos, hitList, ctx, includeAll) {
                     var clip = data.assets.clip;
                     if (!clip)
                         return true;
-
                     var bounds = clip.GetBounds();
                     minerva.Rect.transform(bounds, ctx.currentTransform);
                     if (!minerva.Rect.containsPoint(bounds, pos)) {
                         ctx.restore();
                         return false;
                     }
-
                     clip.Draw(ctx);
                     if (!ctx.raw.isPointInPath(pos.x, pos.y)) {
                         ctx.restore();
                         return false;
                     }
-
                     return true;
                 }
                 tapins.insideClip = insideClip;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function insideLayoutClip(data, pos, hitList, ctx, includeAll) {
                     if (data.hitChildren)
                         return true;
-
                     var clc = data.assets.compositeLayoutClip;
                     if (!clc || minerva.Rect.isEmpty(clc))
                         return true;
-
                     var lcbounds = data.layoutClipBounds;
                     minerva.Rect.copyTo(clc, lcbounds);
                     minerva.Rect.transform(lcbounds, ctx.currentTransform);
-
                     if (!minerva.Rect.containsPoint(lcbounds, pos)) {
                         hitList.shift();
                         ctx.restore();
                         return false;
                     }
-
                     return true;
                 }
                 tapins.insideLayoutClip = insideLayoutClip;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function insideObject(data, pos, hitList, ctx, includeAll) {
                     if (data.hitChildren)
                         return true;
-
                     var bounds = data.bounds;
                     minerva.Rect.copyTo(data.assets.extents, bounds);
                     minerva.Rect.transform(bounds, ctx.currentTransform);
@@ -2803,21 +2630,20 @@ var minerva;
                         ctx.restore();
                         return false;
                     }
-
                     return true;
                 }
                 tapins.insideObject = insideObject;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var hittest;
         (function (hittest) {
+            var tapins;
             (function (tapins) {
                 function prepareCtx(data, pos, hitList, ctx, includeAll) {
                     ctx.save();
@@ -2825,16 +2651,15 @@ var minerva;
                     return true;
                 }
                 tapins.prepareCtx = prepareCtx;
-            })(hittest.tapins || (hittest.tapins = {}));
-            var tapins = hittest.tapins;
-        })(core.hittest || (core.hittest = {}));
-        var hittest = core.hittest;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = hittest.tapins || (hittest.tapins = {}));
+        })(hittest = core.hittest || (core.hittest = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
             var MeasureBinder = (function () {
                 function MeasureBinder() {
@@ -2844,10 +2669,8 @@ var minerva;
                     var last = assets.previousConstraint;
                     var old = new minerva.Size();
                     var tree = updater.tree;
-
                     if (!tree.surface && minerva.Size.isUndef(last) && !tree.visualParent && tree.isLayoutContainer)
                         last.width = last.height = Number.POSITIVE_INFINITY;
-
                     var success = false;
                     if (!minerva.Size.isUndef(last)) {
                         minerva.Size.copyTo(assets.desiredSize, old);
@@ -2855,24 +2678,22 @@ var minerva;
                         if (minerva.Size.isEqual(old, assets.desiredSize))
                             return success;
                     }
-
                     if (tree.visualParent)
                         tree.visualParent.invalidateMeasure();
-
                     assets.dirtyFlags &= ~minerva.DirtyFlags.Measure;
                     return success;
                 };
                 return MeasureBinder;
             })();
             measure.MeasureBinder = MeasureBinder;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
             var MeasurePipeDef = (function (_super) {
                 __extends(MeasurePipeDef, _super);
@@ -2885,7 +2706,6 @@ var minerva;
                         availableSize: new minerva.Size()
                     };
                 };
-
                 MeasurePipeDef.prototype.createOutput = function () {
                     return {
                         previousConstraint: new minerva.Size(),
@@ -2900,7 +2720,6 @@ var minerva;
                         newUiFlags: 0
                     };
                 };
-
                 MeasurePipeDef.prototype.prepare = function (input, state, output) {
                     minerva.Size.copyTo(input.previousConstraint, output.previousConstraint);
                     minerva.Size.copyTo(input.desiredSize, output.desiredSize);
@@ -2908,7 +2727,6 @@ var minerva;
                     output.origDirtyFlags = output.dirtyFlags = input.dirtyFlags;
                     output.origUiFlags = output.uiFlags = input.uiFlags;
                 };
-
                 MeasurePipeDef.prototype.flush = function (input, state, output) {
                     var newDirty = (output.dirtyFlags | input.dirtyFlags) & ~output.origDirtyFlags;
                     output.newUpDirty = newDirty & minerva.DirtyFlags.UpDirtyState;
@@ -2923,31 +2741,32 @@ var minerva;
                 return MeasurePipeDef;
             })(minerva.pipe.TriPipeDef);
             measure.MeasurePipeDef = MeasurePipeDef;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.applyTemplate = function (input, state, output, tree, availableSize) {
                     tree.applyTemplate();
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.checkNeedMeasure = function (input, state, output, tree, availableSize) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Measure) > 0)
@@ -2959,34 +2778,34 @@ var minerva;
                     }
                     return false;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.completeOverride = function (input, state, output, tree, availableSize) {
                     output.dirtyFlags &= ~minerva.DirtyFlags.Measure;
                     minerva.Size.copyTo(output.desiredSize, output.hiddenDesire);
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.doOverride = function (input, state, output, tree, availableSize) {
                     var ds = output.desiredSize;
@@ -2998,17 +2817,17 @@ var minerva;
                     }
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.finishDesired = function (input, state, output, tree, availableSize) {
                     var ds = output.desiredSize;
@@ -3022,17 +2841,17 @@ var minerva;
                     }
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.invalidateFuture = function (input, state, output, tree, availableSize) {
                     output.dirtyFlags |= minerva.DirtyFlags.Arrange;
@@ -3040,17 +2859,17 @@ var minerva;
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.prepareOverride = function (input, state, output, tree, availableSize) {
                     minerva.Size.copyTo(availableSize, state.availableSize);
@@ -3058,17 +2877,17 @@ var minerva;
                     core.helpers.coerceSize(state.availableSize, input);
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.validate = function (input, state, output, tree, availableSize) {
                     if (isNaN(availableSize.width) || isNaN(availableSize.height)) {
@@ -3077,17 +2896,17 @@ var minerva;
                     }
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var measure;
         (function (measure) {
+            var tapins;
             (function (tapins) {
                 tapins.validateVisibility = function (input, state, output, tree, availableSize) {
                     if (input.visibility !== 0 /* Visible */) {
@@ -3098,16 +2917,15 @@ var minerva;
                     }
                     return true;
                 };
-            })(measure.tapins || (measure.tapins = {}));
-            var tapins = measure.tapins;
-        })(core.measure || (core.measure = {}));
-        var measure = core.measure;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = measure.tapins || (measure.tapins = {}));
+        })(measure = core.measure || (core.measure = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
             var ProcessDownPipeDef = (function (_super) {
                 __extends(ProcessDownPipeDef, _super);
@@ -3122,7 +2940,6 @@ var minerva;
                         subtreeDownDirty: 0
                     };
                 };
-
                 ProcessDownPipeDef.prototype.createOutput = function () {
                     return {
                         totalIsRenderVisible: false,
@@ -3136,7 +2953,6 @@ var minerva;
                         newUpDirty: 0
                     };
                 };
-
                 ProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.LocalTransform) > 0) {
                         input.dirtyFlags |= minerva.DirtyFlags.Transform;
@@ -3151,7 +2967,6 @@ var minerva;
                     minerva.mat3.copyTo(input.absoluteXform, output.absoluteXform);
                     state.subtreeDownDirty = 0;
                 };
-
                 ProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
                     output.newUpDirty = (output.dirtyFlags & ~input.dirtyFlags) & minerva.DirtyFlags.UpDirtyState;
                     input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.DownDirtyState;
@@ -3166,65 +2981,62 @@ var minerva;
                 return ProcessDownPipeDef;
             })(minerva.pipe.TriPipeDef);
             processdown.ProcessDownPipeDef = ProcessDownPipeDef;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.calcAbsoluteXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
-
                     var abs = output.absoluteXform;
-
+                    //abs = render * vp abs
                     if (vpinput)
                         minerva.mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
                     else
                         minerva.mat3.copyTo(output.renderXform, abs);
-
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.calcRenderXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
-
                     var rx = output.renderXform;
                     if (input.carrierXform)
-                        minerva.mat3.multiply(input.carrierXform, input.layoutXform, rx);
+                        minerva.mat3.multiply(input.carrierXform, input.layoutXform, rx); //render = carrier * layout
                     else
-                        minerva.mat3.copyTo(input.layoutXform, rx);
-                    minerva.mat3.multiply(rx, state.localXform, rx);
-
+                        minerva.mat3.copyTo(input.layoutXform, rx); //render = layout
+                    minerva.mat3.multiply(rx, state.localXform, rx); //render = render * local
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.calcXformOrigin = function (input, state, output, vpinput, tree) {
                     var xo = state.xformOrigin;
@@ -3232,125 +3044,123 @@ var minerva;
                     if (!userxo) {
                         xo.x = 0;
                         xo.y = 0;
-                    } else {
+                    }
+                    else {
                         xo.x = input.actualWidth * userxo.x;
                         xo.y = input.actualHeight * userxo.y;
                     }
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.processHitTestVisibility = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.HitTestVisibility) === 0)
                         return true;
-
                     if (vpinput) {
                         output.totalIsHitTestVisible = vpinput.totalIsHitTestVisible && input.isHitTestVisible;
-                    } else {
+                    }
+                    else {
                         output.totalIsHitTestVisible = input.isHitTestVisible;
                     }
-
                     if (output.totalIsHitTestVisible !== input.totalIsHitTestVisible)
                         state.subtreeDownDirty |= minerva.DirtyFlags.HitTestVisibility;
-
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
+                //NOTE: Canvas+UserControl doesn't do this
                 tapins.processLayoutClip = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                         return true;
-
                     var lc = input.layoutClip;
                     var clc = output.compositeLayoutClip;
                     if (!vpinput || minerva.Rect.isEmpty(vpinput.compositeLayoutClip)) {
                         minerva.Rect.copyTo(lc, clc);
-                    } else {
+                    }
+                    else {
                         minerva.Rect.copyTo(vpinput.compositeLayoutClip, clc);
                         if (!minerva.Rect.isEmpty(lc))
                             minerva.Rect.intersection(clc, lc);
                     }
-
                     if (!minerva.Rect.isEqual(input.compositeLayoutClip, output.compositeLayoutClip)) {
                         state.subtreeDownDirty |= minerva.DirtyFlags.LayoutClip;
                     }
-
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.processLocalXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.LocalTransform) === 0)
                         return true;
-
                     var local = minerva.mat3.identity(state.localXform);
                     var render = input.renderTransform;
                     if (!render)
                         return true;
-
                     var origin = state.xformOrigin;
                     minerva.mat3.translate(local, origin.x, origin.y);
-                    minerva.mat3.multiply(local, render.getRaw(), local);
+                    minerva.mat3.multiply(local, render.getRaw(), local); //local = local * render
                     minerva.mat3.translate(local, -origin.x, -origin.y);
-
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.processRenderVisibility = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.RenderVisibility) === 0)
                         return true;
-
+                    //Update bounds
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
-
+                    //NOTE: Removing visual parent `UpdateBounds`
+                    //      In our down pass, we should only be affecting self and children
+                    //Calculate
                     if (vpinput) {
                         output.totalOpacity = vpinput.totalOpacity * input.opacity;
                         output.totalIsRenderVisible = vpinput.totalIsRenderVisible && (input.visibility === 0 /* Visible */);
-                    } else {
+                    }
+                    else {
                         output.totalOpacity = input.opacity;
                         output.totalIsRenderVisible = input.visibility === 0 /* Visible */;
                     }
-
+                    //Update bounds, propagate render visibility
                     if (input.totalIsRenderVisible !== output.totalIsRenderVisible) {
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
                         state.subtreeDownDirty |= minerva.DirtyFlags.RenderVisibility;
@@ -3358,47 +3168,47 @@ var minerva;
                     if (input.totalOpacity !== output.totalOpacity) {
                         state.subtreeDownDirty |= minerva.DirtyFlags.RenderVisibility;
                     }
-
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.processXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
-
                     if (!minerva.mat3.equal(input.renderXform, output.renderXform)) {
+                        //NOTE: Removing visual parent (or surface) `Invalidate`
+                        //      In our down pass, we should only be invalidating self and children
                         output.dirtyFlags |= minerva.DirtyFlags.NewBounds;
                         state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
-                    } else if (!minerva.mat3.equal(input.absoluteXform, output.absoluteXform)) {
+                    }
+                    else if (!minerva.mat3.equal(input.absoluteXform, output.absoluteXform)) {
                         state.subtreeDownDirty |= minerva.DirtyFlags.Transform;
                     }
-
+                    //TODO: We can optimize to shift bounds rather than going through an UpdateBounds invalidation
                     output.dirtyFlags |= minerva.DirtyFlags.Bounds;
-
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processdown;
         (function (processdown) {
+            var tapins;
             (function (tapins) {
                 tapins.propagateDirtyToChildren = function (input, state, output, vpinput, tree) {
                     var newDownDirty = state.subtreeDownDirty & minerva.DirtyFlags.PropagateDown;
@@ -3410,16 +3220,15 @@ var minerva;
                     }
                     return true;
                 };
-            })(processdown.tapins || (processdown.tapins = {}));
-            var tapins = processdown.tapins;
-        })(core.processdown || (core.processdown = {}));
-        var processdown = core.processdown;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processdown.tapins || (processdown.tapins = {}));
+        })(processdown = core.processdown || (core.processdown = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processup;
         (function (processup) {
             var ProcessUpPipeDef = (function (_super) {
                 __extends(ProcessUpPipeDef, _super);
@@ -3435,7 +3244,6 @@ var minerva;
                         hasInvalidate: false
                     };
                 };
-
                 ProcessUpPipeDef.prototype.createOutput = function () {
                     return {
                         extents: new minerva.Rect(),
@@ -3447,7 +3255,6 @@ var minerva;
                         forceInvalidate: false
                     };
                 };
-
                 ProcessUpPipeDef.prototype.prepare = function (input, state, output) {
                     output.dirtyFlags = input.dirtyFlags;
                     minerva.Rect.copyTo(input.extents, output.extents);
@@ -3457,7 +3264,6 @@ var minerva;
                     minerva.Rect.copyTo(input.dirtyRegion, output.dirtyRegion);
                     output.forceInvalidate = input.forceInvalidate;
                 };
-
                 ProcessUpPipeDef.prototype.flush = function (input, state, output) {
                     input.dirtyFlags = output.dirtyFlags & ~minerva.DirtyFlags.UpDirtyState;
                     minerva.Rect.copyTo(output.extents, input.extents);
@@ -3470,20 +3276,20 @@ var minerva;
                 return ProcessUpPipeDef;
             })(minerva.pipe.TriPipeDef);
             processup.ProcessUpPipeDef = ProcessUpPipeDef;
-        })(core.processup || (core.processup = {}));
-        var processup = core.processup;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(processup = core.processup || (core.processup = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processup;
         (function (processup) {
+            var tapins;
             (function (tapins) {
                 tapins.calcActualSize = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
-
                     var as = state.actualSize;
                     as.width = input.actualWidth;
                     as.height = input.actualHeight;
@@ -3492,25 +3298,23 @@ var minerva;
                         as.width = 0;
                     if (isNaN(as.height))
                         as.height = 0;
-
                     return true;
                 };
-            })(processup.tapins || (processup.tapins = {}));
-            var tapins = processup.tapins;
-        })(core.processup || (core.processup = {}));
-        var processup = core.processup;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processup.tapins || (processup.tapins = {}));
+        })(processup = core.processup || (core.processup = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processup;
         (function (processup) {
+            var tapins;
             (function (tapins) {
                 tapins.calcExtents = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
-
                     var e = output.extents;
                     var ewc = output.extentsWithChildren;
                     e.x = ewc.x = 0;
@@ -3518,48 +3322,44 @@ var minerva;
                     var as = state.actualSize;
                     e.width = ewc.width = as.width;
                     e.height = ewc.height = as.height;
-
                     var assets;
                     for (var walker = tree.walk(); walker.step();) {
                         assets = walker.current.assets;
                         if (assets.totalIsRenderVisible)
                             minerva.Rect.union(ewc, assets.globalBoundsWithChildren);
                     }
-
                     return true;
                 };
-            })(processup.tapins || (processup.tapins = {}));
-            var tapins = processup.tapins;
-        })(core.processup || (core.processup = {}));
-        var processup = core.processup;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processup.tapins || (processup.tapins = {}));
+        })(processup = core.processup || (core.processup = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processup;
         (function (processup) {
+            var tapins;
             (function (tapins) {
                 tapins.calcPaintBounds = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
-
                     core.helpers.intersectBoundsWithClipPath(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform, input.clip, input.layoutClip);
                     core.helpers.intersectBoundsWithClipPath(output.surfaceBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.absoluteXform, input.clip, input.layoutClip);
-
                     return true;
                 };
-            })(processup.tapins || (processup.tapins = {}));
-            var tapins = processup.tapins;
-        })(core.processup || (core.processup = {}));
-        var processup = core.processup;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processup.tapins || (processup.tapins = {}));
+        })(processup = core.processup || (core.processup = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processup;
         (function (processup) {
+            var tapins;
             (function (tapins) {
                 tapins.processBounds = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
@@ -3570,23 +3370,24 @@ var minerva;
                         vo.updateBounds();
                         vo.invalidate(input.surfaceBoundsWithChildren);
                         state.hasNewBounds = true;
-                    } else if (!minerva.Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate) {
+                    }
+                    else if (!minerva.Rect.isEqual(input.extentsWithChildren, output.extentsWithChildren) || input.forceInvalidate) {
                         state.hasNewBounds = true;
                     }
                     output.forceInvalidate = false;
                     return true;
                 };
-            })(processup.tapins || (processup.tapins = {}));
-            var tapins = processup.tapins;
-        })(core.processup || (core.processup = {}));
-        var processup = core.processup;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processup.tapins || (processup.tapins = {}));
+        })(processup = core.processup || (core.processup = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processup;
         (function (processup) {
+            var tapins;
             (function (tapins) {
                 tapins.processInvalidate = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Invalidate) === 0 && !state.hasInvalidate)
@@ -3596,17 +3397,17 @@ var minerva;
                     dirty.x = dirty.y = dirty.width = dirty.height = 0;
                     return true;
                 };
-            })(processup.tapins || (processup.tapins = {}));
-            var tapins = processup.tapins;
-        })(core.processup || (core.processup = {}));
-        var processup = core.processup;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processup.tapins || (processup.tapins = {}));
+        })(processup = core.processup || (core.processup = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var processup;
         (function (processup) {
+            var tapins;
             (function (tapins) {
                 tapins.processNewBounds = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.NewBounds) === 0 && !state.hasNewBounds)
@@ -3616,22 +3417,20 @@ var minerva;
                     minerva.Rect.union(output.dirtyRegion, output.surfaceBoundsWithChildren);
                     return true;
                 };
-            })(processup.tapins || (processup.tapins = {}));
-            var tapins = processup.tapins;
-        })(core.processup || (core.processup = {}));
-        var processup = core.processup;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = processup.tapins || (processup.tapins = {}));
+        })(processup = core.processup || (core.processup = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 if (!CanvasRenderingContext2D.prototype.isPointInStroke) {
     CanvasRenderingContext2D.prototype.isPointInStroke = function (x, y) {
         return false;
     };
 }
-
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
             var ARC_TO_BEZIER = 0.55228475;
             var caps = [
@@ -3664,84 +3463,70 @@ var minerva;
                     enumerable: true,
                     configurable: true
                 });
-
                 RenderContext.prototype.resize = function (width, height) {
                     var canvas = this.raw.canvas;
                     canvas.width = width;
                     canvas.height = height;
                 };
-
                 RenderContext.prototype.save = function () {
                     this.$$transforms.push(minerva.mat3.create(this.currentTransform));
                     this.raw.save();
                 };
-
                 RenderContext.prototype.restore = function () {
                     var old = this.$$transforms.pop();
                     if (old)
                         minerva.mat3.copyTo(old, this.currentTransform);
                     this.raw.restore();
                 };
-
                 RenderContext.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
                     minerva.mat3.copyTo([m11, m12, m21, m22, dx, dy], this.currentTransform);
                     this.raw.setTransform(m11, m12, m21, m22, dx, dy);
                 };
-
                 RenderContext.prototype.resetTransform = function () {
                     minerva.mat3.identity(this.currentTransform);
                     var raw = this.raw;
                     if (raw.resetTransform)
                         raw.resetTransform();
                 };
-
                 RenderContext.prototype.transform = function (m11, m12, m21, m22, dx, dy) {
                     var ct = this.currentTransform;
                     minerva.mat3.multiply(ct, minerva.mat3.create([m11, m12, m21, m22, dx, dy]), ct);
                     this.raw.transform(m11, m12, m21, m22, dx, dy);
                 };
-
                 RenderContext.prototype.scale = function (x, y) {
                     minerva.mat3.scale(this.currentTransform, x, y);
                     this.raw.scale(x, y);
                 };
-
                 RenderContext.prototype.rotate = function (angle) {
                     var ct = this.currentTransform;
                     var r = minerva.mat3.createRotate(angle);
-                    minerva.mat3.multiply(ct, r, ct);
+                    minerva.mat3.multiply(ct, r, ct); //ct = ct * r
                     this.raw.rotate(angle);
                 };
-
                 RenderContext.prototype.translate = function (x, y) {
                     minerva.mat3.translate(this.currentTransform, x, y);
                     this.raw.translate(x, y);
                 };
-
                 RenderContext.prototype.transformMatrix = function (mat) {
                     var ct = this.currentTransform;
-                    minerva.mat3.multiply(ct, mat, ct);
+                    minerva.mat3.multiply(ct, mat, ct); //ct = ct * matrix
                     this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
-
                 RenderContext.prototype.pretransformMatrix = function (mat) {
                     var ct = this.currentTransform;
-                    minerva.mat3.multiply(mat, ct, ct);
+                    minerva.mat3.multiply(mat, ct, ct); //ct = matrix * ct
                     this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
-
                 RenderContext.prototype.clipGeometry = function (geom) {
                     geom.Draw(this);
                     this.raw.clip();
                 };
-
                 RenderContext.prototype.clipRect = function (rect) {
                     var raw = this.raw;
                     raw.beginPath();
                     raw.rect(rect.x, rect.y, rect.width, rect.height);
                     raw.clip();
                 };
-
                 RenderContext.prototype.fillEx = function (brush, region, fillRule) {
                     var raw = this.raw;
                     brush.setupBrush(raw, region);
@@ -3749,48 +3534,41 @@ var minerva;
                     if (fillRule == null) {
                         raw.fillRule = raw.msFillRule = "nonzero";
                         raw.fill();
-                    } else {
+                    }
+                    else {
                         var fr = fillRule === 0 /* EvenOdd */ ? "evenodd" : "nonzero";
                         raw.fillRule = raw.msFillRule = fr;
                         raw.fill(fr);
                     }
                 };
-
                 RenderContext.prototype.drawRectEx = function (extents, cr) {
                     var raw = this.raw;
                     if (!cr || minerva.CornerRadius.isEmpty(cr)) {
                         raw.rect(extents.x, extents.y, extents.width, extents.height);
                         return;
                     }
-
                     var top_adj = Math.max(cr.topLeft + cr.topRight - extents.width, 0) / 2;
                     var bottom_adj = Math.max(cr.bottomLeft + cr.bottomRight - extents.width, 0) / 2;
                     var left_adj = Math.max(cr.topLeft + cr.bottomLeft - extents.height, 0) / 2;
                     var right_adj = Math.max(cr.topRight + cr.bottomRight - extents.height, 0) / 2;
-
                     var tlt = cr.topLeft - top_adj;
                     raw.moveTo(extents.x + tlt, extents.y);
-
                     var trt = cr.topRight - top_adj;
                     var trr = cr.topRight - right_adj;
                     raw.lineTo(extents.x + extents.width - trt, extents.y);
                     raw.bezierCurveTo(extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y, extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER, extents.x + extents.width, extents.y + trr);
-
                     var brr = cr.bottomRight - right_adj;
                     var brb = cr.bottomRight - bottom_adj;
                     raw.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
                     raw.bezierCurveTo(extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER, extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height, extents.x + extents.width - brb, extents.y + extents.height);
-
                     var blb = cr.bottomLeft - bottom_adj;
                     var bll = cr.bottomLeft - left_adj;
                     raw.lineTo(extents.x + blb, extents.y + extents.height);
                     raw.bezierCurveTo(extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height, extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER, extents.x, extents.y + extents.height - bll);
-
                     var tll = cr.topLeft - left_adj;
                     raw.lineTo(extents.x, extents.y + tll);
                     raw.bezierCurveTo(extents.x, extents.y + tll - tll * ARC_TO_BEZIER, extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y, extents.x + tlt, extents.y);
                 };
-
                 RenderContext.prototype.isPointInStrokeEx = function (strokePars, x, y) {
                     var raw = this.raw;
                     raw.lineWidth = strokePars.strokeThickness;
@@ -3802,21 +3580,20 @@ var minerva;
                 return RenderContext;
             })();
             render.RenderContext = RenderContext;
-
             function getIEVersion() {
                 var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
                 if (re.exec(navigator.userAgent) != null)
                     return parseFloat(RegExp.$1);
                 return -1;
             }
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
             var RenderPipeDef = (function (_super) {
                 __extends(RenderPipeDef, _super);
@@ -3829,22 +3606,22 @@ var minerva;
                         renderRegion: new minerva.Rect()
                     };
                 };
-
                 RenderPipeDef.prototype.createOutput = function () {
                     return {};
                 };
                 return RenderPipeDef;
             })(minerva.pipe.TriPipeDef);
             render.RenderPipeDef = RenderPipeDef;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.applyClip = function (input, state, output, ctx, region, tree) {
                     var clip = input.clip;
@@ -3852,32 +3629,32 @@ var minerva;
                         ctx.clipGeometry(clip);
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.doRender = function (input, state, output, ctx, region, tree) {
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.postRender = function (input, state, output, ctx, region, tree) {
                     var effect = input.effect;
@@ -3887,17 +3664,17 @@ var minerva;
                     ctx.restore();
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.preRender = function (input, state, output, ctx, region, tree) {
                     var effect = input.effect;
@@ -3907,17 +3684,17 @@ var minerva;
                     effect.PreRender(ctx);
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.prepareContext = function (input, state, output, ctx, region, tree) {
                     ctx.save();
@@ -3925,17 +3702,17 @@ var minerva;
                     ctx.raw.globalAlpha = input.totalOpacity;
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.renderChildren = function (input, state, output, ctx, region, tree) {
                     for (var walker = tree.walk(2 /* ZForward */); walker.step();) {
@@ -3943,48 +3720,48 @@ var minerva;
                     }
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.restoreContext = function (input, state, output, ctx, region, tree) {
                     ctx.restore();
                     return true;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.validate = function (input, state, output, ctx, region, tree) {
                     return !!input.totalIsRenderVisible && ((input.totalOpacity * 255) >= 0.5);
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var render;
         (function (render) {
+            var tapins;
             (function (tapins) {
                 tapins.validateRegion = function (input, state, output, ctx, region, tree) {
                     var r = state.renderRegion;
@@ -3993,16 +3770,15 @@ var minerva;
                     minerva.Rect.intersection(r, region);
                     return r.width > 0 && r.height > 0;
                 };
-            })(render.tapins || (render.tapins = {}));
-            var tapins = render.tapins;
-        })(core.render || (core.render = {}));
-        var render = core.render;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = render.tapins || (render.tapins = {}));
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var sizing;
         (function (sizing) {
             var SizingPipeDef = (function (_super) {
                 __extends(SizingPipeDef, _super);
@@ -4015,16 +3791,13 @@ var minerva;
                         useRender: false
                     };
                 };
-
                 SizingPipeDef.prototype.createOutput = function () {
                     return {
                         actualSize: new minerva.Size()
                     };
                 };
-
                 SizingPipeDef.prototype.prepare = function (input, state, output, tree) {
                 };
-
                 SizingPipeDef.prototype.flush = function (input, state, output, tree) {
                     var as = output.actualSize;
                     input.actualWidth = as.width;
@@ -4033,31 +3806,32 @@ var minerva;
                 return SizingPipeDef;
             })(minerva.pipe.TriPipeDef);
             sizing.SizingPipeDef = SizingPipeDef;
-        })(core.sizing || (core.sizing = {}));
-        var sizing = core.sizing;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+        })(sizing = core.sizing || (core.sizing = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var sizing;
         (function (sizing) {
+            var tapins;
             (function (tapins) {
                 tapins.calcUseRender = function (input, state, output, tree) {
                     state.useRender = true;
                     return true;
                 };
-            })(sizing.tapins || (sizing.tapins = {}));
-            var tapins = sizing.tapins;
-        })(core.sizing || (core.sizing = {}));
-        var sizing = core.sizing;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = sizing.tapins || (sizing.tapins = {}));
+        })(sizing = core.sizing || (core.sizing = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var core;
     (function (core) {
+        var sizing;
         (function (sizing) {
+            var tapins;
             (function (tapins) {
                 tapins.computeActual = function (input, state, output, tree) {
                     var as = output.actualSize;
@@ -4065,25 +3839,23 @@ var minerva;
                     if (input.visibility !== 0 /* Visible */) {
                         return true;
                     }
-
                     if (state.useRender) {
                         minerva.Size.copyTo(input.renderSize, as);
                         return true;
                     }
-
                     core.helpers.coerceSize(as, input);
                     return true;
                 };
-            })(sizing.tapins || (sizing.tapins = {}));
-            var tapins = sizing.tapins;
-        })(core.sizing || (core.sizing = {}));
-        var sizing = core.sizing;
-    })(minerva.core || (minerva.core = {}));
-    var core = minerva.core;
+            })(tapins = sizing.tapins || (sizing.tapins = {}));
+        })(sizing = core.sizing || (core.sizing = {}));
+    })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../core/Updater" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
             var BorderUpdater = (function (_super) {
                 __extends(BorderUpdater, _super);
@@ -4092,25 +3864,24 @@ var minerva;
                 }
                 BorderUpdater.prototype.init = function () {
                     this.setTree(new border.BorderUpdaterTree()).setMeasurePipe(minerva.singleton(border.measure.BorderMeasurePipeDef)).setArrangePipe(minerva.singleton(border.arrange.BorderArrangePipeDef)).setRenderPipe(minerva.singleton(minerva.core.render.RenderContext.hasFillRule ? border.render.BorderRenderPipeDef : border.render.ShimBorderRenderPipeDef)).setHitTestPipe(minerva.singleton(border.hittest.BorderHitTestPipeDef));
-
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();
                     assets.borderThickness = new minerva.Thickness();
                     assets.cornerRadius = new minerva.CornerRadius();
-
                     _super.prototype.init.call(this);
                 };
                 return BorderUpdater;
             })(minerva.core.Updater);
             border.BorderUpdater = BorderUpdater;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../core/UpdaterTree" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
             var BorderUpdaterTree = (function (_super) {
                 __extends(BorderUpdaterTree, _super);
@@ -4134,15 +3905,16 @@ var minerva;
                 return BorderUpdaterTree;
             })(minerva.core.UpdaterTree);
             border.BorderUpdaterTree = BorderUpdaterTree;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var arrange;
             (function (arrange) {
                 var BorderArrangePipeDef = (function (_super) {
                     __extends(BorderArrangePipeDef, _super);
@@ -4158,14 +3930,12 @@ var minerva;
                     return BorderArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.BorderArrangePipeDef = BorderArrangePipeDef;
-
                 function preOverride(input, state, output, tree, finalRect) {
                     if (!tree.subtree)
                         return true;
                     var tb = state.totalBorder;
                     minerva.Thickness.copyTo(input.padding, tb);
                     minerva.Thickness.add(tb, input.borderThickness);
-
                     var cr = state.childRect;
                     cr.x = cr.y = 0;
                     minerva.Size.copyTo(state.finalSize, cr);
@@ -4173,7 +3943,6 @@ var minerva;
                     return true;
                 }
                 arrange.preOverride = preOverride;
-
                 function doOverride(input, state, output, tree, finalRect) {
                     if (tree.subtree)
                         tree.subtree.arrange(state.childRect);
@@ -4181,17 +3950,17 @@ var minerva;
                     return true;
                 }
                 arrange.doOverride = doOverride;
-            })(border.arrange || (border.arrange = {}));
-            var arrange = border.arrange;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = border.arrange || (border.arrange = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var hittest;
             (function (hittest) {
                 var BorderHitTestPipeDef = (function (_super) {
                     __extends(BorderHitTestPipeDef, _super);
@@ -4202,12 +3971,11 @@ var minerva;
                     return BorderHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.BorderHitTestPipeDef = BorderHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         if (data.hitChildren)
                             return true;
-
                         if (!data.assets.background && !data.assets.borderBrush) {
                             hitList.shift();
                             ctx.restore();
@@ -4216,19 +3984,19 @@ var minerva;
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(border.hittest || (border.hittest = {}));
-            var hittest = border.hittest;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = border.hittest || (border.hittest = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../../core/measure/MeasurePipeDef" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var measure;
             (function (measure) {
                 var BorderMeasurePipeDef = (function (_super) {
                     __extends(BorderMeasurePipeDef, _super);
@@ -4244,7 +4012,6 @@ var minerva;
                     return BorderMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.BorderMeasurePipeDef = BorderMeasurePipeDef;
-
                 function preOverride(input, state, output, tree, availableSize) {
                     var tb = state.totalBorder;
                     minerva.Thickness.copyTo(input.padding, tb);
@@ -4253,7 +4020,6 @@ var minerva;
                     return true;
                 }
                 measure.preOverride = preOverride;
-
                 function doOverride(input, state, output, tree, availableSize) {
                     var ds = output.desiredSize;
                     if (tree.subtree) {
@@ -4263,24 +4029,23 @@ var minerva;
                     return true;
                 }
                 measure.doOverride = doOverride;
-
                 function postOverride(input, state, output, tree, availableSize) {
                     minerva.Thickness.growSize(state.totalBorder, output.desiredSize);
                     minerva.Size.min(output.desiredSize, state.availableSize);
                     return true;
                 }
                 measure.postOverride = postOverride;
-            })(border.measure || (border.measure = {}));
-            var measure = border.measure;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = border.measure || (border.measure = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
                 var BorderRenderPipeDef = (function (_super) {
                     __extends(BorderRenderPipeDef, _super);
@@ -4298,17 +4063,17 @@ var minerva;
                     return BorderRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.BorderRenderPipeDef = BorderRenderPipeDef;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
                 var ShimBorderRenderPipeDef = (function (_super) {
                     __extends(ShimBorderRenderPipeDef, _super);
@@ -4327,53 +4092,49 @@ var minerva;
                     return ShimBorderRenderPipeDef;
                 })(render.BorderRenderPipeDef);
                 render.ShimBorderRenderPipeDef = ShimBorderRenderPipeDef;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function calcInnerOuter(input, state, output, ctx, region, tree) {
                         if (!state.shouldRender)
                             return true;
-
                         minerva.Rect.copyTo(input.extents, state.fillExtents);
-
                         var bt = input.borderThickness;
                         minerva.Thickness.shrinkRect(bt, state.fillExtents);
-
                         var ia = state.innerCornerRadius;
                         minerva.CornerRadius.copyTo(input.cornerRadius, ia);
                         minerva.Thickness.shrinkCornerRadius(bt, ia);
-
                         var oa = state.outerCornerRadius;
                         minerva.CornerRadius.copyTo(input.cornerRadius, oa);
                         minerva.Thickness.growCornerRadius(bt, oa);
-
                         return true;
                     }
                     tapins.calcInnerOuter = calcInnerOuter;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function calcShouldRender(input, state, output, ctx, region, tree) {
                         state.shouldRender = false;
@@ -4388,27 +4149,26 @@ var minerva;
                         return true;
                     }
                     tapins.calcShouldRender = calcShouldRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
                         if (!state.shouldRender)
                             return true;
                         ctx.save();
                         minerva.core.helpers.renderLayoutClip(ctx, input, tree);
-
                         var borderBrush = input.borderBrush;
                         var extents = input.extents;
                         var fillExtents = state.fillExtents;
@@ -4425,31 +4185,30 @@ var minerva;
                             ctx.drawRectEx(fillExtents, state.innerCornerRadius);
                             ctx.fillEx(background, fillExtents);
                         }
-
                         ctx.restore();
                         return true;
                     }
                     tapins.doRender = doRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
+                    var shim;
                     (function (shim) {
                         function calcBalanced(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender || minerva.Thickness.isEmpty(input.borderThickness))
                                 return true;
-
                             if (minerva.Thickness.isBalanced(input.borderThickness)) {
                                 var icr = state.innerCornerRadius;
                                 var ocr = state.outerCornerRadius;
@@ -4462,42 +4221,37 @@ var minerva;
                                 var bt = input.borderThickness;
                                 minerva.Rect.shrink(state.strokeExtents, bt.left / 2.0, bt.top / 2.0, bt.right / 2.0, bt.bottom / 2.0);
                             }
-
                             return true;
                         }
                         shim.calcBalanced = calcBalanced;
-                    })(tapins.shim || (tapins.shim = {}));
-                    var shim = tapins.shim;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                    })(shim = tapins.shim || (tapins.shim = {}));
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
+                    var shim;
                     (function (shim) {
                         function createPattern(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender || minerva.Thickness.isBalanced(input.borderThickness))
                                 return true;
-
                             if (!state.pattern) {
                                 state.pattern = createBorderPattern(input.borderBrush, input.extents, state.fillExtents, state.outerCornerRadius, state.innerCornerRadius);
                             }
-
                             return true;
                         }
                         shim.createPattern = createPattern;
-
                         var tempCtx;
-
                         function createBorderPattern(borderBrush, extents, fillExtents, oa, ia) {
                             tempCtx = tempCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
                             var raw = tempCtx.raw;
@@ -4511,44 +4265,41 @@ var minerva;
                             raw.fill();
                             return raw.createPattern(raw.canvas, "no-repeat");
                         }
-                    })(tapins.shim || (tapins.shim = {}));
-                    var shim = tapins.shim;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                    })(shim = tapins.shim || (tapins.shim = {}));
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
+                    var shim;
                     (function (shim) {
                         function doRender(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender)
                                 return true;
                             ctx.save();
                             minerva.core.helpers.renderLayoutClip(ctx, input, tree);
-
                             if (input.background)
                                 renderBackground(ctx, input, state);
-
                             if (state.pattern) {
                                 renderPattern(ctx, input, state);
-                            } else if (input.borderBrush) {
+                            }
+                            else if (input.borderBrush) {
                                 renderBorder(ctx, input, state);
                             }
-
                             ctx.restore();
                             return true;
                         }
                         shim.doRender = doRender;
-
                         function renderPattern(ctx, input, state) {
                             var raw = ctx.raw;
                             raw.beginPath();
@@ -4556,13 +4307,11 @@ var minerva;
                             ctx.drawRectEx(input.extents, state.outerCornerRadius);
                             raw.fill();
                         }
-
                         function renderBackground(ctx, input, state) {
                             ctx.raw.beginPath();
                             ctx.drawRectEx(state.fillExtents, state.innerCornerRadius);
                             ctx.fillEx(input.background, state.fillExtents);
                         }
-
                         function renderBorder(ctx, input, state) {
                             var raw = ctx.raw;
                             raw.beginPath();
@@ -4575,48 +4324,43 @@ var minerva;
                             raw.strokeStyle = input.borderBrush.toHtml5Object();
                             raw.stroke();
                         }
-                    })(tapins.shim || (tapins.shim = {}));
-                    var shim = tapins.shim;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                    })(shim = tapins.shim || (tapins.shim = {}));
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var border;
         (function (border) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
+                    var shim;
                     (function (shim) {
                         function invalidatePattern(input, state, output, ctx, region, tree) {
                             if (!state.shouldRender)
                                 return true;
-
                             if (minerva.Thickness.isEmpty(input.borderThickness)) {
                                 state.pattern = null;
                                 return true;
                             }
-
                             if (!state.oldMetrics) {
                                 state.oldMetrics = {};
                                 setOldMetrics(input, state, state.oldMetrics);
                                 state.pattern = null;
                                 return true;
                             }
-
                             if (didMetricsChange(input, state, state.oldMetrics))
                                 state.pattern = null;
-
                             setOldMetrics(input, state, state.oldMetrics);
                             return true;
                         }
                         shim.invalidatePattern = invalidatePattern;
-
                         function setOldMetrics(input, state, metrics) {
                             metrics.borderBrush = input.borderBrush;
                             metrics.borderThickness = input.borderThickness;
@@ -4625,24 +4369,20 @@ var minerva;
                             metrics.outerCornerRadius = state.outerCornerRadius;
                             metrics.innerCornerRadius = state.innerCornerRadius;
                         }
-
                         function didMetricsChange(input, state, metrics) {
                             return metrics.borderBrush !== input.borderBrush || !minerva.Rect.isEqual(metrics.extents, input.extents) || !minerva.Rect.isEqual(metrics.fillExtents, state.fillExtents) || !minerva.CornerRadius.isEqual(metrics.outerCornerRadius, state.outerCornerRadius) || !minerva.CornerRadius.isEqual(metrics.innerCornerRadius, state.innerCornerRadius);
                         }
-                    })(tapins.shim || (tapins.shim = {}));
-                    var shim = tapins.shim;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(border.render || (border.render = {}));
-            var render = border.render;
-        })(controls.border || (controls.border = {}));
-        var border = controls.border;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                    })(shim = tapins.shim || (tapins.shim = {}));
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
             var PanelUpdater = (function (_super) {
                 __extends(PanelUpdater, _super);
@@ -4652,11 +4392,9 @@ var minerva;
                 PanelUpdater.prototype.init = function () {
                     var assets = this.assets;
                     assets.background = null;
-
                     this.setTree(new panel.PanelUpdaterTree()).setMeasurePipe(minerva.singleton(panel.measure.PanelMeasurePipeDef)).setArrangePipe(minerva.singleton(panel.arrange.PanelArrangePipeDef)).setProcessUpPipe(minerva.singleton(panel.processup.PanelProcessUpPipeDef)).setRenderPipe(minerva.singleton(panel.render.PanelRenderPipeDef)).setHitTestPipe(minerva.singleton(panel.hittest.PanelHitTestPipeDef));
                     _super.prototype.init.call(this);
                 };
-
                 PanelUpdater.prototype.setChildren = function (children) {
                     this.tree.children = children;
                     return this;
@@ -4664,7 +4402,7 @@ var minerva;
                 return PanelUpdater;
             })(minerva.core.Updater);
             panel.PanelUpdater = PanelUpdater;
-
+            var reactTo;
             (function (reactTo) {
                 function zIndex(updater, oldValue, newValue) {
                     var vp = updater.tree.visualParent;
@@ -4672,16 +4410,16 @@ var minerva;
                         vp.tree.zSorted = null;
                 }
                 reactTo.zIndex = zIndex;
-            })(panel.reactTo || (panel.reactTo = {}));
-            var reactTo = panel.reactTo;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(reactTo = panel.reactTo || (panel.reactTo = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../panel/PanelUpdater" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
             var CanvasUpdater = (function (_super) {
                 __extends(CanvasUpdater, _super);
@@ -4690,26 +4428,23 @@ var minerva;
                 }
                 CanvasUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(canvas.measure.CanvasMeasurePipeDef)).setArrangePipe(minerva.singleton(canvas.arrange.CanvasArrangePipeDef)).setProcessDownPipe(minerva.singleton(canvas.processdown.CanvasProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(canvas.processup.CanvasProcessUpPipeDef));
-
                     var assets = this.assets;
                     assets.breakLayoutClip = true;
-
                     _super.prototype.init.call(this);
                 };
                 return CanvasUpdater;
             })(controls.panel.PanelUpdater);
             canvas.CanvasUpdater = CanvasUpdater;
+            var reactTo;
             (function (reactTo) {
                 function left(updater, oldValue, newValue) {
                     invalidateTopLeft(updater);
                 }
                 reactTo.left = left;
-
                 function top(updater, oldValue, newValue) {
                     invalidateTopLeft(updater);
                 }
                 reactTo.top = top;
-
                 function invalidateTopLeft(updater) {
                     var vp = updater.tree.visualParent;
                     if (updater instanceof CanvasUpdater && !vp) {
@@ -4717,10 +4452,8 @@ var minerva;
                         minerva.core.Updater.$$addDownDirty(updater);
                         updater.invalidateArrange();
                     }
-
                     if (!(vp instanceof CanvasUpdater))
                         return;
-
                     var ls = updater.assets.layoutSlot;
                     minerva.Size.copyTo(updater.assets.desiredSize, ls);
                     ls.x = updater.getAttachedValue("Canvas.Left");
@@ -4733,17 +4466,17 @@ var minerva;
                     }
                     updater.invalidateArrange();
                 }
-            })(canvas.reactTo || (canvas.reactTo = {}));
-            var reactTo = canvas.reactTo;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(reactTo = canvas.reactTo || (canvas.reactTo = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
+            var arrange;
             (function (arrange) {
                 var PanelArrangePipeDef = (function (_super) {
                     __extends(PanelArrangePipeDef, _super);
@@ -4754,17 +4487,18 @@ var minerva;
                     return PanelArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.PanelArrangePipeDef = PanelArrangePipeDef;
-            })(panel.arrange || (panel.arrange = {}));
-            var arrange = panel.arrange;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = panel.arrange || (panel.arrange = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../panel/arrange/PanelArrangePipeDef" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var arrange;
             (function (arrange) {
                 var CanvasArrangePipeDef = (function (_super) {
                     __extends(CanvasArrangePipeDef, _super);
@@ -4775,18 +4509,19 @@ var minerva;
                     return CanvasArrangePipeDef;
                 })(controls.panel.arrange.PanelArrangePipeDef);
                 arrange.CanvasArrangePipeDef = CanvasArrangePipeDef;
-            })(canvas.arrange || (canvas.arrange = {}));
-            var arrange = canvas.arrange;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = canvas.arrange || (canvas.arrange = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function buildLayoutClip(input, state, output, tree, finalRect) {
                         var lc = output.layoutClip;
@@ -4794,20 +4529,20 @@ var minerva;
                         return true;
                     }
                     tapins.buildLayoutClip = buildLayoutClip;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(canvas.arrange || (canvas.arrange = {}));
-            var arrange = canvas.arrange;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = canvas.arrange || (canvas.arrange = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var cr = state.childRect;
@@ -4815,7 +4550,7 @@ var minerva;
                         for (var walker = tree.walk(); walker.step();) {
                             child = walker.current;
                             minerva.Size.copyTo(child.assets.desiredSize, cr);
-
+                            //NOTE: Coercing undefined, null, NaN, and 0 to 0
                             cr.x = child.getAttachedValue("Canvas.Left") || 0;
                             cr.y = child.getAttachedValue("Canvas.Top") || 0;
                             child.arrange(cr);
@@ -4823,19 +4558,18 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(canvas.arrange || (canvas.arrange = {}));
-            var arrange = canvas.arrange;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = canvas.arrange || (canvas.arrange = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
+            var measure;
             (function (measure) {
                 var PanelMeasurePipeDef = (function (_super) {
                     __extends(PanelMeasurePipeDef, _super);
@@ -4846,7 +4580,6 @@ var minerva;
                     return PanelMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.PanelMeasurePipeDef = PanelMeasurePipeDef;
-
                 function doOverride(input, state, output, tree, availableSize) {
                     var desired = output.desiredSize;
                     desired.width = desired.height = 0;
@@ -4858,17 +4591,18 @@ var minerva;
                     }
                     return true;
                 }
-            })(panel.measure || (panel.measure = {}));
-            var measure = panel.measure;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = panel.measure || (panel.measure = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../panel/measure/PanelMeasurePipeDef" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var measure;
             (function (measure) {
                 var CanvasMeasurePipeDef = (function (_super) {
                     __extends(CanvasMeasurePipeDef, _super);
@@ -4879,18 +4613,19 @@ var minerva;
                     return CanvasMeasurePipeDef;
                 })(controls.panel.measure.PanelMeasurePipeDef);
                 measure.CanvasMeasurePipeDef = CanvasMeasurePipeDef;
-            })(canvas.measure || (canvas.measure = {}));
-            var measure = canvas.measure;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = canvas.measure || (canvas.measure = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var as = state.availableSize;
@@ -4903,19 +4638,18 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(canvas.measure || (canvas.measure = {}));
-            var measure = canvas.measure;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = canvas.measure || (canvas.measure = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var processdown;
             (function (processdown) {
                 var CanvasProcessDownPipeDef = (function (_super) {
                     __extends(CanvasProcessDownPipeDef, _super);
@@ -4926,30 +4660,28 @@ var minerva;
                     return CanvasProcessDownPipeDef;
                 })(minerva.core.processdown.ProcessDownPipeDef);
                 processdown.CanvasProcessDownPipeDef = CanvasProcessDownPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function processLayoutClip(input, state, output, vpinput, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                             return true;
-
                         var clc = input.compositeLayoutClip;
                         clc.x = clc.y = clc.width = clc.height;
                         return true;
                     }
                     tapins.processLayoutClip = processLayoutClip;
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(canvas.processdown || (canvas.processdown = {}));
-            var processdown = canvas.processdown;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = canvas.processdown || (canvas.processdown = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var processup;
             (function (processup) {
                 var CanvasProcessUpPipeDef = (function (_super) {
                     __extends(CanvasProcessUpPipeDef, _super);
@@ -4960,23 +4692,23 @@ var minerva;
                     return CanvasProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.CanvasProcessUpPipeDef = CanvasProcessUpPipeDef;
-            })(canvas.processup || (canvas.processup = {}));
-            var processup = canvas.processup;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(processup = canvas.processup || (canvas.processup = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var canvas;
         (function (canvas) {
+            var processup;
             (function (processup) {
+                var tapins;
                 (function (tapins) {
                     tapins.calcPaintBounds = function (input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         minerva.core.helpers.intersectBoundsWithClipPath(output.globalBoundsWithChildren, output.extentsWithChildren, input.effectPadding, input.renderXform, input.clip, input.layoutClip);
                         var sbwc = output.surfaceBoundsWithChildren;
                         var surface = tree.surface;
@@ -4984,24 +4716,22 @@ var minerva;
                             sbwc.x = sbwc.y = 0;
                             sbwc.width = surface.width;
                             sbwc.height = surface.height;
-                        } else {
+                        }
+                        else {
                             minerva.core.helpers.intersectBoundsWithClipPath(sbwc, output.extentsWithChildren, input.effectPadding, input.absoluteXform, input.clip, input.layoutClip);
                         }
-
                         return true;
                     };
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(canvas.processup || (canvas.processup = {}));
-            var processup = canvas.processup;
-        })(controls.canvas || (controls.canvas = {}));
-        var canvas = controls.canvas;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = canvas.processup || (canvas.processup = {}));
+        })(canvas = controls.canvas || (controls.canvas = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var control;
         (function (control) {
             var ControlUpdater = (function (_super) {
                 __extends(ControlUpdater, _super);
@@ -5010,22 +4740,20 @@ var minerva;
                 }
                 ControlUpdater.prototype.init = function () {
                     this.setTree(new control.ControlUpdaterTree()).setHitTestPipe(minerva.singleton(control.hittest.ControlHitTestPipeDef));
-
                     this.assets.isEnabled = true;
-
                     _super.prototype.init.call(this);
                 };
                 return ControlUpdater;
             })(minerva.core.Updater);
             control.ControlUpdater = ControlUpdater;
-        })(controls.control || (controls.control = {}));
-        var control = controls.control;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(control = controls.control || (controls.control = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var control;
         (function (control) {
             var ControlUpdaterTree = (function (_super) {
                 __extends(ControlUpdaterTree, _super);
@@ -5037,15 +4765,16 @@ var minerva;
                 return ControlUpdaterTree;
             })(minerva.core.UpdaterTree);
             control.ControlUpdaterTree = ControlUpdaterTree;
-        })(controls.control || (controls.control = {}));
-        var control = controls.control;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(control = controls.control || (controls.control = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var control;
         (function (control) {
+            var hittest;
             (function (hittest) {
                 var ControlHitTestPipeDef = (function (_super) {
                     __extends(ControlHitTestPipeDef, _super);
@@ -5056,34 +4785,30 @@ var minerva;
                     return ControlHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.ControlHitTestPipeDef = ControlHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function shouldSkip(data, pos, hitList, ctx) {
                         return !!data.assets.isEnabled;
                     }
                     tapins.shouldSkip = shouldSkip;
-
                     function canHitInside(data, pos, hitList, ctx) {
                         if (data.hitChildren)
                             return true;
-
                         hitList.shift();
                         ctx.restore();
                         return false;
                     }
                     tapins.canHitInside = canHitInside;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(control.hittest || (control.hittest = {}));
-            var hittest = control.hittest;
-        })(controls.control || (controls.control = {}));
-        var control = controls.control;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = control.hittest || (control.hittest = {}));
+        })(control = controls.control || (controls.control = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
             (function (GridUnitType) {
                 GridUnitType[GridUnitType["Auto"] = 0] = "Auto";
@@ -5091,14 +4816,14 @@ var minerva;
                 GridUnitType[GridUnitType["Star"] = 2] = "Star";
             })(grid.GridUnitType || (grid.GridUnitType = {}));
             var GridUnitType = grid.GridUnitType;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
             var GridUpdater = (function (_super) {
                 __extends(GridUpdater, _super);
@@ -5107,19 +4832,17 @@ var minerva;
                 }
                 GridUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(grid.measure.GridMeasurePipeDef)).setArrangePipe(minerva.singleton(grid.arrange.GridArrangePipeDef)).setProcessUpPipe(minerva.singleton(grid.processup.GridProcessUpPipeDef)).setRenderPipe(minerva.singleton(grid.render.GridRenderPipeDef));
-
                     var assets = this.assets;
                     assets.showGridLines = false;
                     assets.columnDefinitions = [];
                     assets.rowDefinitions = [];
                     assets.gridState = grid.createGridState();
-
                     _super.prototype.init.call(this);
                 };
                 return GridUpdater;
             })(controls.panel.PanelUpdater);
             grid.GridUpdater = GridUpdater;
-
+            var reactTo;
             (function (reactTo) {
                 function invalidateCell(updater) {
                     var vp = updater.tree.visualParent;
@@ -5127,42 +4850,36 @@ var minerva;
                         vp.invalidateMeasure();
                     updater.invalidateMeasure();
                 }
-
                 function showGridLines(updater, ov, nv) {
                     updater.invalidateMeasure();
                     updater.invalidate();
                 }
                 reactTo.showGridLines = showGridLines;
-
                 function column(updater, ov, nv) {
                     invalidateCell(updater);
                 }
                 reactTo.column = column;
-
                 function columnSpan(updater, ov, nv) {
                     invalidateCell(updater);
                 }
                 reactTo.columnSpan = columnSpan;
-
                 function row(updater, ov, nv) {
                     invalidateCell(updater);
                 }
                 reactTo.row = row;
-
                 function rowSpan(updater, ov, nv) {
                     invalidateCell(updater);
                 }
                 reactTo.rowSpan = rowSpan;
-            })(grid.reactTo || (grid.reactTo = {}));
-            var reactTo = grid.reactTo;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(reactTo = grid.reactTo || (grid.reactTo = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
             function createGridState() {
                 return {
@@ -5171,14 +4888,14 @@ var minerva;
                 };
             }
             grid.createGridState = createGridState;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
             var Segment = (function () {
                 function Segment() {
@@ -5197,7 +4914,6 @@ var minerva;
                         return this.max;
                     return value;
                 };
-
                 Segment.init = function (segment, offered, min, max, unitType) {
                     segment.desired = 0.0;
                     segment.stars = 0;
@@ -5205,26 +4921,25 @@ var minerva;
                     segment.min = min || 0.0;
                     segment.max = max != null ? max : Number.POSITIVE_INFINITY;
                     segment.type = unitType != null ? unitType : 1 /* Pixel */;
-
                     if (segment.offered < min)
                         segment.offered = min;
                     else if (segment.offered > max)
                         segment.offered = max;
-
                     return segment;
                 };
                 return Segment;
             })();
             grid.Segment = Segment;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var arrange;
             (function (arrange) {
                 var GridArrangePipeDef = (function (_super) {
                     __extends(GridArrangePipeDef, _super);
@@ -5240,24 +4955,24 @@ var minerva;
                     return GridArrangePipeDef;
                 })(controls.panel.arrange.PanelArrangePipeDef);
                 arrange.GridArrangePipeDef = GridArrangePipeDef;
-            })(grid.arrange || (grid.arrange = {}));
-            var arrange = grid.arrange;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = grid.arrange || (grid.arrange = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function calcConsumed(input, state, output, tree, finalRect) {
                         var con = state.consumed;
                         con.width = con.height = 0;
                         var fs = state.finalSize;
-
                         var cm = input.gridState.colMatrix;
                         for (var i = 0; i < cm.length; i++) {
                             con.width += (cm[i][i].offered = cm[i][i].desired);
@@ -5266,39 +4981,34 @@ var minerva;
                         for (var i = 0; i < rm.length; i++) {
                             con.height += (rm[i][i].offered = rm[i][i].desired);
                         }
-
                         if (con.width !== fs.width)
                             grid.helpers.expandStarCols(cm, input.columnDefinitions, fs);
                         if (con.height !== fs.height)
                             grid.helpers.expandStarRows(rm, input.rowDefinitions, fs);
-
                         return true;
                     }
                     tapins.calcConsumed = calcConsumed;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(grid.arrange || (grid.arrange = {}));
-            var arrange = grid.arrange;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = grid.arrange || (grid.arrange = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var cr = state.childRect;
-
                         var rm = input.gridState.rowMatrix;
                         var cm = input.gridState.colMatrix;
-
                         for (var walker = tree.walk(); walker.step();) {
                             var child = walker.current;
-
                             var col = Math.min(child.getAttachedValue("Grid.Column"), cm.length - 1);
                             if (isNaN(col))
                                 col = 0;
@@ -5311,7 +5021,6 @@ var minerva;
                             var rowspan = Math.min(child.getAttachedValue("Grid.RowSpan"), rm.length - row);
                             if (isNaN(rowspan))
                                 rowspan = 1;
-
                             cr.x = cr.y = cr.width = cr.height = 0;
                             for (var i = 0; i < col; i++) {
                                 cr.x += cm[i][i].offered;
@@ -5325,28 +5034,26 @@ var minerva;
                             for (var i = row; i < row + rowspan; i++) {
                                 cr.height += rm[i][i].offered;
                             }
-
                             child.arrange(cr);
                         }
-
                         minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(grid.arrange || (grid.arrange = {}));
-            var arrange = grid.arrange;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = grid.arrange || (grid.arrange = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function restoreMeasureResults(input, state, output, tree, finalRect) {
                         for (var rm = input.gridState.rowMatrix, i = 0; i < rm.length; i++) {
@@ -5354,62 +5061,56 @@ var minerva;
                                 rm[i][j].offered = rm[i][j].original;
                             }
                         }
-
                         for (var cm = input.gridState.colMatrix, i = 0; i < cm.length; i++) {
                             for (var j = 0; j <= i; j++) {
                                 cm[i][j].offered = cm[i][j].original;
                             }
                         }
-
                         return true;
                     }
                     tapins.restoreMeasureResults = restoreMeasureResults;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(grid.arrange || (grid.arrange = {}));
-            var arrange = grid.arrange;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = grid.arrange || (grid.arrange = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function setActuals(input, state, output, tree, finalRect) {
                         for (var coldefs = input.columnDefinitions, cm = input.gridState.colMatrix, i = 0; i < coldefs.length; i++) {
                             coldefs[i].setActualWidth(cm[i][i].offered);
                         }
-
                         for (var rowdefs = input.rowDefinitions, rm = input.gridState.rowMatrix, i = 0; i < rowdefs.length; i++) {
                             rowdefs[i].setActualHeight(rm[i][i].offered);
                         }
-
                         return true;
                     }
                     tapins.setActuals = setActuals;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(grid.arrange || (grid.arrange = {}));
-            var arrange = grid.arrange;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = grid.arrange || (grid.arrange = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var helpers;
             (function (helpers) {
                 function allocateDesiredSize(rowMat, colMat) {
                     for (var i = 0; i < 2; i++) {
                         var matrix = i === 0 ? rowMat : colMat;
                         var count = matrix.length;
-
                         for (var row = count - 1; row >= 0; row--) {
                             for (var col = row; col >= 0; col--) {
                                 var spansStar = false;
@@ -5425,7 +5126,8 @@ var minerva;
                                     var additional = current - totalAllocated;
                                     if (spansStar) {
                                         additional = helpers.assignSize(matrix, col, row, additional, 2 /* Star */, true);
-                                    } else {
+                                    }
+                                    else {
                                         additional = helpers.assignSize(matrix, col, row, additional, 1 /* Pixel */, true);
                                         additional = helpers.assignSize(matrix, col, row, additional, 0 /* Auto */, true);
                                     }
@@ -5441,17 +5143,17 @@ var minerva;
                     }
                 }
                 helpers.allocateDesiredSize = allocateDesiredSize;
-            })(grid.helpers || (grid.helpers = {}));
-            var helpers = grid.helpers;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var helpers;
             (function (helpers) {
                 function assignSize(mat, start, end, size, unitType, desiredSize) {
                     var count = 0;
@@ -5463,7 +5165,6 @@ var minerva;
                         if (segmentSize < cur.max)
                             count += (unitType === 2 /* Star */) ? cur.stars : 1;
                     }
-
                     do {
                         assigned = false;
                         var contribution = size / count;
@@ -5482,25 +5183,24 @@ var minerva;
                             else
                                 cur.offered = newSize;
                         }
-                    } while(assigned);
+                    } while (assigned);
                     return size;
                 }
                 helpers.assignSize = assignSize;
-            })(grid.helpers || (grid.helpers = {}));
-            var helpers = grid.helpers;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var helpers;
             (function (helpers) {
                 function expandStarCols(mat, coldefs, availableSize) {
                     var aw = availableSize.width;
-
                     for (var i = 0; i < mat.length; i++) {
                         var cur = mat[i][i];
                         if (cur.type === 2 /* Star */)
@@ -5509,7 +5209,6 @@ var minerva;
                             aw = Math.max(aw - cur.offered, 0);
                     }
                     aw = helpers.assignSize(mat, 0, mat.length - 1, aw, 2 /* Star */, false);
-
                     for (var i = 0; i < coldefs.length; i++) {
                         var cur = mat[i][i];
                         if (cur.type === 2 /* Star */)
@@ -5517,21 +5216,20 @@ var minerva;
                     }
                 }
                 helpers.expandStarCols = expandStarCols;
-            })(grid.helpers || (grid.helpers = {}));
-            var helpers = grid.helpers;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var helpers;
             (function (helpers) {
                 function expandStarRows(mat, rowdefs, availableSize) {
                     var ah = availableSize.height;
-
                     for (var i = 0; i < mat.length; i++) {
                         var cur = mat[i][i];
                         if (cur.type === 2 /* Star */)
@@ -5540,7 +5238,6 @@ var minerva;
                             ah = Math.max(ah - cur.offered, 0);
                     }
                     ah = helpers.assignSize(mat, 0, mat.length - 1, ah, 2 /* Star */, false);
-
                     for (var i = 0; i < rowdefs.length; i++) {
                         var cur = mat[i][i];
                         if (cur.type === 2 /* Star */)
@@ -5548,17 +5245,17 @@ var minerva;
                     }
                 }
                 helpers.expandStarRows = expandStarRows;
-            })(grid.helpers || (grid.helpers = {}));
-            var helpers = grid.helpers;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
                 var GridChildPlacement = (function () {
                     function GridChildPlacement(matrix, row, col, size) {
@@ -5570,24 +5267,23 @@ var minerva;
                     GridChildPlacement.row = function (matrix, childShape, child) {
                         return new GridChildPlacement(matrix, childShape.row + childShape.rowspan - 1, childShape.row, child.assets.desiredSize.height);
                     };
-
                     GridChildPlacement.col = function (matrix, childShape, child) {
                         return new GridChildPlacement(matrix, childShape.col + childShape.colspan - 1, childShape.col, child.assets.desiredSize.width);
                     };
                     return GridChildPlacement;
                 })();
                 measure.GridChildPlacement = GridChildPlacement;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
                 (function (OverridePass) {
                     OverridePass[OverridePass["AutoAuto"] = 0] = "AutoAuto";
@@ -5595,10 +5291,9 @@ var minerva;
                     OverridePass[OverridePass["AutoStar"] = 2] = "AutoStar";
                     OverridePass[OverridePass["StarAutoAgain"] = 3] = "StarAutoAgain";
                     OverridePass[OverridePass["NonStar"] = 4] = "NonStar";
-                    OverridePass[OverridePass["RemainingStar"] = 5] = "RemainingStar";
+                    OverridePass[OverridePass["RemainingStar"] = 5] = "RemainingStar"; //Child in ?
                 })(measure.OverridePass || (measure.OverridePass = {}));
                 var OverridePass = measure.OverridePass;
-
                 var GridChildShape = (function () {
                     function GridChildShape() {
                     }
@@ -5615,9 +5310,7 @@ var minerva;
                         var rowspan = this.rowspan = Math.min(child.getAttachedValue("Grid.RowSpan"), rm.length - row);
                         if (isNaN(rowspan))
                             this.rowspan = rowspan = 1;
-
                         this.starRow = this.autoRow = this.starCol = this.autoCol = false;
-
                         for (var i = row; i < row + rowspan; i++) {
                             this.starRow = this.starRow || (rm[i][i].type === 2 /* Star */);
                             this.autoRow = this.autoRow || (rm[i][i].type === 0 /* Auto */);
@@ -5626,13 +5319,10 @@ var minerva;
                             this.starCol = this.starCol || (cm[i][i].type === 2 /* Star */);
                             this.autoCol = this.autoCol || (cm[i][i].type === 0 /* Auto */);
                         }
-
                         return this;
                     };
-
                     GridChildShape.prototype.shouldMeasurePass = function (gridShape, childSize, pass) {
                         childSize.width = childSize.height = 0;
-
                         if (this.autoRow && this.autoCol && !this.starRow && !this.starCol) {
                             if (pass !== 0 /* AutoAuto */)
                                 return false;
@@ -5640,7 +5330,6 @@ var minerva;
                             childSize.height = Number.POSITIVE_INFINITY;
                             return true;
                         }
-
                         if (this.starRow && this.autoCol && !this.starCol) {
                             if (pass !== 1 /* StarAuto */ && pass !== 3 /* StarAutoAgain */)
                                 return false;
@@ -5649,14 +5338,12 @@ var minerva;
                             childSize.width = Number.POSITIVE_INFINITY;
                             return true;
                         }
-
                         if (this.autoRow && this.starCol && !this.starRow) {
                             if (pass !== 2 /* AutoStar */)
                                 return false;
                             childSize.height = Number.POSITIVE_INFINITY;
                             return true;
                         }
-
                         if ((this.autoRow || this.autoCol) && !(this.starRow || this.starCol)) {
                             if (pass !== 4 /* NonStar */)
                                 return false;
@@ -5666,13 +5353,10 @@ var minerva;
                                 childSize.width = Number.POSITIVE_INFINITY;
                             return true;
                         }
-
                         if (!(this.starRow || this.starCol))
                             return pass === 4 /* NonStar */;
-
                         return pass === 5 /* RemainingStar */;
                     };
-
                     GridChildShape.prototype.size = function (childSize, rm, cm) {
                         for (var i = this.row; i < this.row + this.rowspan; i++) {
                             childSize.height += rm[i][i].offered;
@@ -5684,17 +5368,17 @@ var minerva;
                     return GridChildShape;
                 })();
                 measure.GridChildShape = GridChildShape;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
                 var GridMeasurePipeDef = (function (_super) {
                     __extends(GridMeasurePipeDef, _super);
@@ -5715,17 +5399,17 @@ var minerva;
                     return GridMeasurePipeDef;
                 })(controls.panel.measure.PanelMeasurePipeDef);
                 measure.GridMeasurePipeDef = GridMeasurePipeDef;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
                 var GridShape = (function () {
                     function GridShape() {
@@ -5745,18 +5429,19 @@ var minerva;
                     return GridShape;
                 })();
                 measure.GridShape = GridShape;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function buildShape(input, state, output, tree, finalRect) {
                         var shapes = state.childShapes;
@@ -5770,45 +5455,39 @@ var minerva;
                         }
                         if (i < shapes.length)
                             shapes.slice(i, shapes.length - i);
-
                         state.gridShape.init(state.childShapes);
-
                         state.placements.length = 0;
                         state.placements.push(new measure.GridChildPlacement(null, 0, 0, 0));
                         state.placementIndex = 0;
-
                         return true;
                     }
                     tapins.buildShape = buildShape;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function createDoOverridePass(pass) {
                         return function doOverridePass(input, state, output, tree, finalRect) {
                             var rm = input.gridState.rowMatrix;
                             var cm = input.gridState.colMatrix;
-
                             if (tree.children.length > 0) {
                                 grid.helpers.expandStarCols(cm, input.columnDefinitions, state.availableSize);
                                 grid.helpers.expandStarRows(rm, input.rowDefinitions, state.availableSize);
                             }
-
                             var placements = state.placements;
                             var placement;
                             var separator = placements[0];
-
                             var shapes = state.childShapes;
                             var childSize = state.childSize;
                             for (var walker = tree.walk(), i = 0; walker.step(); i++) {
@@ -5818,54 +5497,51 @@ var minerva;
                                     continue;
                                 childShape.size(childSize, rm, cm);
                                 child.measure(childSize);
-
                                 if (pass !== 1 /* StarAuto */) {
                                     placement = measure.GridChildPlacement.row(rm, childShape, child);
                                     if (placement.row === placement.col) {
                                         placements.splice(state.placementIndex + 1, 0, placement);
-                                    } else {
+                                    }
+                                    else {
                                         placements.splice(state.placementIndex, 0, placement);
                                         state.placementIndex++;
                                     }
                                 }
-
                                 placement = measure.GridChildPlacement.col(cm, childShape, child);
                                 if (placement.row === placement.col) {
                                     placements.splice(state.placementIndex + 1, 0, placement);
-                                } else {
+                                }
+                                else {
                                     placements.splice(state.placementIndex, 0, placement);
                                     state.placementIndex++;
                                 }
                             }
-
                             placements.splice(state.placementIndex, 1);
                             state.placementIndex = -1;
-
                             while (placement = placements.pop()) {
                                 var cell = placement.matrix[placement.row][placement.col];
                                 cell.desired = Math.max(cell.desired, placement.size);
                                 grid.helpers.allocateDesiredSize(rm, cm);
                             }
                             state.placementIndex = placements.push(separator) - 1;
-
                             return true;
                         };
                     }
                     tapins.createDoOverridePass = createDoOverridePass;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var desired = output.desiredSize;
@@ -5879,20 +5555,20 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function ensureColMatrix(input, state, output, tree, finalRect) {
                         var colCount = input.columnDefinitions.length || 1;
@@ -5912,24 +5588,23 @@ var minerva;
                                     grid.Segment.init(mrow[cc]);
                             }
                         }
-
                         return true;
                     }
                     tapins.ensureColMatrix = ensureColMatrix;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function ensureRowMatrix(input, state, output, tree, finalRect) {
                         var rowCount = input.rowDefinitions.length || 1;
@@ -5949,37 +5624,33 @@ var minerva;
                                     grid.Segment.init(mrow[rr]);
                             }
                         }
-
                         return true;
                     }
                     tapins.ensureRowMatrix = ensureRowMatrix;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     var DEFAULT_GRID_LEN = {
                         Value: 1.0,
                         Type: 2 /* Star */
                     };
-
                     function prepareColMatrix(input, state, output, tree, finalRect) {
                         var coldefs = input.columnDefinitions;
                         var cm = input.gridState.colMatrix;
-
                         var ts = state.totalStars;
                         ts.width = 0.0;
-
                         if (coldefs.length === 0) {
                             var mcell = cm[0][0];
                             mcell.type = 2 /* Star */;
@@ -5987,54 +5658,50 @@ var minerva;
                             ts.width += 1.0;
                             return true;
                         }
-
                         for (var i = 0; i < coldefs.length; i++) {
                             var coldef = coldefs[i];
                             var width = coldef.Width || DEFAULT_GRID_LEN;
                             coldef.setActualWidth(Number.POSITIVE_INFINITY);
-
                             var cell = grid.Segment.init(cm[i][i], 0.0, coldef.MinWidth, coldef.MaxWidth, width.Type);
                             if (width.Type === 1 /* Pixel */) {
                                 cell.desired = cell.offered = cell.clamp(width.Value);
                                 coldef.setActualWidth(cell.desired);
-                            } else if (width.Type === 2 /* Star */) {
+                            }
+                            else if (width.Type === 2 /* Star */) {
                                 cell.stars = width.Value;
                                 ts.width += width.Value;
-                            } else if (width.Type === 0 /* Auto */) {
+                            }
+                            else if (width.Type === 0 /* Auto */) {
                                 cell.desired = cell.offered = cell.clamp(0);
                             }
                         }
-
                         return true;
                     }
                     tapins.prepareColMatrix = prepareColMatrix;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     var DEFAULT_GRID_LEN = {
                         Value: 1.0,
                         Type: 2 /* Star */
                     };
-
                     function prepareRowMatrix(input, state, output, tree, finalRect) {
                         var rowdefs = input.rowDefinitions;
                         var rm = input.gridState.rowMatrix;
-
                         var ts = state.totalStars;
                         ts.height = 0.0;
-
                         if (rowdefs.length === 0) {
                             var mcell = rm[0][0];
                             mcell.type = 2 /* Star */;
@@ -6042,41 +5709,40 @@ var minerva;
                             ts.height += 1.0;
                             return true;
                         }
-
                         for (var i = 0; i < rowdefs.length; i++) {
                             var rowdef = rowdefs[i];
                             var height = rowdef.Height || DEFAULT_GRID_LEN;
                             rowdef.setActualHeight(Number.POSITIVE_INFINITY);
-
                             var cell = grid.Segment.init(rm[i][i], 0.0, rowdef.MinHeight, rowdef.MaxHeight, height.Type);
                             if (height.Type === 1 /* Pixel */) {
                                 cell.desired = cell.offered = cell.clamp(height.Value);
                                 rowdef.setActualHeight(cell.desired);
-                            } else if (height.Type === 2 /* Star */) {
+                            }
+                            else if (height.Type === 2 /* Star */) {
                                 cell.stars = height.Value;
                                 ts.height += height.Value;
-                            } else if (height.Type === 0 /* Auto */) {
+                            }
+                            else if (height.Type === 0 /* Auto */) {
                                 cell.desired = cell.offered = cell.clamp(0);
                             }
                         }
-
                         return true;
                     }
                     tapins.prepareRowMatrix = prepareRowMatrix;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function saveMeasureResults(input, state, output, tree, finalRect) {
                         for (var rm = input.gridState.rowMatrix, i = 0; i < rm.length; i++) {
@@ -6084,29 +5750,26 @@ var minerva;
                                 rm[i][j].original = rm[i][j].offered;
                             }
                         }
-
                         for (var cm = input.gridState.colMatrix, i = 0; i < cm.length; i++) {
                             for (j = 0; j <= i; j++) {
                                 cm[i][j].original = cm[i][j].offered;
                             }
                         }
-
                         return true;
                     }
                     tapins.saveMeasureResults = saveMeasureResults;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(grid.measure || (grid.measure = {}));
-            var measure = grid.measure;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = grid.measure || (grid.measure = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
+            var processup;
             (function (processup) {
                 var PanelProcessUpPipeDef = (function (_super) {
                     __extends(PanelProcessUpPipeDef, _super);
@@ -6117,17 +5780,18 @@ var minerva;
                     return PanelProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.PanelProcessUpPipeDef = PanelProcessUpPipeDef;
-            })(panel.processup || (panel.processup = {}));
-            var processup = panel.processup;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(processup = panel.processup || (panel.processup = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../panel/processup/PanelProcessUpPipeDef" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var processup;
             (function (processup) {
                 var GridProcessUpPipeDef = (function (_super) {
                     __extends(GridProcessUpPipeDef, _super);
@@ -6138,23 +5802,23 @@ var minerva;
                     return GridProcessUpPipeDef;
                 })(controls.panel.processup.PanelProcessUpPipeDef);
                 processup.GridProcessUpPipeDef = GridProcessUpPipeDef;
-            })(grid.processup || (grid.processup = {}));
-            var processup = grid.processup;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(processup = grid.processup || (grid.processup = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var processup;
             (function (processup) {
+                var tapins;
                 (function (tapins) {
                     function calcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         var e = output.extents;
                         var ewc = output.extentsWithChildren;
                         e.x = ewc.x = 0;
@@ -6162,34 +5826,31 @@ var minerva;
                         var as = state.actualSize;
                         e.width = ewc.width = as.width;
                         e.height = ewc.height = as.height;
-
                         if (input.showGridLines)
                             return true;
-
                         var assets;
                         for (var walker = tree.walk(); walker.step();) {
                             assets = walker.current.assets;
                             if (assets.totalIsRenderVisible)
                                 minerva.Rect.union(ewc, assets.globalBoundsWithChildren);
                         }
-
                         return true;
                     }
                     tapins.calcExtents = calcExtents;
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(grid.processup || (grid.processup = {}));
-            var processup = grid.processup;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = grid.processup || (grid.processup = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var processup;
             (function (processup) {
+                var tapins;
                 (function (tapins) {
                     function preCalcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
@@ -6201,19 +5862,18 @@ var minerva;
                         return true;
                     }
                     tapins.preCalcExtents = preCalcExtents;
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(grid.processup || (grid.processup = {}));
-            var processup = grid.processup;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = grid.processup || (grid.processup = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
+            var render;
             (function (render) {
                 var PanelRenderPipeDef = (function (_super) {
                     __extends(PanelRenderPipeDef, _super);
@@ -6224,7 +5884,6 @@ var minerva;
                     return PanelRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.PanelRenderPipeDef = PanelRenderPipeDef;
-
                 function doRender(input, state, output, ctx, region, tree) {
                     var background = input.background;
                     if (!background || background.isTransparent())
@@ -6232,29 +5891,27 @@ var minerva;
                     var extents = input.extents;
                     if (minerva.Rect.isEmpty(extents))
                         return true;
-
                     ctx.save();
                     minerva.core.helpers.renderLayoutClip(ctx, input, tree);
-
                     var raw = ctx.raw;
                     raw.beginPath();
                     raw.rect(extents.x, extents.y, extents.width, extents.height);
                     ctx.fillEx(background, extents);
-
                     ctx.restore();
                     return true;
                 }
-            })(panel.render || (panel.render = {}));
-            var render = panel.render;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(render = panel.render || (panel.render = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../panel/render/PanelRenderPipeDef" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var grid;
         (function (grid) {
+            var render;
             (function (render) {
                 var GridRenderPipeDef = (function (_super) {
                     __extends(GridRenderPipeDef, _super);
@@ -6270,20 +5927,17 @@ var minerva;
                     return GridRenderPipeDef;
                 })(controls.panel.render.PanelRenderPipeDef);
                 render.GridRenderPipeDef = GridRenderPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function renderGridLines(input, state, output, ctx, region, tree) {
                         if (!input.showGridLines)
                             return true;
-
                         var framework = state.framework;
                         framework.width = input.actualWidth;
                         framework.height = input.actualHeight;
                         minerva.core.helpers.coerceSize(framework, input);
-
                         var raw = ctx.raw;
                         raw.save();
-
                         for (var cols = input.columnDefinitions, i = 0, x = 0; i < cols.length; i++) {
                             x += cols[i].ActualWidth;
                             raw.beginPath();
@@ -6292,7 +5946,6 @@ var minerva;
                             raw.lineTo(x, framework.height);
                             raw.stroke();
                         }
-
                         for (var rows = input.rowDefinitions, i = 0, y = 0; i < rows.length; i++) {
                             y += rows[i].ActualHeight;
                             raw.beginPath();
@@ -6301,24 +5954,20 @@ var minerva;
                             raw.lineTo(framework.width, y);
                             raw.stroke();
                         }
-
                         raw.restore();
-
                         return true;
                     }
                     tapins.renderGridLines = renderGridLines;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(grid.render || (grid.render = {}));
-            var render = grid.render;
-        })(controls.grid || (controls.grid = {}));
-        var grid = controls.grid;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = grid.render || (grid.render = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
             var ImageUpdater = (function (_super) {
                 __extends(ImageUpdater, _super);
@@ -6327,16 +5976,13 @@ var minerva;
                 }
                 ImageUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(image.measure.ImageMeasurePipeDef)).setArrangePipe(minerva.singleton(image.arrange.ImageArrangePipeDef)).setProcessDownPipe(minerva.singleton(image.processdown.ImageProcessDownPipeDef)).setRenderPipe(minerva.singleton(image.render.ImageRenderPipeDef)).setHitTestPipe(minerva.singleton(image.hittest.ImageHitTestPipeDef));
-
                     var assets = this.assets;
                     assets.source = null;
                     assets.stretch = 2 /* Uniform */;
                     assets.overlap = 1 /* In */;
                     assets.imgXform = minerva.mat3.identity();
-
                     _super.prototype.init.call(this);
                 };
-
                 ImageUpdater.prototype.invalidateMetrics = function () {
                     this.assets.dirtyFlags |= minerva.DirtyFlags.ImageMetrics;
                     minerva.core.Updater.$$addDownDirty(this);
@@ -6345,15 +5991,16 @@ var minerva;
                 return ImageUpdater;
             })(minerva.core.Updater);
             image.ImageUpdater = ImageUpdater;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var arrange;
             (function (arrange) {
                 var ImageArrangePipeDef = (function (_super) {
                     __extends(ImageArrangePipeDef, _super);
@@ -6371,64 +6018,59 @@ var minerva;
                     return ImageArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.ImageArrangePipeDef = ImageArrangePipeDef;
-            })(image.arrange || (image.arrange = {}));
-            var arrange = image.arrange;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = image.arrange || (image.arrange = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function calcImageBounds(input, state, output, tree, finalRect) {
                         var ib = state.imageBounds;
                         ib.x = ib.y = ib.width = ib.height = 0;
-
                         if (input.source) {
                             ib.width = input.source.pixelWidth;
                             ib.height = input.source.pixelHeight;
                         }
-
                         var fs = state.finalSize;
                         if (ib.width === 0)
                             ib.width = fs.width;
                         if (ib.height === 0)
                             ib.height = fs.height;
-
                         return true;
                     }
                     tapins.calcImageBounds = calcImageBounds;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(image.arrange || (image.arrange = {}));
-            var arrange = image.arrange;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = image.arrange || (image.arrange = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function calcStretch(input, state, output, tree, finalRect) {
                         var ib = state.imageBounds;
-
                         var sx = 1.0;
                         var sy = 1.0;
-
                         var fs = state.finalSize;
                         if (ib.width !== fs.width)
                             sx = fs.width / ib.width;
                         if (ib.height !== fs.height)
                             sy = fs.height / ib.height;
-
                         switch (input.stretch) {
                             case 2 /* Uniform */:
                                 sx = sy = Math.min(sx, sy);
@@ -6443,27 +6085,25 @@ var minerva;
                             default:
                                 break;
                         }
-
                         state.stretchX = sx;
                         state.stretchY = sy;
-
                         return true;
                     }
                     tapins.calcStretch = calcStretch;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(image.arrange || (image.arrange = {}));
-            var arrange = image.arrange;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = image.arrange || (image.arrange = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var as = state.arrangedSize;
@@ -6472,39 +6112,38 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(image.arrange || (image.arrange = {}));
-            var arrange = image.arrange;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = image.arrange || (image.arrange = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function invalidateMetrics(input, state, output, tree, finalRect) {
                         output.dirtyFlags |= minerva.DirtyFlags.ImageMetrics;
                         return true;
                     }
                     tapins.invalidateMetrics = invalidateMetrics;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(image.arrange || (image.arrange = {}));
-            var arrange = image.arrange;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = image.arrange || (image.arrange = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var hittest;
             (function (hittest) {
                 var ImageHitTestPipeDef = (function (_super) {
                     __extends(ImageHitTestPipeDef, _super);
@@ -6518,37 +6157,38 @@ var minerva;
                     return ImageHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.ImageHitTestPipeDef = ImageHitTestPipeDef;
-            })(image.hittest || (image.hittest = {}));
-            var hittest = image.hittest;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(image.hittest || (image.hittest = {}));
-            var hittest = image.hittest;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function insideChildren(data, pos, hitList, ctx) {
                         hitList.unshift(data.updater);
@@ -6556,20 +6196,20 @@ var minerva;
                         return true;
                     }
                     tapins.insideChildren = insideChildren;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(image.hittest || (image.hittest = {}));
-            var hittest = image.hittest;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function insideStretch(data, pos, hitList, ctx) {
                         var source = data.assets.source;
@@ -6578,40 +6218,35 @@ var minerva;
                             ctx.restore();
                             return false;
                         }
-
                         var stretch = data.assets.stretch;
                         if (stretch === 1 /* Fill */ || stretch === 3 /* UniformToFill */)
                             return true;
-
                         var ir = data.imgRect;
                         ir.x = ir.y = 0;
                         ir.width = source.pixelWidth;
                         ir.height = source.pixelHeight;
                         minerva.Rect.transform(ir, data.assets.imgXform);
                         minerva.Rect.transform(ir, ctx.currentTransform);
-
                         if (!minerva.Rect.containsPoint(ir, pos)) {
                             hitList.shift();
                             ctx.restore();
                             return false;
                         }
-
                         return true;
                     }
                     tapins.insideStretch = insideStretch;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(image.hittest || (image.hittest = {}));
-            var hittest = image.hittest;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var measure;
             (function (measure) {
                 var ImageMeasurePipeDef = (function (_super) {
                     __extends(ImageMeasurePipeDef, _super);
@@ -6629,18 +6264,19 @@ var minerva;
                     return ImageMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.ImageMeasurePipeDef = ImageMeasurePipeDef;
-            })(image.measure || (image.measure = {}));
-            var measure = image.measure;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = image.measure || (image.measure = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function calcImageBounds(input, state, output, tree, availableSize) {
                         var ib = state.imageBounds;
@@ -6652,44 +6288,40 @@ var minerva;
                         return true;
                     }
                     tapins.calcImageBounds = calcImageBounds;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(image.measure || (image.measure = {}));
-            var measure = image.measure;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = image.measure || (image.measure = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function calcStretch(input, state, output, tree, availableSize) {
                         var as = state.availableSize;
                         var dw = as.width;
                         var dh = as.height;
                         var ib = state.imageBounds;
-
                         if (!isFinite(dw))
                             dw = ib.width;
                         if (!isFinite(dh))
                             dh = ib.height;
-
                         var sx = 0.0;
                         var sy = 0.0;
                         if (ib.width > 0)
                             sx = dw / ib.width;
                         if (ib.height > 0)
                             sy = dh / ib.height;
-
                         if (!isFinite(as.width))
                             sx = sy;
                         if (!isFinite(as.height))
                             sy = sx;
-
                         switch (input.stretch) {
                             default:
                             case 2 /* Uniform */:
@@ -6708,26 +6340,25 @@ var minerva;
                                 sx = sy = 1.0;
                                 break;
                         }
-
                         state.stretchX = sx;
                         state.stretchY = sy;
                         return true;
                     }
                     tapins.calcStretch = calcStretch;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(image.measure || (image.measure = {}));
-            var measure = image.measure;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = image.measure || (image.measure = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
@@ -6736,25 +6367,24 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(image.measure || (image.measure = {}));
-            var measure = image.measure;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = image.measure || (image.measure = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var processdown;
             (function (processdown) {
                 var ImageProcessDownPipeDef = (function (_super) {
                     __extends(ImageProcessDownPipeDef, _super);
                     function ImageProcessDownPipeDef() {
                         _super.call(this);
-
+                        //TODO: Should we merge the overlap into the layout clip for render?
                         this.addTapinBefore('processLayoutClip', 'checkNeedImageMetrics', processdown.tapins.checkNeedImageMetrics).addTapinAfter('checkNeedImageMetrics', 'prepareImageMetrics', processdown.tapins.prepareImageMetrics).addTapinAfter('prepareImageMetrics', 'calcImageTransform', processdown.tapins.calcImageTransform).addTapinAfter('calcImageTransform', 'calcOverlap', processdown.tapins.calcOverlap);
                     }
                     ImageProcessDownPipeDef.prototype.createState = function () {
@@ -6765,20 +6395,17 @@ var minerva;
                         state.imgAdjust = false;
                         return state;
                     };
-
                     ImageProcessDownPipeDef.prototype.createOutput = function () {
                         var output = _super.prototype.createOutput.call(this);
                         output.imgXform = minerva.mat3.identity();
                         output.overlap = 1 /* In */;
                         return output;
                     };
-
                     ImageProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
                         _super.prototype.prepare.call(this, input, state, output, vpinput, tree);
                         output.overlap = input.overlap;
                         minerva.mat3.copyTo(input.imgXform, output.imgXform);
                     };
-
                     ImageProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
                         _super.prototype.flush.call(this, input, state, output, vpinput, tree);
                         input.overlap = output.overlap;
@@ -6787,41 +6414,38 @@ var minerva;
                     return ImageProcessDownPipeDef;
                 })(minerva.core.processdown.ProcessDownPipeDef);
                 processdown.ImageProcessDownPipeDef = ImageProcessDownPipeDef;
-            })(image.processdown || (image.processdown = {}));
-            var processdown = image.processdown;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(processdown = image.processdown || (image.processdown = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var processdown;
             (function (processdown) {
+                var tapins;
                 (function (tapins) {
                     function calcImageTransform(input, state, output, vpinput, tree) {
                         if (!state.calcImageMetrics)
                             return true;
-
                         var w = state.paintRect.width;
                         var h = state.paintRect.height;
                         var sw = state.imgRect.width;
                         var sh = state.imgRect.height;
-
                         var sx = w / sw;
                         var sy = h / sh;
                         if (w === 0)
                             sx = 1.0;
                         if (h === 0)
                             sy = 1.0;
-
                         var xform = output.imgXform;
                         if (input.stretch === 1 /* Fill */) {
                             minerva.mat3.createScale(sx, sy, xform);
                             return true;
                         }
-
                         var scale = 1.0;
                         switch (input.stretch) {
                             case 2 /* Uniform */:
@@ -6833,134 +6457,131 @@ var minerva;
                             case 0 /* None */:
                                 break;
                         }
-
+                        //AlignmentX.Center
                         var dx = (w - (scale * sw)) / 2;
-
+                        //AlignmentY.Center
                         var dy = (h - (scale * sh)) / 2;
-
                         minerva.mat3.createScale(scale, scale, xform);
                         minerva.mat3.translate(xform, dx, dy);
-
                         return true;
                     }
                     tapins.calcImageTransform = calcImageTransform;
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(image.processdown || (image.processdown = {}));
-            var processdown = image.processdown;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = image.processdown || (image.processdown = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var processdown;
             (function (processdown) {
+                var tapins;
                 (function (tapins) {
                     function calcOverlap(input, state, output, vpinput, tree) {
                         if (!state.calcImageMetrics)
                             return true;
-
                         if (input.stretch === 3 /* UniformToFill */ || state.imgAdjust) {
                             var paint = state.paintRect;
                             minerva.Rect.roundOut(paint);
-
                             var imgRect = state.imgRect;
                             minerva.Rect.transform(imgRect, output.imgXform);
                             minerva.Rect.roundIn(imgRect);
-
                             output.overlap = minerva.Rect.rectIn(paint, imgRect);
                         }
-
                         return true;
                     }
                     tapins.calcOverlap = calcOverlap;
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(image.processdown || (image.processdown = {}));
-            var processdown = image.processdown;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = image.processdown || (image.processdown = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var processdown;
             (function (processdown) {
+                var tapins;
                 (function (tapins) {
                     function checkNeedImageMetrics(input, state, output, vpinput, tree) {
                         state.calcImageMetrics = false;
                         if ((input.dirtyFlags & minerva.DirtyFlags.ImageMetrics) === 0)
                             return true;
-
                         minerva.mat3.identity(output.imgXform);
                         output.overlap = 1 /* In */;
-
                         var imgRect = state.imgRect;
                         imgRect.x = imgRect.y = imgRect.width = imgRect.height = 0;
-
                         state.calcImageMetrics = !!input.source;
                         return true;
                     }
                     tapins.checkNeedImageMetrics = checkNeedImageMetrics;
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(image.processdown || (image.processdown = {}));
-            var processdown = image.processdown;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = image.processdown || (image.processdown = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var processdown;
             (function (processdown) {
+                var tapins;
                 (function (tapins) {
                     function prepareImageMetrics(input, state, output, vpinput, tree) {
                         if (!state.calcImageMetrics)
                             return true;
-
                         var imgRect = state.imgRect;
                         imgRect.x = imgRect.y = 0;
-
                         var source = input.source;
                         source.lock();
                         imgRect.width = source.pixelWidth;
                         imgRect.height = source.pixelHeight;
                         source.unlock();
-
                         var paintRect = state.paintRect;
                         paintRect.x = paintRect.y = 0;
                         paintRect.width = input.actualWidth;
                         paintRect.height = input.actualHeight;
-
+                        /*
+                        See note below
+                        var stretched = state.stretched;
+                        Size.copyTo(paintRect, stretched);
+                        */
                         state.imgAdjust = !minerva.Size.isEqual(paintRect, input.renderSize);
-
+                        /*
+                         Removing `stretched` since actualWidth, actualHeight should already be coerced
+                        core.helpers.coerceSize(stretched, input);
+                        if (input.stretch !== Stretch.UniformToFill) {
+                            paintRect.width = Math.min(paintRect.width, stretched.width);
+                            paintRect.height = Math.min(paintRect.height, stretched.height);
+                        }
+                        */
                         if (input.stretch === 0 /* None */)
                             minerva.Rect.union(paintRect, imgRect);
-
                         return true;
                     }
                     tapins.prepareImageMetrics = prepareImageMetrics;
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(image.processdown || (image.processdown = {}));
-            var processdown = image.processdown;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = image.processdown || (image.processdown = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var render;
             (function (render) {
                 var ImageRenderPipeDef = (function (_super) {
                     __extends(ImageRenderPipeDef, _super);
@@ -6971,24 +6592,24 @@ var minerva;
                     return ImageRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.ImageRenderPipeDef = ImageRenderPipeDef;
-            })(image.render || (image.render = {}));
-            var render = image.render;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(render = image.render || (image.render = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var image;
         (function (image) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
                         var source = input.source;
                         if (!source || source.pixelWidth === 0 || source.pixelHeight === 0)
                             return true;
-
                         source.lock();
                         ctx.save();
                         minerva.core.helpers.renderLayoutClip(ctx, input, tree);
@@ -6996,22 +6617,19 @@ var minerva;
                         ctx.raw.drawImage(source.image, 0, 0);
                         ctx.restore();
                         source.unlock();
-
                         return true;
                     }
                     tapins.doRender = doRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(image.render || (image.render = {}));
-            var render = image.render;
-        })(controls.image || (controls.image = {}));
-        var image = controls.image;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = image.render || (image.render = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
             var PanelUpdaterTree = (function (_super) {
                 __extends(PanelUpdaterTree, _super);
@@ -7029,7 +6647,6 @@ var minerva;
                     }
                     return walkArray(this.children, direction === 1 /* Reverse */);
                 };
-
                 PanelUpdaterTree.prototype.zSort = function () {
                     var zs = this.zSorted;
                     if (zs)
@@ -7040,18 +6657,15 @@ var minerva;
                     }
                     zs.sort(zIndexComparer);
                 };
-
                 PanelUpdaterTree.prototype.onChildAttached = function (child) {
                     this.zSorted = null;
                 };
-
                 PanelUpdaterTree.prototype.onChildDetached = function (child) {
                     this.zSorted = null;
                 };
                 return PanelUpdaterTree;
             })(minerva.core.UpdaterTree);
             panel.PanelUpdaterTree = PanelUpdaterTree;
-
             function walkArray(arr, reverse) {
                 var len = arr.length;
                 var e = { step: undefined, current: undefined };
@@ -7067,7 +6681,8 @@ var minerva;
                         e.current = arr[index];
                         return true;
                     };
-                } else {
+                }
+                else {
                     index = -1;
                     e.step = function () {
                         index++;
@@ -7081,49 +6696,47 @@ var minerva;
                 }
                 return e;
             }
-
             function zIndexComparer(upd1, upd2) {
                 var zi1 = upd1.getAttachedValue("Panel.ZIndex") || 0;
                 var zi2 = upd2.getAttachedValue("Panel.ZIndex") || 0;
                 return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
             }
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var cr = state.childRect;
                         cr.x = cr.y = 0;
                         minerva.Size.copyTo(state.finalSize, cr);
-
                         for (var walker = tree.walk(); walker.step();) {
                             walker.current.arrange(cr);
                         }
-
                         minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(panel.arrange || (panel.arrange = {}));
-            var arrange = panel.arrange;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = panel.arrange || (panel.arrange = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
+            var hittest;
             (function (hittest) {
                 var PanelHitTestPipeDef = (function (_super) {
                     __extends(PanelHitTestPipeDef, _super);
@@ -7134,12 +6747,11 @@ var minerva;
                     return PanelHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.PanelHitTestPipeDef = PanelHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         if (data.hitChildren)
                             return true;
-
                         if (!data.assets.background) {
                             hitList.shift();
                             ctx.restore();
@@ -7148,20 +6760,20 @@ var minerva;
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(panel.hittest || (panel.hittest = {}));
-            var hittest = panel.hittest;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = panel.hittest || (panel.hittest = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var panel;
         (function (panel) {
+            var processup;
             (function (processup) {
+                var tapins;
                 (function (tapins) {
                     function preCalcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
@@ -7173,18 +6785,16 @@ var minerva;
                         return true;
                     }
                     tapins.preCalcExtents = preCalcExtents;
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(panel.processup || (panel.processup = {}));
-            var processup = panel.processup;
-        })(controls.panel || (controls.panel = {}));
-        var panel = controls.panel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = panel.processup || (panel.processup = {}));
+        })(panel = controls.panel || (controls.panel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var popup;
         (function (popup) {
             var PopupUpdater = (function (_super) {
                 __extends(PopupUpdater, _super);
@@ -7193,20 +6803,16 @@ var minerva;
                 }
                 PopupUpdater.prototype.init = function () {
                     this.setTree(new popup.PopupUpdaterTree()).setProcessDownPipe(minerva.singleton(popup.processdown.PopupProcessDownPipeDef)).setProcessUpPipe(minerva.singleton(popup.processup.PopupProcessUpPipeDef)).setHitTestPipe(minerva.singleton(popup.hittest.PopupHitTestPipeDef));
-
                     var assets = this.assets;
                     assets.horizontalOffset = 0;
                     assets.verticalOffset = 0;
                     assets.isVisible = false;
                     assets.isOpen = false;
-
                     _super.prototype.init.call(this);
                 };
-
                 PopupUpdater.prototype.setInitiator = function (initiator) {
                     this.tree.initiatorSurface = initiator.tree.surface;
                 };
-
                 PopupUpdater.prototype.setChild = function (child) {
                     var old = this.tree.popupChild;
                     if (old) {
@@ -7217,14 +6823,12 @@ var minerva;
                         child.assets.carrierXform = minerva.mat3.identity();
                     }
                 };
-
                 PopupUpdater.prototype.setLayer = function (layer) {
                     this.hide();
                     this.tree.layer = layer;
                     if (this.assets.isOpen)
                         this.show();
                 };
-
                 PopupUpdater.prototype.hide = function () {
                     var layer = this.tree.layer;
                     if (!this.assets.isVisible || !layer)
@@ -7236,7 +6840,6 @@ var minerva;
                     surface.detachLayer(layer);
                     return true;
                 };
-
                 PopupUpdater.prototype.show = function () {
                     var layer = this.tree.layer;
                     if (this.assets.isVisible || !layer)
@@ -7251,13 +6854,12 @@ var minerva;
                 return PopupUpdater;
             })(minerva.core.Updater);
             popup.PopupUpdater = PopupUpdater;
-
+            var reactTo;
             (function (reactTo) {
                 function isOpen(updater, oldValue, newValue) {
                     (newValue === true) ? updater.show() : updater.hide();
                 }
                 reactTo.isOpen = isOpen;
-
                 function horizontalOffset(updater, oldValue, newValue) {
                     var tree = updater.tree;
                     var child = tree.popupChild;
@@ -7271,7 +6873,6 @@ var minerva;
                         tree.layer.invalidateMeasure();
                 }
                 reactTo.horizontalOffset = horizontalOffset;
-
                 function verticalOffset(updater, oldValue, newValue) {
                     var tree = updater.tree;
                     var child = tree.popupChild;
@@ -7285,43 +6886,43 @@ var minerva;
                         tree.layer.invalidateMeasure();
                 }
                 reactTo.verticalOffset = verticalOffset;
-
                 function tweenOffset(child, tweenX, tweenY) {
                     if (child.assets.carrierXform) {
                         minerva.mat3.translate(child.assets.carrierXform, tweenX, tweenY);
                     }
                 }
-            })(popup.reactTo || (popup.reactTo = {}));
-            var reactTo = popup.reactTo;
-        })(controls.popup || (controls.popup = {}));
-        var popup = controls.popup;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(reactTo = popup.reactTo || (popup.reactTo = {}));
+        })(popup = controls.popup || (controls.popup = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../core/UpdaterTree" />
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var popup;
         (function (popup) {
             var PopupUpdaterTree = (function (_super) {
                 __extends(PopupUpdaterTree, _super);
                 function PopupUpdaterTree() {
                     _super.apply(this, arguments);
-                    this.popupChild = undefined;
-                    this.layer = undefined;
+                    this.popupChild = undefined; //`Popup`.`Child` that will be a child of `layer`
+                    this.layer = undefined; //Root layer that will be attached to the surface
                     this.initiatorSurface = undefined;
                 }
                 return PopupUpdaterTree;
             })(minerva.core.UpdaterTree);
             popup.PopupUpdaterTree = PopupUpdaterTree;
-        })(controls.popup || (controls.popup = {}));
-        var popup = controls.popup;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(popup = controls.popup || (controls.popup = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var popup;
         (function (popup) {
+            var hittest;
             (function (hittest) {
                 var PopupHitTestPipeDef = (function (_super) {
                     __extends(PopupHitTestPipeDef, _super);
@@ -7332,25 +6933,24 @@ var minerva;
                     return PopupHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.PopupHitTestPipeDef = PopupHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function shouldSkip(data, pos, hitList, ctx) {
                         return !!data.assets.isVisible;
                     }
                     tapins.shouldSkip = shouldSkip;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(popup.hittest || (popup.hittest = {}));
-            var hittest = popup.hittest;
-        })(controls.popup || (controls.popup = {}));
-        var popup = controls.popup;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = popup.hittest || (popup.hittest = {}));
+        })(popup = controls.popup || (controls.popup = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var popup;
         (function (popup) {
+            var processdown;
             (function (processdown) {
                 var PopupProcessDownPipeDef = (function (_super) {
                     __extends(PopupProcessDownPipeDef, _super);
@@ -7361,58 +6961,53 @@ var minerva;
                     return PopupProcessDownPipeDef;
                 })(minerva.core.processdown.ProcessDownPipeDef);
                 processdown.PopupProcessDownPipeDef = PopupProcessDownPipeDef;
-            })(popup.processdown || (popup.processdown = {}));
-            var processdown = popup.processdown;
-        })(controls.popup || (controls.popup = {}));
-        var popup = controls.popup;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(processdown = popup.processdown || (popup.processdown = {}));
+        })(popup = controls.popup || (controls.popup = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var popup;
         (function (popup) {
+            var processdown;
             (function (processdown) {
+                var tapins;
                 (function (tapins) {
                     tapins.postProcessXform = function (input, state, output, vpinput, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                             return true;
-
                         var child = tree.popupChild;
                         if (!child)
                             return true;
-
                         child.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
-
                         var carrier = child.assets.carrierXform;
                         if (!carrier)
                             carrier = child.assets.carrierXform || minerva.mat3.create();
                         minerva.mat3.copyTo(output.absoluteXform, carrier);
                         minerva.mat3.translate(carrier, input.horizontalOffset, input.verticalOffset);
-
                         minerva.core.Updater.$$addDownDirty(child);
-
                         return true;
                     };
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(popup.processdown || (popup.processdown = {}));
-            var processdown = popup.processdown;
-        })(controls.popup || (controls.popup = {}));
-        var popup = controls.popup;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = popup.processdown || (popup.processdown = {}));
+        })(popup = controls.popup || (controls.popup = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var popup;
         (function (popup) {
+            var processdown;
             (function (processdown) {
+                var tapins;
                 (function (tapins) {
                     tapins.preProcessXform = function (input, state, output, vpinput, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                             return true;
-
                         var child = tree.popupChild;
                         if (child) {
                             child.assets.dirtyFlags |= minerva.DirtyFlags.LocalTransform;
@@ -7420,19 +7015,18 @@ var minerva;
                         }
                         return true;
                     };
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(popup.processdown || (popup.processdown = {}));
-            var processdown = popup.processdown;
-        })(controls.popup || (controls.popup = {}));
-        var popup = controls.popup;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = popup.processdown || (popup.processdown = {}));
+        })(popup = controls.popup || (controls.popup = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var popup;
         (function (popup) {
+            var processup;
             (function (processup) {
                 var PopupProcessUpPipeDef = (function (_super) {
                     __extends(PopupProcessUpPipeDef, _super);
@@ -7443,16 +7037,15 @@ var minerva;
                     return PopupProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.PopupProcessUpPipeDef = PopupProcessUpPipeDef;
-            })(popup.processup || (popup.processup = {}));
-            var processup = popup.processup;
-        })(controls.popup || (controls.popup = {}));
-        var popup = controls.popup;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(processup = popup.processup || (popup.processup = {}));
+        })(popup = controls.popup || (controls.popup = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
             var ScrollContentPresenterUpdater = (function (_super) {
                 __extends(ScrollContentPresenterUpdater, _super);
@@ -7461,7 +7054,6 @@ var minerva;
                 }
                 ScrollContentPresenterUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(scrollcontentpresenter.measure.ScrollContentPresenterMeasurePipeDef)).setArrangePipe(minerva.singleton(scrollcontentpresenter.arrange.ScrollContentPresenterArrangePipeDef)).setRenderPipe(minerva.singleton(scrollcontentpresenter.render.ScrollContentPresenterRenderPipeDef));
-
                     var assets = this.assets;
                     assets.internalClip = new minerva.Rect();
                     assets.scrollData = {
@@ -7480,21 +7072,21 @@ var minerva;
                         invalidate: function () {
                         }
                     };
-
                     _super.prototype.init.call(this);
                 };
                 return ScrollContentPresenterUpdater;
             })(minerva.core.Updater);
             scrollcontentpresenter.ScrollContentPresenterUpdater = ScrollContentPresenterUpdater;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var arrange;
             (function (arrange) {
                 var ScrollContentPresenterArrangePipeDef = (function (_super) {
                     __extends(ScrollContentPresenterArrangePipeDef, _super);
@@ -7507,12 +7099,10 @@ var minerva;
                         output.internalClip = new minerva.Rect();
                         return output;
                     };
-
                     ScrollContentPresenterArrangePipeDef.prototype.prepare = function (input, state, output) {
                         minerva.Rect.copyTo(input.internalClip, output.internalClip);
                         _super.prototype.prepare.call(this, input, state, output);
                     };
-
                     ScrollContentPresenterArrangePipeDef.prototype.flush = function (input, state, output) {
                         _super.prototype.flush.call(this, input, state, output);
                         minerva.Rect.copyTo(output.internalClip, input.internalClip);
@@ -7520,18 +7110,19 @@ var minerva;
                     return ScrollContentPresenterArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.ScrollContentPresenterArrangePipeDef = ScrollContentPresenterArrangePipeDef;
-            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
-            var arrange = scrollcontentpresenter.arrange;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var as = state.arrangedSize;
@@ -7539,126 +7130,110 @@ var minerva;
                             as.width = as.height = 0;
                             return true;
                         }
-
                         var sd = input.scrollData;
                         if (scrollcontentpresenter.helpers.clampOffsets(sd)) {
                             sd.invalidate();
                         }
-
                         var desired = tree.subtree.assets.desiredSize;
-
                         var cr = state.childRect;
                         cr.x = -sd.offsetX;
                         cr.y = -sd.offsetY;
                         cr.width = Math.max(state.finalSize.width, desired.width);
                         cr.height = Math.max(state.finalSize.height, desired.height);
-
                         tree.subtree.arrange(cr);
-
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
-            var arrange = scrollcontentpresenter.arrange;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function updateClip(input, state, output, tree, availableSize) {
                         var ic = output.internalClip;
                         ic.x = ic.y = 0;
                         minerva.Size.copyTo(state.arrangedSize, ic);
-
+                        //TODO: Clip for TextBox/RichTextBox
                         return true;
                     }
                     tapins.updateClip = updateClip;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
-            var arrange = scrollcontentpresenter.arrange;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function updateExtents(input, state, output, tree, availableSize) {
                         var sd = input.scrollData;
                         var viewport = state.finalSize;
-
                         var changed = sd.viewportWidth !== viewport.width || sd.viewportHeight !== viewport.height;
                         sd.viewportWidth = viewport.width;
                         sd.viewportHeight = viewport.height;
-
                         if (scrollcontentpresenter.helpers.clampOffsets(sd) || changed) {
                             sd.invalidate();
                         }
-
                         return true;
                     }
                     tapins.updateExtents = updateExtents;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
-            var arrange = scrollcontentpresenter.arrange;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = scrollcontentpresenter.arrange || (scrollcontentpresenter.arrange = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var helpers;
             (function (helpers) {
                 function clampOffsets(sd) {
                     var changed = false;
-
                     var clampX = clampHorizontal(sd, sd.cachedOffsetX);
                     if (!areClose(clampX, sd.offsetX)) {
                         sd.offsetX = clampX;
                         changed = true;
                     }
-
                     var clampY = clampVertical(sd, sd.cachedOffsetY);
                     if (!areClose(clampY, sd.offsetY)) {
                         sd.offsetY = clampY;
                         changed = true;
                     }
-
                     return changed;
                 }
                 helpers.clampOffsets = clampOffsets;
-
                 function clampHorizontal(sd, x) {
                     if (!sd.canHorizontallyScroll)
                         return 0;
                     return Math.max(0, Math.min(x, sd.extentWidth - sd.viewportWidth));
                 }
-
                 function clampVertical(sd, y) {
                     if (!sd.canVerticallyScroll)
                         return 0;
                     return Math.max(0, Math.min(y, sd.extentHeight - sd.viewportHeight));
                 }
-
                 var epsilon = 1.192093E-07;
                 var adjustment = 10;
-
                 function areClose(val1, val2) {
                     if (val1 === val2)
                         return true;
@@ -7666,17 +7241,17 @@ var minerva;
                     var diff = val1 - val2;
                     return -softdiff < diff && diff < softdiff;
                 }
-            })(scrollcontentpresenter.helpers || (scrollcontentpresenter.helpers = {}));
-            var helpers = scrollcontentpresenter.helpers;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(helpers = scrollcontentpresenter.helpers || (scrollcontentpresenter.helpers = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var measure;
             (function (measure) {
                 var ScrollContentPresenterMeasurePipeDef = (function (_super) {
                     __extends(ScrollContentPresenterMeasurePipeDef, _super);
@@ -7692,107 +7267,98 @@ var minerva;
                     return ScrollContentPresenterMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.ScrollContentPresenterMeasurePipeDef = ScrollContentPresenterMeasurePipeDef;
-            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
-            var measure = scrollcontentpresenter.measure;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     tapins.doOverride = function (input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
                         ds.width = ds.height = 0;
-
                         if (!tree.subtree)
                             return true;
-
                         var sd = input.scrollData;
                         var ideal = state.idealSize;
                         ideal.width = !sd.canHorizontallyScroll ? state.availableSize.width : Number.POSITIVE_INFINITY;
                         ideal.height = !sd.canVerticallyScroll ? state.availableSize.height : Number.POSITIVE_INFINITY;
-
                         tree.subtree.measure(ideal);
-
                         return true;
                     };
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
-            var measure = scrollcontentpresenter.measure;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function finishDoOverride(input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
                         var sd = input.scrollData;
-
                         minerva.Size.copyTo(state.availableSize, ds);
                         ds.width = Math.min(ds.width, sd.extentWidth);
                         ds.height = Math.min(ds.height, sd.extentHeight);
-
                         return true;
                     }
                     tapins.finishDoOverride = finishDoOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
-            var measure = scrollcontentpresenter.measure;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function updateExtents(input, state, output, tree, availableSize) {
                         var sd = input.scrollData;
                         var viewport = state.availableSize;
                         var extent = tree.subtree.assets.desiredSize;
-
                         var changed = sd.viewportWidth !== viewport.width || sd.viewportHeight !== viewport.height || sd.extentWidth !== extent.width || sd.extentHeight !== extent.height;
                         sd.viewportWidth = viewport.width;
                         sd.viewportHeight = viewport.height;
                         sd.extentWidth = extent.width;
                         sd.extentHeight = extent.height;
-
                         if (scrollcontentpresenter.helpers.clampOffsets(sd) || changed) {
                             sd.invalidate();
                         }
-
                         return true;
                     }
                     tapins.updateExtents = updateExtents;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
-            var measure = scrollcontentpresenter.measure;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = scrollcontentpresenter.measure || (scrollcontentpresenter.measure = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var scrollcontentpresenter;
         (function (scrollcontentpresenter) {
+            var render;
             (function (render) {
                 var ScrollContentPresenterRenderPipeDef = (function (_super) {
                     __extends(ScrollContentPresenterRenderPipeDef, _super);
@@ -7803,7 +7369,7 @@ var minerva;
                     return ScrollContentPresenterRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.ScrollContentPresenterRenderPipeDef = ScrollContentPresenterRenderPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function applyInternalClip(input, state, output, ctx, region, tree) {
                         if (minerva.Rect.isEmpty(input.internalClip))
@@ -7812,18 +7378,16 @@ var minerva;
                         return true;
                     }
                     tapins.applyInternalClip = applyInternalClip;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(scrollcontentpresenter.render || (scrollcontentpresenter.render = {}));
-            var render = scrollcontentpresenter.render;
-        })(controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
-        var scrollcontentpresenter = controls.scrollcontentpresenter;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = scrollcontentpresenter.render || (scrollcontentpresenter.render = {}));
+        })(scrollcontentpresenter = controls.scrollcontentpresenter || (controls.scrollcontentpresenter = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
             var StackPanelUpdater = (function (_super) {
                 __extends(StackPanelUpdater, _super);
@@ -7832,23 +7396,22 @@ var minerva;
                 }
                 StackPanelUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(stackpanel.measure.StackPanelMeasurePipeDef)).setArrangePipe(minerva.singleton(stackpanel.arrange.StackPanelArrangePipeDef));
-
                     this.assets.orientation = 1 /* Vertical */;
-
                     _super.prototype.init.call(this);
                 };
                 return StackPanelUpdater;
             })(controls.panel.PanelUpdater);
             stackpanel.StackPanelUpdater = StackPanelUpdater;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var arrange;
             (function (arrange) {
                 var StackPanelArrangePipeDef = (function (_super) {
                     __extends(StackPanelArrangePipeDef, _super);
@@ -7859,28 +7422,27 @@ var minerva;
                     return StackPanelArrangePipeDef;
                 })(controls.panel.arrange.PanelArrangePipeDef);
                 arrange.StackPanelArrangePipeDef = StackPanelArrangePipeDef;
-            })(stackpanel.arrange || (stackpanel.arrange = {}));
-            var arrange = stackpanel.arrange;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = stackpanel.arrange || (stackpanel.arrange = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doHorizontal(input, state, output, tree, finalRect) {
                         if (input.orientation !== 0 /* Horizontal */)
                             return true;
-
                         var fs = state.finalSize;
                         var arranged = state.arrangedSize;
                         arranged.width = 0;
                         var childRect = state.childRect;
-
                         var child;
                         var childDesired;
                         for (var walker = tree.walk(); walker.step();) {
@@ -7889,34 +7451,30 @@ var minerva;
                             childDesired.height = fs.height;
                             minerva.Size.copyTo(childDesired, childRect);
                             childRect.x = arranged.width;
-
                             if (minerva.Rect.isEmpty(childRect))
                                 childRect.x = childRect.y = childRect.width = childRect.height = 0;
                             child.arrange(childRect);
-
                             arranged.width += childDesired.width;
                             arranged.height = Math.max(arranged.height, childDesired.height);
                         }
-
                         arranged.width = Math.max(arranged.width, state.finalSize.width);
-
                         return true;
                     }
                     tapins.doHorizontal = doHorizontal;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(stackpanel.arrange || (stackpanel.arrange = {}));
-            var arrange = stackpanel.arrange;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = stackpanel.arrange || (stackpanel.arrange = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var cr = state.childRect;
@@ -7926,30 +7484,28 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(stackpanel.arrange || (stackpanel.arrange = {}));
-            var arrange = stackpanel.arrange;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = stackpanel.arrange || (stackpanel.arrange = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doVertical(input, state, output, tree, finalRect) {
                         if (input.orientation !== 1 /* Vertical */)
                             return true;
-
                         var fs = state.finalSize;
                         var arranged = state.arrangedSize;
                         arranged.height = 0;
                         var childRect = state.childRect;
-
                         var child;
                         var childDesired;
                         for (var walker = tree.walk(); walker.step();) {
@@ -7958,33 +7514,28 @@ var minerva;
                             childDesired.width = fs.width;
                             minerva.Size.copyTo(childDesired, childRect);
                             childRect.y = arranged.height;
-
                             if (minerva.Rect.isEmpty(childRect))
                                 childRect.x = childRect.y = childRect.width = childRect.height = 0;
                             child.arrange(childRect);
-
                             arranged.width = Math.max(arranged.width, childDesired.width);
                             arranged.height += childDesired.height;
                         }
-
                         arranged.height = Math.max(arranged.height, state.finalSize.height);
-
                         return true;
                     }
                     tapins.doVertical = doVertical;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(stackpanel.arrange || (stackpanel.arrange = {}));
-            var arrange = stackpanel.arrange;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = stackpanel.arrange || (stackpanel.arrange = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var measure;
             (function (measure) {
                 var StackPanelMeasurePipeDef = (function (_super) {
                     __extends(StackPanelMeasurePipeDef, _super);
@@ -8000,57 +7551,54 @@ var minerva;
                     return StackPanelMeasurePipeDef;
                 })(controls.panel.measure.PanelMeasurePipeDef);
                 measure.StackPanelMeasurePipeDef = StackPanelMeasurePipeDef;
-            })(stackpanel.measure || (stackpanel.measure = {}));
-            var measure = stackpanel.measure;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = stackpanel.measure || (stackpanel.measure = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doHorizontal(input, state, output, tree, availableSize) {
                         if (input.orientation !== 0 /* Horizontal */)
                             return true;
-
                         var ca = state.childAvailable;
                         ca.height = state.availableSize.height;
                         var height = input.height;
                         if (!isNaN(height))
                             ca.height = height;
                         ca.height = Math.max(Math.min(ca.height, input.maxHeight), input.minHeight);
-
                         var desired = output.desiredSize;
                         for (var walker = tree.walk(), child, childDesired; walker.step();) {
                             child = walker.current;
                             child.measure(ca);
                             childDesired = child.assets.desiredSize;
-
                             desired.width += childDesired.width;
                             desired.height = Math.max(desired.height, childDesired.height);
                         }
-
                         return true;
                     }
                     tapins.doHorizontal = doHorizontal;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(stackpanel.measure || (stackpanel.measure = {}));
-            var measure = stackpanel.measure;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = stackpanel.measure || (stackpanel.measure = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ca = state.childAvailable;
@@ -8060,57 +7608,51 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(stackpanel.measure || (stackpanel.measure = {}));
-            var measure = stackpanel.measure;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = stackpanel.measure || (stackpanel.measure = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var stackpanel;
         (function (stackpanel) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doVertical(input, state, output, tree, availableSize) {
                         if (input.orientation !== 1 /* Vertical */)
                             return true;
-
                         var ca = state.childAvailable;
                         ca.width = state.availableSize.width;
                         var width = input.width;
                         if (!isNaN(width))
                             ca.width = width;
                         ca.width = Math.max(Math.min(ca.width, input.maxWidth), input.minWidth);
-
                         var desired = output.desiredSize;
                         for (var walker = tree.walk(), child, childDesired; walker.step();) {
                             child = walker.current;
                             child.measure(ca);
                             childDesired = child.assets.desiredSize;
-
                             desired.height += childDesired.height;
                             desired.width = Math.max(desired.width, childDesired.width);
                         }
-
                         return true;
                     }
                     tapins.doVertical = doVertical;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(stackpanel.measure || (stackpanel.measure = {}));
-            var measure = stackpanel.measure;
-        })(controls.stackpanel || (controls.stackpanel = {}));
-        var stackpanel = controls.stackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = stackpanel.measure || (stackpanel.measure = {}));
+        })(stackpanel = controls.stackpanel || (controls.stackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textblock;
         (function (textblock) {
             var TextBlockUpdater = (function (_super) {
                 __extends(TextBlockUpdater, _super);
@@ -8119,9 +7661,7 @@ var minerva;
                 }
                 TextBlockUpdater.prototype.init = function () {
                     this.setTree(new textblock.TextBlockUpdaterTree()).setMeasurePipe(minerva.singleton(textblock.measure.TextBlockMeasurePipeDef)).setArrangePipe(minerva.singleton(textblock.arrange.TextBlockArrangePipeDef)).setProcessUpPipe(minerva.singleton(textblock.processup.TextBlockProcessUpPipeDef)).setRenderPipe(minerva.singleton(textblock.render.TextBlockRenderPipeDef)).setHitTestPipe(minerva.singleton(textblock.hittest.TextBlockHitTestPipeDef));
-
                     this.setDocument();
-
                     var assets = this.assets;
                     assets.padding = new minerva.Thickness();
                     assets.selectionStart = 0;
@@ -8130,17 +7670,14 @@ var minerva;
                     assets.textAlignment = 0 /* Left */;
                     assets.lineStackingStrategy = 0 /* MaxHeight */;
                     assets.lineHeight = NaN;
-
                     _super.prototype.init.call(this);
                 };
-
                 TextBlockUpdater.prototype.setDocument = function (docdef) {
                     if (this.tree.doc)
                         return this;
                     this.tree.doc = minerva.text.createDocumentLayout(docdef || new minerva.text.DocumentLayoutDef());
                     return this;
                 };
-
                 TextBlockUpdater.prototype.invalidateFont = function (full) {
                     if (full === true) {
                         this.invalidateMeasure();
@@ -8149,7 +7686,6 @@ var minerva;
                     }
                     this.invalidate();
                 };
-
                 TextBlockUpdater.prototype.invalidateTextMetrics = function () {
                     this.invalidateMeasure();
                     this.invalidateArrange();
@@ -8162,14 +7698,14 @@ var minerva;
                 return TextBlockUpdater;
             })(minerva.core.Updater);
             textblock.TextBlockUpdater = TextBlockUpdater;
-        })(controls.textblock || (controls.textblock = {}));
-        var textblock = controls.textblock;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textblock;
         (function (textblock) {
             var TextBlockUpdaterTree = (function (_super) {
                 __extends(TextBlockUpdaterTree, _super);
@@ -8182,25 +7718,20 @@ var minerva;
                     doc.def.layout(docctx, doc.assets, constraint, this.walkText());
                     return new minerva.Size(doc.assets.actualWidth, doc.assets.actualHeight);
                 };
-
                 TextBlockUpdaterTree.prototype.render = function (ctx, docctx) {
                     var doc = this.doc;
                     doc.def.render(ctx, docctx, doc.assets);
                 };
-
                 TextBlockUpdaterTree.prototype.setAvailableWidth = function (width) {
                     this.doc.assets.availableWidth = width;
                 };
-
                 TextBlockUpdaterTree.prototype.getHorizontalOffset = function (docctx) {
                     var doc = this.doc;
                     return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
                 };
-
                 TextBlockUpdaterTree.prototype.clearText = function () {
                     this.children.length = 0;
                 };
-
                 TextBlockUpdaterTree.prototype.walkText = function () {
                     var i = -1;
                     var children = this.children;
@@ -8213,14 +7744,12 @@ var minerva;
                         }
                     };
                 };
-
                 TextBlockUpdaterTree.prototype.onTextAttached = function (child, index) {
                     if (index == null || index < 0 || index >= this.children.length)
                         this.children.push(child);
                     else
                         this.children.splice(index, 0, child);
                 };
-
                 TextBlockUpdaterTree.prototype.onTextDetached = function (child) {
                     var index = this.children.indexOf(child);
                     if (index > -1)
@@ -8229,15 +7758,16 @@ var minerva;
                 return TextBlockUpdaterTree;
             })(minerva.core.UpdaterTree);
             textblock.TextBlockUpdaterTree = TextBlockUpdaterTree;
-        })(controls.textblock || (controls.textblock = {}));
-        var textblock = controls.textblock;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textblock;
         (function (textblock) {
+            var arrange;
             (function (arrange) {
                 var TextBlockArrangePipeDef = (function (_super) {
                     __extends(TextBlockArrangePipeDef, _super);
@@ -8248,35 +7778,32 @@ var minerva;
                     return TextBlockArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.TextBlockArrangePipeDef = TextBlockArrangePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var fs = state.finalSize;
                         var as = state.arrangedSize;
-
                         minerva.Thickness.shrinkSize(input.padding, fs);
                         minerva.Size.copyTo(tree.layout(fs, input), as);
                         as.width = Math.max(as.width, fs.width);
                         as.height = Math.max(as.height, fs.height);
                         tree.setAvailableWidth(fs.width);
                         minerva.Thickness.growSize(input.padding, as);
-
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(textblock.arrange || (textblock.arrange = {}));
-            var arrange = textblock.arrange;
-        })(controls.textblock || (controls.textblock = {}));
-        var textblock = controls.textblock;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = textblock.arrange || (textblock.arrange = {}));
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textblock;
         (function (textblock) {
+            var hittest;
             (function (hittest) {
                 var TextBlockHitTestPipeDef = (function (_super) {
                     __extends(TextBlockHitTestPipeDef, _super);
@@ -8287,25 +7814,24 @@ var minerva;
                     return TextBlockHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.TextBlockHitTestPipeDef = TextBlockHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(textblock.hittest || (textblock.hittest = {}));
-            var hittest = textblock.hittest;
-        })(controls.textblock || (controls.textblock = {}));
-        var textblock = controls.textblock;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = textblock.hittest || (textblock.hittest = {}));
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textblock;
         (function (textblock) {
+            var measure;
             (function (measure) {
                 var TextBlockMeasurePipeDef = (function (_super) {
                     __extends(TextBlockMeasurePipeDef, _super);
@@ -8316,31 +7842,28 @@ var minerva;
                     return TextBlockMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.TextBlockMeasurePipeDef = TextBlockMeasurePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
-
                         minerva.Thickness.shrinkSize(input.padding, state.availableSize);
                         minerva.Size.copyTo(tree.layout(state.availableSize, input), ds);
                         minerva.Thickness.growSize(input.padding, ds);
-
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(textblock.measure || (textblock.measure = {}));
-            var measure = textblock.measure;
-        })(controls.textblock || (controls.textblock = {}));
-        var textblock = controls.textblock;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = textblock.measure || (textblock.measure = {}));
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textblock;
         (function (textblock) {
+            var processup;
             (function (processup) {
                 var TextBlockProcessUpPipeDef = (function (_super) {
                     __extends(TextBlockProcessUpPipeDef, _super);
@@ -8351,55 +7874,47 @@ var minerva;
                     return TextBlockProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.TextBlockProcessUpPipeDef = TextBlockProcessUpPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function calcActualSize(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         var as = state.actualSize;
                         as.width = Number.POSITIVE_INFINITY;
                         as.height = Number.POSITIVE_INFINITY;
                         minerva.core.helpers.coerceSize(as, input);
-
                         minerva.Thickness.shrinkSize(input.padding, as);
                         minerva.Size.copyTo(tree.layout(as, input), as);
                         minerva.Thickness.growSize(input.padding, as);
-
                         return true;
                     }
                     tapins.calcActualSize = calcActualSize;
-
                     function calcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         var e = output.extents;
                         e.x = tree.getHorizontalOffset(input);
                         e.y = 0;
                         minerva.Size.copyTo(state.actualSize, e);
-
                         var padding = input.padding;
                         e.x += padding.left;
                         e.y += padding.top;
                         minerva.Rect.copyTo(e, output.extentsWithChildren);
-
                         return true;
                     }
                     tapins.calcExtents = calcExtents;
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(textblock.processup || (textblock.processup = {}));
-            var processup = textblock.processup;
-        })(controls.textblock || (controls.textblock = {}));
-        var textblock = controls.textblock;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = textblock.processup || (textblock.processup = {}));
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textblock;
         (function (textblock) {
+            var render;
             (function (render) {
                 var TextBlockRenderPipeDef = (function (_super) {
                     __extends(TextBlockRenderPipeDef, _super);
@@ -8410,7 +7925,7 @@ var minerva;
                     return TextBlockRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.TextBlockRenderPipeDef = TextBlockRenderPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
                         ctx.save();
@@ -8423,25 +7938,22 @@ var minerva;
                         return true;
                     }
                     tapins.doRender = doRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(textblock.render || (textblock.render = {}));
-            var render = textblock.render;
-        })(controls.textblock || (controls.textblock = {}));
-        var textblock = controls.textblock;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = textblock.render || (textblock.render = {}));
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
             var CURSOR_BLINK_DIVIDER = 3;
             var CURSOR_BLINK_OFF_MULTIPLIER = 2;
             var CURSOR_BLINK_DELAY_MULTIPLIER = 3;
             var CURSOR_BLINK_ON_MULTIPLIER = 4;
             var CURSOR_BLINK_TIMEOUT_DEFAULT = 900;
-
             var Blinker = (function () {
                 function Blinker(onChange) {
                     this.isEnabled = true;
@@ -8455,51 +7967,43 @@ var minerva;
                     this.$connect(CURSOR_BLINK_DELAY_MULTIPLIER);
                     this.$show();
                 };
-
                 Blinker.prototype.begin = function () {
                     if (this.$$timeout === 0) {
                         this.$connect(CURSOR_BLINK_ON_MULTIPLIER);
                         this.$show();
                     }
                 };
-
                 Blinker.prototype.end = function () {
                     this.$disconnect();
                     this.$hide();
                 };
-
                 Blinker.prototype.$connect = function (multiplier) {
                     var _this = this;
                     var delay = this.$$blink_delay * multiplier / CURSOR_BLINK_DIVIDER;
-                    this.$$timeout = window.setTimeout(function () {
-                        return _this.$blink();
-                    }, delay);
+                    this.$$timeout = window.setTimeout(function () { return _this.$blink(); }, delay);
                 };
-
                 Blinker.prototype.$disconnect = function () {
                     if (this.$$timeout !== 0) {
                         window.clearTimeout(this.$$timeout);
                         this.$$timeout = 0;
                     }
                 };
-
                 Blinker.prototype.$blink = function () {
                     if (this.isVisible) {
                         this.$hide();
                         this.$connect(CURSOR_BLINK_OFF_MULTIPLIER);
-                    } else {
+                    }
+                    else {
                         this.$show();
                         this.$connect(CURSOR_BLINK_ON_MULTIPLIER);
                     }
                 };
-
                 Blinker.prototype.$show = function () {
                     if (this.isVisible)
                         return;
                     this.isVisible = true;
                     this.$$onChange && this.$$onChange(true);
                 };
-
                 Blinker.prototype.$hide = function () {
                     if (!this.isVisible)
                         return;
@@ -8509,14 +8013,14 @@ var minerva;
                 return Blinker;
             })();
             textboxview.Blinker = Blinker;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
             var TextBoxViewUpdater = (function (_super) {
                 __extends(TextBoxViewUpdater, _super);
@@ -8526,9 +8030,7 @@ var minerva;
                 TextBoxViewUpdater.prototype.init = function () {
                     var _this = this;
                     this.setTree(new textboxview.TextBoxViewUpdaterTree()).setMeasurePipe(minerva.singleton(textboxview.measure.TextBoxViewMeasurePipeDef)).setArrangePipe(minerva.singleton(textboxview.arrange.TextBoxViewArrangePipeDef)).setProcessUpPipe(minerva.singleton(textboxview.processup.TextBoxViewProcessUpPipeDef)).setRenderPipe(minerva.singleton(textboxview.render.TextBoxViewRenderPipeDef)).setHitTestPipe(minerva.singleton(textboxview.hittest.TextBoxViewHitTestPipeDef));
-
                     this.setDocument();
-
                     var assets = this.assets;
                     assets.selectionStart = 0;
                     assets.selectionLength = 0;
@@ -8536,32 +8038,26 @@ var minerva;
                     assets.textAlignment = 0 /* Left */;
                     assets.lineStackingStrategy = 0 /* MaxHeight */;
                     assets.lineHeight = NaN;
-
                     assets.isCaretVisible = false;
                     assets.caretBrush = null;
                     assets.caretRegion = new minerva.Rect();
                     assets.isReadOnly = false;
-
                     this.blinker = new textboxview.Blinker(function (isVisible) {
                         _this.assets.isCaretVisible = isVisible;
                         _this.invalidateCaret();
                     });
-
                     _super.prototype.init.call(this);
                 };
-
                 TextBoxViewUpdater.prototype.setDocument = function (docdef) {
                     if (this.tree.doc)
                         return this;
                     this.tree.doc = minerva.text.createDocumentLayout(docdef || new minerva.text.DocumentLayoutDef());
                     return this;
                 };
-
                 TextBoxViewUpdater.prototype.getCursorFromPoint = function (point) {
                     var doc = this.tree.doc;
                     return doc.def.getCursorFromPoint(point, this.assets, doc.assets);
                 };
-
                 TextBoxViewUpdater.prototype.invalidateFont = function (full) {
                     if (full === true) {
                         this.invalidateMeasure();
@@ -8570,12 +8066,10 @@ var minerva;
                     }
                     this.invalidate();
                 };
-
                 TextBoxViewUpdater.prototype.invalidateTextMetrics = function () {
                     this.invalidateMeasure().invalidateArrange().updateBounds(true).invalidate();
                     return this;
                 };
-
                 TextBoxViewUpdater.prototype.invalidateMeasure = function () {
                     _super.prototype.invalidateMeasure.call(this);
                     var docassets = this.tree.doc.assets;
@@ -8583,7 +8077,6 @@ var minerva;
                     docassets.actualHeight = NaN;
                     return this;
                 };
-
                 TextBoxViewUpdater.prototype.invalidateCaret = function () {
                     var assets = this.assets;
                     var region = new minerva.Rect();
@@ -8591,13 +8084,11 @@ var minerva;
                     minerva.Rect.transform(region, assets.absoluteXform);
                     this.invalidate(region);
                 };
-
                 TextBoxViewUpdater.prototype.invalidateSelectionStart = function () {
                     this.tree.doc.assets.selCached = false;
                     this.invalidateCaretRegion();
                     this.resetCaretBlinker(true);
                 };
-
                 TextBoxViewUpdater.prototype.invalidateSelectionLength = function (switching) {
                     this.tree.doc.assets.selCached = false;
                     this.invalidate();
@@ -8605,17 +8096,14 @@ var minerva;
                     if (switching)
                         this.invalidateCaretRegion();
                 };
-
                 TextBoxViewUpdater.prototype.invalidateCaretRegion = function () {
                     this.invalidateCaret();
                     var cr = this.assets.caretRegion;
                     cr.x = cr.y = cr.width = cr.height = 0;
                 };
-
                 TextBoxViewUpdater.prototype.resetCaretBlinker = function (shouldDelay) {
                     var assets = this.assets;
                     var blinker = this.blinker;
-
                     if (assets.selectionLength > 0 || assets.isReadOnly || !assets.isFocused)
                         return blinker.end();
                     if (shouldDelay)
@@ -8625,14 +8113,14 @@ var minerva;
                 return TextBoxViewUpdater;
             })(minerva.core.Updater);
             textboxview.TextBoxViewUpdater = TextBoxViewUpdater;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
             var TextBoxViewUpdaterTree = (function (_super) {
                 __extends(TextBoxViewUpdaterTree, _super);
@@ -8645,30 +8133,24 @@ var minerva;
                     doc.def.layout(docctx, doc.assets, constraint, this.walkText());
                     return new minerva.Size(doc.assets.actualWidth, doc.assets.actualHeight);
                 };
-
                 TextBoxViewUpdaterTree.prototype.render = function (ctx, docctx) {
                     var doc = this.doc;
                     doc.def.render(ctx, docctx, doc.assets);
                 };
-
                 TextBoxViewUpdaterTree.prototype.setAvailableWidth = function (width) {
                     this.doc.assets.availableWidth = width;
                 };
-
                 TextBoxViewUpdaterTree.prototype.getHorizontalOffset = function (docctx) {
                     var doc = this.doc;
                     return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
                 };
-
                 TextBoxViewUpdaterTree.prototype.getCaretRegion = function (docctx) {
                     var doc = this.doc;
                     return doc.def.getCaretFromCursor(docctx, doc.assets);
                 };
-
                 TextBoxViewUpdaterTree.prototype.clearText = function () {
                     this.children.length = 0;
                 };
-
                 TextBoxViewUpdaterTree.prototype.walkText = function () {
                     var i = -1;
                     var children = this.children;
@@ -8681,14 +8163,12 @@ var minerva;
                         }
                     };
                 };
-
                 TextBoxViewUpdaterTree.prototype.onTextAttached = function (child, index) {
                     if (index == null || index < 0 || index >= this.children.length)
                         this.children.push(child);
                     else
                         this.children.splice(index, 0, child);
                 };
-
                 TextBoxViewUpdaterTree.prototype.onTextDetached = function (child) {
                     var index = this.children.indexOf(child);
                     if (index > -1)
@@ -8697,15 +8177,16 @@ var minerva;
                 return TextBoxViewUpdaterTree;
             })(minerva.core.UpdaterTree);
             textboxview.TextBoxViewUpdaterTree = TextBoxViewUpdaterTree;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
+            var arrange;
             (function (arrange) {
                 var TextBoxViewArrangePipeDef = (function (_super) {
                     __extends(TextBoxViewArrangePipeDef, _super);
@@ -8716,33 +8197,30 @@ var minerva;
                     return TextBoxViewArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.TextBoxViewArrangePipeDef = TextBoxViewArrangePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var fs = state.finalSize;
                         var as = state.arrangedSize;
-
                         minerva.Size.copyTo(tree.layout(fs, input), as);
                         as.width = Math.max(as.width, fs.width);
                         as.height = Math.max(as.height, fs.height);
                         tree.setAvailableWidth(fs.width);
-
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(textboxview.arrange || (textboxview.arrange = {}));
-            var arrange = textboxview.arrange;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = textboxview.arrange || (textboxview.arrange = {}));
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
+            var hittest;
             (function (hittest) {
                 var TextBoxViewHitTestPipeDef = (function (_super) {
                     __extends(TextBoxViewHitTestPipeDef, _super);
@@ -8753,25 +8231,24 @@ var minerva;
                     return TextBoxViewHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.TextBoxViewHitTestPipeDef = TextBoxViewHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(textboxview.hittest || (textboxview.hittest = {}));
-            var hittest = textboxview.hittest;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = textboxview.hittest || (textboxview.hittest = {}));
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
+            var measure;
             (function (measure) {
                 var TextBoxViewMeasurePipeDef = (function (_super) {
                     __extends(TextBoxViewMeasurePipeDef, _super);
@@ -8782,7 +8259,7 @@ var minerva;
                     return TextBoxViewMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.TextBoxViewMeasurePipeDef = TextBoxViewMeasurePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
@@ -8795,19 +8272,18 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(textboxview.measure || (textboxview.measure = {}));
-            var measure = textboxview.measure;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = textboxview.measure || (textboxview.measure = {}));
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
+            var processup;
             (function (processup) {
                 var TextBoxViewProcessUpPipeDef = (function (_super) {
                     __extends(TextBoxViewProcessUpPipeDef, _super);
@@ -8818,49 +8294,42 @@ var minerva;
                     return TextBoxViewProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.TextBoxViewProcessUpPipeDef = TextBoxViewProcessUpPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function calcActualSize(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         var as = state.actualSize;
                         as.width = Number.POSITIVE_INFINITY;
                         as.height = Number.POSITIVE_INFINITY;
                         minerva.core.helpers.coerceSize(as, input);
-
                         minerva.Size.copyTo(tree.layout(as, input), as);
-
                         return true;
                     }
                     tapins.calcActualSize = calcActualSize;
-
                     function calcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         var e = output.extents;
                         e.x = e.y = 0;
                         minerva.Size.copyTo(state.actualSize, e);
                         minerva.Rect.copyTo(e, output.extentsWithChildren);
-                        output.extentsWithChildren.width++;
-
+                        output.extentsWithChildren.width++; //include caret
                         return true;
                     }
                     tapins.calcExtents = calcExtents;
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(textboxview.processup || (textboxview.processup = {}));
-            var processup = textboxview.processup;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = textboxview.processup || (textboxview.processup = {}));
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var textboxview;
         (function (textboxview) {
+            var render;
             (function (render) {
                 var TextBoxViewRenderPipeDef = (function (_super) {
                     __extends(TextBoxViewRenderPipeDef, _super);
@@ -8873,12 +8342,10 @@ var minerva;
                         output.caretRegion = new minerva.Rect();
                         return output;
                     };
-
                     TextBoxViewRenderPipeDef.prototype.prepare = function (input, state, output) {
                         minerva.Rect.copyTo(input.caretRegion, output.caretRegion);
                         _super.prototype.prepare.call(this, input, state, output);
                     };
-
                     TextBoxViewRenderPipeDef.prototype.flush = function (input, state, output) {
                         _super.prototype.flush.call(this, input, state, output);
                         minerva.Rect.copyTo(output.caretRegion, input.caretRegion);
@@ -8886,7 +8353,7 @@ var minerva;
                     return TextBoxViewRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.TextBoxViewRenderPipeDef = TextBoxViewRenderPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region, tree) {
                         ctx.save();
@@ -8896,7 +8363,6 @@ var minerva;
                         return true;
                     }
                     tapins.doRender = doRender;
-
                     function calcCaretRegion(input, state, output, ctx, region, tree) {
                         if (!minerva.Rect.isEmpty(output.caretRegion) || input.selectionLength > 0)
                             return true;
@@ -8904,15 +8370,12 @@ var minerva;
                         return true;
                     }
                     tapins.calcCaretRegion = calcCaretRegion;
-
                     function renderCaret(input, state, output, ctx, region, tree) {
                         if (!input.isCaretVisible || input.selectionLength > 0)
                             return true;
-
                         var region = output.caretRegion;
                         var brush = input.caretBrush;
                         var raw = ctx.raw;
-
                         raw.beginPath();
                         raw.moveTo(region.x + 0.5, region.y);
                         raw.lineTo(region.x + 0.5, region.y + region.height);
@@ -8920,26 +8383,24 @@ var minerva;
                         if (brush) {
                             brush.setupBrush(raw, region);
                             raw.strokeStyle = brush.toHtml5Object();
-                        } else {
+                        }
+                        else {
                             raw.strokeStyle = "#000000";
                         }
                         raw.stroke();
-
                         return true;
                     }
                     tapins.renderCaret = renderCaret;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(textboxview.render || (textboxview.render = {}));
-            var render = textboxview.render;
-        })(controls.textboxview || (controls.textboxview = {}));
-        var textboxview = controls.textboxview;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = textboxview.render || (textboxview.render = {}));
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
             var UserControlUpdater = (function (_super) {
                 __extends(UserControlUpdater, _super);
@@ -8948,26 +8409,25 @@ var minerva;
                 }
                 UserControlUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(usercontrol.measure.UserControlMeasurePipeDef)).setArrangePipe(minerva.singleton(usercontrol.arrange.UserControlArrangePipeDef)).setProcessDownPipe(minerva.singleton(usercontrol.processdown.UserControlProcessDownPipeDef));
-
                     var assets = this.assets;
                     assets.breakLayoutClip = true;
                     assets.padding = new minerva.Thickness();
                     assets.borderThickness = new minerva.Thickness();
-
                     _super.prototype.init.call(this);
                 };
                 return UserControlUpdater;
             })(controls.control.ControlUpdater);
             usercontrol.UserControlUpdater = UserControlUpdater;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var arrange;
             (function (arrange) {
                 var UserControlArrangePipeDef = (function (_super) {
                     __extends(UserControlArrangePipeDef, _super);
@@ -8983,41 +8443,41 @@ var minerva;
                     return UserControlArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.UserControlArrangePipeDef = UserControlArrangePipeDef;
-            })(usercontrol.arrange || (usercontrol.arrange = {}));
-            var arrange = usercontrol.arrange;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = usercontrol.arrange || (usercontrol.arrange = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         if (tree.subtree)
                             tree.subtree.arrange(state.childRect);
-
                         minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(usercontrol.arrange || (usercontrol.arrange = {}));
-            var arrange = usercontrol.arrange;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = usercontrol.arrange || (usercontrol.arrange = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function preOverride(input, state, output, tree, availableSize) {
                         if (!tree.subtree)
@@ -9025,7 +8485,6 @@ var minerva;
                         var tb = state.totalBorder;
                         minerva.Thickness.copyTo(input.padding, tb);
                         minerva.Thickness.add(tb, input.borderThickness);
-
                         var cr = state.childRect;
                         cr.x = cr.y = 0;
                         minerva.Size.copyTo(state.finalSize, cr);
@@ -9033,19 +8492,18 @@ var minerva;
                         return true;
                     }
                     tapins.preOverride = preOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(usercontrol.arrange || (usercontrol.arrange = {}));
-            var arrange = usercontrol.arrange;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = usercontrol.arrange || (usercontrol.arrange = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var measure;
             (function (measure) {
                 var UserControlMeasurePipeDef = (function (_super) {
                     __extends(UserControlMeasurePipeDef, _super);
@@ -9061,18 +8519,19 @@ var minerva;
                     return UserControlMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.UserControlMeasurePipeDef = UserControlMeasurePipeDef;
-            })(usercontrol.measure || (usercontrol.measure = {}));
-            var measure = usercontrol.measure;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = usercontrol.measure || (usercontrol.measure = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
@@ -9084,20 +8543,20 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(usercontrol.measure || (usercontrol.measure = {}));
-            var measure = usercontrol.measure;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = usercontrol.measure || (usercontrol.measure = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function postOverride(input, state, output, tree, availableSize) {
                         minerva.Thickness.growSize(state.totalBorder, output.desiredSize);
@@ -9105,20 +8564,20 @@ var minerva;
                         return true;
                     }
                     tapins.postOverride = postOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(usercontrol.measure || (usercontrol.measure = {}));
-            var measure = usercontrol.measure;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = usercontrol.measure || (usercontrol.measure = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function preOverride(input, state, output, tree, availableSize) {
                         var tb = state.totalBorder;
@@ -9128,19 +8587,18 @@ var minerva;
                         return true;
                     }
                     tapins.preOverride = preOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(usercontrol.measure || (usercontrol.measure = {}));
-            var measure = usercontrol.measure;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = usercontrol.measure || (usercontrol.measure = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var usercontrol;
         (function (usercontrol) {
+            var processdown;
             (function (processdown) {
                 var UserControlProcessDownPipeDef = (function (_super) {
                     __extends(UserControlProcessDownPipeDef, _super);
@@ -9151,29 +8609,26 @@ var minerva;
                     return UserControlProcessDownPipeDef;
                 })(minerva.core.processdown.ProcessDownPipeDef);
                 processdown.UserControlProcessDownPipeDef = UserControlProcessDownPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function processLayoutClip(input, state, output, vpinput, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.LayoutClip) === 0)
                             return true;
-
                         var clc = input.compositeLayoutClip;
                         clc.x = clc.y = clc.width = clc.height;
                         return true;
                     }
                     tapins.processLayoutClip = processLayoutClip;
-                })(processdown.tapins || (processdown.tapins = {}));
-                var tapins = processdown.tapins;
-            })(usercontrol.processdown || (usercontrol.processdown = {}));
-            var processdown = usercontrol.processdown;
-        })(controls.usercontrol || (controls.usercontrol = {}));
-        var usercontrol = controls.usercontrol;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = usercontrol.processdown || (usercontrol.processdown = {}));
+        })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingpanel;
         (function (virtualizingpanel) {
             var VirtualizingPanelUpdater = (function (_super) {
                 __extends(VirtualizingPanelUpdater, _super);
@@ -9182,20 +8637,19 @@ var minerva;
                 }
                 VirtualizingPanelUpdater.prototype.init = function () {
                     this.setTree(new virtualizingpanel.VirtualizingPanelUpdaterTree());
-
                     _super.prototype.init.call(this);
                 };
                 return VirtualizingPanelUpdater;
             })(controls.panel.PanelUpdater);
             virtualizingpanel.VirtualizingPanelUpdater = VirtualizingPanelUpdater;
-        })(controls.virtualizingpanel || (controls.virtualizingpanel = {}));
-        var virtualizingpanel = controls.virtualizingpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(virtualizingpanel = controls.virtualizingpanel || (controls.virtualizingpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingpanel;
         (function (virtualizingpanel) {
             virtualizingpanel.NO_CONTAINER_OWNER = {
                 itemCount: 0,
@@ -9210,7 +8664,6 @@ var minerva;
                 remove: function (index, count) {
                 }
             };
-
             var VirtualizingPanelUpdaterTree = (function (_super) {
                 __extends(VirtualizingPanelUpdaterTree, _super);
                 function VirtualizingPanelUpdaterTree() {
@@ -9220,14 +8673,14 @@ var minerva;
                 return VirtualizingPanelUpdaterTree;
             })(controls.panel.PanelUpdaterTree);
             virtualizingpanel.VirtualizingPanelUpdaterTree = VirtualizingPanelUpdaterTree;
-        })(controls.virtualizingpanel || (controls.virtualizingpanel = {}));
-        var virtualizingpanel = controls.virtualizingpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(virtualizingpanel = controls.virtualizingpanel || (controls.virtualizingpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
             var VirtualizingStackPanelUpdater = (function (_super) {
                 __extends(VirtualizingStackPanelUpdater, _super);
@@ -9236,7 +8689,6 @@ var minerva;
                 }
                 VirtualizingStackPanelUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(virtualizingstackpanel.measure.VirtualizingStackPanelMeasurePipeDef)).setArrangePipe(minerva.singleton(virtualizingstackpanel.arrange.VirtualizingStackPanelArrangePipeDef));
-
                     var assets = this.assets;
                     assets.orientation = 1 /* Vertical */;
                     assets.scrollData = {
@@ -9255,21 +8707,21 @@ var minerva;
                         invalidate: function () {
                         }
                     };
-
                     _super.prototype.init.call(this);
                 };
                 return VirtualizingStackPanelUpdater;
             })(controls.virtualizingpanel.VirtualizingPanelUpdater);
             virtualizingstackpanel.VirtualizingStackPanelUpdater = VirtualizingStackPanelUpdater;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var arrange;
             (function (arrange) {
                 var VirtualizingStackPanelArrangePipeDef = (function (_super) {
                     __extends(VirtualizingStackPanelArrangePipeDef, _super);
@@ -9280,29 +8732,28 @@ var minerva;
                     return VirtualizingStackPanelArrangePipeDef;
                 })(controls.panel.arrange.PanelArrangePipeDef);
                 arrange.VirtualizingStackPanelArrangePipeDef = VirtualizingStackPanelArrangePipeDef;
-            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
-            var arrange = virtualizingstackpanel.arrange;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(arrange = virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doHorizontal(input, state, output, tree, finalRect) {
                         if (input.orientation !== 0 /* Horizontal */)
                             return true;
-
                         var fs = state.finalSize;
                         var arranged = state.arrangedSize;
                         arranged.width = 0;
                         var childRect = state.childRect;
                         var sd = input.scrollData;
-
                         var child;
                         var childDesired;
                         for (var walker = tree.walk(); walker.step();) {
@@ -9312,34 +8763,30 @@ var minerva;
                             minerva.Size.copyTo(childDesired, childRect);
                             childRect.x = arranged.width;
                             childRect.y = -sd.offsetY;
-
                             if (minerva.Rect.isEmpty(childRect))
                                 childRect.x = childRect.y = childRect.width = childRect.height = 0;
                             child.arrange(childRect);
-
                             arranged.width += childDesired.width;
                             arranged.height = Math.max(arranged.height, childDesired.height);
                         }
-
                         arranged.width = Math.max(arranged.width, fs.width);
-
                         return true;
                     }
                     tapins.doHorizontal = doHorizontal;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
-            var arrange = virtualizingstackpanel.arrange;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var cr = state.childRect;
@@ -9349,31 +8796,29 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
-            var arrange = virtualizingstackpanel.arrange;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var arrange;
             (function (arrange) {
+                var tapins;
                 (function (tapins) {
                     function doVertical(input, state, output, tree, finalRect) {
                         if (input.orientation !== 1 /* Vertical */)
                             return true;
-
                         var fs = state.finalSize;
                         var arranged = state.arrangedSize;
                         arranged.height = 0;
                         var childRect = state.childRect;
                         var sd = input.scrollData;
-
                         var child;
                         var childDesired;
                         for (var walker = tree.walk(); walker.step();) {
@@ -9383,33 +8828,28 @@ var minerva;
                             minerva.Size.copyTo(childDesired, childRect);
                             childRect.x = -sd.offsetX;
                             childRect.y = arranged.height;
-
                             if (minerva.Rect.isEmpty(childRect))
                                 childRect.x = childRect.y = childRect.width = childRect.height = 0;
                             child.arrange(childRect);
-
                             arranged.width = Math.max(arranged.width, childDesired.width);
                             arranged.height += childDesired.height;
                         }
-
                         arranged.height = Math.max(arranged.height, fs.height);
-
                         return true;
                     }
                     tapins.doVertical = doVertical;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
-            var arrange = virtualizingstackpanel.arrange;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = virtualizingstackpanel.arrange || (virtualizingstackpanel.arrange = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var measure;
             (function (measure) {
                 var VirtualizingStackPanelMeasurePipeDef = (function (_super) {
                     __extends(VirtualizingStackPanelMeasurePipeDef, _super);
@@ -9425,32 +8865,31 @@ var minerva;
                     return VirtualizingStackPanelMeasurePipeDef;
                 })(controls.panel.measure.PanelMeasurePipeDef);
                 measure.VirtualizingStackPanelMeasurePipeDef = VirtualizingStackPanelMeasurePipeDef;
-            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
-            var measure = virtualizingstackpanel.measure;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+            })(measure = virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doHorizontal(input, state, output, tree, availableSize) {
                         if (input.orientation !== 0 /* Horizontal */)
                             return true;
-
                         var ca = state.childAvailable;
                         var sd = input.scrollData;
                         if (sd.canVerticallyScroll)
                             ca.height = Number.POSITIVE_INFINITY;
-
+                        //Dispose and remove containers that are before offset
                         var index = Math.floor(sd.offsetX);
                         var count = tree.containerOwner.itemCount;
                         tree.containerOwner.remove(0, index);
-
                         var viscount = 0;
                         var ds = output.desiredSize;
                         for (var generator = tree.containerOwner.createGenerator(index, count); generator.generate();) {
@@ -9463,35 +8902,32 @@ var minerva;
                             if (ds.width > ca.width)
                                 break;
                         }
-
+                        //Dispose and remove containers that are after visible
                         tree.containerOwner.remove(index + viscount, count - (index + viscount));
-
                         var changed = sd.extentHeight !== ds.height || sd.extentWidth !== count || sd.viewportHeight !== ca.height || sd.viewportWidth !== viscount;
                         sd.extentHeight = ds.height;
                         sd.extentWidth = count;
                         sd.viewportHeight = ca.height;
                         sd.viewportWidth = viscount;
-
                         if (changed)
                             sd.invalidate();
-
                         return true;
                     }
                     tapins.doHorizontal = doHorizontal;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
-            var measure = virtualizingstackpanel.measure;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ca = state.childAvailable;
@@ -9501,34 +8937,32 @@ var minerva;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
-            var measure = virtualizingstackpanel.measure;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var controls;
     (function (controls) {
+        var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
+            var measure;
             (function (measure) {
+                var tapins;
                 (function (tapins) {
                     function doVertical(input, state, output, tree, availableSize) {
                         if (input.orientation !== 1 /* Vertical */)
                             return true;
-
                         var ca = state.childAvailable;
                         var sd = input.scrollData;
                         if (sd.canHorizontallyScroll)
                             ca.width = Number.POSITIVE_INFINITY;
-
+                        //Dispose and remove containers that are before offset
                         var index = Math.floor(sd.offsetY);
                         var count = tree.containerOwner.itemCount;
                         tree.containerOwner.remove(0, index);
-
                         var viscount = 0;
                         var ds = output.desiredSize;
                         for (var generator = tree.containerOwner.createGenerator(index, count); generator.generate();) {
@@ -9541,32 +8975,26 @@ var minerva;
                             if (ds.height > ca.height)
                                 break;
                         }
-
+                        //Dispose and remove containers that are after visible
                         tree.containerOwner.remove(index + viscount, count - (index + viscount));
-
                         var changed = sd.extentHeight !== count || sd.extentWidth !== ds.width || sd.viewportHeight !== viscount || sd.viewportWidth !== ca.width;
                         sd.extentHeight = count;
                         sd.extentWidth = ds.width;
                         sd.viewportHeight = viscount;
                         sd.viewportWidth = ca.width;
-
                         if (changed)
                             sd.invalidate();
-
                         return true;
                     }
                     tapins.doVertical = doVertical;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
-            var measure = virtualizingstackpanel.measure;
-        })(controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
-        var virtualizingstackpanel = controls.virtualizingstackpanel;
-    })(minerva.controls || (minerva.controls = {}));
-    var controls = minerva.controls;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = virtualizingstackpanel.measure || (virtualizingstackpanel.measure = {}));
+        })(virtualizingstackpanel = controls.virtualizingstackpanel || (controls.virtualizingstackpanel = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var engine;
     (function (engine) {
         var fontCtx = null;
         var hitTestCtx = null;
@@ -9581,6 +9009,7 @@ var minerva;
                 this.$$dirtyRegion = null;
                 this.$$width = 0;
                 this.$$height = 0;
+                //NOTE: If we resize the HTML5 canvas during resize, the canvas will go blank until render happens
                 this.$$sizechanged = false;
             }
             Object.defineProperty(Surface.prototype, "width", {
@@ -9590,7 +9019,6 @@ var minerva;
                 enumerable: true,
                 configurable: true
             });
-
             Object.defineProperty(Surface.prototype, "height", {
                 get: function () {
                     return this.$$height;
@@ -9598,14 +9026,12 @@ var minerva;
                 enumerable: true,
                 configurable: true
             });
-
             Surface.prototype.init = function (canvas) {
                 this.$$canvas = canvas;
                 this.$$ctx = new minerva.core.render.RenderContext(canvas.getContext('2d', { alpha: false }));
                 this.$$width = canvas.offsetWidth;
                 this.$$height = canvas.offsetHeight;
             };
-
             Surface.prototype.attachLayer = function (layer, root) {
                 if (root === true)
                     this.$$layers.unshift(layer);
@@ -9616,7 +9042,6 @@ var minerva;
                 layer.fullInvalidate();
                 layer.setSurface(this);
             };
-
             Surface.prototype.detachLayer = function (layer) {
                 layer.tree.isTop = false;
                 layer.setSurface(null);
@@ -9625,7 +9050,6 @@ var minerva;
                     this.$$layers.splice(index, 1);
                 this.invalidate(layer.assets.surfaceBoundsWithChildren);
             };
-
             Surface.prototype.walkLayers = function (reverse) {
                 var layers = this.$$layers;
                 var i = -1;
@@ -9639,7 +9063,8 @@ var minerva;
                             return this.current !== undefined;
                         }
                     };
-                } else {
+                }
+                else {
                     return {
                         current: undefined,
                         step: function () {
@@ -9650,10 +9075,8 @@ var minerva;
                     };
                 }
             };
-
             Surface.prototype.updateBounds = function () {
             };
-
             Surface.prototype.invalidate = function (region) {
                 region = region || new minerva.Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
                 if (!this.$$dirtyRegion)
@@ -9661,23 +9084,21 @@ var minerva;
                 else
                     minerva.Rect.union(this.$$dirtyRegion, region);
             };
-
             Surface.prototype.render = function () {
                 var region = this.$$dirtyRegion;
                 if (!region || minerva.Rect.isEmpty(region))
                     return;
                 this.$$dirtyRegion = null;
                 minerva.Rect.roundOut(region);
-
                 var ctx = this.$$ctx;
                 if (this.$$sizechanged) {
                     this.$$sizechanged = false;
                     ctx.resize(this.$$width, this.$$height);
-                } else {
+                }
+                else {
                 }
                 ctx.raw.fillStyle = "#ffffff";
                 ctx.raw.fillRect(region.x, region.y, region.width, region.height);
-
                 ctx.save();
                 ctx.clipRect(region);
                 for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
@@ -9685,15 +9106,12 @@ var minerva;
                 }
                 ctx.restore();
             };
-
             Surface.prototype.addUpDirty = function (updater) {
                 this.$$upDirty.push(updater);
             };
-
             Surface.prototype.addDownDirty = function (updater) {
                 this.$$downDirty.push(updater);
             };
-
             Surface.prototype.updateLayout = function () {
                 var pass = {
                     count: 0,
@@ -9714,14 +9132,11 @@ var minerva;
                     layersUpdated = engine.draft(this.$$layers, this.$$layout, pass);
                     updated = engine.process(this.$$downDirty, this.$$upDirty) || layersUpdated || updated;
                 }
-
                 if (pass.count >= pass.maxCount) {
                     console.error("[MINERVA] Aborting infinite update loop");
                 }
-
                 return updated;
             };
-
             Surface.prototype.resize = function (width, height) {
                 this.$$width = width;
                 this.$$height = height;
@@ -9731,20 +9146,17 @@ var minerva;
                     layers[i].invalidateMeasure();
                 }
             };
-
             Surface.prototype.hitTest = function (pos) {
                 if (this.$$layers.length < 1)
                     return null;
                 hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
                 hitTestCtx.resize(this.$$canvas.width, this.$$canvas.height);
-
                 var list = [];
                 for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
                     layers[i].hitTest(pos, list, hitTestCtx, false);
                 }
                 return list;
             };
-
             Surface.measureWidth = function (text, font) {
                 fontCtx = fontCtx || document.createElement('canvas').getContext('2d');
                 fontCtx.font = font.toHtml5Object();
@@ -9753,11 +9165,11 @@ var minerva;
             return Surface;
         })();
         engine.Surface = Surface;
-    })(minerva.engine || (minerva.engine = {}));
-    var engine = minerva.engine;
+    })(engine = minerva.engine || (minerva.engine = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var engine;
     (function (engine) {
         function draft(layers, draftPipe, pass) {
             var updated = false;
@@ -9777,11 +9189,11 @@ var minerva;
             return updated;
         }
         engine.draft = draft;
-    })(minerva.engine || (minerva.engine = {}));
-    var engine = minerva.engine;
+    })(engine = minerva.engine || (minerva.engine = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var engine;
     (function (engine) {
         function process(down, up) {
             var updated = down.length > 0 || up.length > 0;
@@ -9790,12 +9202,13 @@ var minerva;
             return updated;
         }
         engine.process = process;
-
+        //Down --> RenderVisibility, HitTestVisibility, Transformation, Clip
         function processDown(list) {
             for (var updater; (updater = list[0]) != null;) {
                 if (updater.processDown()) {
                     list.shift();
-                } else {
+                }
+                else {
                     list.push(list.shift());
                 }
             }
@@ -9803,13 +9216,15 @@ var minerva;
                 console.warn("[MINERVA] Finished DownDirty pass, not empty.");
             }
         }
-
+        //Up --> Bounds, Invalidation
         function processUp(list) {
             for (var updater; (updater = list[0]) != null;) {
                 var childIndex = updater.findChildInList(list);
                 if (childIndex > -1) {
+                    // OPTIMIZATION: Parent is overzealous, children will invalidate him
                     list.splice(childIndex + 1, 0, list.shift());
-                } else if (updater.processUp()) {
+                }
+                else if (updater.processUp()) {
                     list.shift();
                 }
             }
@@ -9817,28 +9232,28 @@ var minerva;
                 console.warn("[MINERVA] Finished UpDirty pass, not empty.");
             }
         }
-    })(minerva.engine || (minerva.engine = {}));
-    var engine = minerva.engine;
+    })(engine = minerva.engine || (minerva.engine = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    /// NOTE:
+    ///     Row-major order
+    ///     [m11, m12, m21, m22, x0, y0]
     var FLOAT_EPSILON = 0.000001;
     var createTypedArray;
-
     if (typeof Float32Array !== "undefined") {
         createTypedArray = function (length) {
             return new Float32Array(length);
         };
-    } else {
+    }
+    else {
         createTypedArray = function (length) {
             return new Array(length);
         };
     }
-
     minerva.mat3 = {
         create: function (src) {
             var dest = createTypedArray(6);
-
             if (src) {
                 dest[0] = src[0];
                 dest[1] = src[1];
@@ -9846,10 +9261,10 @@ var minerva;
                 dest[3] = src[3];
                 dest[4] = src[4];
                 dest[5] = src[5];
-            } else {
+            }
+            else {
                 dest[0] = dest[1] = dest[2] = dest[3] = dest[4] = dest[5] = 0;
             }
-
             return dest;
         },
         copyTo: function (src, dest) {
@@ -9888,16 +9303,12 @@ var minerva;
             if (!dest)
                 dest = a;
             var a11 = a[0], a12 = a[1], a21 = a[2], a22 = a[3], ax0 = a[4], ay0 = a[5], b11 = b[0], b12 = b[1], b21 = b[2], b22 = b[3], bx0 = b[4], by0 = b[5];
-
             dest[0] = a11 * b11 + a12 * b21;
             dest[1] = a11 * b12 + a12 * b22;
-
             dest[2] = a21 * b11 + a22 * b21;
             dest[3] = a21 * b12 + a22 * b22;
-
             dest[4] = ax0 * b11 + ay0 * b21 + bx0;
             dest[5] = ax0 * b12 + ay0 * b22 + by0;
-
             return dest;
         },
         inverse: function (mat, dest) {
@@ -9945,7 +9356,6 @@ var minerva;
             mat[0] *= sx;
             mat[2] *= sx;
             mat[4] *= sx;
-
             mat[1] *= sy;
             mat[3] *= sy;
             mat[5] *= sy;
@@ -9976,23 +9386,20 @@ var minerva;
             return dest;
         }
     };
-
     function simple_inverse(mat, dest) {
         var m11 = mat[0];
         if (Math.abs(m11) < FLOAT_EPSILON)
             return null;
-
         var m22 = mat[3];
         if (Math.abs(m22) < FLOAT_EPSILON)
             return null;
-
         if (!dest) {
             dest = mat;
-        } else {
+        }
+        else {
             dest[1] = mat[1];
             dest[2] = mat[2];
         }
-
         var x0 = -mat[4];
         var y0 = -mat[5];
         if (Math.abs(m11 - 1) < FLOAT_EPSILON) {
@@ -10003,27 +9410,22 @@ var minerva;
             m22 = 1 / m22;
             y0 *= m22;
         }
-
         dest[0] = m11;
         dest[3] = m22;
         dest[4] = x0;
         dest[5] = y0;
         return dest;
     }
-
     function complex_inverse(mat, dest) {
         if (!dest)
             dest = mat;
-
         var m11 = mat[0], m12 = mat[1], m21 = mat[2], m22 = mat[3];
-
+        //inv(A) = 1/det(A) * adj(A)
         var det = m11 * m22 - m12 * m21;
         if (det === 0 || !isFinite(det))
             return null;
         var id = 1 / det;
-
         var x0 = mat[4], y0 = mat[5];
-
         dest[0] = m22 * id;
         dest[1] = -m12 * id;
         dest[2] = -m21 * id;
@@ -10055,24 +9457,21 @@ var minerva;
         Indexes[Indexes["OffsetZ"] = 14] = "OffsetZ";
         Indexes[Indexes["M44"] = 15] = "M44";
     })(Indexes || (Indexes = {}));
-
     var FLOAT_EPSILON = 0.000001;
     var createTypedArray;
-
     if (typeof Float32Array !== "undefined") {
         createTypedArray = function (length) {
             return new Float32Array(length);
         };
-    } else {
+    }
+    else {
         createTypedArray = function (length) {
             return new Array(length);
         };
     }
-
     minerva.mat4 = {
         create: function (src) {
             var dest = createTypedArray(16);
-
             if (src) {
                 dest[0 /* M11 */] = src[0 /* M11 */];
                 dest[1 /* M12 */] = src[1 /* M12 */];
@@ -10091,7 +9490,6 @@ var minerva;
                 dest[14 /* OffsetZ */] = src[14 /* OffsetZ */];
                 dest[15 /* M44 */] = src[15 /* M44 */];
             }
-
             return dest;
         },
         copyTo: function (src, dest) {
@@ -10141,9 +9539,7 @@ var minerva;
             if (!dest)
                 dest = a;
             var m11 = a[0 /* M11 */], m12 = a[1 /* M12 */], m13 = a[2 /* M13 */], m14 = a[3 /* M14 */], m21 = a[4 /* M21 */], m22 = a[5 /* M22 */], m23 = a[6 /* M23 */], m24 = a[7 /* M24 */], m31 = a[8 /* M31 */], m32 = a[9 /* M32 */], m33 = a[10 /* M33 */], m34 = a[11 /* M34 */], mx0 = a[12 /* OffsetX */], my0 = a[13 /* OffsetY */], mz0 = a[14 /* OffsetZ */], m44 = a[15 /* M44 */];
-
             var n11 = b[0 /* M11 */], n12 = b[1 /* M12 */], n13 = b[2 /* M13 */], n14 = b[3 /* M14 */], n21 = b[4 /* M21 */], n22 = b[5 /* M22 */], n23 = b[6 /* M23 */], n24 = b[7 /* M24 */], n31 = b[8 /* M31 */], n32 = b[9 /* M32 */], n33 = b[10 /* M33 */], n34 = b[11 /* M34 */], nx0 = b[12 /* OffsetX */], ny0 = b[13 /* OffsetY */], nz0 = b[14 /* OffsetZ */], n44 = b[15 /* M44 */];
-
             dest[0 /* M11 */] = m11 * n11 + m12 * n21 + m13 * n31 + m14 * nx0;
             dest[1 /* M12 */] = m11 * n12 + m12 * n22 + m13 * n32 + m14 * ny0;
             dest[2 /* M13 */] = m11 * n13 + m12 * n23 + m13 * n33 + m14 * nz0;
@@ -10165,14 +9561,12 @@ var minerva;
         inverse: function (mat, dest) {
             if (!dest)
                 dest = mat;
-
+            // Cache the matrix values (makes for huge speed increases!)
             var a00 = mat[0 /* M11 */], a01 = mat[1 /* M12 */], a02 = mat[2 /* M13 */], a03 = mat[3 /* M14 */], a10 = mat[4 /* M21 */], a11 = mat[5 /* M22 */], a12 = mat[6 /* M23 */], a13 = mat[7 /* M24 */], a20 = mat[8 /* M31 */], a21 = mat[9 /* M32 */], a22 = mat[10 /* M33 */], a23 = mat[11 /* M34 */], a30 = mat[12 /* OffsetX */], a31 = mat[13 /* OffsetY */], a32 = mat[14 /* OffsetZ */], a33 = mat[15 /* M44 */], b00 = a00 * a11 - a01 * a10, b01 = a00 * a12 - a02 * a10, b02 = a00 * a13 - a03 * a10, b03 = a01 * a12 - a02 * a11, b04 = a01 * a13 - a03 * a11, b05 = a02 * a13 - a03 * a12, b06 = a20 * a31 - a21 * a30, b07 = a20 * a32 - a22 * a30, b08 = a20 * a33 - a23 * a30, b09 = a21 * a32 - a22 * a31, b10 = a21 * a33 - a23 * a31, b11 = a22 * a33 - a23 * a32;
-
             var d = (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
             if (!isFinite(d) || !d)
                 return null;
             var id = 1 / d;
-
             dest[0 /* M11 */] = (a11 * b11 - a12 * b10 + a13 * b09) * id;
             dest[1 /* M12 */] = (-a01 * b11 + a02 * b10 - a03 * b09) * id;
             dest[2 /* M13 */] = (a31 * b05 - a32 * b04 + a33 * b03) * id;
@@ -10189,232 +9583,253 @@ var minerva;
             dest[13 /* OffsetY */] = (a00 * b09 - a01 * b07 + a02 * b06) * id;
             dest[14 /* OffsetZ */] = (-a30 * b03 + a31 * b01 - a32 * b00) * id;
             dest[15 /* M44 */] = (a20 * b03 - a21 * b01 + a22 * b00) * id;
-
             return dest;
         },
         transformVec4: function (mat, vec, dest) {
             if (!dest)
                 dest = vec;
-
             var x = vec[0], y = vec[1], z = vec[2], w = vec[3];
-
             var m11 = mat[0 /* M11 */], m12 = mat[1 /* M12 */], m13 = mat[2 /* M13 */], m14 = mat[3 /* M14 */], m21 = mat[4 /* M21 */], m22 = mat[5 /* M22 */], m23 = mat[6 /* M23 */], m24 = mat[7 /* M24 */], m31 = mat[8 /* M31 */], m32 = mat[9 /* M32 */], m33 = mat[10 /* M33 */], m34 = mat[11 /* M34 */], mx0 = mat[12 /* OffsetX */], my0 = mat[13 /* OffsetY */], mz0 = mat[14 /* OffsetZ */], m44 = mat[15 /* M44 */];
-
             dest[0] = m11 * x + m12 * y + m13 * z + m14 * w;
             dest[1] = m21 * x + m22 * y + m23 * z + m24 * w;
             dest[2] = m31 * x + m32 * y + m33 * z + m34 * w;
             dest[3] = mx0 * x + my0 * y + mz0 * z + m44 * w;
-
             return dest;
         },
         createTranslate: function (x, y, z, dest) {
             if (!dest)
                 dest = minerva.mat4.create();
-
             dest[0 /* M11 */] = 1;
             dest[1 /* M12 */] = 0;
             dest[2 /* M13 */] = 0;
             dest[3 /* M14 */] = 0;
-
             dest[4 /* M21 */] = 0;
             dest[5 /* M22 */] = 1;
             dest[6 /* M23 */] = 0;
             dest[7 /* M24 */] = 0;
-
             dest[8 /* M31 */] = 0;
             dest[9 /* M32 */] = 0;
             dest[10 /* M33 */] = 1;
             dest[11 /* M34 */] = 0;
-
             dest[12 /* OffsetX */] = x;
             dest[13 /* OffsetY */] = y;
             dest[14 /* OffsetZ */] = z;
             dest[15 /* M44 */] = 1;
-
             return dest;
         },
         createScale: function (x, y, z, dest) {
             if (!dest)
                 dest = minerva.mat4.create();
-
             dest[0 /* M11 */] = x;
             dest[1 /* M12 */] = 0;
             dest[2 /* M13 */] = 0;
             dest[3 /* M14 */] = 0;
-
             dest[0 /* M11 */] = 0;
             dest[1 /* M12 */] = y;
             dest[2 /* M13 */] = 0;
             dest[3 /* M14 */] = 0;
-
             dest[8 /* M31 */] = 0;
             dest[9 /* M32 */] = 0;
             dest[10 /* M33 */] = z;
             dest[11 /* M34 */] = 0;
-
             dest[12 /* OffsetX */] = 0;
             dest[13 /* OffsetY */] = 0;
             dest[14 /* OffsetZ */] = 0;
             dest[15 /* M44 */] = 1;
-
             return dest;
         },
         createRotateX: function (theta, dest) {
             if (!dest)
                 dest = minerva.mat4.create();
-
             var s = Math.sin(theta);
             var c = Math.cos(theta);
-
             dest[0 /* M11 */] = 1;
             dest[1 /* M12 */] = 0;
             dest[2 /* M13 */] = 0;
             dest[3 /* M14 */] = 0;
-
             dest[4 /* M21 */] = 0;
             dest[5 /* M22 */] = c;
             dest[6 /* M23 */] = s;
             dest[7 /* M24 */] = 0;
-
             dest[8 /* M31 */] = 0;
             dest[9 /* M32 */] = -s;
             dest[10 /* M33 */] = c;
             dest[11 /* M34 */] = 0;
-
             dest[12 /* OffsetX */] = 0;
             dest[13 /* OffsetY */] = 0;
             dest[14 /* OffsetZ */] = 0;
             dest[15 /* M44 */] = 1;
-
             return dest;
         },
         createRotateY: function (theta, dest) {
             if (!dest)
                 dest = minerva.mat4.create();
-
             var s = Math.sin(theta);
             var c = Math.cos(theta);
-
             dest[0 /* M11 */] = c;
             dest[1 /* M12 */] = 0;
             dest[2 /* M13 */] = -s;
             dest[3 /* M14 */] = 0;
-
             dest[4 /* M21 */] = 0;
             dest[5 /* M22 */] = 1;
             dest[6 /* M23 */] = 0;
             dest[7 /* M24 */] = 0;
-
             dest[8 /* M31 */] = s;
             dest[9 /* M32 */] = 0;
             dest[10 /* M33 */] = c;
             dest[11 /* M34 */] = 0;
-
             dest[12 /* OffsetX */] = 0;
             dest[13 /* OffsetY */] = 0;
             dest[14 /* OffsetZ */] = 0;
             dest[15 /* M44 */] = 1;
-
             return dest;
         },
         createRotateZ: function (theta, dest) {
             if (!dest)
                 dest = minerva.mat4.create();
-
             var s = Math.sin(theta);
             var c = Math.cos(theta);
-
             dest[0 /* M11 */] = c;
             dest[1 /* M12 */] = s;
             dest[2 /* M13 */] = 0;
             dest[3 /* M14 */] = 0;
-
             dest[4 /* M21 */] = -s;
             dest[5 /* M22 */] = c;
             dest[6 /* M23 */] = 0;
             dest[7 /* M24 */] = 0;
-
             dest[8 /* M31 */] = 0;
             dest[9 /* M32 */] = 0;
             dest[10 /* M33 */] = 1;
             dest[11 /* M34 */] = 0;
-
             dest[12 /* OffsetX */] = 0;
             dest[13 /* OffsetY */] = 0;
             dest[14 /* OffsetZ */] = 0;
             dest[15 /* M44 */] = 1;
-
             return dest;
         },
         createPerspective: function (fieldOfViewY, aspectRatio, zNearPlane, zFarPlane, dest) {
             if (!dest)
                 dest = minerva.mat4.create();
-
             var height = 1.0 / Math.tan(fieldOfViewY / 2.0);
             var width = height / aspectRatio;
             var d = zNearPlane - zFarPlane;
-
             dest[0 /* M11 */] = width;
             dest[1 /* M12 */] = 0;
             dest[2 /* M13 */] = 0;
             dest[3 /* M14 */] = 0;
-
             dest[4 /* M21 */] = 0;
             dest[5 /* M22 */] = height;
             dest[6 /* M23 */] = 0;
             dest[7 /* M24 */] = 0;
-
             dest[8 /* M31 */] = 0;
             dest[9 /* M32 */] = 0;
             dest[10 /* M33 */] = zFarPlane / d;
             dest[11 /* M34 */] = -1.0;
-
             dest[12 /* OffsetX */] = 0;
             dest[13 /* OffsetY */] = 0;
             dest[14 /* OffsetZ */] = zNearPlane * zFarPlane / d;
             dest[15 /* M44 */] = 0.0;
-
             return dest;
         },
         createViewport: function (width, height, dest) {
             if (!dest)
                 dest = minerva.mat4.create();
-
             dest[0 /* M11 */] = width / 2.0;
             dest[1 /* M12 */] = 0;
             dest[2 /* M13 */] = 0;
             dest[3 /* M14 */] = 0;
-
             dest[4 /* M21 */] = 0;
             dest[5 /* M22 */] = -height / 2.0;
             dest[6 /* M23 */] = 0;
             dest[7 /* M24 */] = 0;
-
             dest[8 /* M31 */] = 0;
             dest[9 /* M32 */] = 0;
             dest[10 /* M33 */] = 1;
             dest[11 /* M34 */] = 0;
-
             dest[12 /* OffsetX */] = width / 2.0;
             dest[13 /* OffsetY */] = height / 2.0;
             dest[14 /* OffsetZ */] = 0;
             dest[15 /* M44 */] = 1;
-
             return dest;
         }
     };
 })(minerva || (minerva = {}));
-
 var mat4 = minerva.mat4;
+/// <reference path="../Rect" />
 var minerva;
 (function (minerva) {
     minerva.Rect.transform4 = function (dest, projection) {
         console.warn("[Rect.transform4] Not implemented");
-    };
+        /*
+        if (!projection)
+            return;
 
+        var x = dest.x;
+        var y = dest.y;
+        var width = dest.width;
+        var height = dest.height;
+
+        var p1 = vec4.create(x, y, 0.0, 1.0);
+        var p2 = vec4.create(x + width, y, 0.0, 1.0);
+        var p3 = vec4.create(x + width, y + height, 0.0, 1.0);
+        var p4 = vec4.create(x, y + height, 0.0, 1.0);
+
+        mat4.transformVec4(projection, p1);
+        mat4.transformVec4(projection, p2);
+        mat4.transformVec4(projection, p3);
+        mat4.transformVec4(projection, p4);
+
+        var vs = 65536.0;
+        var vsr = 1.0 / vs;
+        p1[0] *= vsr;
+        p1[1] *= vsr;
+        p2[0] *= vsr;
+        p2[1] *= vsr;
+        p3[0] *= vsr;
+        p3[1] *= vsr;
+        p4[0] *= vsr;
+        p4[1] *= vsr;
+
+        var cm1 = clipmask(p1);
+        var cm2 = clipmask(p2);
+        var cm3 = clipmask(p3);
+        var cm4 = clipmask(p4);
+
+        if ((cm1 | cm2 | cm3 | cm4) !== 0) {
+            if ((cm1 & cm2 & cm3 & cm4) === 0) {
+                dest.x = dest.y = dest.width = dest.height = 0;
+                //TODO: Implement
+                //var r1 = Matrix3D._ClipToBounds(p1, p2, p3, cm1 | cm2 | cm3);
+                //var r2 = Matrix3D._ClipToBounds(p1, p3, p4, cm1 | cm3 | cm4);
+                //if (!r1.IsEmpty()) rect.union(dest, r1);
+                //if (!r2.IsEmpty()) rect.union(dest, r2);
+            }
+        } else {
+            var p1w = 1.0 / p1[3];
+            var p2w = 1.0 / p2[3];
+            var p3w = 1.0 / p3[3];
+            var p4w = 1.0 / p4[3];
+            p1[0] *= p1w * vs;
+            p1[1] *= p1w * vs;
+            p2[0] *= p2w * vs;
+            p2[1] *= p2w * vs;
+            p3[0] *= p3w * vs;
+            p3[1] *= p3w * vs;
+            p4[0] *= p4w * vs;
+            p4[1] *= p4w * vs;
+
+            dest.x = p1[0];
+            dest.y = p1[1];
+            dest.width = 0;
+            dest.height = 0;
+            Rect.extendTo(dest, p2[0], p2[1]);
+            Rect.extendTo(dest, p3[0], p3[1]);
+            Rect.extendTo(dest, p4[0], p4[1]);
+        }
+        */
+    };
     function clipmask(clip) {
         var mask = 0;
-
         if (-clip[0] + clip[3] < 0)
             mask |= (1 << 0);
         if (clip[0] + clip[3] < 0)
@@ -10427,24 +9842,22 @@ var minerva;
             mask |= (1 << 4);
         if (-clip[2] + clip[3] < 0)
             mask |= (1 << 5);
-
         return mask;
     }
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     var createTypedArray;
-
     if (typeof Float32Array !== "undefined") {
         createTypedArray = function (length) {
             return new Float32Array(length);
         };
-    } else {
+    }
+    else {
         createTypedArray = function (length) {
             return new Array(length);
         };
     }
-
     minerva.vec4 = {
         create: function (x, y, z, w) {
             var dest = createTypedArray(4);
@@ -10465,11 +9878,12 @@ var minerva;
         }
     };
 })(minerva || (minerva = {}));
-
 var vec4 = minerva.vec4;
 var minerva;
 (function (minerva) {
+    var path;
     (function (_path) {
+        //TODO: Optimize to work similar to Rect, Size
         var Path = (function () {
             function Path() {
                 this.$$entries = [];
@@ -10483,7 +9897,6 @@ var minerva;
                 enumerable: true,
                 configurable: true
             });
-
             Object.defineProperty(Path.prototype, "endY", {
                 get: function () {
                     return this.$$endY;
@@ -10491,74 +9904,61 @@ var minerva;
                 enumerable: true,
                 configurable: true
             });
-
             Path.prototype.reset = function () {
                 this.$$entries.length = 0;
                 this.$$endX = 0;
                 this.$$endY = 0;
             };
-
             Path.prototype.move = function (x, y) {
                 this.$$entries.push(_path.segments.move(x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
-
             Path.prototype.line = function (x, y) {
                 this.$$entries.push(_path.segments.line(x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
-
             Path.prototype.quadraticBezier = function (cpx, cpy, x, y) {
                 this.$$entries.push(_path.segments.quadraticBezier(cpx, cpy, x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
-
             Path.prototype.cubicBezier = function (cp1x, cp1y, cp2x, cp2y, x, y) {
                 this.$$entries.push(_path.segments.cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y));
                 this.$$endX = x;
                 this.$$endY = y;
             };
-
             Path.prototype.ellipse = function (x, y, width, height) {
                 this.$$entries.push(_path.segments.ellipse(x, y, width, height));
                 this.$$endX = x;
                 this.$$endY = y;
             };
-
             Path.prototype.ellipticalArc = function (rx, ry, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
                 this.$$entries.push(_path.segments.ellipticalArc(rx, ry, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey));
                 this.$$endX = ex;
                 this.$$endY = ey;
             };
-
             Path.prototype.arc = function (x, y, r, sAngle, eAngle, aClockwise) {
                 this.$$entries.push(_path.segments.arc(x, y, r, sAngle, eAngle, aClockwise));
             };
-
             Path.prototype.arcTo = function (cpx, cpy, x, y, radius) {
                 var arcto = _path.segments.arcTo(cpx, cpy, x, y, radius);
                 this.$$entries.push(arcto);
                 this.$$endX = arcto.ex;
                 this.$$endY = arcto.ey;
             };
-
             Path.prototype.rect = function (x, y, width, height) {
                 this.$$entries.push(_path.segments.rect(x, y, width, height));
             };
-
             Path.prototype.roundedRect = function (x, y, width, height, radiusX, radiusY) {
                 this.$$entries.push(_path.segments.roundedRect(x, y, width, height, radiusX, radiusY));
                 this.$$endX = x;
                 this.$$endY = y;
             };
-
             Path.prototype.close = function () {
                 this.$$entries.push(_path.segments.close());
             };
-
             Path.prototype.draw = function (ctx) {
                 ctx.beginPath();
                 var path = this.$$entries;
@@ -10567,14 +9967,12 @@ var minerva;
                     path[i].draw(ctx);
                 }
             };
-
             Path.prototype.calcBounds = function (pars) {
                 if (this.$$entries.length <= 0)
                     return new minerva.Rect();
                 var box = pars && pars.strokeThickness > 1 ? this.$$calcStrokeBox(pars) : this.$$calcFillBox();
                 return new minerva.Rect(box.l, box.t, Math.max(0, box.r - box.l), Math.max(0, box.b - box.t));
             };
-
             Path.prototype.$$calcFillBox = function () {
                 var path = this.$$entries;
                 var len = path.length;
@@ -10591,15 +9989,12 @@ var minerva;
                     entry = path[i];
                     entry.sx = curx;
                     entry.sy = cury;
-
                     entry.extendFillBox(box);
-
                     curx = entry.ex || 0;
                     cury = entry.ey || 0;
                 }
                 return box;
             };
-
             Path.prototype.$$calcStrokeBox = function (pars) {
                 var box = {
                     l: Number.POSITIVE_INFINITY,
@@ -10610,13 +10005,11 @@ var minerva;
                 processStrokedBounds(box, this.$$entries, pars);
                 return box;
             };
-
             Path.Merge = function (path1, path2) {
                 path1.$$entries.push.apply(path1.$$entries, path2.$$entries);
                 path1.$$endX += path2.$$endX;
                 path1.$$endY += path2.$$endY;
             };
-
             Path.prototype.Serialize = function () {
                 var path = this.$$entries;
                 var len = path.length;
@@ -10634,7 +10027,7 @@ var minerva;
         function expandStartCap(box, entry, pars) {
             var v;
             var hs = pars.strokeThickness / 2.0;
-            var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0;
+            var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0; //HTML5 doesn't support start and end cap
             switch (cap) {
                 case 2 /* Round */:
                     box.l = Math.min(box.l, entry.sx - hs);
@@ -10649,12 +10042,10 @@ var minerva;
                         return;
                     var sd = minerva.Vector.reverse(minerva.Vector.normalize(v.slice(0)));
                     var sdo = minerva.Vector.orthogonal(sd.slice(0));
-
                     var x1 = entry.sx + hs * (sd[0] + sdo[0]);
                     var x2 = entry.sx + hs * (sd[0] - sdo[0]);
                     var y1 = entry.sy + hs * (sd[1] + sdo[1]);
                     var y2 = entry.sy + hs * (sd[1] - sdo[1]);
-
                     box.l = Math.min(box.l, x1, x2);
                     box.r = Math.max(box.r, x1, x2);
                     box.t = Math.min(box.t, y1, y2);
@@ -10667,12 +10058,10 @@ var minerva;
                     if (!v[0] || !v[1])
                         return;
                     var sdo = minerva.Vector.orthogonal(minerva.Vector.normalize(v.slice(0)));
-
                     var x1 = entry.sx + hs * sdo[0];
                     var x2 = entry.sx + hs * -sdo[0];
                     var y1 = entry.sy + hs * sdo[1];
                     var y2 = entry.sy + hs * -sdo[1];
-
                     box.l = Math.min(box.l, x1, x2);
                     box.r = Math.max(box.r, x1, x2);
                     box.t = Math.min(box.t, y1, y2);
@@ -10680,14 +10069,12 @@ var minerva;
                     break;
             }
         }
-
         function expandEndCap(box, entry, pars) {
             var ex = entry.ex;
             var ey = entry.ey;
-
             var v;
             var hs = pars.strokeThickness / 2.0;
-            var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0;
+            var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0; //HTML5 doesn't support start and end cap
             switch (cap) {
                 case 2 /* Round */:
                     box.l = Math.min(box.l, ex - hs);
@@ -10700,12 +10087,10 @@ var minerva;
                         return;
                     var ed = minerva.Vector.normalize(v.slice(0));
                     var edo = minerva.Vector.orthogonal(ed.slice(0));
-
                     var x1 = ex + hs * (ed[0] + edo[0]);
                     var x2 = ex + hs * (ed[0] - edo[0]);
                     var y1 = ey + hs * (ed[1] + edo[1]);
                     var y2 = ey + hs * (ed[1] - edo[1]);
-
                     box.l = Math.min(box.l, x1, x2);
                     box.r = Math.max(box.r, x1, x2);
                     box.t = Math.min(box.t, y1, y2);
@@ -10716,12 +10101,10 @@ var minerva;
                     if (!(v = entry.getEndVector()))
                         return;
                     var edo = minerva.Vector.orthogonal(minerva.Vector.normalize(v.slice(0)));
-
                     var x1 = ex + hs * edo[0];
                     var x2 = ex + hs * -edo[0];
                     var y1 = ey + hs * edo[1];
                     var y2 = ey + hs * -edo[1];
-
                     box.l = Math.min(box.l, x1, x2);
                     box.r = Math.max(box.r, x1, x2);
                     box.t = Math.min(box.t, y1, y2);
@@ -10729,7 +10112,6 @@ var minerva;
                     break;
             }
         }
-
         function expandLineJoin(box, previous, entry, pars) {
             var hs = pars.strokeThickness / 2.0;
             if (pars.strokeLineJoin === 2 /* Round */) {
@@ -10750,7 +10132,6 @@ var minerva;
             box.t = Math.min(box.t, y1, y2);
             box.b = Math.max(box.b, y1, y2);
         }
-
         function processStrokedBounds(box, segs, pars) {
             var len = segs.length;
             var last = null;
@@ -10758,13 +10139,10 @@ var minerva;
             var cury = null;
             var sx = null;
             var sy = null;
-
             var isLastEntryMove = false;
-
             function processEntry(entry, i) {
                 entry.sx = curx;
                 entry.sy = cury;
-
                 if (!entry.isSingle) {
                     if (!entry.isMove && isLastEntryMove) {
                         sx = entry.sx;
@@ -10774,15 +10152,12 @@ var minerva;
                     if (!isLastEntryMove && i > 0)
                         expandLineJoin(box, last, entry, pars);
                 }
-
                 entry.extendStrokeBox(box, pars);
-
                 curx = entry.ex || 0;
                 cury = entry.ey || 0;
                 isLastEntryMove = !!entry.isMove;
                 last = entry;
             }
-
             for (var i = 0; i < len; i++) {
                 processEntry(segs[i], i);
             }
@@ -10790,11 +10165,9 @@ var minerva;
             if (end && !end.isSingle)
                 expandEndCap(box, end, pars);
         }
-
         function findMiterTips(previous, entry, hs, miterLimit) {
             var x = entry.sx;
             var y = entry.sy;
-
             var av = previous.getEndVector();
             var bv = entry.getStartVector();
             if (!av || !bv)
@@ -10803,16 +10176,14 @@ var minerva;
             var tau = minerva.Vector.angleBetween(av, bv) / 2;
             if (isNaN(tau))
                 return null;
-
             var miterRatio = 1 / Math.sin(tau);
             if (miterRatio > miterLimit)
                 return findBevelTips(previous, entry, hs);
-
+            //vector in direction of join point to miter tip
             var cv = minerva.Vector.isClockwiseTo(av, bv) ? av.slice(0) : bv.slice(0);
             minerva.Vector.normalize(minerva.Vector.reverse(minerva.Vector.rotate(cv, tau)));
-
+            //distance from join point and miter tip
             var miterLen = hs * miterRatio;
-
             var tip = { x: x + miterLen * cv[0], y: y + miterLen * cv[1] };
             return [
                 tip,
@@ -10820,11 +10191,9 @@ var minerva;
             ];
         }
         _path.findMiterTips = findMiterTips;
-
         function findBevelTips(previous, entry, hs) {
             var x = entry.sx;
             var y = entry.sy;
-
             var av = previous.getEndVector();
             var bv = entry.getStartVector();
             if (!av || !bv)
@@ -10835,43 +10204,43 @@ var minerva;
             if (minerva.Vector.isClockwiseTo(av, bv)) {
                 avo = minerva.Vector.orthogonal(av.slice(0));
                 bvo = minerva.Vector.reverse(minerva.Vector.orthogonal(bv.slice(0)));
-            } else {
+            }
+            else {
                 avo = minerva.Vector.reverse(minerva.Vector.orthogonal(av.slice(0)));
                 bvo = minerva.Vector.orthogonal(bv.slice(0));
             }
-
             return [
                 { x: x - hs * avo[0], y: y - hs * avo[1] },
                 { x: x - hs * bvo[0], y: y - hs * bvo[1] }
             ];
         }
         _path.findBevelTips = findBevelTips;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function arc(x, y, radius, sa, ea, cc) {
                 var inited = false;
-
+                //start point
                 var sx;
                 var sy;
-
+                //end point
                 var ex;
                 var ey;
-
+                //cardinal corners
                 var l;
                 var r;
                 var t;
                 var b;
-
+                //contains cardinal corners
                 var cl;
                 var cr;
                 var ct;
                 var cb;
-
                 function init() {
                     if (inited)
                         return;
@@ -10879,22 +10248,16 @@ var minerva;
                     sy = y + (radius * Math.sin(sa));
                     ex = x + (radius * Math.cos(ea));
                     ey = y + (radius * Math.sin(ea));
-
                     l = x - radius;
                     cl = arcContainsPoint(sx, sy, ex, ey, l, y, cc);
-
                     r = x + radius;
                     cr = arcContainsPoint(sx, sy, ex, ey, r, y, cc);
-
                     t = y - radius;
                     ct = arcContainsPoint(sx, sy, ex, ey, x, t, cc);
-
                     b = y + radius;
                     cb = arcContainsPoint(sx, sy, ex, ey, x, b, cc);
-
                     inited = true;
                 }
-
                 return {
                     sx: null,
                     sy: null,
@@ -10916,12 +10279,10 @@ var minerva;
                         init();
                         this.ex = ex;
                         this.ey = ey;
-
                         box.l = Math.min(box.l, sx, ex);
                         box.r = Math.max(box.r, sx, ex);
                         box.t = Math.min(box.t, sy, ey);
                         box.b = Math.max(box.b, sy, ey);
-
                         if (cl)
                             box.l = Math.min(box.l, l);
                         if (cr)
@@ -10937,12 +10298,10 @@ var minerva;
                         init();
                         this.ex = ex;
                         this.ey = ey;
-
                         box.l = Math.min(box.l, sx, ex);
                         box.r = Math.max(box.r, sx, ex);
                         box.t = Math.min(box.t, sy, ey);
                         box.b = Math.max(box.b, sy, ey);
-
                         var hs = pars.strokeThickness / 2.0;
                         if (cl)
                             box.l = Math.min(box.l, l - hs);
@@ -10952,15 +10311,13 @@ var minerva;
                             box.t = Math.min(box.t, t - hs);
                         if (cb)
                             box.b = Math.max(box.b, b + hs);
-
-                        var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0;
+                        var cap = pars.strokeStartLineCap || pars.strokeEndLineCap || 0; //HTML5 doesn't support start and end cap
                         var sv = this.getStartVector();
                         sv[0] = -sv[0];
                         sv[1] = -sv[1];
                         var ss = getCapSpread(sx, sy, pars.strokeThickness, cap, sv);
                         var ev = this.getEndVector();
                         var es = getCapSpread(ex, ey, pars.strokeThickness, cap, ev);
-
                         box.l = Math.min(box.l, ss.x1, ss.x2, es.x1, es.x2);
                         box.r = Math.max(box.r, ss.x1, ss.x2, es.x1, es.x2);
                         box.t = Math.min(box.t, ss.y1, ss.y2, es.y1, es.y2);
@@ -10986,12 +10343,16 @@ var minerva;
                         if (cc)
                             return [rv[1], -rv[0]];
                         return [-rv[1], rv[0]];
-                    }
+                    },
                 };
             }
             segments.arc = arc;
-
             function arcContainsPoint(sx, sy, ex, ey, cpx, cpy, cc) {
+                // var a = ex - sx;
+                // var b = cpx - sx;
+                // var c = ey - sy;
+                // var d = cpy - sy;
+                // det = ad - bc;
                 var n = (ex - sx) * (cpy - sy) - (cpx - sx) * (ey - sy);
                 if (n === 0)
                     return true;
@@ -11001,7 +10362,6 @@ var minerva;
                     return true;
                 return false;
             }
-
             function getCapSpread(x, y, thickness, cap, vector) {
                 var hs = thickness / 2.0;
                 switch (cap) {
@@ -11036,7 +10396,6 @@ var minerva;
                         break;
                 }
             }
-
             function normalizeVector(v) {
                 var len = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
                 return [
@@ -11044,33 +10403,29 @@ var minerva;
                     v[1] / len
                 ];
             }
-
             function perpendicularVector(v) {
                 return [
                     -v[1],
                     v[0]
                 ];
             }
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 function radToDegrees(rad) {
     return rad * 180 / Math.PI;
 }
-
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             var EPSILON = 1e-10;
-
             function arcTo(cpx, cpy, x, y, radius) {
                 var line;
                 var arc;
                 var inited = false;
-
                 function init(prevX, prevY) {
                     if (inited)
                         return;
@@ -11079,28 +10434,26 @@ var minerva;
                     var v1 = [cpx - prevX, cpy - prevY];
                     var v2 = [x - cpx, y - cpy];
                     var inner_theta = Math.PI - minerva.Vector.angleBetween(v1, v2);
-
+                    //find 2 points tangent to imaginary circle along guide lines
                     var a = getTangentPoint(inner_theta, radius, [prevX, prevY], v1, true);
                     var b = getTangentPoint(inner_theta, radius, [cpx, cpy], v2, false);
-
+                    //find center point
                     var c = getPerpendicularIntersections(a, v1, b, v2);
-
+                    //counter clockwise test
                     var cc = !minerva.Vector.isClockwiseTo(v1, v2);
-
+                    //find starting angle -- [1,0] is origin direction of 0rad
                     var sa = Math.atan2(a[1] - c[1], a[0] - c[0]);
                     if (sa < 0)
                         sa = (2 * Math.PI) + sa;
                     var ea = Math.atan2(b[1] - c[1], b[0] - c[0]);
                     if (ea < 0)
                         ea = (2 * Math.PI) + ea;
-
                     line = segments.line(a[0], a[1]);
                     line.sx = prevX;
                     line.sy = prevY;
                     arc = segments.arc(c[0], c[1], radius, sa, ea, cc);
                     inited = true;
                 }
-
                 return {
                     sx: null,
                     sy: null,
@@ -11119,12 +10472,10 @@ var minerva;
                         init(this.sx, this.sy);
                         this.ex = arc.ex;
                         this.ey = arc.ey;
-
                         box.l = Math.min(box.l, this.sx);
                         box.r = Math.max(box.r, this.sx);
                         box.t = Math.min(box.t, this.sy);
                         box.b = Math.max(box.b, this.sy);
-
                         line.extendFillBox(box);
                         arc.extendFillBox(box);
                     },
@@ -11132,13 +10483,11 @@ var minerva;
                         init(this.sx, this.sy);
                         this.ex = arc.ex;
                         this.ey = arc.ey;
-
                         var hs = pars.strokeThickness / 2;
                         box.l = Math.min(box.l, this.sx - hs);
                         box.r = Math.max(box.r, this.sx + hs);
                         box.t = Math.min(box.t, this.sy - hs);
                         box.b = Math.max(box.b, this.sy + hs);
-
                         line.extendStrokeBox(box, pars);
                         arc.extendStrokeBox(box, pars);
                     },
@@ -11155,7 +10504,6 @@ var minerva;
                 };
             }
             segments.arcTo = arcTo;
-
             function getTangentPoint(theta, radius, s, d, invert) {
                 var len = Math.sqrt(d[0] * d[0] + d[1] * d[1]);
                 var f = radius / Math.tan(theta / 2);
@@ -11164,18 +10512,17 @@ var minerva;
                     t = 1 - t;
                 return [s[0] + t * d[0], s[1] + t * d[1]];
             }
-
             function getPerpendicularIntersections(s1, d1, s2, d2) {
                 return minerva.Vector.intersection(s1, minerva.Vector.orthogonal(d1.slice(0)), s2, minerva.Vector.orthogonal(d2.slice(0)));
             }
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function close() {
                 return {
@@ -11204,14 +10551,14 @@ var minerva;
                 };
             }
             segments.close = close;
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function cubicBezier(cp1x, cp1y, cp2x, cp2y, x, y) {
                 return {
@@ -11247,7 +10594,6 @@ var minerva;
                             box.t = Math.min(box.t, m.y[1]);
                             box.b = Math.max(box.b, m.y[1]);
                         }
-
                         box.l = Math.min(box.l, x);
                         box.r = Math.max(box.r, x);
                         box.t = Math.min(box.t, y);
@@ -11255,7 +10601,6 @@ var minerva;
                     },
                     extendStrokeBox: function (box, pars) {
                         var hs = pars.strokeThickness / 2.0;
-
                         var m = getMaxima(this.sx, cp1x, cp2x, x, this.sy, cp1y, cp2y, y);
                         if (m.x[0] != null) {
                             box.l = Math.min(box.l, m.x[0] - hs);
@@ -11273,7 +10618,6 @@ var minerva;
                             box.t = Math.min(box.t, m.y[1] - hs);
                             box.b = Math.max(box.b, m.y[1] + hs);
                         }
-
                         box.l = Math.min(box.l, x);
                         box.r = Math.max(box.r, x);
                         box.t = Math.min(box.t, y);
@@ -11283,12 +10627,14 @@ var minerva;
                         return "C" + cp1x.toString() + "," + cp1y.toString() + " " + cp2x.toString() + "," + cp2y.toString() + " " + x.toString() + "," + y.toString();
                     },
                     getStartVector: function () {
+                        //[F(0)'x, F(0)'y]
                         return [
                             3 * (cp1x - this.sx),
                             3 * (cp1y - this.sy)
                         ];
                     },
                     getEndVector: function () {
+                        //[F(1)'x, F(1)'y]
                         return [
                             3 * (x - cp2x),
                             3 * (y - cp2y)
@@ -11297,49 +10643,41 @@ var minerva;
                 };
             }
             segments.cubicBezier = cubicBezier;
-
-            
             function getMaxima(x1, x2, x3, x4, y1, y2, y3, y4) {
                 return {
                     x: cod(x1, x2, x3, x4),
                     y: cod(y1, y2, y3, y4)
                 };
             }
-
             function cod(a, b, c, d) {
                 var u = 2 * a - 4 * b + 2 * c;
                 var v = b - a;
                 var w = -a + 3 * b + d - 3 * c;
                 var rt = Math.sqrt(u * u - 4 * v * w);
-
                 var cods = [null, null];
                 if (isNaN(rt))
                     return cods;
-
                 var t, ot;
-
                 t = (-u + rt) / (2 * w);
                 if (t >= 0 && t <= 1) {
                     ot = 1 - t;
                     cods[0] = (a * ot * ot * ot) + (3 * b * t * ot * ot) + (3 * c * ot * t * t) + (d * t * t * t);
                 }
-
                 t = (-u - rt) / (2 * w);
                 if (t >= 0 && t <= 1) {
                     ot = 1 - t;
                     cods[1] = (a * ot * ot * ot) + (3 * b * t * ot * ot) + (3 * c * ot * t * t) + (d * t * t * t);
                 }
-
                 return cods;
             }
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function ellipse(x, y, width, height) {
                 var radiusX = width / 2;
@@ -11348,7 +10686,6 @@ var minerva;
                 var bottom = y + height;
                 var centerX = x + radiusX;
                 var centerY = y + radiusY;
-
                 return {
                     sx: null,
                     sy: null,
@@ -11365,19 +10702,18 @@ var minerva;
                             ctx.arc(centerX, centerY, radiusX, 0, Math.PI * 2, false);
                             return;
                         }
-
-                        var kappa = .5522848;
+                        var kappa = .5522848; // 4 * ((sqrt(2) - 1) / 3)
                         var ox = radiusX * kappa;
                         var oy = radiusY * kappa;
-
+                        //move to left edge, halfway down
                         ctx.moveTo(x, centerY);
-
+                        //top left bezier curve
                         ctx.bezierCurveTo(x, centerY - oy, centerX - ox, y, centerX, y);
-
+                        //top right bezier curve
                         ctx.bezierCurveTo(centerX + ox, y, right, centerY - oy, right, centerY);
-
+                        //bottom right bezier curve
                         ctx.bezierCurveTo(right, centerY + oy, centerX + ox, bottom, centerX, bottom);
-
+                        //bottom left bezier curve
                         ctx.bezierCurveTo(centerX - ox, bottom, x, centerY + oy, x, centerY);
                         ctx.closePath();
                     },
@@ -11403,15 +10739,16 @@ var minerva;
                 };
             }
             segments.ellipse = ellipse;
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (_segments) {
+            //SVG implementation: http://www.w3.org/TR/SVG/implnote.html#ArcSyntax
             function ellipticalArc(rx, ry, rotationAngle, isLargeArcFlag, sweepDirectionFlag, ex, ey) {
                 return {
                     sx: null,
@@ -11459,33 +10796,40 @@ var minerva;
                 };
             }
             _segments.ellipticalArc = ellipticalArc;
-
             var NO_DRAW_EPSILON = 0.000002;
             var ZERO_EPSILON = 0.000019;
             var SMALL_EPSILON = 0.000117;
-
             function buildSegments(ea) {
+                // from tests it seems that Silverlight closely follows SVG arc
+                // behavior (which is very different from the model used with GDI+)
+                // some helpful stuff is available here:
+                // http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
                 var segments = [];
-
+                // get start point from the existing path
                 var sx = ea.sx, sy = ea.sy, ex = ea.ex, ey = ea.ey, rx = ea.rx, ry = ea.ry;
-
+                // if start and end points are identical, then no arc is drawn
+                // FIXME: what's the logic (if any) to compare points
+                // e.g. 60 and 60.000002 are drawn while 80 and 80.000003 aren't
                 if (Math.abs(ex - sx) < NO_DRAW_EPSILON && Math.abs(ey - sy) < NO_DRAW_EPSILON)
                     return segments;
-
+                // Correction of out-of-range radii, see F6.6 (step 1)
                 if (Math.abs(rx) < ZERO_EPSILON || Math.abs(ry) < ZERO_EPSILON) {
+                    // treat this as a straight line (to end point)
                     segments.push(_segments.line(ex, ey));
                     return segments;
                 }
-
+                // Silverlight "too small to be useful"
                 if (Math.abs(rx) < SMALL_EPSILON || Math.abs(ry) < SMALL_EPSILON) {
+                    // yes it does mean there's a hole between "normal" FP values and "zero" FP values
+                    // and SL doesn't render anything in this twilight sonze
                     return segments;
                 }
-
+                // Correction of out-of-range radii, see F6.6.1 (step 2)
                 rx = Math.abs(rx);
                 ry = Math.abs(ry);
-
+                // convert angle into radians
                 var angle = ea.rotationAngle * Math.PI / 180.0;
-
+                // variables required for F6.3.1
                 var cos_phi = Math.cos(angle);
                 var sin_phi = Math.sin(angle);
                 var dx2 = (sx - ex) / 2.0;
@@ -11496,113 +10840,115 @@ var minerva;
                 var y1p2 = y1p * y1p;
                 var rx2 = rx * rx;
                 var ry2 = ry * ry;
-
+                // Correction of out-of-range radii, see F6.6.2 (step 4)
                 var lambda = (x1p2 / rx2) + (y1p2 / ry2);
                 if (lambda > 1.0) {
+                    // see F6.6.3
                     var lambda_root = Math.sqrt(lambda);
                     rx *= lambda_root;
                     ry *= lambda_root;
-
+                    // update rx2 and ry2
                     rx2 = rx * rx;
                     ry2 = ry * ry;
                 }
-
                 var cxp, cyp, cx, cy;
                 var c = (rx2 * ry2) - (rx2 * y1p2) - (ry2 * x1p2);
-
                 var large = ea.isLargeArcFlag === true;
                 var sweep = ea.sweepDirectionFlag === 1 /* Clockwise */;
-
+                // check if there is no possible solution (i.e. we can't do a square root of a negative value)
                 if (c < 0.0) {
+                    // scale uniformly until we have a single solution (see F6.2) i.e. when c == 0.0
                     var scale = Math.sqrt(1.0 - c / (rx2 * ry2));
                     rx *= scale;
                     ry *= scale;
-
+                    // update rx2 and ry2
                     rx2 = rx * rx;
                     ry2 = ry * ry;
-
+                    // step 2 (F6.5.2) - simplified since c == 0.0
                     cxp = 0.0;
                     cyp = 0.0;
-
+                    // step 3 (F6.5.3 first part) - simplified since cxp and cyp == 0.0
                     cx = 0.0;
                     cy = 0.0;
-                } else {
+                }
+                else {
+                    // complete c calculation
                     c = Math.sqrt(c / ((rx2 * y1p2) + (ry2 * x1p2)));
-
+                    // inverse sign if Fa == Fs
                     if (large === sweep)
                         c = -c;
-
+                    // step 2 (F6.5.2)
                     cxp = c * (rx * y1p / ry);
                     cyp = c * (-ry * x1p / rx);
-
+                    // step 3 (F6.5.3 first part)
                     cx = cos_phi * cxp - sin_phi * cyp;
                     cy = sin_phi * cxp + cos_phi * cyp;
                 }
-
+                // step 3 (F6.5.3 second part) we now have the center point of the ellipse
                 cx += (sx + ex) / 2.0;
                 cy += (sy + ey) / 2.0;
-
+                // step 4 (F6.5.4)
+                // we dont' use arccos (as per w3c doc), see http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
+                // note: atan2 (0.0, 1.0) == 0.0
                 var at = Math.atan2(((y1p - cyp) / ry), ((x1p - cxp) / rx));
                 var theta1 = (at < 0.0) ? 2.0 * Math.PI + at : at;
-
                 var nat = Math.atan2(((-y1p - cyp) / ry), ((-x1p - cxp) / rx));
                 var delta_theta = (nat < at) ? 2.0 * Math.PI - at + nat : nat - at;
-
                 if (sweep) {
+                    // ensure delta theta < 0 or else add 360 degrees
                     if (delta_theta < 0.0)
                         delta_theta += 2.0 * Math.PI;
-                } else {
+                }
+                else {
+                    // ensure delta theta > 0 or else substract 360 degrees
                     if (delta_theta > 0.0)
                         delta_theta -= 2.0 * Math.PI;
                 }
-
+                // add several cubic bezier to approximate the arc (smaller than 90 degrees)
+                // we add one extra segment because we want something smaller than 90deg (i.e. not 90 itself)
                 var segment_count = Math.floor(Math.abs(delta_theta / (Math.PI / 2))) + 1;
                 var delta = delta_theta / segment_count;
-
+                // http://www.stillhq.com/ctpfaq/2001/comp.text.pdf-faq-2001-04.txt (section 2.13)
                 var bcp = 4.0 / 3 * (1 - Math.cos(delta / 2)) / Math.sin(delta / 2);
-
                 var cos_phi_rx = cos_phi * rx;
                 var cos_phi_ry = cos_phi * ry;
                 var sin_phi_rx = sin_phi * rx;
                 var sin_phi_ry = sin_phi * ry;
-
                 var cos_theta1 = Math.cos(theta1);
                 var sin_theta1 = Math.sin(theta1);
-
                 for (var i = 0; i < segment_count; ++i) {
+                    // end angle (for this segment) = current + delta
                     var theta2 = theta1 + delta;
                     var cos_theta2 = Math.cos(theta2);
                     var sin_theta2 = Math.sin(theta2);
-
+                    // first control point (based on start point sx,sy)
                     var c1x = sx - bcp * (cos_phi_rx * sin_theta1 + sin_phi_ry * cos_theta1);
                     var c1y = sy + bcp * (cos_phi_ry * cos_theta1 - sin_phi_rx * sin_theta1);
-
+                    // end point (for this segment)
                     var cur_ex = cx + (cos_phi_rx * cos_theta2 - sin_phi_ry * sin_theta2);
                     var cur_ey = cy + (sin_phi_rx * cos_theta2 + cos_phi_ry * sin_theta2);
-
+                    // second control point (based on end point ex,ey)
                     var c2x = cur_ex + bcp * (cos_phi_rx * sin_theta2 + sin_phi_ry * cos_theta2);
                     var c2y = cur_ey + bcp * (sin_phi_rx * sin_theta2 - cos_phi_ry * cos_theta2);
-
                     segments.push(_segments.cubicBezier(c1x, c1y, c2x, c2y, cur_ex, cur_ey));
-
+                    // next start point is the current end point (same for angle)
                     sx = cur_ex;
                     sy = cur_ey;
                     theta1 = theta2;
-
+                    // avoid recomputations
                     cos_theta1 = cos_theta2;
                     sin_theta1 = sin_theta2;
                 }
-
                 return segments;
             }
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function line(x, y) {
                 return {
@@ -11643,14 +10989,14 @@ var minerva;
                 };
             }
             segments.line = line;
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function move(x, y) {
                 return {
@@ -11686,14 +11032,14 @@ var minerva;
                 };
             }
             segments.move = move;
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function quadraticBezier(cpx, cpy, x, y) {
                 return {
@@ -11719,7 +11065,6 @@ var minerva;
                             box.t = Math.min(box.t, m.y);
                             box.b = Math.max(box.b, m.y);
                         }
-
                         box.l = Math.min(box.l, x);
                         box.r = Math.max(box.r, x);
                         box.t = Math.min(box.t, y);
@@ -11727,7 +11072,6 @@ var minerva;
                     },
                     extendStrokeBox: function (box, pars) {
                         var hs = pars.strokeThickness / 2.0;
-
                         var m = getMaxima(this.sx, cpx, x, this.sy, cpy, y);
                         if (m.x) {
                             box.l = Math.min(box.l, m.x - hs);
@@ -11737,7 +11081,6 @@ var minerva;
                             box.t = Math.min(box.t, m.y - hs);
                             box.b = Math.max(box.b, m.y + hs);
                         }
-
                         box.l = Math.min(box.l, x);
                         box.r = Math.max(box.r, x);
                         box.t = Math.min(box.t, y);
@@ -11747,12 +11090,14 @@ var minerva;
                         return "Q" + cpx.toString() + "," + cpy.toString() + " " + x.toString() + "," + y.toString();
                     },
                     getStartVector: function () {
+                        //[F(0)'x, F(0)'y]
                         return [
                             2 * (cpx - this.sx),
                             2 * (cpy - this.sy)
                         ];
                     },
                     getEndVector: function () {
+                        //[F(1)'x, F(1)'y]
                         return [
                             2 * (x - cpx),
                             2 * (y - cpy)
@@ -11761,29 +11106,26 @@ var minerva;
                 };
             }
             segments.quadraticBezier = quadraticBezier;
-
-            
             function getMaxima(x1, x2, x3, y1, y2, y3) {
                 return {
                     x: cod(x1, x2, x3),
                     y: cod(y1, y2, y3)
                 };
             }
-
             function cod(a, b, c) {
                 var t = (a - b) / (a - 2 * b + c);
                 if (t < 0 || t > 1)
                     return null;
                 return (a * Math.pow(1 - t, 2)) + (2 * b * (1 - t) * t) + (c * Math.pow(t, 2));
             }
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function rect(x, y, width, height) {
                 return {
@@ -11821,24 +11163,22 @@ var minerva;
                 };
             }
             segments.rect = rect;
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var path;
     (function (path) {
+        var segments;
         (function (segments) {
             function roundedRect(x, y, width, height, radiusX, radiusY) {
                 if (radiusX === 0.0 && radiusY === 0.0)
                     return segments.rect(x, y, width, height);
-
                 var left = x;
                 var top = y;
                 var right = x + width;
                 var bottom = y + height;
-
                 return {
                     sx: null,
                     sy: null,
@@ -11854,21 +11194,21 @@ var minerva;
                     draw: function (ctx) {
                         ctx.beginPath();
                         ctx.moveTo(left + radiusX, top);
-
+                        //top edge
                         ctx.lineTo(right - radiusX, top);
-
+                        //top right arc
                         ctx.quadraticCurveTo(right, top, right, top + radiusY);
-
+                        //right edge
                         ctx.lineTo(right, bottom - radiusY);
-
+                        //bottom right arc
                         ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
-
+                        //bottom edge
                         ctx.lineTo(left + radiusX, bottom);
-
+                        //bottom left arc
                         ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
-
+                        //left edge
                         ctx.lineTo(left, top + radiusY);
-
+                        //top left arc
                         ctx.quadraticCurveTo(left, top, left + radiusX, top);
                         ctx.closePath();
                     },
@@ -11894,14 +11234,39 @@ var minerva;
                 };
             }
             segments.roundedRect = roundedRect;
-        })(path.segments || (path.segments = {}));
-        var segments = path.segments;
-    })(minerva.path || (minerva.path = {}));
-    var path = minerva.path;
+        })(segments = path.segments || (path.segments = {}));
+    })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
+(function (context) {
+    if (!context.perfex) {
+        context.perfex = {};
+    }
+    if (!context.perfex.timer) {
+        context.perfex.timer = {
+            all: [],
+            reset: function () {
+            },
+            start: function (tag) {
+            },
+            stop: function () {
+            }
+        };
+    }
+    if (!context.perfex.phases) {
+        context.perfex.phases = {
+            current: null,
+            all: [],
+            start: function (tag) {
+            }
+        };
+    }
+})(window);
+/// <reference path="../../core/Updater" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
             var ShapeUpdater = (function (_super) {
                 __extends(ShapeUpdater, _super);
@@ -11910,12 +11275,10 @@ var minerva;
                 }
                 ShapeUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(shape.measure.ShapeMeasurePipeDef)).setArrangePipe(minerva.singleton(shape.arrange.ShapeArrangePipeDef)).setRenderPipe(minerva.singleton(shape.render.ShapeRenderPipeDef)).setProcessUpPipe(minerva.singleton(shape.processup.ShapeProcessUpPipeDef)).setHitTestPipe(minerva.singleton(shape.hittest.ShapeHitTestPipeDef));
-
                     var assets = this.assets;
                     assets.naturalBounds = new minerva.Rect();
                     assets.shapeFlags = 0 /* None */;
                     assets.shapeRect = new minerva.Rect();
-
                     assets.fill = null;
                     assets.stretch = 0 /* None */;
                     assets.stroke = null;
@@ -11927,10 +11290,8 @@ var minerva;
                     assets.strokeEndLineCap = 0 /* Flat */;
                     assets.strokeLineJoin = 0 /* Miter */;
                     assets.strokeMiterLimit = 10;
-
                     _super.prototype.init.call(this);
                 };
-
                 ShapeUpdater.prototype.invalidateNaturalBounds = function () {
                     var nb = this.assets.naturalBounds;
                     nb.x = nb.y = nb.width = nb.height = 0;
@@ -11940,14 +11301,15 @@ var minerva;
                 return ShapeUpdater;
             })(minerva.core.Updater);
             shape.ShapeUpdater = ShapeUpdater;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../shape/ShapeUpdater" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var ellipse;
         (function (ellipse) {
             var EllipseUpdater = (function (_super) {
                 __extends(EllipseUpdater, _super);
@@ -11956,24 +11318,23 @@ var minerva;
                 }
                 EllipseUpdater.prototype.init = function () {
                     this.setRenderPipe(minerva.singleton(ellipse.render.EllipseRenderPipeDef)).setHitTestPipe(minerva.singleton(ellipse.hittest.EllipseHitTestPipeDef));
-
                     var assets = this.assets;
                     assets.stretch = 1 /* Fill */;
-
                     _super.prototype.init.call(this);
                 };
                 return EllipseUpdater;
             })(shapes.shape.ShapeUpdater);
             ellipse.EllipseUpdater = EllipseUpdater;
-        })(shapes.ellipse || (shapes.ellipse = {}));
-        var ellipse = shapes.ellipse;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var ellipse;
         (function (ellipse) {
+            var helpers;
             (function (helpers) {
                 function draw(ctx, x, y, width, height) {
                     var radiusX = width / 2;
@@ -11982,40 +11343,38 @@ var minerva;
                     var bottom = y + height;
                     var centerX = x + radiusX;
                     var centerY = y + radiusY;
-
                     ctx.beginPath();
                     if (width === height) {
                         ctx.arc(centerX, centerY, radiusX, 0, Math.PI * 2, false);
                         return;
                     }
-
-                    var kappa = .5522848;
+                    var kappa = .5522848; // 4 * ((sqrt(2) - 1) / 3)
                     var ox = radiusX * kappa;
                     var oy = radiusY * kappa;
-
+                    //move to left edge, halfway down
                     ctx.moveTo(x, centerY);
-
+                    //top left bezier curve
                     ctx.bezierCurveTo(x, centerY - oy, centerX - ox, y, centerX, y);
-
+                    //top right bezier curve
                     ctx.bezierCurveTo(centerX + ox, y, right, centerY - oy, right, centerY);
-
+                    //bottom right bezier curve
                     ctx.bezierCurveTo(right, centerY + oy, centerX + ox, bottom, centerX, bottom);
-
+                    //bottom left bezier curve
                     ctx.bezierCurveTo(centerX - ox, bottom, x, centerY + oy, x, centerY);
                     ctx.closePath();
                 }
                 helpers.draw = draw;
-            })(ellipse.helpers || (ellipse.helpers = {}));
-            var helpers = ellipse.helpers;
-        })(shapes.ellipse || (shapes.ellipse = {}));
-        var ellipse = shapes.ellipse;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+            })(helpers = ellipse.helpers || (ellipse.helpers = {}));
+        })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var hittest;
             (function (hittest) {
                 var ShapeHitTestPipeDef = (function (_super) {
                     __extends(ShapeHitTestPipeDef, _super);
@@ -12026,17 +11385,18 @@ var minerva;
                     return ShapeHitTestPipeDef;
                 })(minerva.core.hittest.HitTestPipeDef);
                 hittest.ShapeHitTestPipeDef = ShapeHitTestPipeDef;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+            })(hittest = shape.hittest || (shape.hittest = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../shape/hittest/ShapeHitTestPipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var ellipse;
         (function (ellipse) {
+            var hittest;
             (function (hittest) {
                 var EllipseHitTestPipeDef = (function (_super) {
                     __extends(EllipseHitTestPipeDef, _super);
@@ -12047,7 +11407,7 @@ var minerva;
                     return EllipseHitTestPipeDef;
                 })(shapes.shape.hittest.ShapeHitTestPipeDef);
                 hittest.EllipseHitTestPipeDef = EllipseHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function drawShape(data, pos, hitList, ctx) {
                         var sr = data.assets.shapeRect;
@@ -12055,19 +11415,18 @@ var minerva;
                         return true;
                     }
                     tapins.drawShape = drawShape;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(ellipse.hittest || (ellipse.hittest = {}));
-            var hittest = ellipse.hittest;
-        })(shapes.ellipse || (shapes.ellipse = {}));
-        var ellipse = shapes.ellipse;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = ellipse.hittest || (ellipse.hittest = {}));
+        })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var render;
             (function (render) {
                 var ShapeRenderPipeDef = (function (_super) {
                     __extends(ShapeRenderPipeDef, _super);
@@ -12083,17 +11442,18 @@ var minerva;
                     return ShapeRenderPipeDef;
                 })(minerva.core.render.RenderPipeDef);
                 render.ShapeRenderPipeDef = ShapeRenderPipeDef;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+            })(render = shape.render || (shape.render = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../shape/render/ShapeRenderPipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var ellipse;
         (function (ellipse) {
+            var render;
             (function (render) {
                 var EllipseRenderPipeDef = (function (_super) {
                     __extends(EllipseRenderPipeDef, _super);
@@ -12104,30 +11464,26 @@ var minerva;
                     return EllipseRenderPipeDef;
                 })(shapes.shape.render.ShapeRenderPipeDef);
                 render.EllipseRenderPipeDef = EllipseRenderPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-
                         var sr = input.shapeRect;
                         ellipse.helpers.draw(ctx.raw, sr.x, sr.y, sr.width, sr.height);
-
                         return true;
                     }
                     tapins.doRender = doRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(ellipse.render || (ellipse.render = {}));
-            var render = ellipse.render;
-        })(shapes.ellipse || (shapes.ellipse = {}));
-        var ellipse = shapes.ellipse;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = ellipse.render || (ellipse.render = {}));
+        })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
             var PathUpdater = (function (_super) {
                 __extends(PathUpdater, _super);
@@ -12136,24 +11492,23 @@ var minerva;
                 }
                 PathUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(path.measure.PathMeasurePipeDef)).setArrangePipe(minerva.singleton(path.arrange.PathArrangePipeDef)).setRenderPipe(minerva.singleton(path.render.PathRenderPipeDef)).setHitTestPipe(minerva.singleton(path.hittest.PathHitTestPipeDef));
-
                     var assets = this.assets;
                     assets.stretch = 0 /* None */;
                     assets.stretchXform = minerva.mat3.identity();
-
                     _super.prototype.init.call(this);
                 };
                 return PathUpdater;
             })(shapes.shape.ShapeUpdater);
             path.PathUpdater = PathUpdater;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../path/PathUpdater" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var line;
         (function (line) {
             var LineUpdater = (function (_super) {
                 __extends(LineUpdater, _super);
@@ -12162,18 +11517,14 @@ var minerva;
                 }
                 LineUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(line.measure.LineMeasurePipeDef));
-
                     var assets = this.assets;
                     assets.x1 = 0;
                     assets.y1 = 0;
                     assets.x2 = 0;
                     assets.y2 = 0;
-
                     assets.data = new shapes.path.AnonPathGeometry();
-
                     _super.prototype.init.call(this);
                 };
-
                 LineUpdater.prototype.invalidatePath = function () {
                     this.assets.data.old = true;
                     this.invalidateNaturalBounds();
@@ -12181,15 +11532,16 @@ var minerva;
                 return LineUpdater;
             })(shapes.path.PathUpdater);
             line.LineUpdater = LineUpdater;
-        })(shapes.line || (shapes.line = {}));
-        var line = shapes.line;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(line = shapes.line || (shapes.line = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var measure;
             (function (measure) {
                 var ShapeMeasurePipeDef = (function (_super) {
                     __extends(ShapeMeasurePipeDef, _super);
@@ -12202,12 +11554,10 @@ var minerva;
                         output.naturalBounds = new minerva.Rect();
                         return output;
                     };
-
                     ShapeMeasurePipeDef.prototype.prepare = function (input, state, output) {
                         minerva.Rect.copyTo(input.naturalBounds, output.naturalBounds);
                         _super.prototype.prepare.call(this, input, state, output);
                     };
-
                     ShapeMeasurePipeDef.prototype.flush = function (input, state, output) {
                         _super.prototype.flush.call(this, input, state, output);
                         minerva.Rect.copyTo(output.naturalBounds, input.naturalBounds);
@@ -12215,7 +11565,7 @@ var minerva;
                     return ShapeMeasurePipeDef;
                 })(minerva.core.measure.MeasurePipeDef);
                 measure.ShapeMeasurePipeDef = ShapeMeasurePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function calcNaturalBounds(input, state, output, tree) {
                         var nb = output.naturalBounds;
@@ -12224,26 +11574,25 @@ var minerva;
                         return true;
                     }
                     tapins.calcNaturalBounds = calcNaturalBounds;
-
                     function doOverride(input, state, output, tree) {
                         var ds = output.desiredSize;
                         ds.width = ds.height = 0;
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(shape.measure || (shape.measure = {}));
-            var measure = shape.measure;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = shape.measure || (shape.measure = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../shape/measure/ShapeMeasurePipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
+            var measure;
             (function (measure) {
                 var PathMeasurePipeDef = (function (_super) {
                     __extends(PathMeasurePipeDef, _super);
@@ -12254,13 +11603,12 @@ var minerva;
                     return PathMeasurePipeDef;
                 })(shapes.shape.measure.ShapeMeasurePipeDef);
                 measure.PathMeasurePipeDef = PathMeasurePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function buildPath(input, state, output, tree) {
                         return true;
                     }
                     tapins.buildPath = buildPath;
-
                     function calcNaturalBounds(input, state, output, tree) {
                         var nb = output.naturalBounds;
                         nb.x = nb.y = nb.width = nb.height = 0;
@@ -12268,11 +11616,9 @@ var minerva;
                             var bounds = input.data.GetBounds(input);
                             minerva.Rect.copyTo(bounds, nb);
                         }
-
                         return true;
                     }
                     tapins.calcNaturalBounds = calcNaturalBounds;
-
                     function adjustNoStretchDesired(input, state, output, tree) {
                         if (input.stretch === 0 /* None */) {
                             var nb = output.naturalBounds;
@@ -12280,23 +11626,22 @@ var minerva;
                             ds.width = nb.width + Math.max(0, nb.x);
                             ds.height = nb.height + Math.max(0, nb.y);
                         }
-
                         return true;
                     }
                     tapins.adjustNoStretchDesired = adjustNoStretchDesired;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(path.measure || (path.measure = {}));
-            var measure = path.measure;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = path.measure || (path.measure = {}));
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../path/measure/PathMeasurePipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var line;
         (function (line) {
+            var measure;
             (function (measure) {
                 var LineMeasurePipeDef = (function (_super) {
                     __extends(LineMeasurePipeDef, _super);
@@ -12307,7 +11652,7 @@ var minerva;
                     return LineMeasurePipeDef;
                 })(shapes.path.measure.PathMeasurePipeDef);
                 measure.LineMeasurePipeDef = LineMeasurePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function buildPath(input, state, output, tree) {
                         if (!input.data.old)
@@ -12320,18 +11665,16 @@ var minerva;
                         return true;
                     }
                     tapins.buildPath = buildPath;
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(line.measure || (line.measure = {}));
-            var measure = line.measure;
-        })(shapes.line || (shapes.line = {}));
-        var line = shapes.line;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = line.measure || (line.measure = {}));
+        })(line = shapes.line || (shapes.line = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
             var AnonPathGeometry = (function () {
                 function AnonPathGeometry() {
@@ -12342,22 +11685,22 @@ var minerva;
                 AnonPathGeometry.prototype.Draw = function (ctx) {
                     this.path.draw(ctx.raw);
                 };
-
                 AnonPathGeometry.prototype.GetBounds = function (pars) {
                     return this.path.calcBounds(pars);
                 };
                 return AnonPathGeometry;
             })();
             path.AnonPathGeometry = AnonPathGeometry;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var arrange;
             (function (arrange) {
                 var ShapeArrangePipeDef = (function (_super) {
                     __extends(ShapeArrangePipeDef, _super);
@@ -12368,7 +11711,7 @@ var minerva;
                     return ShapeArrangePipeDef;
                 })(minerva.core.arrange.ArrangePipeDef);
                 arrange.ShapeArrangePipeDef = ShapeArrangePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doOverride(input, state, output, tree) {
                         var sx;
@@ -12391,27 +11734,25 @@ var minerva;
                                 sx = sy = Math.max(fs.width / nb.width, fs.height / nb.height);
                                 break;
                         }
-
                         var as = state.arrangedSize;
                         as.width = (nb.width * sx) || 0;
                         as.height = (nb.height * sy) || 0;
-
                         return true;
                     }
                     tapins.doOverride = doOverride;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(shape.arrange || (shape.arrange = {}));
-            var arrange = shape.arrange;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = shape.arrange || (shape.arrange = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../shape/arrange/ShapeArrangePipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
+            var arrange;
             (function (arrange) {
                 var PathArrangePipeDef = (function (_super) {
                     __extends(PathArrangePipeDef, _super);
@@ -12424,12 +11765,10 @@ var minerva;
                         output.stretchXform = minerva.mat3.identity();
                         return output;
                     };
-
                     PathArrangePipeDef.prototype.prepare = function (input, state, output) {
                         minerva.mat3.copyTo(input.stretchXform, output.stretchXform);
                         _super.prototype.prepare.call(this, input, state, output);
                     };
-
                     PathArrangePipeDef.prototype.flush = function (input, state, output) {
                         _super.prototype.flush.call(this, input, state, output);
                         minerva.mat3.copyTo(output.stretchXform, input.stretchXform);
@@ -12437,7 +11776,7 @@ var minerva;
                     return PathArrangePipeDef;
                 })(shapes.shape.arrange.ShapeArrangePipeDef);
                 arrange.PathArrangePipeDef = PathArrangePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function adjustNoStretchArranged(input, state, output, tree) {
                         if (input.stretch === 0 /* None */) {
@@ -12446,37 +11785,32 @@ var minerva;
                             as.width = nb.width + Math.max(0, nb.x);
                             as.height = nb.height + Math.max(0, nb.y);
                         }
-
                         return true;
                     }
                     tapins.adjustNoStretchArranged = adjustNoStretchArranged;
-
                     function buildStretchXform(input, state, output, tree) {
                         if (input.stretch === 0 /* None */)
                             return true;
-
                         var xform = output.stretchXform;
                         var nb = input.naturalBounds;
                         var rs = output.renderSize;
                         minerva.mat3.createTranslate(-nb.x, -nb.y, xform);
                         minerva.mat3.scale(xform, rs.width / nb.width, rs.height / nb.height);
-
                         return true;
                     }
                     tapins.buildStretchXform = buildStretchXform;
-                })(arrange.tapins || (arrange.tapins = {}));
-                var tapins = arrange.tapins;
-            })(path.arrange || (path.arrange = {}));
-            var arrange = path.arrange;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = path.arrange || (path.arrange = {}));
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
+            var hittest;
             (function (hittest) {
                 var PathHitTestPipeDef = (function (_super) {
                     __extends(PathHitTestPipeDef, _super);
@@ -12487,7 +11821,7 @@ var minerva;
                     return PathHitTestPipeDef;
                 })(shapes.shape.hittest.ShapeHitTestPipeDef);
                 hittest.PathHitTestPipeDef = PathHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function drawShape(data, pos, hitList, ctx) {
                         var assets = data.assets;
@@ -12496,19 +11830,19 @@ var minerva;
                         return true;
                     }
                     tapins.drawShape = drawShape;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(path.hittest || (path.hittest = {}));
-            var hittest = path.hittest;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = path.hittest || (path.hittest = {}));
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../shape/render/ShapeRenderPipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
+            var render;
             (function (render) {
                 var PathRenderPipeDef = (function (_super) {
                     __extends(PathRenderPipeDef, _super);
@@ -12519,18 +11853,19 @@ var minerva;
                     return PathRenderPipeDef;
                 })(shapes.shape.render.ShapeRenderPipeDef);
                 render.PathRenderPipeDef = PathRenderPipeDef;
-            })(path.render || (path.render = {}));
-            var render = path.render;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+            })(render = path.render || (path.render = {}));
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
@@ -12540,20 +11875,20 @@ var minerva;
                         return true;
                     }
                     tapins.doRender = doRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(path.render || (path.render = {}));
-            var render = path.render;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = path.render || (path.render = {}));
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var path;
         (function (path) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function fill(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
@@ -12563,18 +11898,17 @@ var minerva;
                         return true;
                     }
                     tapins.fill = fill;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(path.render || (path.render = {}));
-            var render = path.render;
-        })(shapes.path || (shapes.path = {}));
-        var path = shapes.path;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = path.render || (path.render = {}));
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../path/PathUpdater" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var polyline;
         (function (polyline) {
             var PolylineUpdater = (function (_super) {
                 __extends(PolylineUpdater, _super);
@@ -12583,19 +11917,15 @@ var minerva;
                 }
                 PolylineUpdater.prototype.init = function () {
                     this.setMeasurePipe(minerva.singleton(polyline.measure.PolylineMeasurePipeDef));
-
                     var assets = this.assets;
                     assets.data = new shapes.path.AnonPathGeometry();
                     assets.isClosed = false;
-
                     _super.prototype.init.call(this);
                 };
-
                 PolylineUpdater.prototype.invalidateFillRule = function () {
                     this.assets.data.fillRule = this.assets.fillRule;
                     this.invalidate();
                 };
-
                 PolylineUpdater.prototype.invalidatePath = function () {
                     this.assets.data.old = true;
                     this.invalidateNaturalBounds();
@@ -12603,14 +11933,15 @@ var minerva;
                 return PolylineUpdater;
             })(shapes.path.PathUpdater);
             polyline.PolylineUpdater = PolylineUpdater;
-        })(shapes.polyline || (shapes.polyline = {}));
-        var polyline = shapes.polyline;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(polyline = shapes.polyline || (shapes.polyline = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../polyline/PolylineUpdater" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var polygon;
         (function (polygon) {
             var PolygonUpdater = (function (_super) {
                 __extends(PolygonUpdater, _super);
@@ -12624,15 +11955,17 @@ var minerva;
                 return PolygonUpdater;
             })(shapes.polyline.PolylineUpdater);
             polygon.PolygonUpdater = PolygonUpdater;
-        })(shapes.polygon || (shapes.polygon = {}));
-        var polygon = shapes.polygon;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(polygon = shapes.polygon || (shapes.polygon = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../path/measure/PathMeasurePipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var polyline;
         (function (polyline) {
+            var measure;
             (function (measure) {
                 var PolylineMeasurePipeDef = (function (_super) {
                     __extends(PolylineMeasurePipeDef, _super);
@@ -12643,26 +11976,24 @@ var minerva;
                     return PolylineMeasurePipeDef;
                 })(shapes.path.measure.PathMeasurePipeDef);
                 measure.PolylineMeasurePipeDef = PolylineMeasurePipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function buildPath(input, state, output, tree) {
                         if (!input.data.old)
                             return true;
-
                         var path = input.data.path;
                         path.reset();
-
                         var points = input.points;
                         if (points.length < 2)
                             return true;
-
                         var p0 = points[0];
                         var p = points[1];
                         if (points.length === 2) {
                             extendLine(p0, p, input.strokeThickness);
                             path.move(p0.x, p0.y);
                             path.line(p.x, p.y);
-                        } else {
+                        }
+                        else {
                             path.move(p0.x, p0.y);
                             for (var i = 1; i < points.length; i++) {
                                 var p = points[i];
@@ -12671,42 +12002,44 @@ var minerva;
                         }
                         if (input.isClosed)
                             path.close();
-
                         input.data.old = false;
                         return true;
                     }
                     tapins.buildPath = buildPath;
-
                     function extendLine(p1, p2, thickness) {
                         var t5 = thickness * 5.0;
                         var dx = p1.x - p2.x;
                         var dy = p1.y - p2.y;
-
                         if (dy === 0.0) {
                             t5 -= thickness / 2.0;
                             if (dx > 0.0) {
                                 p1.x += t5;
                                 p2.x -= t5;
-                            } else {
+                            }
+                            else {
                                 p1.x -= t5;
                                 p2.x += t5;
                             }
-                        } else if (dx === 0.0) {
+                        }
+                        else if (dx === 0.0) {
                             t5 -= thickness / 2.0;
                             if (dy > 0.0) {
                                 p1.y += t5;
                                 p2.y -= t5;
-                            } else {
+                            }
+                            else {
                                 p1.y -= t5;
                                 p2.y += t5;
                             }
-                        } else {
+                        }
+                        else {
                             var angle = Math.atan2(dy, dx);
                             var ax = Math.abs(Math.sin(angle) * t5);
                             if (dx > 0.0) {
                                 p1.x += ax;
                                 p2.x -= ax;
-                            } else {
+                            }
+                            else {
                                 p1.x -= ax;
                                 p2.x += ax;
                             }
@@ -12714,24 +12047,24 @@ var minerva;
                             if (dy > 0.0) {
                                 p1.y += ay;
                                 p2.y -= ay;
-                            } else {
+                            }
+                            else {
                                 p1.y -= ay;
                                 p2.y += ay;
                             }
                         }
                     }
-                })(measure.tapins || (measure.tapins = {}));
-                var tapins = measure.tapins;
-            })(polyline.measure || (polyline.measure = {}));
-            var measure = polyline.measure;
-        })(shapes.polyline || (shapes.polyline = {}));
-        var polyline = shapes.polyline;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = polyline.measure || (polyline.measure = {}));
+        })(polyline = shapes.polyline || (shapes.polyline = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../shape/ShapeUpdater" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var rectangle;
         (function (rectangle) {
             var RectangleUpdater = (function (_super) {
                 __extends(RectangleUpdater, _super);
@@ -12740,26 +12073,25 @@ var minerva;
                 }
                 RectangleUpdater.prototype.init = function () {
                     this.setRenderPipe(minerva.singleton(rectangle.render.RectangleRenderPipeDef)).setHitTestPipe(minerva.singleton(rectangle.hittest.RectangleHitTestPipeDef));
-
                     var assets = this.assets;
                     assets.stretch = 1 /* Fill */;
                     assets.radiusX = 0;
                     assets.radiusY = 0;
-
                     _super.prototype.init.call(this);
                 };
                 return RectangleUpdater;
             })(shapes.shape.ShapeUpdater);
             rectangle.RectangleUpdater = RectangleUpdater;
-        })(shapes.rectangle || (shapes.rectangle = {}));
-        var rectangle = shapes.rectangle;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+        })(rectangle = shapes.rectangle || (shapes.rectangle = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var rectangle;
         (function (rectangle) {
+            var helpers;
             (function (helpers) {
                 function draw(ctx, left, top, width, height, radiusX, radiusY) {
                     var right = left + width;
@@ -12771,36 +12103,37 @@ var minerva;
                     }
                     ctx.beginPath();
                     ctx.moveTo(left + radiusX, top);
-
+                    //top edge
                     ctx.lineTo(right - radiusX, top);
-
+                    //top right arc
                     ctx.quadraticCurveTo(right, top, right, top + radiusY);
-
+                    //right edge
                     ctx.lineTo(right, bottom - radiusY);
-
+                    //bottom right arc
                     ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
-
+                    //bottom edge
                     ctx.lineTo(left + radiusX, bottom);
-
+                    //bottom left arc
                     ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
-
+                    //left edge
                     ctx.lineTo(left, top + radiusY);
-
+                    //top left arc
                     ctx.quadraticCurveTo(left, top, left + radiusX, top);
                     ctx.closePath();
                 }
                 helpers.draw = draw;
-            })(rectangle.helpers || (rectangle.helpers = {}));
-            var helpers = rectangle.helpers;
-        })(shapes.rectangle || (shapes.rectangle = {}));
-        var rectangle = shapes.rectangle;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+            })(helpers = rectangle.helpers || (rectangle.helpers = {}));
+        })(rectangle = shapes.rectangle || (shapes.rectangle = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../shape/hittest/ShapeHitTestPipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var rectangle;
         (function (rectangle) {
+            var hittest;
             (function (hittest) {
                 var RectangleHitTestPipeDef = (function (_super) {
                     __extends(RectangleHitTestPipeDef, _super);
@@ -12811,7 +12144,7 @@ var minerva;
                     return RectangleHitTestPipeDef;
                 })(shapes.shape.hittest.ShapeHitTestPipeDef);
                 hittest.RectangleHitTestPipeDef = RectangleHitTestPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function drawShape(data, pos, hitList, ctx) {
                         var assets = data.assets;
@@ -12822,25 +12155,23 @@ var minerva;
                         var ry = Math.min(Math.abs(assets.radiusY), sr.height / 2.0);
                         if (isNaN(ry))
                             ry = 0;
-
                         rectangle.helpers.draw(ctx.raw, sr.x, sr.y, sr.width, sr.height, rx, ry);
-
                         return true;
                     }
                     tapins.drawShape = drawShape;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(rectangle.hittest || (rectangle.hittest = {}));
-            var hittest = rectangle.hittest;
-        })(shapes.rectangle || (shapes.rectangle = {}));
-        var rectangle = shapes.rectangle;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = rectangle.hittest || (rectangle.hittest = {}));
+        })(rectangle = shapes.rectangle || (shapes.rectangle = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../../shape/render/ShapeRenderPipeDef" />
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var rectangle;
         (function (rectangle) {
+            var render;
             (function (render) {
                 var RectangleRenderPipeDef = (function (_super) {
                     __extends(RectangleRenderPipeDef, _super);
@@ -12851,12 +12182,11 @@ var minerva;
                     return RectangleRenderPipeDef;
                 })(shapes.shape.render.ShapeRenderPipeDef);
                 render.RectangleRenderPipeDef = RectangleRenderPipeDef;
-
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-
                         var sr = input.shapeRect;
                         var rx = Math.min(Math.abs(input.radiusX), sr.width / 2.0);
                         if (isNaN(rx))
@@ -12864,26 +12194,24 @@ var minerva;
                         var ry = Math.min(Math.abs(input.radiusY), sr.height / 2.0);
                         if (isNaN(ry))
                             ry = 0;
-
                         rectangle.helpers.draw(ctx.raw, sr.x, sr.y, sr.width, sr.height, rx, ry);
-
                         return true;
                     }
                     tapins.doRender = doRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(rectangle.render || (rectangle.render = {}));
-            var render = rectangle.render;
-        })(shapes.rectangle || (shapes.rectangle = {}));
-        var rectangle = shapes.rectangle;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = rectangle.render || (rectangle.render = {}));
+        })(rectangle = shapes.rectangle || (shapes.rectangle = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function canHitInside(data, pos, hitList, ctx) {
                         if (!data.assets.fill && !data.assets.stroke) {
@@ -12894,20 +12222,20 @@ var minerva;
                         return true;
                     }
                     tapins.canHitInside = canHitInside;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = shape.hittest || (shape.hittest = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function canHitShape(data, pos, hitList, ctx) {
                         if ((data.assets.shapeFlags & 1 /* Empty */) === 1 /* Empty */) {
@@ -12918,68 +12246,67 @@ var minerva;
                         return true;
                     }
                     tapins.canHitShape = canHitShape;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = shape.hittest || (shape.hittest = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function drawShape(data, pos, hitList, ctx) {
+                        //No-op
                         return true;
                     }
                     tapins.drawShape = drawShape;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = shape.hittest || (shape.hittest = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function finishShape(data, pos, hitList, ctx) {
                         var assets = data.assets;
                         var inside = (!!assets.fill && ctx.raw.isPointInPath(pos.x, pos.y)) || (!!assets.stroke && ctx.isPointInStrokeEx(assets, pos.x, pos.y));
                         ctx.restore();
-
                         if (!inside) {
                             hitList.shift();
                             ctx.restore();
                             return false;
                         }
-
                         return true;
                     }
                     tapins.finishShape = finishShape;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = shape.hittest || (shape.hittest = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function insideChildren(data, pos, hitList, ctx) {
                         hitList.unshift(data.updater);
@@ -12987,39 +12314,38 @@ var minerva;
                         return true;
                     }
                     tapins.insideChildren = insideChildren;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = shape.hittest || (shape.hittest = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var hittest;
             (function (hittest) {
+                var tapins;
                 (function (tapins) {
                     function prepareShape(data, pos, hitList, ctx) {
                         ctx.save();
                         return true;
                     }
                     tapins.prepareShape = prepareShape;
-                })(hittest.tapins || (hittest.tapins = {}));
-                var tapins = hittest.tapins;
-            })(shape.hittest || (shape.hittest = {}));
-            var hittest = shape.hittest;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = shape.hittest || (shape.hittest = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var processup;
             (function (processup) {
                 var ShapeProcessUpPipeDef = (function (_super) {
                     __extends(ShapeProcessUpPipeDef, _super);
@@ -13033,13 +12359,11 @@ var minerva;
                         output.shapeRect = new minerva.Rect();
                         return output;
                     };
-
                     ShapeProcessUpPipeDef.prototype.prepare = function (input, state, output) {
                         output.shapeFlags = input.shapeFlags;
                         minerva.Rect.copyTo(input.shapeRect, output.shapeRect);
                         _super.prototype.prepare.call(this, input, state, output);
                     };
-
                     ShapeProcessUpPipeDef.prototype.flush = function (input, state, output) {
                         _super.prototype.flush.call(this, input, state, output);
                         minerva.Rect.copyTo(output.shapeRect, input.shapeRect);
@@ -13048,23 +12372,23 @@ var minerva;
                     return ShapeProcessUpPipeDef;
                 })(minerva.core.processup.ProcessUpPipeDef);
                 processup.ShapeProcessUpPipeDef = ShapeProcessUpPipeDef;
-            })(shape.processup || (shape.processup = {}));
-            var processup = shape.processup;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+            })(processup = shape.processup || (shape.processup = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var processup;
             (function (processup) {
+                var tapins;
                 (function (tapins) {
                     function calcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         var e = output.extents;
                         var ewc = output.extentsWithChildren;
                         e.x = ewc.x = 0;
@@ -13072,65 +12396,60 @@ var minerva;
                         var as = state.actualSize;
                         e.width = ewc.width = as.width;
                         e.height = ewc.height = as.height;
-
                         return true;
                     }
                     tapins.calcExtents = calcExtents;
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(shape.processup || (shape.processup = {}));
-            var processup = shape.processup;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = shape.processup || (shape.processup = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var processup;
             (function (processup) {
+                var tapins;
                 (function (tapins) {
                     function calcShapeRect(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-
                         var sr = output.shapeRect;
                         minerva.Rect.copyTo(output.extents, sr);
-
                         output.shapeFlags = 1 /* Empty */;
                         if (minerva.Rect.isEmpty(sr))
                             return true;
-
                         var t = !!input.stroke ? input.strokeThickness : 0.0;
                         if (t >= sr.width || t >= sr.height) {
                             sr.width = Math.max(sr.width, t + t * 0.001);
                             sr.height = Math.max(sr.height, t + t * 0.001);
                             output.shapeFlags = 4 /* Degenerate */;
-                        } else {
+                        }
+                        else {
                             output.shapeFlags = 2 /* Normal */;
                         }
-
                         var ht = t / 2;
                         minerva.Rect.shrink(sr, ht, ht, ht, ht);
-
                         return true;
                     }
                     tapins.calcShapeRect = calcShapeRect;
-                })(processup.tapins || (processup.tapins = {}));
-                var tapins = processup.tapins;
-            })(shape.processup || (shape.processup = {}));
-            var processup = shape.processup;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = shape.processup || (shape.processup = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function calcShouldDraw(input, state, output, ctx, region) {
                         state.shouldDraw = false;
@@ -13142,42 +12461,42 @@ var minerva;
                         return true;
                     }
                     tapins.calcShouldDraw = calcShouldDraw;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = shape.render || (shape.render = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-
+                        //No-op
                         return true;
                     }
                     tapins.doRender = doRender;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = shape.render || (shape.render = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function fill(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
@@ -13187,20 +12506,20 @@ var minerva;
                         return true;
                     }
                     tapins.fill = fill;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = shape.render || (shape.render = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function finishDraw(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
@@ -13209,20 +12528,20 @@ var minerva;
                         return true;
                     }
                     tapins.finishDraw = finishDraw;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = shape.render || (shape.render = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     function prepareDraw(input, state, output, ctx, region, tree) {
                         if (!state.shouldDraw)
@@ -13232,20 +12551,20 @@ var minerva;
                         return true;
                     }
                     tapins.prepareDraw = prepareDraw;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = shape.render || (shape.render = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var shapes;
     (function (shapes) {
+        var shape;
         (function (shape) {
+            var render;
             (function (render) {
+                var tapins;
                 (function (tapins) {
                     var caps = [
                         "butt",
@@ -13258,39 +12577,31 @@ var minerva;
                         "bevel",
                         "round"
                     ];
-
                     function stroke(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-
                         var stroke = input.stroke;
                         if (!stroke || !(input.strokeThickness > 0))
                             return true;
-
                         var raw = ctx.raw;
                         raw.lineWidth = input.strokeThickness;
                         raw.lineCap = caps[input.strokeStartLineCap || input.strokeEndLineCap || 0] || caps[0];
                         raw.lineJoin = joins[input.strokeLineJoin || 0] || joins[0];
                         raw.miterLimit = input.strokeMiterLimit;
-
                         stroke.setupBrush(raw, input.shapeRect);
                         raw.strokeStyle = stroke.toHtml5Object();
                         raw.stroke();
-
                         return true;
                     }
                     tapins.stroke = stroke;
-                })(render.tapins || (render.tapins = {}));
-                var tapins = render.tapins;
-            })(shape.render || (shape.render = {}));
-            var render = shape.render;
-        })(shapes.shape || (shapes.shape = {}));
-        var shape = shapes.shape;
-    })(minerva.shapes || (minerva.shapes = {}));
-    var shapes = minerva.shapes;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = shape.render || (shape.render = {}));
+        })(shape = shapes.shape || (shapes.shape = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (_text) {
         var DocumentLayoutDef = (function () {
             function DocumentLayoutDef() {
@@ -13306,12 +12617,10 @@ var minerva;
                     selCached: false
                 };
             };
-
             DocumentLayoutDef.prototype.layout = function (docctx, docassets, constraint, walker) {
                 if (!isNaN(docassets.actualWidth))
                     return false;
                 docassets.maxWidth = constraint.width;
-
                 docassets.actualWidth = 0.0;
                 docassets.actualHeight = 0.0;
                 docassets.lines = [];
@@ -13320,11 +12629,9 @@ var minerva;
                 }
                 return true;
             };
-
             DocumentLayoutDef.prototype.render = function (ctx, docctx, docassets) {
                 var _this = this;
                 this.splitSelection(docctx, docassets);
-
                 ctx.save();
                 docassets.lines.forEach(function (line) {
                     var halign = _this.getHorizontalAlignmentX(docctx, docassets, line.width);
@@ -13347,29 +12654,25 @@ var minerva;
                 });
                 ctx.restore();
             };
-
             DocumentLayoutDef.prototype.getCursorFromPoint = function (point, docctx, docassets) {
                 var line = docassets.lines[0];
                 if (!line)
                     return 0;
-
+                //NOTE: Find line that contains point
                 var advance = 0;
                 if (point.y > 0) {
                     for (var cury = 0, lines = docassets.lines, i = 0, len = lines.length; i < len; i++) {
                         line = lines[i];
                         if (point.y <= (cury + line.height))
                             break;
-                        advance += line.runs.reduce(function (agg, r) {
-                            return agg + r.length;
-                        }, 0);
+                        advance += line.runs.reduce(function (agg, r) { return agg + r.length; }, 0);
                         cury += line.height;
                     }
                 }
-
                 var px = point.x - this.getHorizontalAlignmentX(docctx, docassets, line.width);
                 if (px < 0)
                     return advance;
-
+                //NOTE: Find run that contains point
                 var curx = 0;
                 var i = 0;
                 for (var runs = line.runs, len = runs.length; i < len; i++) {
@@ -13382,26 +12685,24 @@ var minerva;
                 var run = runs[i];
                 if (!run)
                     return advance;
-
+                //NOTE: Guess at cursor
                 var end = Math.max(0, Math.min(run.text.length, Math.ceil((px - curx) / run.width * run.text.length)));
                 var usedText = run.text.substr(0, end);
-
+                //NOTE: Move backward if width is right of point
                 var width;
                 while (end > 0 && (width = this.measureTextWidth(usedText, run.attrs.font)) > px) {
                     end--;
                     usedText = run.text.substr(0, end);
                 }
-
+                //NOTE: Move forward if width is left of point
                 var lastEnd = end;
                 while (end < run.text.length && (width = this.measureTextWidth(usedText, run.attrs.font)) < px) {
                     lastEnd = end;
                     end++;
                     usedText = run.text.substr(0, end);
                 }
-
                 return advance + lastEnd;
             };
-
             DocumentLayoutDef.prototype.getCaretFromCursor = function (docctx, docassets) {
                 var cursor = docctx.selectionStart;
                 var advance = 0;
@@ -13426,23 +12727,17 @@ var minerva;
                 cr.y -= lastLineHeight;
                 return cr;
             };
-
             DocumentLayoutDef.prototype.splitSelection = function (docctx, assets) {
                 var _this = this;
                 if (assets.selCached)
                     return;
                 var start = docctx.selectionStart;
-                assets.lines.forEach(function (line) {
-                    return line.runs.forEach(function (run) {
-                        _text.layout.Run.splitSelection(run, start, start + docctx.selectionLength, function (text, attrs) {
-                            return _this.measureTextWidth(text, attrs.font);
-                        });
-                        start -= run.length;
-                    });
-                });
+                assets.lines.forEach(function (line) { return line.runs.forEach(function (run) {
+                    _text.layout.Run.splitSelection(run, start, start + docctx.selectionLength, function (text, attrs) { return _this.measureTextWidth(text, attrs.font); });
+                    start -= run.length;
+                }); });
                 assets.selCached = true;
             };
-
             DocumentLayoutDef.prototype.getHorizontalAlignmentX = function (docctx, assets, lineWidth) {
                 if (docctx.textAlignment === 0 /* Left */ || docctx.textAlignment === 3 /* Justify */)
                     return 0;
@@ -13453,14 +12748,12 @@ var minerva;
                     return (width - lineWidth) / 2.0;
                 return width - lineWidth;
             };
-
             DocumentLayoutDef.prototype.measureTextWidth = function (text, font) {
                 return minerva.engine.Surface.measureWidth(text, font);
             };
             return DocumentLayoutDef;
         })();
         _text.DocumentLayoutDef = DocumentLayoutDef;
-
         function getWidthConstraint(assets) {
             if (isFinite(assets.availableWidth))
                 return assets.availableWidth;
@@ -13468,11 +12761,11 @@ var minerva;
                 return assets.actualWidth;
             return Math.min(assets.actualWidth, assets.maxWidth);
         }
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (text) {
         function createDocumentLayout(def) {
             return {
@@ -13481,12 +12774,12 @@ var minerva;
             };
         }
         text.createDocumentLayout = createDocumentLayout;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
-    (function (_text) {
+    var text;
+    (function (text) {
         var TextUpdater = (function () {
             function TextUpdater() {
                 this.assets = {
@@ -13510,35 +12803,34 @@ var minerva;
             TextUpdater.prototype.init = function () {
                 this.setTextLayout();
             };
-
+            /////// PREPARE TEXT LAYOUT
             TextUpdater.prototype.setTextLayout = function (tldef) {
                 if (this.$$textlayout)
                     return this;
-                this.$$textlayout = tldef || new _text.run.RunLayoutDef();
+                this.$$textlayout = tldef || new text.run.RunLayoutDef();
                 return this;
             };
-
+            /////// TEXT LAYOUT
             TextUpdater.prototype.layout = function (docctx, docassets) {
                 this.$$textlayout.layout(docctx, docassets, this.assets);
                 return this.assets.text.length;
             };
-
             TextUpdater.prototype.invalidateFont = function () {
                 var assets = this.assets;
                 return minerva.Font.mergeInto(assets.font, assets.fontFamily, assets.fontSize, assets.fontStretch, assets.fontStyle, assets.fontWeight);
             };
             return TextUpdater;
         })();
-        _text.TextUpdater = TextUpdater;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+        text.TextUpdater = TextUpdater;
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (text) {
+        var layout;
         (function (layout) {
             var isFirefox = /firefox/i.test(navigator.userAgent);
-
             var Cluster = (function () {
                 function Cluster() {
                     this.isSelected = false;
@@ -13548,16 +12840,15 @@ var minerva;
                 Cluster.render = function (cluster, assets, ctx) {
                     var fontHeight = assets.font.getHeight();
                     var area = new minerva.Rect(0, 0, cluster.width, fontHeight);
-
                     var raw = ctx.raw;
-
+                    //Background
                     var bg = cluster.isSelected ? (assets.selectionBackground || Cluster.DEFAULT_SELECTION_BG) : assets.background;
                     if (bg) {
                         raw.beginPath();
                         raw.rect(area.x, area.y, area.width, area.height);
                         ctx.fillEx(bg, area);
                     }
-
+                    //Text
                     var fg = cluster.isSelected ? (assets.selectionForeground || Cluster.DEFAULT_SELECTION_FG) : assets.foreground;
                     var fg5 = "#000000";
                     if (fg) {
@@ -13570,11 +12861,12 @@ var minerva;
                     if (isFirefox) {
                         raw.textBaseline = "bottom";
                         raw.fillText(cluster.text, 0, fontHeight);
-                    } else {
+                    }
+                    else {
                         raw.textBaseline = "top";
                         raw.fillText(cluster.text, 0, 0);
                     }
-
+                    //Underline
                     if (assets.isUnderlined) {
                         raw.beginPath();
                         raw.moveTo(0, fontHeight);
@@ -13589,14 +12881,14 @@ var minerva;
                 return Cluster;
             })();
             layout.Cluster = Cluster;
-        })(text.layout || (text.layout = {}));
-        var layout = text.layout;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+        })(layout = text.layout || (text.layout = {}));
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (text) {
+        var layout;
         (function (layout) {
             var Line = (function () {
                 function Line() {
@@ -13617,14 +12909,14 @@ var minerva;
                 return Line;
             })();
             layout.Line = Line;
-        })(text.layout || (text.layout = {}));
-        var layout = text.layout;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+        })(layout = text.layout || (text.layout = {}));
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (_text) {
+        var layout;
         (function (layout) {
             var Run = (function () {
                 function Run() {
@@ -13635,24 +12927,20 @@ var minerva;
                 }
                 Run.splitSelection = function (run, start, end, measureWidth) {
                     run.pre = run.sel = run.post = null;
-
                     var rs = run.start;
                     var re = rs + run.length;
-
                     var prelen = Math.min(run.length, Math.max(0, start - rs));
                     if (prelen > 0) {
                         var pre = run.pre = new layout.Cluster();
                         pre.text = run.text.substr(0, prelen);
                         pre.width = measureWidth(pre.text, run.attrs);
                     }
-
                     var postlen = Math.min(run.length, Math.max(0, re - end));
                     if (postlen > 0) {
                         var post = run.post = new layout.Cluster();
                         post.text = run.text.substr(run.length - postlen);
                         post.width = measureWidth(post.text, run.attrs);
                     }
-
                     var ss = Math.min(re, Math.max(rs, start));
                     var se = Math.max(rs, Math.min(re, end));
                     var sellen = Math.max(0, se - ss);
@@ -13666,19 +12954,20 @@ var minerva;
                 return Run;
             })();
             layout.Run = Run;
-        })(_text.layout || (_text.layout = {}));
-        var layout = _text.layout;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+        })(layout = _text.layout || (_text.layout = {}));
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (_text) {
+        var run;
         (function (run) {
             var RunLayoutDef = (function () {
                 function RunLayoutDef() {
                 }
                 RunLayoutDef.prototype.layout = function (docctx, docassets, assets) {
+                    //TODO: Implement lineStackingStrategy, lineHeight
                     var text = assets.text;
                     if (!text) {
                         var line = new _text.layout.Line();
@@ -13690,26 +12979,24 @@ var minerva;
                         docassets.actualHeight = line.height;
                         return false;
                     }
-
                     if (docctx.textWrapping === 0 /* NoWrap */)
                         run.doLayoutNoWrap(docctx, docassets, assets);
                     else
                         run.doLayoutWrap(docctx, docassets, assets);
-
                     docassets.selCached = false;
                     return true;
                 };
                 return RunLayoutDef;
             })();
             run.RunLayoutDef = RunLayoutDef;
-        })(_text.run || (_text.run = {}));
-        var run = _text.run;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+        })(run = _text.run || (_text.run = {}));
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (_text) {
+        var run;
         (function (_run) {
             function doLayoutNoWrap(docctx, docassets, assets) {
                 var pass = {
@@ -13717,18 +13004,14 @@ var minerva;
                     index: 0,
                     max: assets.text.length
                 };
-
                 var font = assets.font;
-
                 var line = new _text.layout.Line();
                 line.height = font.getHeight();
                 docassets.actualHeight += line.height;
                 docassets.lines.push(line);
-
                 var run = new _text.layout.Run();
                 run.attrs = assets;
                 line.runs.push(run);
-
                 while (pass.index < pass.max) {
                     var hitbreak = advance(run, pass, font);
                     if (hitbreak) {
@@ -13738,7 +13021,6 @@ var minerva;
                         line.height = font.getHeight();
                         docassets.actualHeight += line.height;
                         docassets.lines.push(line);
-
                         run = new _text.layout.Run();
                         run.attrs = assets;
                         line.runs.push(run);
@@ -13748,54 +13030,53 @@ var minerva;
                 docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
             }
             _run.doLayoutNoWrap = doLayoutNoWrap;
-
             function advance(run, pass, font) {
+                //NOTE: Returning true implies a new line is necessary
                 var remaining = pass.text.substr(pass.index);
                 var rindex = remaining.indexOf('\r');
                 var nindex = remaining.indexOf('\n');
-
                 if (rindex < 0 && nindex < 0) {
+                    //Didn't find \r or \n
                     run.length = remaining.length;
                     run.text = remaining;
                     run.width = measureTextWidth(run.text, font);
                     pass.index += run.length;
                     return false;
                 }
-
                 if (rindex > -1 && rindex + 1 === nindex) {
+                    //Found \r\n
                     run.length = nindex + 1;
                     run.text = remaining.substr(0, run.length);
                     run.width = measureTextWidth(run.text, font);
                     pass.index += run.length;
                     return true;
                 }
-
                 if (rindex > -1 && rindex < nindex) {
+                    //Found \r before \n, but not back-to-back
                     run.length = rindex + 1;
                     run.text = remaining.substr(0, run.length);
                     run.width = measureTextWidth(run.text, font);
                     pass.index += run.length;
                     return true;
                 }
-
+                //Found \n (potentially before \r, don't care)
                 run.length = nindex + 1;
                 run.text = remaining.substr(0, run.length);
                 run.width = measureTextWidth(run.text, font);
                 pass.index += run.length;
                 return true;
             }
-
             function measureTextWidth(text, font) {
                 return minerva.engine.Surface.measureWidth(text, font);
             }
-        })(_text.run || (_text.run = {}));
-        var run = _text.run;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+        })(run = _text.run || (_text.run = {}));
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    var text;
     (function (_text) {
+        var run;
         (function (_run) {
             function doLayoutWrap(docctx, docassets, assets) {
                 var pass = {
@@ -13803,18 +13084,14 @@ var minerva;
                     index: 0,
                     max: assets.text.length
                 };
-
                 var font = assets.font;
-
                 var line = new _text.layout.Line();
                 line.height = font.getHeight();
                 docassets.actualHeight += line.height;
                 docassets.lines.push(line);
-
                 var run = new _text.layout.Run();
                 run.attrs = assets;
                 line.runs.push(run);
-
                 while (pass.index < pass.max) {
                     var hitbreak = isFinite(docassets.maxWidth) ? advanceFinite(run, pass, font, docassets.maxWidth) : advanceInfinite(run, pass, font);
                     if (hitbreak) {
@@ -13824,7 +13101,6 @@ var minerva;
                         line.height = font.getHeight();
                         docassets.actualHeight += line.height;
                         docassets.lines.push(line);
-
                         run = new _text.layout.Run();
                         run.attrs = assets;
                         line.runs.push(run);
@@ -13834,44 +13110,44 @@ var minerva;
                 docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
             }
             _run.doLayoutWrap = doLayoutWrap;
-
             function advanceInfinite(run, pass, font) {
+                //NOTE: Returning true implies a new line is necessary
                 var remaining = pass.text.substr(pass.index);
                 var rindex = remaining.indexOf('\r');
                 var nindex = remaining.indexOf('\n');
-
                 if (rindex < 0 && nindex < 0) {
+                    //Didn't find \r or \n
                     run.length = remaining.length;
                     run.text = remaining;
                     run.width = measureTextWidth(run.text, font);
                     pass.index += run.length;
                     return false;
                 }
-
                 if (rindex > -1 && rindex + 1 === nindex) {
+                    //Found \r\n
                     run.length = nindex + 1;
                     run.text = remaining.substr(0, run.length);
                     run.width = measureTextWidth(run.text, font);
                     pass.index += run.length;
                     return true;
                 }
-
                 if (rindex > -1 && rindex < nindex) {
+                    //Found \r before \n, but not back-to-back
                     run.length = rindex + 1;
                     run.text = remaining.substr(0, run.length);
                     run.width = measureTextWidth(run.text, font);
                     pass.index += run.length;
                     return true;
                 }
-
+                //Found \n (potentially before \r, don't care)
                 run.length = nindex + 1;
                 run.text = remaining.substr(0, run.length);
                 run.width = measureTextWidth(run.text, font);
                 pass.index += run.length;
                 return true;
             }
-
             function advanceFinite(run, pass, font, maxWidth) {
+                //NOTE: Returning true implies a new line is necessary
                 var text = pass.text;
                 var start = pass.index;
                 var lastSpace = -1;
@@ -13888,7 +13164,8 @@ var minerva;
                         run.width = measureTextWidth(run.text, font);
                         pass.index++;
                         return true;
-                    } else if (c === '\r') {
+                    }
+                    else if (c === '\r') {
                         run.length = pass.index - start + 1;
                         pass.index++;
                         if (text.charAt(pass.index) === '\n') {
@@ -13901,7 +13178,7 @@ var minerva;
                     }
                     if (curWidth > maxWidth) {
                         var breakIndex = (lastSpace > -1) ? lastSpace + 1 : pass.index;
-                        run.length = (breakIndex - start) || 1;
+                        run.length = (breakIndex - start) || 1; //Force at least 1 character
                         run.text = text.substr(start, run.length);
                         run.width = measureTextWidth(run.text, font);
                         pass.index = breakIndex;
@@ -13916,13 +13193,10 @@ var minerva;
                 run.width = measureTextWidth(run.text, font);
                 return false;
             }
-
             function measureTextWidth(text, font) {
                 return minerva.engine.Surface.measureWidth(text, font);
             }
-        })(_text.run || (_text.run = {}));
-        var run = _text.run;
-    })(minerva.text || (minerva.text = {}));
-    var text = minerva.text;
+        })(run = _text.run || (_text.run = {}));
+    })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 //# sourceMappingURL=minerva.js.map
