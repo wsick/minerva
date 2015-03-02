@@ -1,12 +1,12 @@
 /// <reference path="Enums.ts" />
 
 module minerva {
-    var FontStyle = {
+    export var FontStyle = {
         Normal: "normal",
         Italic: "italic",
         Oblique: "oblique"
     };
-    var FontStretch = {
+    export var FontStretch = {
         UltraCondensed: "ultra-condensed",
         ExtraCondensed: "extra-condensed",
         Condensed: "condensed",
@@ -63,7 +63,7 @@ module minerva {
 
         getHeight (): number {
             if (this.$$cachedHeight == null)
-                this.$$cachedHeight = measureFontHeight(this);
+                this.$$cachedHeight = fontHeight.get(this);
             return this.$$cachedHeight;
         }
 
@@ -88,20 +88,5 @@ module minerva {
         s += font.size + "px ";
         s += font.family.toString();
         return s;
-    }
-
-    var dummy: HTMLElement;
-
-    function measureFontHeight (font: Font): number {
-        if (!dummy) {
-            dummy = document.createElement("div");
-            dummy.appendChild(document.createTextNode("M"));
-            document.body.appendChild(dummy);
-        }
-        dummy.style.display = "";
-        dummy.style.font = font.toHtml5Object();
-        var result = dummy.offsetHeight;
-        dummy.style.display = "none";
-        return result;
     }
 }

@@ -144,6 +144,22 @@ declare module minerva {
     }
 }
 declare module minerva {
+    var FontStyle: {
+        Normal: string;
+        Italic: string;
+        Oblique: string;
+    };
+    var FontStretch: {
+        UltraCondensed: string;
+        ExtraCondensed: string;
+        Condensed: string;
+        SemiCondensed: string;
+        Normal: string;
+        SemiExpanded: string;
+        Expanded: string;
+        ExtraExpanded: string;
+        UltraExpanded: string;
+    };
     class Font {
         static DEFAULT_FAMILY: string;
         static DEFAULT_STRETCH: string;
@@ -163,6 +179,13 @@ declare module minerva {
         getAscender(): number;
         getDescender(): number;
     }
+}
+declare module minerva.fontHeight {
+    var cache: {
+        hits: number;
+        misses: number;
+    };
+    function get(font: Font): number;
 }
 declare module minerva {
     interface IBrush {

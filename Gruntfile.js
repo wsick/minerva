@@ -95,6 +95,7 @@ module.exports = function (grunt) {
             build: {
                 src: [
                     'typings/**/*.d.ts',
+                    'lib/perfex/dist/perfex.d.ts',
                     'src/_Version.ts',
                     'src/*.ts',
                     'src/pipe/*.ts',
@@ -112,6 +113,7 @@ module.exports = function (grunt) {
             test: {
                 src: [
                     'typings/**/*.d.ts',
+                    'lib/perfex/dist/perfex.d.ts',
                     '<%= dirs.test.root %>/**/*.ts',
                     '!<%= dirs.test.lib %>/**/*.ts'
                 ].concat(unify.typings()),
@@ -126,6 +128,7 @@ module.exports = function (grunt) {
             stress: {
                 src: [
                     'typings/*.d.ts',
+                    'lib/perfex/dist/perfex.d.ts',
                     '<%= dirs.stress.root %>/**/*.ts',
                     '!<%= dirs.stress.lib %>/**/*.ts'
                 ].concat(unify.typings()),
@@ -216,4 +219,5 @@ module.exports = function (grunt) {
     grunt.registerTask('dist:upbuild', ['bump-build', 'version-apply', 'typescript:build', 'uglify:dist']);
     grunt.registerTask('dist:upminor', ['bump-minor', 'version-apply', 'typescript:build', 'uglify:dist']);
     grunt.registerTask('dist:upmajor', ['bump-major', 'version-apply', 'typescript:build', 'uglify:dist']);
+    grunt.registerTask('dist:nobump', ['version:apply', 'typescript:build', 'uglify:dist']);
 };

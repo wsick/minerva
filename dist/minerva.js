@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.6';
+    minerva.version = '0.4.8';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -177,12 +177,12 @@ var minerva;
 /// <reference path="Enums.ts" />
 var minerva;
 (function (minerva) {
-    var FontStyle = {
+    minerva.FontStyle = {
         Normal: "normal",
         Italic: "italic",
         Oblique: "oblique"
     };
-    var FontStretch = {
+    minerva.FontStretch = {
         UltraCondensed: "ultra-condensed",
         ExtraCondensed: "extra-condensed",
         Condensed: "condensed",
@@ -225,7 +225,7 @@ var minerva;
         };
         Font.prototype.getHeight = function () {
             if (this.$$cachedHeight == null)
-                this.$$cachedHeight = measureFontHeight(this);
+                this.$$cachedHeight = minerva.fontHeight.get(this);
             return this.$$cachedHeight;
         };
         Font.prototype.getAscender = function () {
@@ -235,8 +235,8 @@ var minerva;
             return 0;
         };
         Font.DEFAULT_FAMILY = "Segoe UI, Lucida Grande, Verdana";
-        Font.DEFAULT_STRETCH = FontStretch.Normal;
-        Font.DEFAULT_STYLE = FontStyle.Normal;
+        Font.DEFAULT_STRETCH = minerva.FontStretch.Normal;
+        Font.DEFAULT_STYLE = minerva.FontStyle.Normal;
         Font.DEFAULT_WEIGHT = 400 /* Normal */;
         Font.DEFAULT_SIZE = 14;
         return Font;
@@ -255,19 +255,45 @@ var minerva;
         s += font.family.toString();
         return s;
     }
-    var dummy;
-    function measureFontHeight(font) {
-        if (!dummy) {
-            dummy = document.createElement("div");
-            dummy.appendChild(document.createTextNode("M"));
-            document.body.appendChild(dummy);
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var fontHeight;
+    (function (fontHeight) {
+        var heights = [];
+        fontHeight.cache = {
+            hits: 0,
+            misses: 0
+        };
+        function get(font) {
+            var serial = font.toHtml5Object();
+            var height = heights[serial];
+            if (height == null) {
+                heights[serial] = height = measure(serial);
+                fontHeight.cache.misses++;
+            }
+            else {
+                fontHeight.cache.hits++;
+            }
+            return height;
         }
-        dummy.style.display = "";
-        dummy.style.font = font.toHtml5Object();
-        var result = dummy.offsetHeight;
-        dummy.style.display = "none";
-        return result;
-    }
+        fontHeight.get = get;
+        var dummy;
+        function measure(serial) {
+            perfex.timer.start('MeasureFontHeight', serial);
+            if (!dummy) {
+                dummy = document.createElement("div");
+                dummy.appendChild(document.createTextNode("M"));
+                document.body.appendChild(dummy);
+            }
+            dummy.style.display = "";
+            dummy.style.font = serial;
+            var result = dummy.offsetHeight;
+            dummy.style.display = "none";
+            perfex.timer.stop();
+            return result;
+        }
+    })(fontHeight = minerva.fontHeight || (minerva.fontHeight = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
