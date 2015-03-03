@@ -1,17 +1,17 @@
-module minerva.controls.modal {
-    export interface IModalUpdaterAssets extends core.IUpdaterAssets {
+module minerva.controls.overlay {
+    export interface IOverlayUpdaterAssets extends core.IUpdaterAssets {
         isVisible: boolean;
         isOpen: boolean;
     }
 
-    export class ModalUpdater extends core.Updater {
-        assets: IModalUpdaterAssets;
-        tree: ModalUpdaterTree;
+    export class OverlayUpdater extends core.Updater {
+        assets: IOverlayUpdaterAssets;
+        tree: OverlayUpdaterTree;
 
         init () {
-            this.setTree(new ModalUpdaterTree())
-                .setProcessUpPipe(singleton(processup.ModalProcessUpPipeDef))
-                .setHitTestPipe(singleton(hittest.ModalHitTestPipeDef));
+            this.setTree(new OverlayUpdaterTree())
+                .setProcessUpPipe(singleton(processup.OverlayProcessUpPipeDef))
+                .setHitTestPipe(singleton(hittest.OverlayHitTestPipeDef));
 
             var assets = this.assets;
             assets.isVisible = false;
@@ -57,7 +57,7 @@ module minerva.controls.modal {
     }
 
     export module reactTo {
-        export function isOpen (updater: ModalUpdater, oldValue: boolean, newValue: boolean) {
+        export function isOpen (updater: OverlayUpdater, oldValue: boolean, newValue: boolean) {
             (newValue === true) ? updater.show() : updater.hide();
         }
     }

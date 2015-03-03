@@ -6655,6 +6655,137 @@ var minerva;
 (function (minerva) {
     var controls;
     (function (controls) {
+        var overlay;
+        (function (overlay) {
+            var OverlayUpdater = (function (_super) {
+                __extends(OverlayUpdater, _super);
+                function OverlayUpdater() {
+                    _super.apply(this, arguments);
+                }
+                OverlayUpdater.prototype.init = function () {
+                    this.setTree(new overlay.OverlayUpdaterTree()).setProcessUpPipe(minerva.singleton(overlay.processup.OverlayProcessUpPipeDef)).setHitTestPipe(minerva.singleton(overlay.hittest.OverlayHitTestPipeDef));
+                    var assets = this.assets;
+                    assets.isVisible = false;
+                    assets.isOpen = false;
+                    _super.prototype.init.call(this);
+                };
+                OverlayUpdater.prototype.setInitiator = function (initiator) {
+                    this.tree.initiatorSurface = initiator.tree.surface;
+                };
+                OverlayUpdater.prototype.setLayer = function (layer) {
+                    this.hide();
+                    this.tree.layer = layer;
+                    if (this.assets.isOpen)
+                        this.show();
+                };
+                OverlayUpdater.prototype.hide = function () {
+                    var layer = this.tree.layer;
+                    if (!this.assets.isVisible || !layer)
+                        return false;
+                    this.assets.isVisible = false;
+                    var surface = this.tree.initiatorSurface;
+                    if (!surface)
+                        return false;
+                    surface.detachLayer(layer);
+                    return true;
+                };
+                OverlayUpdater.prototype.show = function () {
+                    var layer = this.tree.layer;
+                    if (this.assets.isVisible || !layer)
+                        return false;
+                    this.assets.isVisible = true;
+                    var surface = this.tree.initiatorSurface;
+                    if (!surface)
+                        return false;
+                    surface.attachLayer(layer);
+                    return true;
+                };
+                return OverlayUpdater;
+            })(minerva.core.Updater);
+            overlay.OverlayUpdater = OverlayUpdater;
+            var reactTo;
+            (function (reactTo) {
+                function isOpen(updater, oldValue, newValue) {
+                    (newValue === true) ? updater.show() : updater.hide();
+                }
+                reactTo.isOpen = isOpen;
+            })(reactTo = overlay.reactTo || (overlay.reactTo = {}));
+        })(overlay = controls.overlay || (controls.overlay = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+/// <reference path="../../core/UpdaterTree" />
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var overlay;
+        (function (overlay) {
+            var OverlayUpdaterTree = (function (_super) {
+                __extends(OverlayUpdaterTree, _super);
+                function OverlayUpdaterTree() {
+                    _super.apply(this, arguments);
+                    this.layer = undefined; //Root layer that will be attached to the surface
+                    this.initiatorSurface = undefined;
+                }
+                return OverlayUpdaterTree;
+            })(minerva.core.UpdaterTree);
+            overlay.OverlayUpdaterTree = OverlayUpdaterTree;
+        })(overlay = controls.overlay || (controls.overlay = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var overlay;
+        (function (overlay) {
+            var hittest;
+            (function (hittest) {
+                var OverlayHitTestPipeDef = (function (_super) {
+                    __extends(OverlayHitTestPipeDef, _super);
+                    function OverlayHitTestPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('canHit', 'shouldSkip', tapins.shouldSkip);
+                    }
+                    return OverlayHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.OverlayHitTestPipeDef = OverlayHitTestPipeDef;
+                var tapins;
+                (function (tapins) {
+                    function shouldSkip(data, pos, hitList, ctx) {
+                        return !!data.assets.isVisible;
+                    }
+                    tapins.shouldSkip = shouldSkip;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = overlay.hittest || (overlay.hittest = {}));
+        })(overlay = controls.overlay || (controls.overlay = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var overlay;
+        (function (overlay) {
+            var processup;
+            (function (processup) {
+                var OverlayProcessUpPipeDef = (function (_super) {
+                    __extends(OverlayProcessUpPipeDef, _super);
+                    function OverlayProcessUpPipeDef() {
+                        _super.call(this);
+                        this.removeTapin('calcActualSize').removeTapin('calcExtents').removeTapin('calcPaintBounds');
+                    }
+                    return OverlayProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.OverlayProcessUpPipeDef = OverlayProcessUpPipeDef;
+            })(processup = overlay.processup || (overlay.processup = {}));
+        })(overlay = controls.overlay || (controls.overlay = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
         var panel;
         (function (panel) {
             var PanelUpdaterTree = (function (_super) {

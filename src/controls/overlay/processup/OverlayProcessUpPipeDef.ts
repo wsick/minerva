@@ -1,5 +1,5 @@
-module minerva.controls.modal.processup {
-    export class ModalProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+module minerva.controls.overlay.processup {
+    export class OverlayProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
         constructor () {
             super();
             this.removeTapin('calcActualSize')

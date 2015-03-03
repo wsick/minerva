@@ -1812,6 +1812,46 @@ declare module minerva.controls.image.render {
 declare module minerva.controls.image.render.tapins {
     function doRender(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
+declare module minerva.controls.overlay {
+    interface IOverlayUpdaterAssets extends core.IUpdaterAssets {
+        isVisible: boolean;
+        isOpen: boolean;
+    }
+    class OverlayUpdater extends core.Updater {
+        assets: IOverlayUpdaterAssets;
+        tree: OverlayUpdaterTree;
+        init(): void;
+        setInitiator(initiator: core.Updater): void;
+        setLayer(layer: core.Updater): void;
+        hide(): boolean;
+        show(): boolean;
+    }
+    module reactTo {
+        function isOpen(updater: OverlayUpdater, oldValue: boolean, newValue: boolean): void;
+    }
+}
+declare module minerva.controls.overlay {
+    class OverlayUpdaterTree extends core.UpdaterTree {
+        layer: core.Updater;
+        initiatorSurface: core.ISurface;
+    }
+}
+declare module minerva.controls.overlay.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IOverlayUpdaterAssets;
+    }
+    class OverlayHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+    }
+    module tapins {
+        function shouldSkip(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
+declare module minerva.controls.overlay.processup {
+    class OverlayProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+}
 declare module minerva.controls.panel {
     class PanelUpdaterTree extends core.UpdaterTree {
         children: core.Updater[];
