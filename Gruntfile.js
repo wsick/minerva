@@ -12,6 +12,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-open');
     grunt.loadNpmTasks('grunt-bower-install-simple');
+    grunt.loadNpmTasks("grunt-version-ts");
     var unify = gunify(grunt);
 
     var ports = {
@@ -219,5 +220,5 @@ module.exports = function (grunt) {
     grunt.registerTask('dist:upbuild', ['bump-build', 'version-apply', 'typescript:build', 'uglify:dist']);
     grunt.registerTask('dist:upminor', ['bump-minor', 'version-apply', 'typescript:build', 'uglify:dist']);
     grunt.registerTask('dist:upmajor', ['bump-major', 'version-apply', 'typescript:build', 'uglify:dist']);
-    grunt.registerTask('dist:nobump', ['version:apply', 'typescript:build', 'uglify:dist']);
+    grunt.registerTask('dist:nobump', ['version-apply', 'typescript:build', 'uglify:dist']);
 };
