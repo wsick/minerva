@@ -502,8 +502,8 @@ declare module minerva.core {
         height: number;
         addUpDirty(updater: Updater): any;
         addDownDirty(updater: Updater): any;
-        attachLayer(layer: Updater, root?: boolean): any;
-        detachLayer(layer: Updater): any;
+        attachLayer(layer: core.Updater, root?: boolean): any;
+        detachLayer(layer: core.Updater): any;
     }
     interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
     }
@@ -595,8 +595,8 @@ declare module minerva.core {
         subtree: any;
         visualOwner: IVisualOwner;
         walk(direction?: WalkDirection): IWalker<Updater>;
-        onChildAttached(child: Updater): void;
-        onChildDetached(child: Updater): void;
+        onChildAttached(child: core.Updater): void;
+        onChildDetached(child: core.Updater): void;
         setTemplateApplier(applier: () => boolean): void;
         applyTemplate(): boolean;
     }
@@ -618,7 +618,7 @@ declare module minerva.core.helpers {
         breakLayoutClip: boolean;
         visualOffset: Point;
     }
-    function renderLayoutClip(ctx: render.RenderContext, assets: IClipAssets, tree: IUpdaterTree): void;
+    function renderLayoutClip(ctx: render.RenderContext, assets: IClipAssets, tree: core.IUpdaterTree): void;
 }
 declare module minerva.core.reactTo {
     module helpers {
@@ -915,7 +915,7 @@ declare module minerva.core.measure.tapins {
 }
 declare module minerva.core.processdown {
     interface IProcessDownTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: IUpdaterTree): boolean;
+        (input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
     }
     interface IInput extends pipe.IPipeInput {
         visibility: Visibility;
@@ -958,8 +958,8 @@ declare module minerva.core.processdown {
         constructor();
         createState(): IState;
         createOutput(): IOutput;
-        prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: IUpdaterTree): void;
-        flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: IUpdaterTree): void;
+        prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
+        flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
     }
 }
 declare module minerva.core.processdown.tapins {
@@ -991,7 +991,7 @@ declare module minerva.core.processdown.tapins {
 }
 declare module minerva.core.processup {
     interface IProcessUpTapin extends pipe.ITriTapin {
-        (input: IInput, state: IState, output: IOutput, tree: IUpdaterTree): boolean;
+        (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
     }
     interface IInput extends pipe.IPipeInput {
         width: number;
@@ -2287,7 +2287,7 @@ declare module minerva.controls.textboxview.render {
 declare module minerva.controls.usercontrol {
     interface IUserControlUpdaterAssets extends control.IControlUpdaterAssets, measure.IInput, arrange.IInput {
     }
-    class UserControlUpdater extends control.ControlUpdater {
+    class UserControlUpdater extends controls.control.ControlUpdater {
         assets: IUserControlUpdaterAssets;
         init(): void;
     }
@@ -2812,14 +2812,14 @@ declare module minerva.shapes.path {
         old: boolean;
         path: minerva.path.Path;
         fillRule: FillRule;
-        Draw(ctx: core.render.RenderContext): void;
+        Draw(ctx: minerva.core.render.RenderContext): void;
         GetBounds(pars?: minerva.path.IStrokeParameters): Rect;
     }
 }
 declare module minerva.shapes.path {
     interface IPathGeometry {
         fillRule: FillRule;
-        Draw(ctx: core.render.RenderContext): any;
+        Draw(ctx: minerva.core.render.RenderContext): any;
         GetBounds(pars?: minerva.path.IStrokeParameters): Rect;
     }
 }
@@ -3065,7 +3065,7 @@ declare module minerva.text {
     }
     interface IDocumentLayoutDef {
         createAssets(): IDocumentAssets;
-        layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
+        layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
         getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
         getCaretFromCursor(docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
@@ -3073,7 +3073,7 @@ declare module minerva.text {
     }
     class DocumentLayoutDef implements IDocumentLayoutDef {
         createAssets(): IDocumentAssets;
-        layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<TextUpdater>): boolean;
+        layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
         getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
         getCaretFromCursor(docctx: IDocumentContext, docassets: IDocumentAssets): Rect;
