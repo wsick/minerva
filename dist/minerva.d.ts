@@ -282,6 +282,14 @@ declare module minerva {
     }
 }
 declare module minerva {
+    interface IObjectPool<T> {
+        create(): T;
+        clone(t: T): T;
+        release(t: T): any;
+    }
+    function createObjectPool<T>(ctor: any, init: (t: T) => any, cloner: (t: T, template: T) => any): IObjectPool<T>;
+}
+declare module minerva {
     interface IPoint {
         x: number;
         y: number;
@@ -313,6 +321,7 @@ declare module minerva {
         y: number;
         width: number;
         height: number;
+        static Pool: IObjectPool<Rect>;
         constructor(x?: number, y?: number, width?: number, height?: number);
         static getBottom(rect: Rect): number;
         static getRight(rect: Rect): number;
@@ -341,6 +350,7 @@ declare module minerva {
     class Size implements ISize {
         width: number;
         height: number;
+        static Pool: IObjectPool<Size>;
         constructor(width?: number, height?: number);
         static copyTo(src: ISize, dest: ISize): void;
         static isEqual(size1: ISize, size2: ISize): boolean;

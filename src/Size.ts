@@ -8,6 +8,13 @@ module minerva {
         width: number;
         height: number;
 
+        static Pool = createObjectPool<Size>(Size, (size: Size) => {
+            size.width = size.height = 0;
+        }, (size: Size, template: Size) => {
+            size.width = template.width;
+            size.height = template.height;
+        });
+
         constructor (width?: number, height?: number) {
             this.width = width == null ? 0 : width;
             this.height = height == null ? 0 : height;

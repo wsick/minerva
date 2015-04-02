@@ -353,6 +353,32 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    function createObjectPool(ctor, init, cloner) {
+        var available = [];
+        return {
+            create: function () {
+                var obj = available.pop();
+                if (!obj)
+                    obj = new ctor();
+                init(obj);
+                return obj;
+            },
+            clone: function (t) {
+                var obj = available.pop();
+                if (!obj)
+                    obj = new ctor();
+                cloner(obj, t);
+                return obj;
+            },
+            release: function (t) {
+                available.push(t);
+            }
+        };
+    }
+    minerva.createObjectPool = createObjectPool;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     var Point = (function () {
         function Point(x, y) {
             this.x = x == null ? 0 : x;
@@ -568,6 +594,14 @@ var minerva;
         Rect.transform4 = function (dest, projection) {
             //See mat/transform4.ts
         };
+        Rect.Pool = minerva.createObjectPool(Rect, function (r) {
+            r.x = r.y = r.width = r.height = 0;
+        }, function (r, template) {
+            r.x = template.x;
+            r.y = template.y;
+            r.width = template.width;
+            r.height = template.height;
+        });
         return Rect;
     })();
     minerva.Rect = Rect;
@@ -597,6 +631,12 @@ var minerva;
             size.width = NaN;
             size.height = NaN;
         };
+        Size.Pool = minerva.createObjectPool(Size, function (size) {
+            size.width = size.height = 0;
+        }, function (size, template) {
+            size.width = template.width;
+            size.height = template.height;
+        });
         return Size;
     })();
     minerva.Size = Size;

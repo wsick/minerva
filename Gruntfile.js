@@ -190,7 +190,7 @@ module.exports = function (grunt) {
         },
         open: {
             stress: {
-                path: 'http://localhost:<%= ports.stress %>/default.html'
+                path: 'http://localhost:<%= ports.stress %>/index.html'
             }
         },
         "version-apply": {
