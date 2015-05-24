@@ -13,7 +13,7 @@ module minerva.controls.border.render.tapins.shim {
     var tempCtx: core.render.RenderContext;
 
     function createBorderPattern (borderBrush: IBrush, extents: Rect, fillExtents: Rect, oa: ICornerRadius, ia: ICornerRadius): CanvasPattern {
-        tempCtx = tempCtx || new core.render.RenderContext(document.createElement('canvas').getContext('2d'));
+        tempCtx = tempCtx || new core.render.RenderContext(<CanvasRenderingContext2D>document.createElement('canvas').getContext('2d'));
         var raw = tempCtx.raw;
         Size.copyTo(extents, raw.canvas);
         raw.beginPath();

@@ -33,7 +33,7 @@ module minerva.engine {
 
         init (canvas: HTMLCanvasElement) {
             this.$$canvas = canvas;
-            this.$$ctx = new core.render.RenderContext(canvas.getContext('2d', {alpha: false}));
+            this.$$ctx = new core.render.RenderContext(<CanvasRenderingContext2D>canvas.getContext('2d', {alpha: false}));
             this.$$width = canvas.offsetWidth;
             this.$$height = canvas.offsetHeight;
         }
@@ -168,7 +168,7 @@ module minerva.engine {
         hitTest (pos: Point): core.Updater[] {
             if (this.$$layers.length < 1)
                 return null;
-            hitTestCtx = hitTestCtx || new core.render.RenderContext(document.createElement('canvas').getContext('2d'));
+            hitTestCtx = hitTestCtx || new core.render.RenderContext(<CanvasRenderingContext2D>document.createElement('canvas').getContext('2d'));
             hitTestCtx.resize(this.$$canvas.width, this.$$canvas.height);
 
             var list: core.Updater[] = [];
@@ -179,7 +179,7 @@ module minerva.engine {
         }
 
         static measureWidth (text: string, font: Font): number {
-            fontCtx = fontCtx || document.createElement('canvas').getContext('2d');
+            fontCtx = fontCtx || <CanvasRenderingContext2D>document.createElement('canvas').getContext('2d');
             fontCtx.font = font.toHtml5Object();
             return fontCtx.measureText(text).width;
         }
