@@ -30,7 +30,7 @@ module minerva.core.render.tapins.tests {
         },
         context: function (): MockRenderContext {
             var canvas = document.createElement('canvas');
-            return new MockRenderContext(canvas.getContext('2d'));
+            return new MockRenderContext(<CanvasRenderingContext2D>canvas.getContext('2d'));
         },
         tree: function (): core.IUpdaterTree {
             return new core.UpdaterTree();

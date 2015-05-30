@@ -16,7 +16,7 @@ module minerva.core.hittest.tapins.tests {
             };
         },
         ctx: function (): render.RenderContext {
-            return new render.RenderContext(document.createElement('canvas').getContext('2d'));
+            return new render.RenderContext(<CanvasRenderingContext2D>document.createElement('canvas').getContext('2d'));
         },
         walk: function (children: Updater[]): (direction?: WalkDirection) => IWalker<Updater> {
             children.push(mock.updater());
