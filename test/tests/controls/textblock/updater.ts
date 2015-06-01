@@ -28,8 +28,11 @@ module minerva.controls.textblock.tests {
         var updater = new TextBlockUpdater();
         updater.assets.textWrapping = TextWrapping.NoWrap;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
+
 
         run.assets.text = "";
         updater.invalidateTextMetrics();
@@ -38,7 +41,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "");
         assert.strictEqual(docassets.actualWidth, 0);
-        assert.strictEqual(docassets.actualHeight, 19);
+        assert.strictEqual(docassets.actualHeight, 16);
     });
 
     QUnit.test("NoWrap", (assert) => {
@@ -46,6 +49,8 @@ module minerva.controls.textblock.tests {
         updater.assets.textWrapping = TextWrapping.NoWrap;
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -57,7 +62,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, alltext);
         assert.strictEqual(docassets.actualWidth, mock.measure(alltext, run.assets.font, true));
-        assert.strictEqual(docassets.actualHeight, 19);
+        assert.strictEqual(docassets.actualHeight, 16);
 
         run.assets.text = "Lorem";
         updater.invalidateTextMetrics();
@@ -66,13 +71,15 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "Lorem");
         assert.strictEqual(docassets.actualWidth, mock.measure("Lorem", run.assets.font, true));
-        assert.strictEqual(docassets.actualHeight, 19);
+        assert.strictEqual(docassets.actualHeight, 16);
     });
 
     QUnit.test("NoWrap - Infinite width with line breaks", (assert) => {
         var updater = new TextBlockUpdater();
 
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -96,6 +103,8 @@ module minerva.controls.textblock.tests {
         var updater = new TextBlockUpdater();
 
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -120,6 +129,8 @@ module minerva.controls.textblock.tests {
         updater.assets.textWrapping = TextWrapping.Wrap;
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -157,6 +168,8 @@ module minerva.controls.textblock.tests {
 
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -183,6 +196,8 @@ module minerva.controls.textblock.tests {
 
         updater.assets.maxWidth = Number.POSITIVE_INFINITY;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
