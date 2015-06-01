@@ -32,7 +32,7 @@ module minerva.controls.textblock.tests {
         run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
-
+        var fheight = minerva.fontHeight.get(run.assets.font);
 
         run.assets.text = "";
         updater.invalidateTextMetrics();
@@ -41,7 +41,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "");
         assert.strictEqual(docassets.actualWidth, 0);
-        assert.strictEqual(docassets.actualHeight, 16);
+        assert.strictEqual(docassets.actualHeight, fheight);
     });
 
     QUnit.test("NoWrap", (assert) => {
@@ -53,6 +53,7 @@ module minerva.controls.textblock.tests {
         run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
+        var fheight = minerva.fontHeight.get(run.assets.font);
 
         var alltext = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris efficitur nunc lobortis varius dignissim. Sed sed sem non orci laoreet tempus. Nullam a nisi consequat, dignissim diam volutpat, blandit augue. Praesent et nulla nec ante consectetur varius et condimentum leo. Nam ornare odio neque, ut lobortis purus volutpat eu. In hac habitasse platea dictumst. Etiam accumsan bibendum vehicula.";
         run.assets.text = alltext;
@@ -62,7 +63,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, alltext);
         assert.strictEqual(docassets.actualWidth, mock.measure(alltext, run.assets.font, true));
-        assert.strictEqual(docassets.actualHeight, 16);
+        assert.strictEqual(docassets.actualHeight, fheight);
 
         run.assets.text = "Lorem";
         updater.invalidateTextMetrics();
@@ -71,7 +72,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "Lorem");
         assert.strictEqual(docassets.actualWidth, mock.measure("Lorem", run.assets.font, true));
-        assert.strictEqual(docassets.actualHeight, 16);
+        assert.strictEqual(docassets.actualHeight, fheight);
     });
 
     QUnit.test("NoWrap - Infinite width with line breaks", (assert) => {
