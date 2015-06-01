@@ -1,5 +1,5 @@
 module minerva.shapes.shape.measure.tests {
-    QUnit.module("Shape Measure Tests");
+    QUnit.module("shapes.shape.measure");
 
     var mock = {
         input: function (): IInput {

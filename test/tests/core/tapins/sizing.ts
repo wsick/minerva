@@ -1,5 +1,5 @@
 module minerva.core.sizing.tapins.tests {
-    QUnit.module("Sizing Pipe Tapins");
+    QUnit.module("core.tapins.sizing");
 
     import Visibility = minerva.Visibility;
     import Size = minerva.Size;

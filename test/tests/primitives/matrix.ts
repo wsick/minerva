@@ -1,5 +1,5 @@
 module minerva.tests.primitives.matrix {
-    QUnit.module("Matrix");
+    QUnit.module("primitives.matrix");
 
     function typedToArray (typed) {
         var arr = [];

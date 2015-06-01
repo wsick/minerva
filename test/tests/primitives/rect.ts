@@ -1,5 +1,5 @@
 module tests.primitives.rect {
-    QUnit.module("Rect");
+    QUnit.module("primitives.rect");
 
     import Size = minerva.Size;
     import Point = minerva.Point;

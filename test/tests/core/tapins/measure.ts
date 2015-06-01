@@ -1,5 +1,5 @@
 module minerva.core.measure.tapins.tests {
-    QUnit.module("Measure Pipe Tapins");
+    QUnit.module("core.tapins.measure");
 
     import Rect = minerva.Rect;
     import Size = minerva.Size;

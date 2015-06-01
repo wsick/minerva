@@ -1,5 +1,5 @@
 module minerva.controls.textboxview.caret.tests {
-    QUnit.module("TextBoxView Caret Tests");
+    QUnit.module("controls.textboxview.caret");
 
     var mock = {
         updater: function () {

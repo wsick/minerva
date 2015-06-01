@@ -1,5 +1,5 @@
 module minerva.core.render.tapins.tests {
-    QUnit.module("Render Pipe Tapins");
+    QUnit.module("core.tapins.render");
 
     import Rect = minerva.Rect;
 

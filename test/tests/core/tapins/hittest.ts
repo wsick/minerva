@@ -1,5 +1,5 @@
 module minerva.core.hittest.tapins.tests {
-    QUnit.module("Hit Test Pipe Tapins");
+    QUnit.module("core.tapins.hittest");
 
     var mock = {
         updater: function (): Updater {

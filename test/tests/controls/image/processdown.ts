@@ -1,5 +1,5 @@
 module minerva.controls.image.processdown.tests {
-    QUnit.module("Image ProcessDown Tapins");
+    QUnit.module("controls.image.processdown");
 
     var mock = {
         input: function (): IInput {

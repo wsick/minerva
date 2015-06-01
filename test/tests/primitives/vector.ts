@@ -1,5 +1,5 @@
 module tests.primitives.vector {
-    QUnit.module("Vector");
+    QUnit.module("primitives.vector");
 
     import Vector = minerva.Vector;
 

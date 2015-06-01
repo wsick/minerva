@@ -1,5 +1,5 @@
 module minerva.shapes.shape.arrange.tests {
-    QUnit.module("Shape Arrange Tests");
+    QUnit.module("shapes.shape.arrange");
 
     var mock = {
         input: function (): IInput {

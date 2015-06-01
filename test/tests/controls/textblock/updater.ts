@@ -1,5 +1,5 @@
 module minerva.controls.textblock.tests {
-    QUnit.module("TextBlock Updater Tests");
+    QUnit.module("controls.textblock.updater");
 
     var mock = {
         textUpdater: function (): text.TextUpdater {

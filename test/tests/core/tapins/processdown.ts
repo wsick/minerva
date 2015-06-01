@@ -1,5 +1,5 @@
 module minerva.core.processdown.tapins.tests {
-    QUnit.module("Process Down Pipe Tapins");
+    QUnit.module("core.tapins.processdown");
 
     import Rect = minerva.Rect;
     import Size = minerva.Size;

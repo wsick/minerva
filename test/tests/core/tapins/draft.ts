@@ -1,5 +1,5 @@
 module minerva.core.draft.tapins.tests {
-    QUnit.module("Draft Pipe Tapins");
+    QUnit.module("core.tapins.draft");
 
     var mock = {
         data: function (updater?: Updater): IDraftPipeData {

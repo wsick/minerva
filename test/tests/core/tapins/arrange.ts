@@ -1,5 +1,5 @@
 module minerva.core.arrange.tapins.tests {
-    QUnit.module("Arrange Pipe Tapins");
+    QUnit.module("core.tapins.arrange");
 
     import Rect = minerva.Rect;
     import Size = minerva.Size;

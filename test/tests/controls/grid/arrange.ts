@@ -1,5 +1,5 @@
 module minerva.controls.grid.arrange.tests {
-    QUnit.module("Grid Arrange Pipe Tapins");
+    QUnit.module("controls.grid.arrange");
 
     var mock = {
         input: function (): IInput {
