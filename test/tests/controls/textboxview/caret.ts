@@ -60,17 +60,19 @@ module minerva.controls.textboxview.caret.tests {
         upd.invalidateTextMetrics();
         upd.tree.layout(new Size(150, 100), upd.assets);
 
-        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, 16));
+        var fheight = minerva.fontHeight.get(textupd.assets.font);
+
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, fheight));
         upd.assets.selectionStart = 8;
-        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(mock.measure("Welcome ", textupd.assets.font, true), 0, 1, 16));
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(mock.measure("Welcome ", textupd.assets.font, true), 0, 1, fheight));
         upd.assets.selectionStart = 17;
-        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(mock.measure("Welcome to Fayde.", textupd.assets.font, true), 0, 1, 16));
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(mock.measure("Welcome to Fayde.", textupd.assets.font, true), 0, 1, fheight));
 
         textupd.assets.text = "";
         upd.invalidateTextMetrics();
         upd.tree.layout(new Size(150, 100), upd.assets);
         upd.assets.selectionStart = 0;
-        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, 16));
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, fheight));
     });
 
     QUnit.test("getCaretFromCursor - Line Breaks", (assert) => {
@@ -85,10 +87,12 @@ module minerva.controls.textboxview.caret.tests {
         upd.invalidateTextMetrics();
         upd.tree.layout(new Size(150, 100), upd.assets);
 
-        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, 16));
+        var fheight = minerva.fontHeight.get(textupd.assets.font);
+
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 0, 1, fheight));
         upd.assets.selectionStart = 17;
-        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, 16, 1, 16));
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(0, fheight, 1, fheight));
         upd.assets.selectionStart = 20;
-        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(mock.measure("Thi", textupd.assets.font, true), 16, 1, 16));
+        assert.deepEqual(upd.tree.getCaretRegion(upd.assets), new Rect(mock.measure("Thi", textupd.assets.font, true), fheight, 1, fheight));
     });
 }
