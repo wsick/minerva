@@ -25,7 +25,7 @@ module minerva.fontHeight {
         perfex.timer.start('MeasureFontHeight', serial);
         if (!dummy) {
             dummy = document.createElement("div");
-            dummy.appendChild(document.createTextNode("M"));
+            dummy.appendChild(document.createTextNode("Hg"));
             document.body.appendChild(dummy);
         }
         dummy.style.display = "";
