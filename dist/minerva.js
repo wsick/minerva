@@ -11636,6 +11636,13 @@ var minerva;
         })(segments = path.segments || (path.segments = {}));
     })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
+(function (Ctx) {
+    if (Ctx.prototype.ellipse)
+        return;
+    Ctx.prototype.ellipse = function (x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
+        if (anticlockwise === void 0) { anticlockwise = false; }
+    };
+})(CanvasRenderingContext2D);
 (function (context) {
     if (!context.perfex) {
         context.perfex = {};
@@ -12529,19 +12536,19 @@ var minerva;
                     //top edge
                     ctx.lineTo(right - radiusX, top);
                     //top right arc
-                    ctx.quadraticCurveTo(right, top, right, top + radiusY);
+                    ctx.ellipse(right - radiusX, top + radiusY, radiusX, radiusY, 0, 3 * Math.PI / 2, 2 * Math.PI);
                     //right edge
                     ctx.lineTo(right, bottom - radiusY);
                     //bottom right arc
-                    ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
+                    ctx.ellipse(right - radiusX, bottom - radiusY, radiusX, radiusY, 0, 0, Math.PI / 2);
                     //bottom edge
                     ctx.lineTo(left + radiusX, bottom);
                     //bottom left arc
-                    ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
+                    ctx.ellipse(left + radiusX, bottom - radiusY, radiusX, radiusY, 0, Math.PI / 2, Math.PI);
                     //left edge
                     ctx.lineTo(left, top + radiusY);
                     //top left arc
-                    ctx.quadraticCurveTo(left, top, left + radiusX, top);
+                    ctx.ellipse(left + radiusX, top + radiusY, radiusX, radiusY, 0, Math.PI, 3 * Math.PI / 2);
                     ctx.closePath();
                 }
                 helpers.draw = draw;
@@ -12611,10 +12618,10 @@ var minerva;
                         if (!state.shouldDraw)
                             return true;
                         var sr = input.shapeRect;
-                        var rx = Math.min(Math.abs(input.radiusX), sr.width / 2.0);
+                        var rx = Math.min(Math.max(0, input.radiusX), sr.width / 2.0);
                         if (isNaN(rx))
                             rx = 0;
-                        var ry = Math.min(Math.abs(input.radiusY), sr.height / 2.0);
+                        var ry = Math.min(Math.max(0, input.radiusY), sr.height / 2.0);
                         if (isNaN(ry))
                             ry = 0;
                         rectangle.helpers.draw(ctx.raw, sr.x, sr.y, sr.width, sr.height, rx, ry);

@@ -12,19 +12,19 @@ module minerva.shapes.rectangle.helpers {
         //top edge
         ctx.lineTo(right - radiusX, top);
         //top right arc
-        ctx.quadraticCurveTo(right, top, right, top + radiusY);
+        ctx.ellipse(right - radiusX, top + radiusY, radiusX, radiusY, 0, 3 * Math.PI / 2, 2 * Math.PI);
         //right edge
         ctx.lineTo(right, bottom - radiusY);
         //bottom right arc
-        ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
+        ctx.ellipse(right - radiusX, bottom - radiusY, radiusX, radiusY, 0, 0, Math.PI / 2);
         //bottom edge
         ctx.lineTo(left + radiusX, bottom);
         //bottom left arc
-        ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
+        ctx.ellipse(left + radiusX, bottom - radiusY, radiusX, radiusY, 0, Math.PI / 2, Math.PI);
         //left edge
         ctx.lineTo(left, top + radiusY);
         //top left arc
-        ctx.quadraticCurveTo(left, top, left + radiusX, top);
+        ctx.ellipse(left + radiusX, top + radiusY, radiusX, radiusY, 0, Math.PI, 3 * Math.PI / 2);
         ctx.closePath();
     }
 }
