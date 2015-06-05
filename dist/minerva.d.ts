@@ -2657,6 +2657,9 @@ declare module minerva.path.segments {
 declare module minerva.path.segments {
     function roundedRect(x: number, y: number, width: number, height: number, radiusX: number, radiusY: number): IRect;
 }
+interface CanvasRenderingContext2D {
+    ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): any;
+}
 declare module minerva.shapes.shape {
     interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processup.IInput, render.IInput {
     }

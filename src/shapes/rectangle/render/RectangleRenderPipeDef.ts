@@ -24,10 +24,10 @@ module minerva.shapes.rectangle.render {
                 return true;
 
             var sr = input.shapeRect;
-            var rx = Math.min(Math.abs(input.radiusX), sr.width / 2.0);
+            var rx = Math.min(Math.max(0, input.radiusX), sr.width / 2.0);
             if (isNaN(rx))
                 rx = 0;
-            var ry = Math.min(Math.abs(input.radiusY), sr.height / 2.0);
+            var ry = Math.min(Math.max(0, input.radiusY), sr.height / 2.0);
             if (isNaN(ry))
                 ry = 0;
 
