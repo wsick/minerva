@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.11';
+    minerva.version = '0.4.12';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -11591,25 +11591,7 @@ var minerva;
                     radiusX: radiusX,
                     radiusY: radiusY,
                     draw: function (ctx) {
-                        ctx.beginPath();
-                        ctx.moveTo(left + radiusX, top);
-                        //top edge
-                        ctx.lineTo(right - radiusX, top);
-                        //top right arc
-                        ctx.quadraticCurveTo(right, top, right, top + radiusY);
-                        //right edge
-                        ctx.lineTo(right, bottom - radiusY);
-                        //bottom right arc
-                        ctx.quadraticCurveTo(right, bottom, right - radiusX, bottom);
-                        //bottom edge
-                        ctx.lineTo(left + radiusX, bottom);
-                        //bottom left arc
-                        ctx.quadraticCurveTo(left, bottom, left, bottom - radiusY);
-                        //left edge
-                        ctx.lineTo(left, top + radiusY);
-                        //top left arc
-                        ctx.quadraticCurveTo(left, top, left + radiusX, top);
-                        ctx.closePath();
+                        minerva.shapes.rectangle.helpers.draw(ctx, left, top, width, height, radiusX, radiusY);
                     },
                     extendFillBox: function (box) {
                         box.l = Math.min(box.l, x);
@@ -11636,13 +11618,6 @@ var minerva;
         })(segments = path.segments || (path.segments = {}));
     })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
-(function (Ctx) {
-    if (Ctx.prototype.ellipse)
-        return;
-    Ctx.prototype.ellipse = function (x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
-        if (anticlockwise === void 0) { anticlockwise = false; }
-    };
-})(CanvasRenderingContext2D);
 (function (context) {
     if (!context.perfex) {
         context.perfex = {};
@@ -12523,14 +12498,47 @@ var minerva;
         (function (rectangle) {
             var helpers;
             (function (helpers) {
+                var epsilon = 1e-10;
                 function draw(ctx, left, top, width, height, radiusX, radiusY) {
                     var right = left + width;
                     var bottom = top + height;
                     if (!radiusX && !radiusY) {
                         ctx.beginPath();
                         ctx.rect(left, top, right - left, bottom - top);
-                        return;
                     }
+                    else if (Math.abs(radiusX - radiusY) < epsilon) {
+                        drawBalancedRadius(ctx, left, right, top, bottom, radiusX);
+                    }
+                    else if (typeof ctx.ellipse === "function") {
+                        drawNativeEllipse(ctx, left, right, top, bottom, radiusX, radiusY);
+                    }
+                    else {
+                        drawNoEllipse(ctx, left, right, top, bottom, radiusX, radiusY);
+                    }
+                }
+                helpers.draw = draw;
+                function drawBalancedRadius(ctx, left, right, top, bottom, radius) {
+                    ctx.beginPath();
+                    ctx.moveTo(left + radius, top);
+                    //top edge
+                    ctx.lineTo(right - radius, top);
+                    //top right arc
+                    ctx.arc(right - radius, top + radius, radius, 3 * Math.PI / 2, 2 * Math.PI);
+                    //right edge
+                    ctx.lineTo(right, bottom - radius);
+                    //bottom right arc
+                    ctx.arc(right - radius, bottom - radius, radius, 0, Math.PI / 2);
+                    //bottom edge
+                    ctx.lineTo(left + radius, bottom);
+                    //bottom left arc
+                    ctx.arc(left + radius, bottom - radius, radius, Math.PI / 2, Math.PI);
+                    //left edge
+                    ctx.lineTo(left, top + radius);
+                    //top left arc
+                    ctx.arc(left + radius, top + radius, radius, Math.PI, 3 * Math.PI / 2);
+                    ctx.closePath();
+                }
+                function drawNativeEllipse(ctx, left, right, top, bottom, radiusX, radiusY) {
                     ctx.beginPath();
                     ctx.moveTo(left + radiusX, top);
                     //top edge
@@ -12551,7 +12559,30 @@ var minerva;
                     ctx.ellipse(left + radiusX, top + radiusY, radiusX, radiusY, 0, Math.PI, 3 * Math.PI / 2);
                     ctx.closePath();
                 }
-                helpers.draw = draw;
+                var kappa = (4 * (Math.SQRT2 - 1) / 3) + 0.03;
+                function drawNoEllipse(ctx, left, right, top, bottom, radiusX, radiusY) {
+                    var rxa = radiusX * kappa;
+                    var rya = radiusY * kappa;
+                    ctx.beginPath();
+                    ctx.moveTo(left + radiusX, top);
+                    //top edge
+                    ctx.lineTo(right - radiusX, top);
+                    //top right arc
+                    ctx.bezierCurveTo(right - radiusX + rxa, top, right, top + radiusY - rya, right, top + radiusY);
+                    //right edge
+                    ctx.lineTo(right, bottom - radiusY);
+                    //bottom right arc
+                    ctx.bezierCurveTo(right, bottom - radiusY + rya, right - radiusX + rxa, bottom, right - radiusX, bottom);
+                    //bottom edge
+                    ctx.lineTo(left + radiusX, bottom);
+                    //bottom left arc
+                    ctx.bezierCurveTo(left + radiusX - rxa, bottom, left, bottom - radiusY + rya, left, bottom - radiusY);
+                    //left edge
+                    ctx.lineTo(left, top + radiusY);
+                    //top left arc
+                    ctx.bezierCurveTo(left, top + radiusY - rya, left + radiusX - rxa, top, left + radiusX, top);
+                    ctx.closePath();
+                }
             })(helpers = rectangle.helpers || (rectangle.helpers = {}));
         })(rectangle = shapes.rectangle || (shapes.rectangle = {}));
     })(shapes = minerva.shapes || (minerva.shapes = {}));

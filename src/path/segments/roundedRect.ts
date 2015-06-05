@@ -21,25 +21,7 @@ module minerva.path.segments {
             radiusX: radiusX,
             radiusY: radiusY,
             draw: function (ctx: CanvasRenderingContext2D) {
-                ctx.beginPath();
-                ctx.moveTo(left + radiusX, top);
-                //top edge
-                ctx.lineTo(right - radiusX, top);
-                //top right arc
-                ctx.ellipse(right - radiusX, top + radiusY, radiusX, radiusY, 0, 3 * Math.PI / 2, 2 * Math.PI);
-                //right edge
-                ctx.lineTo(right, bottom - radiusY);
-                //bottom right arc
-                ctx.ellipse(right - radiusX, bottom - radiusY, radiusX, radiusY, 0, 0, Math.PI / 2);
-                //bottom edge
-                ctx.lineTo(left + radiusX, bottom);
-                //bottom left arc
-                ctx.ellipse(left + radiusX, bottom - radiusY, radiusX, radiusY, 0, Math.PI / 2, Math.PI);
-                //left edge
-                ctx.lineTo(left, top + radiusY);
-                //top left arc
-                ctx.ellipse(left + radiusX, top + radiusY, radiusX, radiusY, 0, Math.PI, 3 * Math.PI / 2);
-                ctx.closePath();
+                minerva.shapes.rectangle.helpers.draw(ctx, left, top, width, height, radiusX, radiusY);
             },
             extendFillBox: function (box: IBoundingBox) {
                 box.l = Math.min(box.l, x);
