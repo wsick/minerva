@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.10';
+    minerva.version = '0.4.11';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -6965,8 +6965,10 @@ var minerva;
                     if (zs)
                         return;
                     zs = this.zSorted = [];
-                    for (var walker = this.walk(); walker.step();) {
-                        zs.push(walker.current);
+                    for (var i = 0, walker = this.walk(); walker.step(); i++) {
+                        var cur = walker.current;
+                        cur.setAttachedValue("Panel.Index", i);
+                        zs.push(cur);
                     }
                     zs.sort(zIndexComparer);
                 };
@@ -7010,8 +7012,18 @@ var minerva;
                 return e;
             }
             function zIndexComparer(upd1, upd2) {
-                var zi1 = upd1.getAttachedValue("Panel.ZIndex") || 0;
-                var zi2 = upd2.getAttachedValue("Panel.ZIndex") || 0;
+                var zi1 = upd1.getAttachedValue("Panel.ZIndex");
+                var zi2 = upd2.getAttachedValue("Panel.ZIndex");
+                if (zi1 == null && zi2 == null) {
+                    zi1 = upd1.getAttachedValue("Panel.Index");
+                    zi2 = upd2.getAttachedValue("Panel.Index");
+                }
+                else if (zi1 == null) {
+                    return zi2 > 0 ? -1 : 1;
+                }
+                else if (zi2 == null) {
+                    return zi1 > 0 ? 1 : -1;
+                }
                 return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
             }
         })(panel = controls.panel || (controls.panel = {}));
