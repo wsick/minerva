@@ -3535,7 +3535,6 @@ var minerva;
     (function (core) {
         var render;
         (function (render) {
-            var ARC_TO_BEZIER = 0.55228475;
             var caps = [
                 "butt",
                 "square",
@@ -3643,34 +3642,6 @@ var minerva;
                         raw.fillRule = raw.msFillRule = fr;
                         raw.fill(fr);
                     }
-                };
-                RenderContext.prototype.drawRectEx = function (extents, cr) {
-                    var raw = this.raw;
-                    if (!cr || minerva.CornerRadius.isEmpty(cr)) {
-                        raw.rect(extents.x, extents.y, extents.width, extents.height);
-                        return;
-                    }
-                    var top_adj = Math.max(cr.topLeft + cr.topRight - extents.width, 0) / 2;
-                    var bottom_adj = Math.max(cr.bottomLeft + cr.bottomRight - extents.width, 0) / 2;
-                    var left_adj = Math.max(cr.topLeft + cr.bottomLeft - extents.height, 0) / 2;
-                    var right_adj = Math.max(cr.topRight + cr.bottomRight - extents.height, 0) / 2;
-                    var tlt = cr.topLeft - top_adj;
-                    raw.moveTo(extents.x + tlt, extents.y);
-                    var trt = cr.topRight - top_adj;
-                    var trr = cr.topRight - right_adj;
-                    raw.lineTo(extents.x + extents.width - trt, extents.y);
-                    raw.bezierCurveTo(extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y, extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER, extents.x + extents.width, extents.y + trr);
-                    var brr = cr.bottomRight - right_adj;
-                    var brb = cr.bottomRight - bottom_adj;
-                    raw.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
-                    raw.bezierCurveTo(extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER, extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height, extents.x + extents.width - brb, extents.y + extents.height);
-                    var blb = cr.bottomLeft - bottom_adj;
-                    var bll = cr.bottomLeft - left_adj;
-                    raw.lineTo(extents.x + blb, extents.y + extents.height);
-                    raw.bezierCurveTo(extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height, extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER, extents.x, extents.y + extents.height - bll);
-                    var tll = cr.topLeft - left_adj;
-                    raw.lineTo(extents.x, extents.y + tll);
-                    raw.bezierCurveTo(extents.x, extents.y + tll - tll * ARC_TO_BEZIER, extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y, extents.x + tlt, extents.y);
                 };
                 RenderContext.prototype.isPointInStrokeEx = function (strokePars, x, y) {
                     var raw = this.raw;
@@ -4229,6 +4200,50 @@ var minerva;
         (function (border) {
             var render;
             (function (render) {
+                var helpers;
+                (function (helpers) {
+                    var ARC_TO_BEZIER = 0.55228475;
+                    function drawBorderRect(ctx, extents, cr) {
+                        if (!cr || minerva.CornerRadius.isEmpty(cr)) {
+                            ctx.rect(extents.x, extents.y, extents.width, extents.height);
+                            return;
+                        }
+                        var top_adj = Math.max(cr.topLeft + cr.topRight - extents.width, 0) / 2;
+                        var bottom_adj = Math.max(cr.bottomLeft + cr.bottomRight - extents.width, 0) / 2;
+                        var left_adj = Math.max(cr.topLeft + cr.bottomLeft - extents.height, 0) / 2;
+                        var right_adj = Math.max(cr.topRight + cr.bottomRight - extents.height, 0) / 2;
+                        var tlt = cr.topLeft - top_adj;
+                        ctx.moveTo(extents.x + tlt, extents.y);
+                        var trt = cr.topRight - top_adj;
+                        var trr = cr.topRight - right_adj;
+                        ctx.lineTo(extents.x + extents.width - trt, extents.y);
+                        ctx.bezierCurveTo(extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y, extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER, extents.x + extents.width, extents.y + trr);
+                        var brr = cr.bottomRight - right_adj;
+                        var brb = cr.bottomRight - bottom_adj;
+                        ctx.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
+                        ctx.bezierCurveTo(extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER, extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height, extents.x + extents.width - brb, extents.y + extents.height);
+                        var blb = cr.bottomLeft - bottom_adj;
+                        var bll = cr.bottomLeft - left_adj;
+                        ctx.lineTo(extents.x + blb, extents.y + extents.height);
+                        ctx.bezierCurveTo(extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height, extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER, extents.x, extents.y + extents.height - bll);
+                        var tll = cr.topLeft - left_adj;
+                        ctx.lineTo(extents.x, extents.y + tll);
+                        ctx.bezierCurveTo(extents.x, extents.y + tll - tll * ARC_TO_BEZIER, extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y, extents.x + tlt, extents.y);
+                    }
+                    helpers.drawBorderRect = drawBorderRect;
+                })(helpers = render.helpers || (render.helpers = {}));
+            })(render = border.render || (border.render = {}));
+        })(border = controls.border || (controls.border = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var border;
+        (function (border) {
+            var render;
+            (function (render) {
                 var tapins;
                 (function (tapins) {
                     function calcInnerOuter(input, state, output, ctx, region, tree) {
@@ -4300,14 +4315,14 @@ var minerva;
                         var raw = ctx.raw;
                         if (borderBrush && !minerva.Rect.isEmpty(extents)) {
                             raw.beginPath();
-                            ctx.drawRectEx(extents, state.outerCornerRadius);
-                            ctx.drawRectEx(fillExtents, state.innerCornerRadius);
+                            render.helpers.drawBorderRect(raw, extents, state.outerCornerRadius);
+                            render.helpers.drawBorderRect(raw, fillExtents, state.innerCornerRadius);
                             ctx.fillEx(borderBrush, extents, minerva.FillRule.EvenOdd);
                         }
                         var background = input.background;
                         if (background && !minerva.Rect.isEmpty(fillExtents)) {
                             raw.beginPath();
-                            ctx.drawRectEx(fillExtents, state.innerCornerRadius);
+                            render.helpers.drawBorderRect(raw, fillExtents, state.innerCornerRadius);
                             ctx.fillEx(background, fillExtents);
                         }
                         ctx.restore();
@@ -4382,11 +4397,11 @@ var minerva;
                             var raw = tempCtx.raw;
                             minerva.Size.copyTo(extents, raw.canvas);
                             raw.beginPath();
-                            tempCtx.drawRectEx(extents, oa);
+                            render.helpers.drawBorderRect(raw, extents, oa);
                             tempCtx.fillEx(borderBrush, extents);
                             raw.globalCompositeOperation = "xor";
                             raw.beginPath();
-                            tempCtx.drawRectEx(fillExtents, ia);
+                            render.helpers.drawBorderRect(raw, fillExtents, ia);
                             raw.fill();
                             return raw.createPattern(raw.canvas, "no-repeat");
                         }
@@ -4429,18 +4444,18 @@ var minerva;
                             var raw = ctx.raw;
                             raw.beginPath();
                             raw.fillStyle = state.pattern;
-                            ctx.drawRectEx(input.extents, state.outerCornerRadius);
+                            render.helpers.drawBorderRect(raw, input.extents, state.outerCornerRadius);
                             raw.fill();
                         }
                         function renderBackground(ctx, input, state) {
                             ctx.raw.beginPath();
-                            ctx.drawRectEx(state.fillExtents, state.innerCornerRadius);
+                            render.helpers.drawBorderRect(ctx.raw, state.fillExtents, state.innerCornerRadius);
                             ctx.fillEx(input.background, state.fillExtents);
                         }
                         function renderBorder(ctx, input, state) {
                             var raw = ctx.raw;
                             raw.beginPath();
-                            ctx.drawRectEx(state.strokeExtents, state.middleCornerRadius);
+                            render.helpers.drawBorderRect(raw, state.strokeExtents, state.middleCornerRadius);
                             raw.lineWidth = input.borderThickness.left;
                             raw.lineCap = "butt";
                             raw.lineJoin = "miter";

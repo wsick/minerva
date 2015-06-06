@@ -22,20 +22,20 @@ module minerva.controls.border.render.tapins.shim {
         var raw = ctx.raw;
         raw.beginPath();
         raw.fillStyle = state.pattern;
-        ctx.drawRectEx(input.extents, state.outerCornerRadius);
+        helpers.drawBorderRect(raw, input.extents, state.outerCornerRadius);
         raw.fill();
     }
 
     function renderBackground (ctx: core.render.RenderContext, input: IInput, state: IShimState) {
         ctx.raw.beginPath();
-        ctx.drawRectEx(state.fillExtents, state.innerCornerRadius);
+        helpers.drawBorderRect(ctx.raw, state.fillExtents, state.innerCornerRadius);
         ctx.fillEx(input.background, state.fillExtents);
     }
 
     function renderBorder (ctx: core.render.RenderContext, input: IInput, state: IShimState) {
         var raw = ctx.raw;
         raw.beginPath();
-        ctx.drawRectEx(state.strokeExtents, state.middleCornerRadius);
+        helpers.drawBorderRect(raw, state.strokeExtents, state.middleCornerRadius);
         raw.lineWidth = input.borderThickness.left;
         raw.lineCap = "butt";
         raw.lineJoin = "miter";
