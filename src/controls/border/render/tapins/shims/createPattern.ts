@@ -17,11 +17,11 @@ module minerva.controls.border.render.tapins.shim {
         var raw = tempCtx.raw;
         Size.copyTo(extents, raw.canvas);
         raw.beginPath();
-        tempCtx.drawRectEx(extents, oa);
+        helpers.drawBorderRect(raw, extents, oa);
         tempCtx.fillEx(borderBrush, extents);
         raw.globalCompositeOperation = "xor";
         raw.beginPath();
-        tempCtx.drawRectEx(fillExtents, ia);
+        helpers.drawBorderRect(raw, fillExtents, ia);
         raw.fill();
         return raw.createPattern(raw.canvas, "no-repeat");
     }

@@ -1089,7 +1089,6 @@ declare module minerva.core.render {
         clipGeometry(geom: IGeometry): void;
         clipRect(rect: Rect): void;
         fillEx(brush: IBrush, region: Rect, fillRule?: FillRule): void;
-        drawRectEx(extents: Rect, cr?: ICornerRadius): void;
         isPointInStrokeEx(strokePars: IStrokeParameters, x: number, y: number): boolean;
     }
 }
@@ -1270,6 +1269,9 @@ declare module minerva.controls.border.render {
         constructor();
         createState(): IShimState;
     }
+}
+declare module minerva.controls.border.render.helpers {
+    function drawBorderRect(ctx: CanvasRenderingContext2D, extents: Rect, cr?: ICornerRadius): void;
 }
 declare module minerva.controls.border.render.tapins {
     function calcInnerOuter(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
