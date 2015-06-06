@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.13';
+    minerva.version = '0.4.14';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -11584,10 +11584,6 @@ var minerva;
             function roundedRect(x, y, width, height, radiusX, radiusY) {
                 if (radiusX === 0.0 && radiusY === 0.0)
                     return segments.rect(x, y, width, height);
-                var left = x;
-                var top = y;
-                var right = x + width;
-                var bottom = y + height;
                 return {
                     sx: null,
                     sy: null,
@@ -11601,7 +11597,7 @@ var minerva;
                     radiusX: radiusX,
                     radiusY: radiusY,
                     draw: function (ctx) {
-                        minerva.shapes.rectangle.helpers.draw(ctx, left, top, width, height, radiusX, radiusY);
+                        minerva.shapes.rectangle.helpers.draw(ctx, x, y, width, height, radiusX, radiusY);
                     },
                     extendFillBox: function (box) {
                         box.l = Math.min(box.l, x);
