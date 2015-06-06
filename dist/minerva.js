@@ -12508,7 +12508,6 @@ var minerva;
         (function (rectangle) {
             var helpers;
             (function (helpers) {
-                var epsilon = 1e-10;
                 function draw(ctx, left, top, width, height, radiusX, radiusY) {
                     var right = left + width;
                     var bottom = top + height;

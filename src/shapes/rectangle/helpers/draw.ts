@@ -1,6 +1,4 @@
 module minerva.shapes.rectangle.helpers {
-    var epsilon = 1e-10;
-
     export function draw (ctx: CanvasRenderingContext2D, left: number, top: number, width: number, height: number, radiusX: number, radiusY: number) {
         var right = left + width;
         var bottom = top + height;
