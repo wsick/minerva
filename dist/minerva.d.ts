@@ -1059,9 +1059,6 @@ declare module minerva.core.processup.tapins {
 declare module minerva.core.processup.tapins {
     var processNewBounds: IProcessUpTapin;
 }
-interface CanvasRenderingContext2D {
-    isPointInStroke(x: number, y: number): boolean;
-}
 declare module minerva.core.render {
     interface IStrokeParameters {
         stroke: IBrush;
@@ -2658,7 +2655,10 @@ declare module minerva.path.segments {
     function roundedRect(x: number, y: number, width: number, height: number, radiusX: number, radiusY: number): IRect;
 }
 interface CanvasRenderingContext2D {
-    ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): any;
+    ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, antiClockwise?: boolean): any;
+}
+interface CanvasRenderingContext2D {
+    isPointInStroke(x: number, y: number): boolean;
 }
 declare module minerva.shapes.shape {
     interface IShapeUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processup.IInput, render.IInput {
