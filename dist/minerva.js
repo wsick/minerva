@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.14';
+    minerva.version = '0.4.15';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -4708,6 +4708,7 @@ var minerva;
                             cr.y = child.getAttachedValue("Canvas.Top") || 0;
                             child.arrange(cr);
                         }
+                        minerva.Size.copyTo(state.finalSize, state.arrangedSize);
                         return true;
                     }
                     tapins.doOverride = doOverride;
