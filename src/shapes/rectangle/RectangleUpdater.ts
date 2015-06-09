@@ -8,7 +8,8 @@ module minerva.shapes.rectangle {
         assets: IRectangleUpdaterAssets;
 
         init () {
-            this.setRenderPipe(singleton(render.RectangleRenderPipeDef))
+            this.setMeasurePipe(singleton(measure.RectangleMeasurePipeDef))
+                .setRenderPipe(singleton(render.RectangleRenderPipeDef))
                 .setHitTestPipe(singleton(hittest.RectangleHitTestPipeDef));
 
             var assets = this.assets;

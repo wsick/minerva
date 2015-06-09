@@ -2703,6 +2703,30 @@ declare module minerva.shapes.ellipse.hittest {
         function drawShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
     }
 }
+declare module minerva.shapes.shape.measure {
+    interface IInput extends core.measure.IInput, IShapeProperties {
+        naturalBounds: Rect;
+    }
+    interface IState extends core.measure.IState {
+    }
+    interface IOutput extends core.measure.IOutput {
+        naturalBounds: Rect;
+    }
+    class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+        createOutput(): IOutput;
+        prepare(input: IInput, state: IState, output: IOutput): void;
+        flush(input: IInput, state: IState, output: IOutput): void;
+    }
+}
+declare module minerva.shapes.ellipse.measure {
+    class EllipseMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+        constructor();
+    }
+    module tapins {
+        function shrinkAvailable(input: shape.measure.IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean;
+    }
+}
 declare module minerva.shapes.shape.render {
     interface IInput extends core.render.IInput {
         fill: IBrush;
@@ -2757,22 +2781,6 @@ declare module minerva.shapes.line {
         assets: ILineUpdaterAssets;
         init(): void;
         invalidatePath(): void;
-    }
-}
-declare module minerva.shapes.shape.measure {
-    interface IInput extends core.measure.IInput, IShapeProperties {
-        naturalBounds: Rect;
-    }
-    interface IState extends core.measure.IState {
-    }
-    interface IOutput extends core.measure.IOutput {
-        naturalBounds: Rect;
-    }
-    class ShapeMeasurePipeDef extends core.measure.MeasurePipeDef {
-        constructor();
-        createOutput(): IOutput;
-        prepare(input: IInput, state: IState, output: IOutput): void;
-        flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.shapes.path.measure {
@@ -2956,6 +2964,14 @@ declare module minerva.shapes.rectangle.hittest {
     }
     module tapins {
         function drawShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
+declare module minerva.shapes.rectangle.measure {
+    class RectangleMeasurePipeDef extends shape.measure.ShapeMeasurePipeDef {
+        constructor();
+    }
+    module tapins {
+        function shrinkAvailable(input: shape.measure.IInput, state: shape.measure.IState, output: shape.measure.IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
 declare module minerva.shapes.rectangle.render {
