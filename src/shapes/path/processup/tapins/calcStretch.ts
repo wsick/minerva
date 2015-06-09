@@ -30,7 +30,7 @@ module minerva.shapes.path.processup.tapins {
                 break;
         }
 
-        mat3.translate(xform, -extents.x, extents.y);
+        mat3.translate(xform, -extents.x, -extents.y);
         mat3.scale(xform, sx, sy);
         mat3.translate(xform, xp, yp);
 

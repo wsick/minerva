@@ -12266,7 +12266,7 @@ var minerva;
                                 sx = sy = Math.max(sx, sy);
                                 break;
                         }
-                        minerva.mat3.translate(xform, -extents.x, extents.y);
+                        minerva.mat3.translate(xform, -extents.x, -extents.y);
                         minerva.mat3.scale(xform, sx, sy);
                         minerva.mat3.translate(xform, xp, yp);
                         minerva.Rect.transform(extents, xform);
@@ -12298,8 +12298,7 @@ var minerva;
                             actual.height = 0.0;
                             return true;
                         }
-                        actual.width = input.actualWidth;
-                        actual.height = input.actualHeight;
+                        minerva.Size.copyTo(state.actualSize, actual);
                         if (tree.visualParent instanceof minerva.controls.canvas.CanvasUpdater) {
                             actual.width = actual.width === 0.0 ? natural.width : actual.width;
                             actual.height = actual.height === 0.0 ? natural.height : actual.height;

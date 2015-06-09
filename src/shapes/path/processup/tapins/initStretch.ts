@@ -11,8 +11,7 @@ module minerva.shapes.path.processup.tapins {
             return true;
         }
 
-        actual.width = input.actualWidth;
-        actual.height = input.actualHeight;
+        Size.copyTo(state.actualSize, actual);
         if (tree.visualParent instanceof controls.canvas.CanvasUpdater) {
             actual.width = actual.width === 0.0 ? natural.width : actual.width;
             actual.height = actual.height === 0.0 ? natural.height : actual.height;
