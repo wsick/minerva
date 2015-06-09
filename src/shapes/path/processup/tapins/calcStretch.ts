@@ -17,11 +17,13 @@ module minerva.shapes.path.processup.tapins {
 
         var sx = actual.width / extents.width;
         var sy = actual.height / extents.height;
+        var xp = 0;
+        var yp = 0;
         switch (input.stretch) {
-            case Stretch.Fill:
-                break;
             case Stretch.Uniform:
                 sx = sy = Math.min(sx, sy);
+                xp = (actual.width - (extents.width * sx)) / 2.0;
+                yp = (actual.height - (extents.height * sy)) / 2.0;
                 break;
             case Stretch.UniformToFill:
                 sx = sy = Math.max(sx, sy);
@@ -30,6 +32,7 @@ module minerva.shapes.path.processup.tapins {
 
         mat3.translate(xform, -extents.x, extents.y);
         mat3.scale(xform, sx, sy);
+        mat3.translate(xform, xp, yp);
 
         Rect.transform(extents, xform);
 

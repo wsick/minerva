@@ -12254,11 +12254,13 @@ var minerva;
                             return true;
                         var sx = actual.width / extents.width;
                         var sy = actual.height / extents.height;
+                        var xp = 0;
+                        var yp = 0;
                         switch (input.stretch) {
-                            case minerva.Stretch.Fill:
-                                break;
                             case minerva.Stretch.Uniform:
                                 sx = sy = Math.min(sx, sy);
+                                xp = (actual.width - (extents.width * sx)) / 2.0;
+                                yp = (actual.height - (extents.height * sy)) / 2.0;
                                 break;
                             case minerva.Stretch.UniformToFill:
                                 sx = sy = Math.max(sx, sy);
@@ -12266,6 +12268,7 @@ var minerva;
                         }
                         minerva.mat3.translate(xform, -extents.x, extents.y);
                         minerva.mat3.scale(xform, sx, sy);
+                        minerva.mat3.translate(xform, xp, yp);
                         minerva.Rect.transform(extents, xform);
                         return true;
                     }
