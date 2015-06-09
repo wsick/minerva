@@ -3,12 +3,13 @@ module minerva.core.processdown.tapins {
         if ((input.dirtyFlags & DirtyFlags.Transform) === 0)
             return true;
 
-        var abs = output.absoluteXform;
-        //abs = render * vp abs
+        var ax = output.absoluteXform;
         if (vpinput)
-            mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
+            mat3.copyTo(vpinput.absoluteXform, ax);
         else
-            mat3.copyTo(output.renderXform, abs);
+            mat3.identity(ax);
+
+        mat3.preapply(ax, output.renderXform);
 
         return true;
     };

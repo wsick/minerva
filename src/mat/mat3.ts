@@ -15,6 +15,9 @@ interface IMatrix3Static {
     scale (mat: number[], sx: number, sy: number): number[];
     createRotate (angleRad: number, dest?: number[]): number[];
     createSkew (angleRadX: number, angleRadY: number, dest?: number[]): number[];
+
+    preapply(dest: number[], mat: number[]): number[];
+    apply(dest: number[], mat: number[]): number[];
 }
 module minerva {
     /// NOTE:
@@ -80,12 +83,12 @@ module minerva {
         },
         equal (a: number[], b: number[]): boolean {
             return a === b || (
-                Math.abs(a[0] - b[0]) < FLOAT_EPSILON &&
-                Math.abs(a[1] - b[1]) < FLOAT_EPSILON &&
-                Math.abs(a[2] - b[2]) < FLOAT_EPSILON &&
-                Math.abs(a[3] - b[3]) < FLOAT_EPSILON &&
-                Math.abs(a[4] - b[4]) < FLOAT_EPSILON &&
-                Math.abs(a[5] - b[5]) < FLOAT_EPSILON
+                    Math.abs(a[0] - b[0]) < FLOAT_EPSILON &&
+                    Math.abs(a[1] - b[1]) < FLOAT_EPSILON &&
+                    Math.abs(a[2] - b[2]) < FLOAT_EPSILON &&
+                    Math.abs(a[3] - b[3]) < FLOAT_EPSILON &&
+                    Math.abs(a[4] - b[4]) < FLOAT_EPSILON &&
+                    Math.abs(a[5] - b[5]) < FLOAT_EPSILON
                 );
         },
         multiply (a: number[], b: number[], dest?: number[]): number[] {
@@ -179,6 +182,13 @@ module minerva {
             dest[4] = 0;
             dest[5] = 0;
             return dest;
+        },
+
+        preapply (dest: number[], mat: number[]): number[] {
+            return mat3.multiply(mat, dest, dest);
+        },
+        apply (dest: number[], mat: number[]): number[] {
+            return mat3.multiply(dest, mat, dest);
         }
     };
 

@@ -2462,6 +2462,8 @@ interface IMatrix3Static {
     scale(mat: number[], sx: number, sy: number): number[];
     createRotate(angleRad: number, dest?: number[]): number[];
     createSkew(angleRadX: number, angleRadY: number, dest?: number[]): number[];
+    preapply(dest: number[], mat: number[]): number[];
+    apply(dest: number[], mat: number[]): number[];
 }
 declare module minerva {
     var mat3: IMatrix3Static;

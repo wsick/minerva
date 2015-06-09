@@ -3105,12 +3105,12 @@ var minerva;
                 tapins.calcAbsoluteXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
-                    var abs = output.absoluteXform;
-                    //abs = render * vp abs
+                    var ax = output.absoluteXform;
                     if (vpinput)
-                        minerva.mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
+                        minerva.mat3.copyTo(vpinput.absoluteXform, ax);
                     else
-                        minerva.mat3.copyTo(output.renderXform, abs);
+                        minerva.mat3.identity(ax);
+                    minerva.mat3.preapply(ax, output.renderXform);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
@@ -3130,10 +3130,11 @@ var minerva;
                         return true;
                     var rx = output.renderXform;
                     if (input.carrierXform)
-                        minerva.mat3.multiply(input.carrierXform, input.layoutXform, rx); //render = carrier * layout
+                        minerva.mat3.copyTo(input.carrierXform, rx);
                     else
-                        minerva.mat3.copyTo(input.layoutXform, rx); //render = layout
-                    minerva.mat3.multiply(rx, state.localXform, rx); //render = render * local
+                        minerva.mat3.identity(rx);
+                    minerva.mat3.preapply(rx, input.layoutXform);
+                    minerva.mat3.preapply(rx, state.localXform);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
@@ -9786,6 +9787,12 @@ var minerva;
             dest[4] = 0;
             dest[5] = 0;
             return dest;
+        },
+        preapply: function (dest, mat) {
+            return minerva.mat3.multiply(mat, dest, dest);
+        },
+        apply: function (dest, mat) {
+            return minerva.mat3.multiply(dest, mat, dest);
         }
     };
     function simple_inverse(mat, dest) {
