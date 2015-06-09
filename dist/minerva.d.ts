@@ -314,6 +314,7 @@ declare module minerva {
         width: number;
         height: number;
         constructor(x?: number, y?: number, width?: number, height?: number);
+        static clear(rect: Rect): void;
         static getBottom(rect: Rect): number;
         static getRight(rect: Rect): number;
         static isEqual(rect1: Rect, rect2: Rect): boolean;
@@ -344,6 +345,7 @@ declare module minerva {
         constructor(width?: number, height?: number);
         static copyTo(src: ISize, dest: ISize): void;
         static isEqual(size1: ISize, size2: ISize): boolean;
+        static isEmpty(size: Size): boolean;
         static min(dest: ISize, size2: ISize): void;
         static isUndef(size: ISize): boolean;
         static undef(size: ISize): void;
@@ -2741,7 +2743,7 @@ declare module minerva.shapes.ellipse.render {
     }
 }
 declare module minerva.shapes.path {
-    interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
+    interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, processup.IInput, render.IInput {
     }
     class PathUpdater extends shape.ShapeUpdater {
         assets: IPathUpdaterAssets;
@@ -2772,10 +2774,6 @@ declare module minerva.shapes.shape.measure {
         prepare(input: IInput, state: IState, output: IOutput): void;
         flush(input: IInput, state: IState, output: IOutput): void;
     }
-    module tapins {
-        function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-        function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-    }
 }
 declare module minerva.shapes.path.measure {
     interface IInput extends shape.measure.IInput {
@@ -2791,7 +2789,6 @@ declare module minerva.shapes.path.measure {
     module tapins {
         function buildPath(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
         function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-        function adjustNoStretchDesired(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
     }
 }
 declare module minerva.shapes.line.measure {
@@ -2828,51 +2825,6 @@ declare module minerva.shapes.path {
         GetBounds(pars?: minerva.path.IStrokeParameters): Rect;
     }
 }
-declare module minerva.shapes.shape.arrange {
-    interface IInput extends core.arrange.IInput {
-        stretch: Stretch;
-        fill: IBrush;
-        fillRule: FillRule;
-        stroke: IBrush;
-        strokeThickness: number;
-        strokeStartLineCap: PenLineCap;
-        strokeEndLineCap: PenLineCap;
-        strokeLineJoin: PenLineJoin;
-        strokeMiterLimit: number;
-        naturalBounds: Rect;
-    }
-    interface IState extends core.arrange.IState {
-    }
-    interface IOutput extends core.arrange.IOutput {
-    }
-    class ShapeArrangePipeDef extends core.arrange.ArrangePipeDef {
-        constructor();
-    }
-    module tapins {
-        function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-    }
-}
-declare module minerva.shapes.path.arrange {
-    interface IInput extends shape.arrange.IInput {
-        data: AnonPathGeometry;
-        stretchXform: number[];
-    }
-    interface IState extends shape.arrange.IState {
-    }
-    interface IOutput extends shape.arrange.IOutput {
-        stretchXform: number[];
-    }
-    class PathArrangePipeDef extends shape.arrange.ShapeArrangePipeDef {
-        constructor();
-        createOutput(): IOutput;
-        prepare(input: IInput, state: IState, output: IOutput): void;
-        flush(input: IInput, state: IState, output: IOutput): void;
-    }
-    module tapins {
-        function adjustNoStretchArranged(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-        function buildStretchXform(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-    }
-}
 declare module minerva.shapes.path.hittest {
     interface IHitTestData extends shape.hittest.IHitTestData {
         assets: IPathUpdaterAssets;
@@ -2883,6 +2835,56 @@ declare module minerva.shapes.path.hittest {
     module tapins {
         function drawShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
     }
+}
+declare module minerva.shapes.shape.processup {
+    interface IInput extends core.processup.IInput {
+        stroke: IBrush;
+        strokeThickness: number;
+        shapeFlags: ShapeFlags;
+        shapeRect: Rect;
+    }
+    interface IState extends core.processup.IState {
+    }
+    interface IOutput extends core.processup.IOutput {
+        shapeFlags: ShapeFlags;
+        shapeRect: Rect;
+    }
+    class ShapeProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+        createOutput(): IOutput;
+        prepare(input: IInput, state: IState, output: IOutput): void;
+        flush(input: IInput, state: IState, output: IOutput): void;
+    }
+}
+declare module minerva.shapes.path.processup {
+    interface IInput extends shape.processup.IInput {
+        naturalBounds: Rect;
+        data: AnonPathGeometry;
+        stretch: Stretch;
+        stretchXform: number[];
+    }
+    interface IState extends shape.processup.IState {
+        actual: Size;
+    }
+    interface IOutput extends shape.processup.IOutput {
+        stretchXform: number[];
+    }
+    class PathProcessUpPipeDef extends shape.processup.ShapeProcessUpPipeDef {
+        constructor();
+        createOutput(): IOutput;
+        createState(): IState;
+        prepare(input: IInput, state: IState, output: IOutput): void;
+        flush(input: IInput, state: IState, output: IOutput): void;
+    }
+}
+declare module minerva.shapes.path.processup.tapins {
+    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.path.processup.tapins {
+    function calcStretch(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.path.processup.tapins {
+    function initStretch(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.shapes.path.render {
     interface IInput extends shape.render.IInput {
@@ -2988,6 +2990,30 @@ declare module minerva.shapes.shape {
         strokeStartLineCap: PenLineCap;
     }
 }
+declare module minerva.shapes.shape.arrange {
+    interface IInput extends core.arrange.IInput {
+        stretch: Stretch;
+        fill: IBrush;
+        fillRule: FillRule;
+        stroke: IBrush;
+        strokeThickness: number;
+        strokeStartLineCap: PenLineCap;
+        strokeEndLineCap: PenLineCap;
+        strokeLineJoin: PenLineJoin;
+        strokeMiterLimit: number;
+        naturalBounds: Rect;
+    }
+    interface IState extends core.arrange.IState {
+    }
+    interface IOutput extends core.arrange.IOutput {
+    }
+    class ShapeArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+    }
+}
+declare module minerva.shapes.shape.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
 declare module minerva.shapes.shape.hittest.tapins {
     function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
@@ -3006,25 +3032,11 @@ declare module minerva.shapes.shape.hittest.tapins {
 declare module minerva.shapes.shape.hittest.tapins {
     function prepareShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
-declare module minerva.shapes.shape.processup {
-    interface IInput extends core.processup.IInput {
-        stroke: IBrush;
-        strokeThickness: number;
-        shapeFlags: ShapeFlags;
-        shapeRect: Rect;
-    }
-    interface IState extends core.processup.IState {
-    }
-    interface IOutput extends core.processup.IOutput {
-        shapeFlags: ShapeFlags;
-        shapeRect: Rect;
-    }
-    class ShapeProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
-        constructor();
-        createOutput(): IOutput;
-        prepare(input: IInput, state: IState, output: IOutput): void;
-        flush(input: IInput, state: IState, output: IOutput): void;
-    }
+declare module minerva.shapes.shape.measure.tapins {
+    function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.shape.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.shapes.shape.processup.tapins {
     function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;

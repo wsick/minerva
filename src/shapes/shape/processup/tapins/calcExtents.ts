@@ -7,9 +7,9 @@ module minerva.shapes.shape.processup.tapins {
         var ewc = output.extentsWithChildren;
         e.x = ewc.x = 0;
         e.y = ewc.y = 0;
-        var as = state.actualSize;
-        e.width = ewc.width = as.width;
-        e.height = ewc.height = as.height;
+        var actual = state.actualSize;
+        e.width = ewc.width = actual.width;
+        e.height = ewc.height = actual.height;
 
         return true;
     }
