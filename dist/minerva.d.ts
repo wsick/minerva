@@ -1086,8 +1086,8 @@ declare module minerva.core.render {
         scale(x: number, y: number): void;
         rotate(angle: number): void;
         translate(x: number, y: number): void;
-        transformMatrix(mat: number[]): void;
-        pretransformMatrix(mat: number[]): void;
+        apply(mat: number[]): void;
+        preapply(mat: number[]): void;
         clipGeometry(geom: IGeometry): void;
         clipRect(rect: Rect): void;
         fillEx(brush: IBrush, region: Rect, fillRule?: FillRule): void;

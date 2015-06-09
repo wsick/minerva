@@ -13,7 +13,7 @@ module minerva.shapes.path.hittest {
     export module tapins {
         export function drawShape (data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean {
             var assets = data.assets;
-            ctx.pretransformMatrix(assets.stretchXform);
+            ctx.preapply(assets.stretchXform);
             assets.data.Draw(ctx);
             return true;
         }

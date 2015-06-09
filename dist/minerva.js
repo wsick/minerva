@@ -811,7 +811,7 @@ var minerva;
         hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
         var inv = minerva.mat3.inverse(host.assets.renderXform, minerva.mat3.create());
         hitTestCtx.save();
-        hitTestCtx.pretransformMatrix(inv);
+        hitTestCtx.preapply(inv);
         var list = [];
         host.hitTest(pos, list, hitTestCtx, true);
         hitTestCtx.restore();
@@ -2741,7 +2741,7 @@ var minerva;
             (function (tapins) {
                 function prepareCtx(data, pos, hitList, ctx, includeAll) {
                     ctx.save();
-                    ctx.pretransformMatrix(data.assets.renderXform);
+                    ctx.preapply(data.assets.renderXform);
                     return true;
                 }
                 tapins.prepareCtx = prepareCtx;
@@ -3617,14 +3617,12 @@ var minerva;
                     minerva.mat3.translate(this.currentTransform, x, y);
                     this.raw.translate(x, y);
                 };
-                RenderContext.prototype.transformMatrix = function (mat) {
-                    var ct = this.currentTransform;
-                    minerva.mat3.multiply(ct, mat, ct); //ct = ct * matrix
+                RenderContext.prototype.apply = function (mat) {
+                    var ct = minerva.mat3.apply(this.currentTransform, mat);
                     this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
-                RenderContext.prototype.pretransformMatrix = function (mat) {
-                    var ct = this.currentTransform;
-                    minerva.mat3.multiply(mat, ct, ct); //ct = matrix * ct
+                RenderContext.prototype.preapply = function (mat) {
+                    var ct = minerva.mat3.preapply(this.currentTransform, mat);
                     this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
                 RenderContext.prototype.clipGeometry = function (geom) {
@@ -3788,7 +3786,7 @@ var minerva;
             (function (tapins) {
                 tapins.prepareContext = function (input, state, output, ctx, region, tree) {
                     ctx.save();
-                    ctx.pretransformMatrix(input.renderXform);
+                    ctx.preapply(input.renderXform);
                     ctx.raw.globalAlpha = input.totalOpacity;
                     return true;
                 };
@@ -6810,7 +6808,7 @@ var minerva;
                         source.lock();
                         ctx.save();
                         minerva.core.helpers.renderLayoutClip(ctx, input, tree);
-                        ctx.pretransformMatrix(input.imgXform);
+                        ctx.preapply(input.imgXform);
                         ctx.raw.drawImage(source.image, 0, 0);
                         ctx.restore();
                         source.unlock();
@@ -12158,7 +12156,7 @@ var minerva;
                 (function (tapins) {
                     function drawShape(data, pos, hitList, ctx) {
                         var assets = data.assets;
-                        ctx.pretransformMatrix(assets.stretchXform);
+                        ctx.preapply(assets.stretchXform);
                         assets.data.Draw(ctx);
                         return true;
                     }
@@ -12390,7 +12388,7 @@ var minerva;
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-                        ctx.pretransformMatrix(input.stretchXform);
+                        ctx.preapply(input.stretchXform);
                         input.data.Draw(ctx);
                         return true;
                     }
