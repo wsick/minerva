@@ -14,6 +14,7 @@ module minerva.shapes.path.processup {
     export class PathProcessUpPipeDef extends shape.processup.ShapeProcessUpPipeDef {
         constructor () {
             super();
+            this.replaceTapin('calcExtents', tapins.calcExtents);
         }
 
         createOutput () {

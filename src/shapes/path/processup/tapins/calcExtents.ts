@@ -1,4 +1,4 @@
-module minerva.shapes.shape.processup.tapins {
+module minerva.shapes.path.processup.tapins {
     export function calcExtents (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
