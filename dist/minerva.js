@@ -3234,9 +3234,9 @@ var minerva;
                     if (!render)
                         return true;
                     var origin = state.xformOrigin;
-                    minerva.mat3.translate(local, origin.x, origin.y);
-                    minerva.mat3.apply(local, render.getRaw());
                     minerva.mat3.translate(local, -origin.x, -origin.y);
+                    minerva.mat3.apply(local, render.getRaw());
+                    minerva.mat3.translate(local, origin.x, origin.y);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
