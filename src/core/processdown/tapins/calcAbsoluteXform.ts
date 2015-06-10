@@ -4,12 +4,9 @@ module minerva.core.processdown.tapins {
             return true;
 
         var ax = output.absoluteXform;
+        mat3.copyTo(output.renderXform, ax);
         if (vpinput)
-            mat3.copyTo(vpinput.absoluteXform, ax);
-        else
-            mat3.identity(ax);
-
-        mat3.preapply(ax, output.renderXform);
+            mat3.apply(ax, vpinput.absoluteXform);
 
         return true;
     };

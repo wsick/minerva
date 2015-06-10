@@ -3106,11 +3106,9 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
                     var ax = output.absoluteXform;
+                    minerva.mat3.copyTo(output.renderXform, ax);
                     if (vpinput)
-                        minerva.mat3.copyTo(vpinput.absoluteXform, ax);
-                    else
-                        minerva.mat3.identity(ax);
-                    minerva.mat3.preapply(ax, output.renderXform);
+                        minerva.mat3.apply(ax, vpinput.absoluteXform);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
@@ -3129,12 +3127,10 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
                     var rx = output.renderXform;
+                    minerva.mat3.copyTo(state.localXform, rx);
+                    minerva.mat3.apply(rx, input.layoutXform);
                     if (input.carrierXform)
-                        minerva.mat3.copyTo(input.carrierXform, rx);
-                    else
-                        minerva.mat3.identity(rx);
-                    minerva.mat3.preapply(rx, input.layoutXform);
-                    minerva.mat3.preapply(rx, state.localXform);
+                        minerva.mat3.apply(rx, input.carrierXform);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
@@ -3239,7 +3235,7 @@ var minerva;
                         return true;
                     var origin = state.xformOrigin;
                     minerva.mat3.translate(local, origin.x, origin.y);
-                    minerva.mat3.multiply(local, render.getRaw(), local); //local = local * render
+                    minerva.mat3.apply(local, render.getRaw());
                     minerva.mat3.translate(local, -origin.x, -origin.y);
                     return true;
                 };
