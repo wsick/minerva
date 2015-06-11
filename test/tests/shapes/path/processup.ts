@@ -139,4 +139,47 @@ module minerva.shapes.path.processup.tests {
         assert.ok(tapins.calcStretch(input, state, output, null));
         assert.deepEqual(typedToArray(output.stretchXform), [1, 0, 0, 1, 10, -20]);
     });
+
+    QUnit.test("calcShapeRect", (assert) => {
+        var pipedef = new PathProcessUpPipeDef();
+        var input = mock.input();
+        var state = pipedef.createState();
+        var output = pipedef.createOutput();
+
+        input.dirtyFlags |= DirtyFlags.Bounds;
+
+        input.naturalBounds = new Rect(1, 2, 3, 4);
+        assert.ok(tapins.calcShapeRect(input, state, output, null));
+        assert.notStrictEqual(output.shapeRect, input.naturalBounds);
+        assert.deepEqual(output.shapeRect, new Rect(1, 2, 3, 4));
+    });
+
+    QUnit.test("calcExtents", (assert) => {
+        var pipedef = new PathProcessUpPipeDef();
+        var input = mock.input();
+        var state = pipedef.createState();
+        var output = pipedef.createOutput();
+
+        input.dirtyFlags |= DirtyFlags.Bounds;
+
+        //empty actual size
+        state.actualSize = new Size(0, 0);
+        assert.ok(tapins.calcExtents(input, state, output, null));
+        assert.deepEqual(output.extents, new Rect(0, 0, 0, 0));
+        assert.deepEqual(output.extentsWithChildren, output.extents);
+
+        state.actualSize = new Size(50, 50);
+        output.shapeRect = new Rect(5, 15, 50, 50);
+        //no stretch xform
+        mat3.identity(output.stretchXform);
+        assert.ok(tapins.calcExtents(input, state, output, null));
+        assert.deepEqual(output.extents, new Rect(5, 15, 50, 50));
+        assert.deepEqual(output.extentsWithChildren, output.extents);
+
+        //stretch xform
+        output.stretchXform = mat3.create([2, 0, 0, 4, 10, 20]);
+        assert.ok(tapins.calcExtents(input, state, output, null));
+        assert.deepEqual(output.extents, new Rect(20, 80, 100, 200));
+        assert.deepEqual(output.extentsWithChildren, output.extents);
+    });
 }
