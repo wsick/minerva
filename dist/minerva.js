@@ -12260,7 +12260,6 @@ var minerva;
                             actual.height = 0.0;
                             return true;
                         }
-                        minerva.Size.copyTo(state.actualSize, actual);
                         if (tree.visualParent instanceof minerva.controls.canvas.CanvasUpdater) {
                             actual.width = actual.width === 0.0 ? natural.width : actual.width;
                             actual.height = actual.height === 0.0 ? natural.height : actual.height;
