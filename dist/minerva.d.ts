@@ -2874,7 +2874,6 @@ declare module minerva.shapes.path.processup {
         stretchXform: number[];
     }
     interface IState extends shape.processup.IState {
-        actual: Size;
     }
     interface IOutput extends shape.processup.IOutput {
         stretchXform: number[];
@@ -2882,19 +2881,21 @@ declare module minerva.shapes.path.processup {
     class PathProcessUpPipeDef extends shape.processup.ShapeProcessUpPipeDef {
         constructor();
         createOutput(): IOutput;
-        createState(): IState;
         prepare(input: IInput, state: IState, output: IOutput): void;
         flush(input: IInput, state: IState, output: IOutput): void;
     }
 }
 declare module minerva.shapes.path.processup.tapins {
+    function calcActualSize(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.path.processup.tapins {
     function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.shapes.path.processup.tapins {
-    function calcStretch(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    function calcShapeRect(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.shapes.path.processup.tapins {
-    function initStretch(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+    function calcStretch(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.shapes.path.render {
     interface IInput extends shape.render.IInput {
