@@ -48,6 +48,14 @@ module minerva.shapes.path.processup.tests {
         }
     };
 
+    function typedToArray (typed) {
+        var arr = [];
+        for (var i = 0; i < typed.length; i++) {
+            arr.push(typed[i]);
+        }
+        return arr;
+    }
+
     QUnit.test("calcActualSize", (assert) => {
         var vparent = new core.Updater();
 
@@ -100,6 +108,35 @@ module minerva.shapes.path.processup.tests {
         var state = pipedef.createState();
         var output = pipedef.createOutput();
 
-        assert.ok(true);
+        input.dirtyFlags |= DirtyFlags.Bounds;
+        output.shapeRect = new Rect(-10, 20, 50, 100);
+
+        //empty actual size -> identity
+        output.stretchXform = [1, 2, 3, 4, 5, 6];
+        state.actualSize = new Size(0, 0);
+        input.stretch = Stretch.None;
+        assert.ok(tapins.calcStretch(input, state, output, null));
+        assert.deepEqual(typedToArray(output.stretchXform), [1, 0, 0, 1, 0, 0]);
+
+        //no stretch -> identity
+        output.stretchXform = [1, 2, 3, 4, 5, 6];
+        state.actualSize = new Size(50, 50);
+        assert.ok(tapins.calcStretch(input, state, output, null));
+        assert.deepEqual(typedToArray(output.stretchXform), [1, 0, 0, 1, 0, 0]);
+
+        //Fill
+        input.stretch = Stretch.Fill;
+        assert.ok(tapins.calcStretch(input, state, output, null));
+        assert.deepEqual(typedToArray(output.stretchXform), [1, 0, 0, 0.5, 10, -10]);
+
+        //Uniform
+        input.stretch = Stretch.Uniform;
+        assert.ok(tapins.calcStretch(input, state, output, null));
+        assert.deepEqual(typedToArray(output.stretchXform), [0.5, 0, 0, 0.5, 17.5, -10]);
+
+        //UniformToFill
+        input.stretch = Stretch.UniformToFill;
+        assert.ok(tapins.calcStretch(input, state, output, null));
+        assert.deepEqual(typedToArray(output.stretchXform), [1, 0, 0, 1, 10, -20]);
     });
 }
