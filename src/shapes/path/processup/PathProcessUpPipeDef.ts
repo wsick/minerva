@@ -8,7 +8,6 @@ module minerva.shapes.path.processup {
         stretchXform: number[];
     }
     export interface IState extends shape.processup.IState {
-        actual: Size;
     }
     export interface IOutput extends shape.processup.IOutput {
         stretchXform: number[];
@@ -17,7 +16,8 @@ module minerva.shapes.path.processup {
     export class PathProcessUpPipeDef extends shape.processup.ShapeProcessUpPipeDef {
         constructor () {
             super();
-            this.addTapinBefore('calcExtents', 'initStretch', tapins.initStretch)
+            this.replaceTapin('calcActualSize', tapins.calcActualSize)
+                .replaceTapin('calcShapeRect', tapins.calcShapeRect)
                 .addTapinBefore('calcExtents', 'calcStretch', tapins.calcStretch)
                 .replaceTapin('calcExtents', tapins.calcExtents);
         }
@@ -26,12 +26,6 @@ module minerva.shapes.path.processup {
             var output = <IOutput>super.createOutput();
             output.stretchXform = mat3.identity();
             return output;
-        }
-
-        createState () {
-            var state = <IState>super.createState();
-            state.actual = new Size();
-            return state;
         }
 
         prepare (input: IInput, state: IState, output: IOutput) {

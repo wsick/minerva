@@ -6,7 +6,7 @@ module minerva {
         var inv = mat3.inverse(host.assets.renderXform, mat3.create());
 
         hitTestCtx.save();
-        hitTestCtx.pretransformMatrix(inv);
+        hitTestCtx.preapply(inv);
         var list: minerva.core.Updater[] = [];
         host.hitTest(pos, list, hitTestCtx, true);
         hitTestCtx.restore();

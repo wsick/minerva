@@ -16,8 +16,8 @@ module minerva.shapes.shape.processup {
     export class ShapeProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
         constructor () {
             super();
-            this.replaceTapin('calcExtents', tapins.calcExtents)
-                .addTapinAfter('calcExtents', 'calcShapeRect', tapins.calcShapeRect);
+            this.addTapinBefore('calcExtents', 'calcShapeRect', tapins.calcShapeRect)
+                .replaceTapin('calcExtents', tapins.calcExtents);
         }
 
         createOutput () {

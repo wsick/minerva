@@ -92,15 +92,13 @@ module minerva.core.render {
             this.raw.translate(x, y);
         }
 
-        transformMatrix (mat: number[]) {
-            var ct = this.currentTransform;
-            mat3.multiply(ct, mat, ct); //ct = ct * matrix
+        apply (mat: number[]) {
+            var ct = mat3.apply(this.currentTransform, mat);
             this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
         }
 
-        pretransformMatrix (mat: number[]) {
-            var ct = this.currentTransform;
-            mat3.multiply(mat, ct, ct); //ct = matrix * ct
+        preapply (mat: number[]) {
+            var ct = mat3.preapply(this.currentTransform, mat);
             this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
         }
 

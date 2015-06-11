@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.16';
+    minerva.version = '0.4.17';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -811,7 +811,7 @@ var minerva;
         hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
         var inv = minerva.mat3.inverse(host.assets.renderXform, minerva.mat3.create());
         hitTestCtx.save();
-        hitTestCtx.pretransformMatrix(inv);
+        hitTestCtx.preapply(inv);
         var list = [];
         host.hitTest(pos, list, hitTestCtx, true);
         hitTestCtx.restore();
@@ -2741,7 +2741,7 @@ var minerva;
             (function (tapins) {
                 function prepareCtx(data, pos, hitList, ctx, includeAll) {
                     ctx.save();
-                    ctx.pretransformMatrix(data.assets.renderXform);
+                    ctx.preapply(data.assets.renderXform);
                     return true;
                 }
                 tapins.prepareCtx = prepareCtx;
@@ -3105,12 +3105,10 @@ var minerva;
                 tapins.calcAbsoluteXform = function (input, state, output, vpinput, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
-                    var abs = output.absoluteXform;
-                    //abs = render * vp abs
+                    var ax = output.absoluteXform;
+                    minerva.mat3.copyTo(output.renderXform, ax);
                     if (vpinput)
-                        minerva.mat3.multiply(output.renderXform, vpinput.absoluteXform, abs);
-                    else
-                        minerva.mat3.copyTo(output.renderXform, abs);
+                        minerva.mat3.apply(ax, vpinput.absoluteXform);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
@@ -3129,11 +3127,10 @@ var minerva;
                     if ((input.dirtyFlags & minerva.DirtyFlags.Transform) === 0)
                         return true;
                     var rx = output.renderXform;
+                    minerva.mat3.copyTo(state.localXform, rx);
+                    minerva.mat3.apply(rx, input.layoutXform);
                     if (input.carrierXform)
-                        minerva.mat3.multiply(input.carrierXform, input.layoutXform, rx); //render = carrier * layout
-                    else
-                        minerva.mat3.copyTo(input.layoutXform, rx); //render = layout
-                    minerva.mat3.multiply(rx, state.localXform, rx); //render = render * local
+                        minerva.mat3.apply(rx, input.carrierXform);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
@@ -3237,9 +3234,9 @@ var minerva;
                     if (!render)
                         return true;
                     var origin = state.xformOrigin;
-                    minerva.mat3.translate(local, origin.x, origin.y);
-                    minerva.mat3.multiply(local, render.getRaw(), local); //local = local * render
                     minerva.mat3.translate(local, -origin.x, -origin.y);
+                    minerva.mat3.apply(local, render.getRaw());
+                    minerva.mat3.translate(local, origin.x, origin.y);
                     return true;
                 };
             })(tapins = processdown.tapins || (processdown.tapins = {}));
@@ -3405,14 +3402,14 @@ var minerva;
                 tapins.calcActualSize = function (input, state, output, tree) {
                     if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                         return true;
-                    var as = state.actualSize;
-                    as.width = input.actualWidth;
-                    as.height = input.actualHeight;
-                    core.helpers.coerceSize(as, input);
-                    if (isNaN(as.width))
-                        as.width = 0;
-                    if (isNaN(as.height))
-                        as.height = 0;
+                    var actual = state.actualSize;
+                    actual.width = input.actualWidth;
+                    actual.height = input.actualHeight;
+                    core.helpers.coerceSize(actual, input);
+                    if (isNaN(actual.width))
+                        actual.width = 0;
+                    if (isNaN(actual.height))
+                        actual.height = 0;
                     return true;
                 };
             })(tapins = processup.tapins || (processup.tapins = {}));
@@ -3616,14 +3613,12 @@ var minerva;
                     minerva.mat3.translate(this.currentTransform, x, y);
                     this.raw.translate(x, y);
                 };
-                RenderContext.prototype.transformMatrix = function (mat) {
-                    var ct = this.currentTransform;
-                    minerva.mat3.multiply(ct, mat, ct); //ct = ct * matrix
+                RenderContext.prototype.apply = function (mat) {
+                    var ct = minerva.mat3.apply(this.currentTransform, mat);
                     this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
-                RenderContext.prototype.pretransformMatrix = function (mat) {
-                    var ct = this.currentTransform;
-                    minerva.mat3.multiply(mat, ct, ct); //ct = matrix * ct
+                RenderContext.prototype.preapply = function (mat) {
+                    var ct = minerva.mat3.preapply(this.currentTransform, mat);
                     this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
                 };
                 RenderContext.prototype.clipGeometry = function (geom) {
@@ -3787,7 +3782,7 @@ var minerva;
             (function (tapins) {
                 tapins.prepareContext = function (input, state, output, ctx, region, tree) {
                     ctx.save();
-                    ctx.pretransformMatrix(input.renderXform);
+                    ctx.preapply(input.renderXform);
                     ctx.raw.globalAlpha = input.totalOpacity;
                     return true;
                 };
@@ -6809,7 +6804,7 @@ var minerva;
                         source.lock();
                         ctx.save();
                         minerva.core.helpers.renderLayoutClip(ctx, input, tree);
-                        ctx.pretransformMatrix(input.imgXform);
+                        ctx.preapply(input.imgXform);
                         ctx.raw.drawImage(source.image, 0, 0);
                         ctx.restore();
                         source.unlock();
@@ -9786,6 +9781,12 @@ var minerva;
             dest[4] = 0;
             dest[5] = 0;
             return dest;
+        },
+        preapply: function (dest, mat) {
+            return minerva.mat3.multiply(mat, dest, dest);
+        },
+        apply: function (dest, mat) {
+            return minerva.mat3.multiply(dest, mat, dest);
         }
     };
     function simple_inverse(mat, dest) {
@@ -12151,7 +12152,7 @@ var minerva;
                 (function (tapins) {
                     function drawShape(data, pos, hitList, ctx) {
                         var assets = data.assets;
-                        ctx.pretransformMatrix(assets.stretchXform);
+                        ctx.preapply(assets.stretchXform);
                         assets.data.Draw(ctx);
                         return true;
                     }
@@ -12173,8 +12174,8 @@ var minerva;
                     __extends(ShapeProcessUpPipeDef, _super);
                     function ShapeProcessUpPipeDef() {
                         _super.call(this);
-                        this.replaceTapin('calcExtents', processup.tapins.calcExtents)
-                            .addTapinAfter('calcExtents', 'calcShapeRect', processup.tapins.calcShapeRect);
+                        this.addTapinBefore('calcExtents', 'calcShapeRect', processup.tapins.calcShapeRect)
+                            .replaceTapin('calcExtents', processup.tapins.calcExtents);
                     }
                     ShapeProcessUpPipeDef.prototype.createOutput = function () {
                         var output = _super.prototype.createOutput.call(this);
@@ -12212,7 +12213,8 @@ var minerva;
                     __extends(PathProcessUpPipeDef, _super);
                     function PathProcessUpPipeDef() {
                         _super.call(this);
-                        this.addTapinBefore('calcExtents', 'initStretch', processup.tapins.initStretch)
+                        this.replaceTapin('calcActualSize', processup.tapins.calcActualSize)
+                            .replaceTapin('calcShapeRect', processup.tapins.calcShapeRect)
                             .addTapinBefore('calcExtents', 'calcStretch', processup.tapins.calcStretch)
                             .replaceTapin('calcExtents', processup.tapins.calcExtents);
                     }
@@ -12220,11 +12222,6 @@ var minerva;
                         var output = _super.prototype.createOutput.call(this);
                         output.stretchXform = minerva.mat3.identity();
                         return output;
-                    };
-                    PathProcessUpPipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.actual = new minerva.Size();
-                        return state;
                     };
                     PathProcessUpPipeDef.prototype.prepare = function (input, state, output) {
                         minerva.mat3.copyTo(input.stretchXform, output.stretchXform);
@@ -12251,7 +12248,54 @@ var minerva;
             (function (processup) {
                 var tapins;
                 (function (tapins) {
+                    function calcActualSize(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+                        var actual = state.actualSize;
+                        actual.width = input.actualWidth;
+                        actual.height = input.actualHeight;
+                        var natural = input.naturalBounds;
+                        if ((natural.width <= 0.0 || natural.height <= 0) || (input.width <= 0.0 || input.height <= 0.0)) {
+                            actual.width = 0.0;
+                            actual.height = 0.0;
+                            return true;
+                        }
+                        if (tree.visualParent instanceof minerva.controls.canvas.CanvasUpdater) {
+                            actual.width = actual.width === 0.0 ? natural.width : actual.width;
+                            actual.height = actual.height === 0.0 ? natural.height : actual.height;
+                            if (!isNaN(input.width))
+                                actual.width = input.width;
+                            if (!isNaN(input.height))
+                                actual.height = input.height;
+                        }
+                        return true;
+                    }
+                    tapins.calcActualSize = calcActualSize;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = path.processup || (path.processup = {}));
+        })(path = shapes.path || (shapes.path = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var shapes;
+    (function (shapes) {
+        var path;
+        (function (path) {
+            var processup;
+            (function (processup) {
+                var tapins;
+                (function (tapins) {
                     function calcExtents(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+                        if (minerva.Size.isEmpty(state.actualSize)) {
+                            minerva.Rect.clear(output.extents);
+                        }
+                        else {
+                            minerva.Rect.copyTo(output.shapeRect, output.extents);
+                            minerva.Rect.transform(output.extents, output.stretchXform);
+                        }
                         minerva.Rect.copyTo(output.extents, output.extentsWithChildren);
                         return true;
                     }
@@ -12271,40 +12315,14 @@ var minerva;
             (function (processup) {
                 var tapins;
                 (function (tapins) {
-                    function calcStretch(input, state, output, tree) {
+                    function calcShapeRect(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-                        var extents = output.extents;
-                        var xform = output.stretchXform;
-                        var actual = state.actual;
-                        minerva.mat3.identity(xform);
-                        minerva.Rect.clear(extents);
-                        if (minerva.Size.isEmpty(actual))
-                            return true;
-                        minerva.Rect.copyTo(input.naturalBounds, extents);
-                        if (input.stretch === minerva.Stretch.None)
-                            return true;
-                        var sx = actual.width / extents.width;
-                        var sy = actual.height / extents.height;
-                        var xp = 0;
-                        var yp = 0;
-                        switch (input.stretch) {
-                            case minerva.Stretch.Uniform:
-                                sx = sy = Math.min(sx, sy);
-                                xp = (actual.width - (extents.width * sx)) / 2.0;
-                                yp = (actual.height - (extents.height * sy)) / 2.0;
-                                break;
-                            case minerva.Stretch.UniformToFill:
-                                sx = sy = Math.max(sx, sy);
-                                break;
-                        }
-                        minerva.mat3.translate(xform, -extents.x, -extents.y);
-                        minerva.mat3.scale(xform, sx, sy);
-                        minerva.mat3.translate(xform, xp, yp);
-                        minerva.Rect.transform(extents, xform);
+                        //TODO: Should we calculate this without stroking?
+                        minerva.Rect.copyTo(input.naturalBounds, output.shapeRect);
                         return true;
                     }
-                    tapins.calcStretch = calcStretch;
+                    tapins.calcShapeRect = calcShapeRect;
                 })(tapins = processup.tapins || (processup.tapins = {}));
             })(processup = path.processup || (path.processup = {}));
         })(path = shapes.path || (shapes.path = {}));
@@ -12320,28 +12338,34 @@ var minerva;
             (function (processup) {
                 var tapins;
                 (function (tapins) {
-                    function initStretch(input, state, output, tree) {
+                    function calcStretch(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-                        var actual = state.actual;
-                        var natural = input.naturalBounds;
-                        if ((natural.width <= 0.0 || natural.height <= 0) || (input.width <= 0.0 || input.height <= 0.0)) {
-                            actual.width = 0.0;
-                            actual.height = 0.0;
+                        var xform = minerva.mat3.identity(output.stretchXform);
+                        var actual = state.actualSize;
+                        if (minerva.Size.isEmpty(actual) || input.stretch === minerva.Stretch.None)
                             return true;
+                        var shapeRect = output.shapeRect;
+                        var sx = actual.width / shapeRect.width;
+                        var sy = actual.height / shapeRect.height;
+                        var xp = 0;
+                        var yp = 0;
+                        switch (input.stretch) {
+                            case minerva.Stretch.Uniform:
+                                sx = sy = Math.min(sx, sy);
+                                xp = (actual.width - (shapeRect.width * sx)) / 2.0;
+                                yp = (actual.height - (shapeRect.height * sy)) / 2.0;
+                                break;
+                            case minerva.Stretch.UniformToFill:
+                                sx = sy = Math.max(sx, sy);
+                                break;
                         }
-                        minerva.Size.copyTo(state.actualSize, actual);
-                        if (tree.visualParent instanceof minerva.controls.canvas.CanvasUpdater) {
-                            actual.width = actual.width === 0.0 ? natural.width : actual.width;
-                            actual.height = actual.height === 0.0 ? natural.height : actual.height;
-                            if (!isNaN(input.width))
-                                actual.width = input.width;
-                            if (!isNaN(input.height))
-                                actual.height = input.height;
-                        }
+                        minerva.mat3.translate(xform, -shapeRect.x, -shapeRect.y);
+                        minerva.mat3.scale(xform, sx, sy);
+                        minerva.mat3.translate(xform, xp, yp);
                         return true;
                     }
-                    tapins.initStretch = initStretch;
+                    tapins.calcStretch = calcStretch;
                 })(tapins = processup.tapins || (processup.tapins = {}));
             })(processup = path.processup || (path.processup = {}));
         })(path = shapes.path || (shapes.path = {}));
@@ -12383,7 +12407,7 @@ var minerva;
                     function doRender(input, state, output, ctx, region) {
                         if (!state.shouldDraw)
                             return true;
-                        ctx.pretransformMatrix(input.stretchXform);
+                        ctx.preapply(input.stretchXform);
                         input.data.Draw(ctx);
                         return true;
                     }
@@ -13044,13 +13068,9 @@ var minerva;
                     function calcExtents(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-                        var e = output.extents;
-                        var ewc = output.extentsWithChildren;
-                        e.x = ewc.x = 0;
-                        e.y = ewc.y = 0;
-                        var actual = state.actualSize;
-                        e.width = ewc.width = actual.width;
-                        e.height = ewc.height = actual.height;
+                        output.extents.x = output.extents.y = 0;
+                        minerva.Size.copyTo(state.actualSize, output.extents);
+                        minerva.Rect.copyTo(output.extents, output.extentsWithChildren);
                         return true;
                     }
                     tapins.calcExtents = calcExtents;
@@ -13073,7 +13093,8 @@ var minerva;
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
                         var sr = output.shapeRect;
-                        minerva.Rect.copyTo(output.extents, sr);
+                        sr.x = sr.y = 0;
+                        minerva.Size.copyTo(state.actualSize, sr);
                         output.shapeFlags = minerva.ShapeFlags.Empty;
                         if (minerva.Rect.isEmpty(sr))
                             return true;
