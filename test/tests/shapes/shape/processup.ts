@@ -57,19 +57,19 @@ module minerva.shapes.shape.processup.tests {
         var output = pipedef.createOutput();
 
         input.dirtyFlags |= DirtyFlags.Bounds;
-        output.extents = new Rect(0, 0, 100, 100);
+        state.actualSize = new Rect(0, 0, 100, 100);
         input.stroke = <any>{};
         input.strokeThickness = 15;
         assert.ok(tapins.calcShapeRect(input, state, output, null));
         assert.deepEqual(output.shapeRect, new Rect(7.5, 7.5, 85, 85));
         assert.strictEqual(output.shapeFlags, ShapeFlags.Normal);
 
-        output.extents = new Rect(0, 0, 0, 0);
+        state.actualSize = new Rect(0, 0, 0, 0);
         assert.ok(tapins.calcShapeRect(input, state, output, null));
         assert.deepEqual(output.shapeRect, new Rect(0, 0, 0, 0));
         assert.strictEqual(output.shapeFlags, ShapeFlags.Empty);
 
-        output.extents = new Rect(0, 0, 10, 10);
+        state.actualSize = new Rect(0, 0, 10, 10);
         assert.ok(tapins.calcShapeRect(input, state, output, null));
         assert.deepEqual(output.shapeRect, new Rect(7.5, 7.5, 0.015000000000000568, 0.015000000000000568));
         assert.strictEqual(output.shapeFlags, ShapeFlags.Degenerate);
