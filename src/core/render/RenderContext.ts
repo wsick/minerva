@@ -79,9 +79,8 @@ module minerva.core.render {
         resetTransform () {
             mat3.identity(this.currentTransform);
             var raw = <any>this.raw;
-            if (raw.resetTransform) {
+            if (raw.resetTransform)
                 raw.resetTransform();
-            }
         }
 
         transform (m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
