@@ -1075,6 +1075,7 @@ declare module minerva.core.render {
         currentTransform: number[];
         raw: CanvasRenderingContext2D;
         hasFillRule: boolean;
+        dpiRatio: number;
         constructor(ctx: CanvasRenderingContext2D);
         static hasFillRule: boolean;
         resize(width: number, height: number): void;
@@ -2676,6 +2677,9 @@ declare module minerva.path.segments {
 }
 declare module minerva.path.segments {
     function roundedRect(x: number, y: number, width: number, height: number, radiusX: number, radiusY: number): IRect;
+}
+interface CanvasRenderingContext2D {
+    backingStorePixelRatio: number;
 }
 interface CanvasRenderingContext2D {
     ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, antiClockwise?: boolean): any;

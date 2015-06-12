@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.19';
+    minerva.version = '0.4.20';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -3539,6 +3539,7 @@ var minerva;
     (function (core) {
         var render;
         (function (render) {
+            var epsilon = 1e-10;
             var caps = [
                 "butt",
                 "square",
@@ -3557,6 +3558,9 @@ var minerva;
                     Object.defineProperty(this, 'raw', { value: ctx, writable: false });
                     Object.defineProperty(this, 'currentTransform', { value: minerva.mat3.identity(), writable: false });
                     Object.defineProperty(this, 'hasFillRule', { value: RenderContext.hasFillRule, writable: false });
+                    var ratio = (window.devicePixelRatio || 1) / ctx.backingStorePixelRatio;
+                    Object.defineProperty(this, 'dpiRatio', { value: ratio, writable: false });
+                    this.scale(ratio, ratio);
                 }
                 Object.defineProperty(RenderContext, "hasFillRule", {
                     get: function () {
@@ -3571,8 +3575,18 @@ var minerva;
                 });
                 RenderContext.prototype.resize = function (width, height) {
                     var canvas = this.raw.canvas;
-                    canvas.width = width;
-                    canvas.height = height;
+                    if (Math.abs(this.dpiRatio - 1) < epsilon) {
+                        canvas.width = width;
+                        canvas.height = height;
+                    }
+                    else {
+                        // Size the canvas width and height (the virtual canvas size) to the scaled up pixel count.
+                        canvas.width = width * this.dpiRatio;
+                        canvas.height = height * this.dpiRatio;
+                        // Size the physical canvas using CSS width and height to the pixel dimensions.
+                        canvas.style.width = width.toString() + "px";
+                        canvas.style.height = height.toString() + "px";
+                    }
                 };
                 RenderContext.prototype.save = function () {
                     this.$$transforms.push(minerva.mat3.create(this.currentTransform));
@@ -11709,6 +11723,18 @@ var minerva;
         })(segments = path.segments || (path.segments = {}));
     })(path = minerva.path || (minerva.path = {}));
 })(minerva || (minerva = {}));
+if (!CanvasRenderingContext2D.prototype.hasOwnProperty("backingStorePixelRatio")) {
+    Object.defineProperty(CanvasRenderingContext2D.prototype, "backingStorePixelRatio", {
+        get: function () {
+            var ctx = this;
+            return ctx.webkitBackingStorePixelRatio
+                || ctx.mozBackingStorePixelRatio
+                || ctx.msBackingStorePixelRatio
+                || ctx.oBackingStorePixelRatio
+                || 1;
+        }
+    });
+}
 if (!CanvasRenderingContext2D.prototype.ellipse) {
     CanvasRenderingContext2D.prototype.ellipse = function (x, y, radiusX, radiusY, rotation, startAngle, endAngle, antiClockwise) {
         this.save();
