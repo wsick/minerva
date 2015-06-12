@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.18';
+    minerva.version = '0.4.19';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -9881,11 +9881,11 @@ var minerva;
         }
         var x0 = -mat[4];
         var y0 = -mat[5];
-        if (Math.abs(m11 - 1) < FLOAT_EPSILON) {
+        if (Math.abs(m11 - 1) > FLOAT_EPSILON) {
             m11 = 1 / m11;
             x0 *= m11;
         }
-        if (Math.abs(m22 - 1) < FLOAT_EPSILON) {
+        if (Math.abs(m22 - 1) > FLOAT_EPSILON) {
             m22 = 1 / m22;
             y0 *= m22;
         }
