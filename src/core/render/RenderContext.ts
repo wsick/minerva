@@ -8,6 +8,7 @@ module minerva.core.render {
         strokeMiterLimit: number;
     }
 
+    var epsilon = 1e-10;
     var caps: string[] = [
         "butt", //flat
         "square", //square
@@ -24,12 +25,15 @@ module minerva.core.render {
         currentTransform = mat3.identity();
         raw: CanvasRenderingContext2D;
         hasFillRule: boolean;
-	private ratio = 1.0;
+        dpiRatio: number;
 
         constructor (ctx: CanvasRenderingContext2D) {
             Object.defineProperty(this, 'raw', {value: ctx, writable: false});
             Object.defineProperty(this, 'currentTransform', {value: mat3.identity(), writable: false});
             Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false});
+            var ratio = (window.devicePixelRatio || 1) / ctx.backingStorePixelRatio;
+            Object.defineProperty(this, 'dpiRatio', {value: ratio, writable: false});
+            this.scale(ratio, ratio);
         }
 
         static get hasFillRule (): boolean {
@@ -41,48 +45,18 @@ module minerva.core.render {
         }
 
         resize (width: number, height: number) {
-	    // Compute a scaling ratio that will account for both the
-	    // devicePixelRatio and the size of the canvas backing
-	    // store.
             var canvas = this.raw.canvas;
-	    var context : any = <any>this.raw;
-	    var backingStoreRatio = context.webkitBackingStorePixelRatio ||
-                context.mozBackingStorePixelRatio ||
-                context.msBackingStorePixelRatio ||
-                context.oBackingStorePixelRatio ||
-                context.backingStorePixelRatio || 1;
-	    var ratio = (window.devicePixelRatio || 1) / backingStoreRatio;
-	    this.ratio = ratio;
-	    
-	    // Size the canvas width and height (the virtual canvas
-	    // size) to the scaled up pixel count.
-            canvas.width = width * ratio;
-            canvas.height = height * ratio;
-
-	    // Size the physical canvas using CSS width and height to
-	    // the pixel dimensions.
-	    canvas.style.width = width + "px";
-	    canvas.style.height = height + "px";
-
-	    // Add a transform to the canvas to scale the contents
-	    // according to the scaling ratio, and update the
-	    // currentTransform to match.
-	    this.raw.transform(ratio, 0, 0, ratio, 0, 0);
-	    mat3.copyTo([ratio, 0, 0, ratio, 0, 0], this.currentTransform);
-
-	    // In setTransform and resetTransform, ensure that the transforms
-	    // are appropriately scaled by the ratio for this canvas.
-	    /*
-	    console.log("Resize canvas: (" + width + "," + height + ") ==> (" +
-			canvas.width + "," + canvas.height + ") ratio " + ratio + ": "
-			+ this.currentTransform[0] + ","
-			+ this.currentTransform[1] + ","
-			+ this.currentTransform[2] + ","
-			+ this.currentTransform[3] + ","
-			+ this.currentTransform[4] + ","
-			+ this.currentTransform[5]
-		       );
-	    */
+            if (Math.abs(this.dpiRatio - 1) < epsilon) {
+                canvas.width = width;
+                canvas.height = height;
+            } else {
+                // Size the canvas width and height (the virtual canvas size) to the scaled up pixel count.
+                canvas.width = width * this.dpiRatio;
+                canvas.height = height * this.dpiRatio;
+                // Size the physical canvas using CSS width and height to the pixel dimensions.
+                canvas.style.width = width.toString() + "px";
+                canvas.style.height = height.toString() + "px";
+            }
         }
 
         save () {
@@ -100,7 +74,6 @@ module minerva.core.render {
         setTransform (m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
             mat3.copyTo([m11, m12, m21, m22, dx, dy], this.currentTransform);
             this.raw.setTransform(m11, m12, m21, m22, dx, dy);
-	    this.raw.transform(this.ratio, 0, 0, this.ratio, 0, 0);
         }
 
         resetTransform () {
@@ -108,8 +81,7 @@ module minerva.core.render {
             var raw = <any>this.raw;
             if (raw.resetTransform) {
                 raw.resetTransform();
-		this.raw.transform(this.ratio, 0, 0, this.ratio, 0, 0);
-	    }
+            }
         }
 
         transform (m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
