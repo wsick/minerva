@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.17';
+    minerva.version = '0.4.18';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -3935,6 +3935,82 @@ var minerva;
             })(tapins = sizing.tapins || (sizing.tapins = {}));
         })(sizing = core.sizing || (core.sizing = {}));
     })(core = minerva.core || (minerva.core = {}));
+})(minerva || (minerva = {}));
+/// <reference path="../core/Updater" />
+var minerva;
+(function (minerva) {
+    var anon;
+    (function (anon) {
+        var AnonymousUpdater = (function (_super) {
+            __extends(AnonymousUpdater, _super);
+            function AnonymousUpdater() {
+                _super.apply(this, arguments);
+            }
+            AnonymousUpdater.prototype.init = function () {
+                this.setMeasurePipe(new anon.measure.AnonymousMeasurePipeDef(this))
+                    .setArrangePipe(new anon.arrange.AnonymousArrangePipeDef(this));
+                _super.prototype.init.call(this);
+            };
+            AnonymousUpdater.prototype.measureOverride = function (availableSize) {
+                return availableSize;
+            };
+            AnonymousUpdater.prototype.arrangeOverride = function (arrangeSize) {
+                return arrangeSize;
+            };
+            return AnonymousUpdater;
+        })(minerva.core.Updater);
+        anon.AnonymousUpdater = AnonymousUpdater;
+    })(anon = minerva.anon || (minerva.anon = {}));
+})(minerva || (minerva = {}));
+/// <reference path="../../core/measure/MeasurePipeDef" />
+var minerva;
+(function (minerva) {
+    var anon;
+    (function (anon) {
+        var arrange;
+        (function (arrange) {
+            var AnonymousArrangePipeDef = (function (_super) {
+                __extends(AnonymousArrangePipeDef, _super);
+                function AnonymousArrangePipeDef(upd) {
+                    _super.call(this);
+                    this.replaceTapin('doOverride', function (input, state, output, tree, finalRect) {
+                        var finalSize = new minerva.Size();
+                        minerva.Size.copyTo(state.finalSize, finalSize);
+                        var val = upd.arrangeOverride(finalSize);
+                        minerva.Size.copyTo(val, state.arrangedSize);
+                        return true;
+                    });
+                }
+                return AnonymousArrangePipeDef;
+            })(minerva.core.arrange.ArrangePipeDef);
+            arrange.AnonymousArrangePipeDef = AnonymousArrangePipeDef;
+        })(arrange = anon.arrange || (anon.arrange = {}));
+    })(anon = minerva.anon || (minerva.anon = {}));
+})(minerva || (minerva = {}));
+/// <reference path="../../core/measure/MeasurePipeDef" />
+var minerva;
+(function (minerva) {
+    var anon;
+    (function (anon) {
+        var measure;
+        (function (measure) {
+            var AnonymousMeasurePipeDef = (function (_super) {
+                __extends(AnonymousMeasurePipeDef, _super);
+                function AnonymousMeasurePipeDef(upd) {
+                    _super.call(this);
+                    this.replaceTapin('doOverride', function (input, state, output, tree, availableSize) {
+                        var availableSize = new minerva.Size();
+                        minerva.Size.copyTo(state.availableSize, availableSize);
+                        var val = upd.measureOverride(availableSize);
+                        minerva.Size.copyTo(val, output.desiredSize);
+                        return true;
+                    });
+                }
+                return AnonymousMeasurePipeDef;
+            })(minerva.core.measure.MeasurePipeDef);
+            measure.AnonymousMeasurePipeDef = AnonymousMeasurePipeDef;
+        })(measure = anon.measure || (anon.measure = {}));
+    })(anon = minerva.anon || (minerva.anon = {}));
 })(minerva || (minerva = {}));
 /// <reference path="../../core/Updater" />
 var minerva;

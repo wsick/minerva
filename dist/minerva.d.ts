@@ -1177,6 +1177,23 @@ declare module minerva.core.sizing.tapins {
 declare module minerva.core.sizing.tapins {
     var computeActual: ISizingTapin;
 }
+declare module minerva.anon {
+    class AnonymousUpdater extends core.Updater {
+        init(): void;
+        measureOverride(availableSize: Size): Size;
+        arrangeOverride(arrangeSize: Size): Size;
+    }
+}
+declare module minerva.anon.arrange {
+    class AnonymousArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor(upd: AnonymousUpdater);
+    }
+}
+declare module minerva.anon.measure {
+    class AnonymousMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor(upd: AnonymousUpdater);
+    }
+}
 declare module minerva.controls.border {
     interface IBorderUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, render.IInput {
     }
