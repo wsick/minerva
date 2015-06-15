@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.20';
+    minerva.version = '0.4.21';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
