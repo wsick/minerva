@@ -232,12 +232,15 @@ module minerva.controls.textblock.tests {
         run.assets.text = "Text";
         updater.invalidateTextMetrics();
         updater.tree.layout(new Size(1, Number.POSITIVE_INFINITY), updater.assets);
-        assert.strictEqual(docassets.lines.length, 1);
+        assert.strictEqual(docassets.lines.length, 4);
         docassets.lines.forEach(line => assert.strictEqual(line.width, line.runs.reduce<number>((agg, run) => agg + run.width, 0), "Line Width === Run Widths"));
         var runs = docassets.lines.reduce<minerva.text.layout.Run[]>((agg, line) => agg.concat(line.runs), []);
         runs.forEach(run => delete run.attrs);
         var expectedRuns = [
-            mock.run("Text", 0, run.assets)
+            mock.run("T", 0, run.assets),
+            mock.run("e", 0, run.assets),
+            mock.run("x", 0, run.assets),
+            mock.run("t", 0, run.assets)
         ];
         runs.forEach((run, i?) => assert.deepEqual(run, expectedRuns[i]));
     });

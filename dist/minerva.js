@@ -13962,7 +13962,7 @@ var minerva;
                         run.text = text.substr(start, run.length);
                         run.width = measureTextWidth(run.text, font);
                         pass.index = start + run.length;
-                        return true;
+                        return pass.index < pass.max;
                     }
                     if (c === ' ')
                         lastSpace = pass.index;
