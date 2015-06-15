@@ -217,4 +217,31 @@ module minerva.controls.textblock.tests {
         ];
         runs.forEach((run, i?) => assert.deepEqual(run, expectedRuns[i]));
     });
+
+    QUnit.test("Wrap - Small width preventing auto line breaking", (assert) => {
+        var updater = new TextBlockUpdater();
+        updater.assets.textWrapping = TextWrapping.Wrap;
+
+        updater.assets.maxWidth = 1;
+        var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
+        updater.tree.onTextAttached(run);
+        var docassets = updater.tree.doc.assets;
+
+        run.assets.text = "Text";
+        updater.invalidateTextMetrics();
+        updater.tree.layout(new Size(1, Number.POSITIVE_INFINITY), updater.assets);
+        assert.strictEqual(docassets.lines.length, 4);
+        docassets.lines.forEach(line => assert.strictEqual(line.width, line.runs.reduce<number>((agg, run) => agg + run.width, 0), "Line Width === Run Widths"));
+        var runs = docassets.lines.reduce<minerva.text.layout.Run[]>((agg, line) => agg.concat(line.runs), []);
+        runs.forEach(run => delete run.attrs);
+        var expectedRuns = [
+            mock.run("T", 0, run.assets),
+            mock.run("e", 0, run.assets),
+            mock.run("x", 0, run.assets),
+            mock.run("t", 0, run.assets)
+        ];
+        runs.forEach((run, i?) => assert.deepEqual(run, expectedRuns[i]));
+    });
 }
