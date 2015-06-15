@@ -13961,7 +13961,7 @@ var minerva;
                         run.length = (breakIndex - start) || 1; //Force at least 1 character
                         run.text = text.substr(start, run.length);
                         run.width = measureTextWidth(run.text, font);
-                        pass.index = breakIndex;
+                        pass.index = start + run.length;
                         return true;
                     }
                     if (c === ' ')
