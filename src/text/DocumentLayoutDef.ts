@@ -19,6 +19,7 @@ module minerva.text {
 
     export interface IDocumentLayoutDef {
         createAssets (): IDocumentAssets;
+        setMaxWidth (docctx: IDocumentContext, docassets: IDocumentAssets, width: number): boolean;
         layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render (ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets);
         getCursorFromPoint (point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
@@ -27,7 +28,7 @@ module minerva.text {
     }
 
     export class DocumentLayoutDef implements IDocumentLayoutDef {
-        createAssets(): IDocumentAssets {
+        createAssets (): IDocumentAssets {
             return {
                 availableWidth: Number.POSITIVE_INFINITY,
                 actualWidth: NaN,
@@ -39,7 +40,16 @@ module minerva.text {
             };
         }
 
-        layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean {
+        setMaxWidth (docctx: IDocumentContext, docassets: IDocumentAssets, width: number): boolean {
+            if (docassets.maxWidth === width)
+                return false;
+            docassets.maxWidth = width;
+            docassets.actualWidth = NaN;
+            docassets.actualHeight = NaN;
+            return true;
+        }
+
+        layout (docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean {
             if (!isNaN(docassets.actualWidth))
                 return false;
             docassets.maxWidth = constraint.width;
@@ -53,7 +63,7 @@ module minerva.text {
             return true;
         }
 
-        render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets) {
+        render (ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets) {
             this.splitSelection(docctx, docassets);
 
             ctx.save();
@@ -79,7 +89,7 @@ module minerva.text {
             ctx.restore();
         }
 
-        getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number {
+        getCursorFromPoint (point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number {
             var line = docassets.lines[0];
             if (!line)
                 return 0;
@@ -134,7 +144,7 @@ module minerva.text {
             return advance + lastEnd;
         }
 
-        getCaretFromCursor(docctx: IDocumentContext, docassets: IDocumentAssets): Rect {
+        getCaretFromCursor (docctx: IDocumentContext, docassets: IDocumentAssets): Rect {
             var cursor = docctx.selectionStart;
             var advance = 0;
             var cr = new Rect(0, 0, 1, 0);
@@ -159,7 +169,7 @@ module minerva.text {
             return cr;
         }
 
-        splitSelection(docctx: IDocumentContext, assets: IDocumentAssets) {
+        splitSelection (docctx: IDocumentContext, assets: IDocumentAssets) {
             if (assets.selCached)
                 return;
             var start = docctx.selectionStart;
@@ -171,7 +181,7 @@ module minerva.text {
             assets.selCached = true;
         }
 
-        getHorizontalAlignmentX(docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number {
+        getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number {
             if (docctx.textAlignment === TextAlignment.Left || docctx.textAlignment === TextAlignment.Justify)
                 return 0;
             var width = getWidthConstraint(assets);
@@ -182,12 +192,12 @@ module minerva.text {
             return width - lineWidth;
         }
 
-        measureTextWidth(text: string, font: Font): number {
+        measureTextWidth (text: string, font: Font): number {
             return engine.Surface.measureWidth(text, font);
         }
     }
 
-    function getWidthConstraint(assets: IDocumentAssets): number {
+    function getWidthConstraint (assets: IDocumentAssets): number {
         if (isFinite(assets.availableWidth))
             return assets.availableWidth;
         if (!isFinite(assets.maxWidth))

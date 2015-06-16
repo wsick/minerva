@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.21';
+    minerva.version = '0.4.22';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -8167,6 +8167,9 @@ var minerva;
                     _super.apply(this, arguments);
                     this.children = [];
                 }
+                TextBlockUpdaterTree.prototype.setMaxWidth = function (width, docctx) {
+                    return this.doc.def.setMaxWidth(docctx, this.doc.assets, width);
+                };
                 TextBlockUpdaterTree.prototype.layout = function (constraint, docctx) {
                     var doc = this.doc;
                     doc.def.layout(docctx, doc.assets, constraint, this.walkText());
@@ -8301,6 +8304,7 @@ var minerva;
                     function doOverride(input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
                         minerva.Thickness.shrinkSize(input.padding, state.availableSize);
+                        tree.setMaxWidth(state.availableSize.width, input);
                         minerva.Size.copyTo(tree.layout(state.availableSize, input), ds);
                         minerva.Thickness.growSize(input.padding, ds);
                         return true;
@@ -8334,13 +8338,13 @@ var minerva;
                     function calcActualSize(input, state, output, tree) {
                         if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
                             return true;
-                        var as = state.actualSize;
-                        as.width = Number.POSITIVE_INFINITY;
-                        as.height = Number.POSITIVE_INFINITY;
-                        minerva.core.helpers.coerceSize(as, input);
-                        minerva.Thickness.shrinkSize(input.padding, as);
-                        minerva.Size.copyTo(tree.layout(as, input), as);
-                        minerva.Thickness.growSize(input.padding, as);
+                        var actual = state.actualSize;
+                        actual.width = Number.POSITIVE_INFINITY;
+                        actual.height = Number.POSITIVE_INFINITY;
+                        minerva.core.helpers.coerceSize(actual, input);
+                        minerva.Thickness.shrinkSize(input.padding, actual);
+                        minerva.Size.copyTo(tree.layout(actual, input), actual);
+                        minerva.Thickness.growSize(input.padding, actual);
                         return true;
                     }
                     tapins.calcActualSize = calcActualSize;
@@ -8591,6 +8595,9 @@ var minerva;
                     _super.apply(this, arguments);
                     this.children = [];
                 }
+                TextBoxViewUpdaterTree.prototype.setMaxWidth = function (width, docctx) {
+                    return this.doc.def.setMaxWidth(docctx, this.doc.assets, width);
+                };
                 TextBoxViewUpdaterTree.prototype.layout = function (constraint, docctx) {
                     var doc = this.doc;
                     doc.def.layout(docctx, doc.assets, constraint, this.walkText());
@@ -8726,12 +8733,13 @@ var minerva;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, availableSize) {
                         var ds = output.desiredSize;
-                        var as = state.availableSize;
-                        minerva.Size.copyTo(tree.layout(as, input), ds);
-                        if (!isFinite(as.width))
+                        var available = state.availableSize;
+                        tree.setMaxWidth(available.width, input);
+                        minerva.Size.copyTo(tree.layout(available, input), ds);
+                        if (!isFinite(available.width))
                             ds.width = Math.max(ds.width, 11);
-                        ds.width = Math.min(ds.width, as.width);
-                        ds.height = Math.min(ds.height, as.height);
+                        ds.width = Math.min(ds.width, available.width);
+                        ds.height = Math.min(ds.height, available.height);
                         return true;
                     }
                     tapins.doOverride = doOverride;
@@ -13394,6 +13402,14 @@ var minerva;
                     lines: [],
                     selCached: false
                 };
+            };
+            DocumentLayoutDef.prototype.setMaxWidth = function (docctx, docassets, width) {
+                if (docassets.maxWidth === width)
+                    return false;
+                docassets.maxWidth = width;
+                docassets.actualWidth = NaN;
+                docassets.actualHeight = NaN;
+                return true;
             };
             DocumentLayoutDef.prototype.layout = function (docctx, docassets, constraint, walker) {
                 if (!isNaN(docassets.actualWidth))

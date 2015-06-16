@@ -14,6 +14,10 @@ module minerva.controls.textboxview {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         children: text.TextUpdater[] = [];
 
+        setMaxWidth (width: number, docctx: text.IDocumentContext) {
+            return this.doc.def.setMaxWidth(docctx, this.doc.assets, width);
+        }
+
         layout (constraint: Size, docctx: text.IDocumentContext): Size {
             var doc = this.doc;
             doc.def.layout(docctx, doc.assets, constraint, this.walkText());

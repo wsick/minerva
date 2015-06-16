@@ -16,14 +16,14 @@ module minerva.controls.textblock.processup {
             if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
                 return true;
 
-            var as = state.actualSize;
-            as.width = Number.POSITIVE_INFINITY;
-            as.height = Number.POSITIVE_INFINITY;
-            core.helpers.coerceSize(as, input);
+            var actual = state.actualSize;
+            actual.width = Number.POSITIVE_INFINITY;
+            actual.height = Number.POSITIVE_INFINITY;
+            core.helpers.coerceSize(actual, input);
 
-            Thickness.shrinkSize(input.padding, as);
-            Size.copyTo(tree.layout(as, input), as);
-            Thickness.growSize(input.padding, as);
+            Thickness.shrinkSize(input.padding, actual);
+            Size.copyTo(tree.layout(actual, input), actual);
+            Thickness.growSize(input.padding, actual);
 
             return true;
         }
