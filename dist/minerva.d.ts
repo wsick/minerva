@@ -2099,6 +2099,7 @@ declare module minerva.controls.textblock {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): any;
+        setMaxWidth(width: number, docctx: text.IDocumentContext): any;
         setAvailableWidth(width: number): any;
         getHorizontalOffset(docctx: text.IDocumentContext): number;
         walkText(): IWalker<text.TextUpdater>;
@@ -2108,6 +2109,7 @@ declare module minerva.controls.textblock {
     class TextBlockUpdaterTree extends core.UpdaterTree implements ITextBlockUpdaterTree {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         children: text.TextUpdater[];
+        setMaxWidth(width: number, docctx: text.IDocumentContext): boolean;
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): void;
         setAvailableWidth(width: number): void;
@@ -2229,6 +2231,7 @@ declare module minerva.controls.textboxview {
     class TextBoxViewUpdaterTree extends core.UpdaterTree implements ITextBoxViewUpdaterTree {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         children: text.TextUpdater[];
+        setMaxWidth(width: number, docctx: text.IDocumentContext): boolean;
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext): void;
         setAvailableWidth(width: number): void;
@@ -3122,6 +3125,7 @@ declare module minerva.text {
     }
     interface IDocumentLayoutDef {
         createAssets(): IDocumentAssets;
+        setMaxWidth(docctx: IDocumentContext, docassets: IDocumentAssets, width: number): boolean;
         layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): any;
         getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
@@ -3130,6 +3134,7 @@ declare module minerva.text {
     }
     class DocumentLayoutDef implements IDocumentLayoutDef {
         createAssets(): IDocumentAssets;
+        setMaxWidth(docctx: IDocumentContext, docassets: IDocumentAssets, width: number): boolean;
         layout(docctx: IDocumentContext, docassets: IDocumentAssets, constraint: Size, walker: IWalker<text.TextUpdater>): boolean;
         render(ctx: core.render.RenderContext, docctx: IDocumentContext, docassets: IDocumentAssets): void;
         getCursorFromPoint(point: IPoint, docctx: IDocumentContext, docassets: IDocumentAssets): number;
