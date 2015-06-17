@@ -32,7 +32,8 @@
   "devDependencies": {
     "qunit": "~1.15.0",
     "requirejs": "~2.1.15",
-    "requirejs-text": "~2.0.12"
+    "requirejs-text": "~2.0.12",
+    "blanket": "~1.1.7"
   },
   "dependencies": {
     "perfex": "~0.1.3"

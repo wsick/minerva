@@ -9,7 +9,13 @@
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
 <script src="lib/qunit/qunit/qunit.js"></script>
-<script src="lib/minerva/dist/minerva.js"></script>
+<script type="text/javascript" src="lib/blanket/dist/qunit/blanket.min.js"></script>
+<script>
+    if (location.href.match(/(\?|&)gruntReport($|&|=)/)) {
+        blanket.options("reporter", "../node_modules/grunt-blanket-qunit/reporter/grunt-reporter.js");
+    }
+</script>
+<script data-cover src="lib/minerva/dist/minerva.js"></script>
 
 <script src=".build/tests/primitives/size.js"></script>
 <script src=".build/tests/primitives/rect.js"></script>

@@ -6,13 +6,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-typescript');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-contrib-symlink');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-open');
     grunt.loadNpmTasks('grunt-bower-install-simple');
     grunt.loadNpmTasks("grunt-version-ts");
+    grunt.loadNpmTasks('grunt-blanket-qunit');
     var unify = gunify(grunt);
 
     var ports = {
@@ -142,9 +142,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-        qunit: {
-            all: ['<%= dirs.test.root %>/*.html']
-        },
         connect: {
             stress: {
                 options: {
@@ -210,11 +207,19 @@ module.exports = function (grunt) {
                 src: ['dist/<%= meta.name %>.js'],
                 dest: 'dist/<%= meta.name %>.min.js'
             }
+        },
+        blanket_qunit: {
+            all: {
+                options: {
+                    urls: ['<%= dirs.test.root %>/tests.html?coverage=true&gruntReport'],
+                    threshold: 60
+                }
+            }
         }
     });
 
     grunt.registerTask('default', ['typescript:build']);
-    grunt.registerTask('test', ['typescript:build', 'typescript:test', 'qunit']);
+    grunt.registerTask('test', ['typescript:build', 'typescript:test', 'blanket_qunit']);
     grunt.registerTask('stress', ['typescript:build', 'typescript:stress', 'connect', 'open', 'watch']);
     grunt.registerTask('lib:reset', ['clean', 'bower-install-simple', 'symlink:test', 'symlink:stress']);
     grunt.registerTask('dist:upbuild', ['bump-build', 'version-apply', 'typescript:build', 'uglify:dist']);
