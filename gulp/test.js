@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-    ts = require('gulp-tsc'),
+    ts = require('gulp-typescript'),
     sourcemaps = require('gulp-sourcemaps'),
     qunit = require('gulp-qunit');
 

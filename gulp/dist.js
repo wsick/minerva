@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-    ts = require('gulp-tsc'),
+    ts = require('gulp-typescript'),
     sourcemaps = require('gulp-sourcemaps'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
