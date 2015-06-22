@@ -1,5 +1,5 @@
 module minerva.core.hittest.tapins.tests {
-    QUnit.module("Hit Test Pipe Tapins");
+    QUnit.module("core.tapins.hittest");
 
     var mock = {
         updater: function (): Updater {
@@ -16,7 +16,7 @@ module minerva.core.hittest.tapins.tests {
             };
         },
         ctx: function (): render.RenderContext {
-            return new render.RenderContext(document.createElement('canvas').getContext('2d'));
+            return new render.RenderContext(<CanvasRenderingContext2D>document.createElement('canvas').getContext('2d'));
         },
         walk: function (children: Updater[]): (direction?: WalkDirection) => IWalker<Updater> {
             children.push(mock.updater());

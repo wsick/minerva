@@ -3,14 +3,14 @@ module minerva.core.processup.tapins {
         if ((input.dirtyFlags & DirtyFlags.Bounds) === 0)
             return true;
 
-        var as = state.actualSize;
-        as.width = input.actualWidth;
-        as.height = input.actualHeight;
-        helpers.coerceSize(as, input);
-        if (isNaN(as.width))
-            as.width = 0;
-        if (isNaN(as.height))
-            as.height = 0;
+        var actual = state.actualSize;
+        actual.width = input.actualWidth;
+        actual.height = input.actualHeight;
+        helpers.coerceSize(actual, input);
+        if (isNaN(actual.width))
+            actual.width = 0;
+        if (isNaN(actual.height))
+            actual.height = 0;
 
         return true;
     };

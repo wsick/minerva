@@ -3,6 +3,7 @@ module minerva.controls.textblock {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         layout(constraint: Size, docctx: text.IDocumentContext): Size;
         render(ctx: core.render.RenderContext, docctx: text.IDocumentContext);
+        setMaxWidth (width: number, docctx: text.IDocumentContext);
         setAvailableWidth(width: number);
         getHorizontalOffset(docctx: text.IDocumentContext): number;
         walkText(): IWalker<text.TextUpdater>;
@@ -13,22 +14,26 @@ module minerva.controls.textblock {
         doc: text.IDocumentLayout<text.IDocumentLayoutDef, text.IDocumentAssets>;
         children: text.TextUpdater[] = [];
 
-        layout(constraint: Size, docctx: text.IDocumentContext): Size {
+        setMaxWidth (width: number, docctx: text.IDocumentContext) {
+            return this.doc.def.setMaxWidth(docctx, this.doc.assets, width);
+        }
+
+        layout (constraint: Size, docctx: text.IDocumentContext): Size {
             var doc = this.doc;
             doc.def.layout(docctx, doc.assets, constraint, this.walkText());
             return new Size(doc.assets.actualWidth, doc.assets.actualHeight);
         }
 
-        render(ctx: core.render.RenderContext, docctx: text.IDocumentContext) {
+        render (ctx: core.render.RenderContext, docctx: text.IDocumentContext) {
             var doc = this.doc;
             doc.def.render(ctx, docctx, doc.assets);
         }
 
-        setAvailableWidth(width: number) {
+        setAvailableWidth (width: number) {
             this.doc.assets.availableWidth = width;
         }
 
-        getHorizontalOffset(docctx: text.IDocumentContext): number {
+        getHorizontalOffset (docctx: text.IDocumentContext): number {
             var doc = this.doc;
             return doc.def.getHorizontalAlignmentX(docctx, doc.assets, doc.assets.actualWidth);
         }

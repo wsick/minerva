@@ -23,6 +23,11 @@ module minerva {
                 && size1.height === size2.height;
         }
 
+        static isEmpty (size: Size): boolean {
+            return size.width === 0
+                || size.height === 0;
+        }
+
         static min (dest: ISize, size2: ISize) {
             dest.width = Math.min(dest.width, size2.width);
             dest.height = Math.min(dest.height, size2.height);

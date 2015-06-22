@@ -1,5 +1,5 @@
 module minerva.shapes.shape.measure.tests {
-    QUnit.module("Shape Measure Tests");
+    QUnit.module("shapes.shape.measure");
 
     var mock = {
         input: function (): IInput {
@@ -58,19 +58,19 @@ module minerva.shapes.shape.measure.tests {
         input.stretch = Stretch.None;
         output.naturalBounds = new Rect(0, 0, 50, 50);
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(0, 0));
+        assert.deepEqual(output.desiredSize, new Size(50, 50));
 
         input.stretch = Stretch.Fill;
         state.availableSize = new Size(100, 150);
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(0, 0));
+        assert.deepEqual(output.desiredSize, new Size(100, 150));
 
         input.stretch = Stretch.Uniform;
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(0, 0));
+        assert.deepEqual(output.desiredSize, new Size(100, 100));
 
         input.stretch = Stretch.UniformToFill;
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(output.desiredSize, new Size(0, 0));
+        assert.deepEqual(output.desiredSize, new Size(150, 150));
     });
 }

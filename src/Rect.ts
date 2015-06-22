@@ -25,6 +25,10 @@ module minerva {
             this.height = height == null ? 0 : height;
         }
 
+        static clear (rect: Rect) {
+            rect.x = rect.y = rect.width = rect.height = 0;
+        }
+
         static getBottom (rect: Rect): number {
             return rect.y + rect.height;
         }

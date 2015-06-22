@@ -4,11 +4,10 @@ module minerva.core.processdown.tapins {
             return true;
 
         var rx = output.renderXform;
+        mat3.copyTo(state.localXform, rx);
+        mat3.apply(rx, input.layoutXform);
         if (input.carrierXform)
-            mat3.multiply(input.carrierXform, input.layoutXform, rx); //render = carrier * layout
-        else
-            mat3.copyTo(input.layoutXform, rx); //render = layout
-        mat3.multiply(rx, state.localXform, rx); //render = render * local
+            mat3.apply(rx, input.carrierXform);
 
         return true;
     };

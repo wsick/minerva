@@ -1,5 +1,5 @@
 module minerva.text.layout.tests {
-    QUnit.module("Text Layout: Run");
+    QUnit.module("text.layout.run");
 
     var mock = {
         textAssets: function (): text.ITextAssets {

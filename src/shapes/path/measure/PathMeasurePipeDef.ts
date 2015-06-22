@@ -13,8 +13,7 @@ module minerva.shapes.path.measure {
         constructor () {
             super();
             this.addTapinBefore('calcNaturalBounds', 'buildPath', tapins.buildPath)
-                .replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds)
-                .addTapinAfter('doOverride', 'adjustNoStretchDesired', tapins.adjustNoStretchDesired);
+                .replaceTapin('calcNaturalBounds', tapins.calcNaturalBounds);
         }
     }
 
@@ -29,17 +28,6 @@ module minerva.shapes.path.measure {
             if (input.data) {
                 var bounds = input.data.GetBounds(input);
                 Rect.copyTo(bounds, nb);
-            }
-
-            return true;
-        }
-
-        export function adjustNoStretchDesired (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
-            if (input.stretch === Stretch.None) {
-                var nb = output.naturalBounds;
-                var ds = output.desiredSize;
-                ds.width = nb.width + Math.max(0, nb.x);
-                ds.height = nb.height + Math.max(0, nb.y);
             }
 
             return true;

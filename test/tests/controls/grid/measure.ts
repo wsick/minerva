@@ -1,5 +1,5 @@
 module minerva.controls.grid.measure.tests {
-    QUnit.module("Grid Measure Pipe Tapins");
+    QUnit.module("controls.grid.measure");
 
     var mock = {
         input: function (): IInput {

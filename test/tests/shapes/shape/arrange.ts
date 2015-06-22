@@ -1,5 +1,5 @@
 module minerva.shapes.shape.arrange.tests {
-    QUnit.module("Shape Arrange Tests");
+    QUnit.module("shapes.shape.arrange");
 
     var mock = {
         input: function (): IInput {
@@ -53,7 +53,7 @@ module minerva.shapes.shape.arrange.tests {
         input.naturalBounds = new Rect(0, 0, 50, 50);
         input.stretch = Stretch.None;
         assert.ok(tapins.doOverride(input, state, output, null));
-        assert.deepEqual(state.arrangedSize, new Size(0, 0));
+        assert.deepEqual(state.arrangedSize, new Size(100, 150));
 
         input.stretch = Stretch.Fill;
         assert.ok(tapins.doOverride(input, state, output, null));

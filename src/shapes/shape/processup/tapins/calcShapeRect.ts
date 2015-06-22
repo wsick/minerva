@@ -4,7 +4,8 @@ module minerva.shapes.shape.processup.tapins {
             return true;
 
         var sr = output.shapeRect;
-        Rect.copyTo(output.extents, sr);
+        sr.x = sr.y = 0;
+        Size.copyTo(state.actualSize, sr);
 
         output.shapeFlags = ShapeFlags.Empty;
         if (Rect.isEmpty(sr))

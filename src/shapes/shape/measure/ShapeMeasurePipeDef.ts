@@ -31,19 +31,4 @@ module minerva.shapes.shape.measure {
             Rect.copyTo(output.naturalBounds, input.naturalBounds);
         }
     }
-
-    export module tapins {
-        export function calcNaturalBounds (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
-            var nb = output.naturalBounds;
-            nb.x = nb.y = 0;
-            nb.width = nb.height = 1;
-            return true;
-        }
-
-        export function doOverride (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
-            var ds = output.desiredSize;
-            ds.width = ds.height = 0;
-            return true;
-        }
-    }
 }

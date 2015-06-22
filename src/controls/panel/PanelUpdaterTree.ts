@@ -3,13 +3,13 @@ module minerva.controls.panel {
         children: core.Updater[] = null;
         zSorted: core.Updater[] = null;
 
-        constructor() {
+        constructor () {
             super();
             this.isContainer = true;
             this.isLayoutContainer = true;
         }
 
-        walk(direction?: WalkDirection): IWalker<core.Updater> {
+        walk (direction?: WalkDirection): IWalker<core.Updater> {
             if (direction === WalkDirection.ZForward || direction === WalkDirection.ZReverse) {
                 this.zSort();
                 return walkArray(this.zSorted, direction === WalkDirection.ZReverse);
@@ -17,29 +17,31 @@ module minerva.controls.panel {
             return walkArray(this.children, direction === WalkDirection.Reverse);
         }
 
-        zSort() {
+        zSort () {
             var zs = this.zSorted;
             if (zs) //NOTE: zSorted = null when invalidated
                 return;
             zs = this.zSorted = [];
-            for (var walker = this.walk(); walker.step();) {
-                zs.push(walker.current);
+            for (var i = 0, walker = this.walk(); walker.step(); i++) {
+                let cur = walker.current;
+                cur.setAttachedValue("Panel.Index", i);
+                zs.push(cur);
             }
             zs.sort(zIndexComparer);
         }
 
-        onChildAttached(child: core.Updater) {
+        onChildAttached (child: core.Updater) {
             this.zSorted = null;
         }
 
-        onChildDetached(child: core.Updater) {
+        onChildDetached (child: core.Updater) {
             this.zSorted = null;
         }
     }
 
     function walkArray<T extends core.Updater>(arr: T[], reverse: boolean): IWalker<core.Updater> {
         var len = arr.length;
-        var e = <IWalker<T>>{ step: undefined, current: undefined };
+        var e = <IWalker<T>>{step: undefined, current: undefined};
         var index;
         if (reverse) {
             index = len;
@@ -67,9 +69,17 @@ module minerva.controls.panel {
         return e;
     }
 
-    function zIndexComparer(upd1: core.Updater, upd2: core.Updater): number {
-        var zi1 = upd1.getAttachedValue("Panel.ZIndex") || 0;
-        var zi2 = upd2.getAttachedValue("Panel.ZIndex") || 0;
+    function zIndexComparer (upd1: core.Updater, upd2: core.Updater): number {
+        var zi1 = upd1.getAttachedValue("Panel.ZIndex");
+        var zi2 = upd2.getAttachedValue("Panel.ZIndex");
+        if (zi1 == null && zi2 == null) {
+            zi1 = upd1.getAttachedValue("Panel.Index");
+            zi2 = upd2.getAttachedValue("Panel.Index");
+        } else if (zi1 == null) {
+            return zi2 > 0 ? -1 : 1;
+        } else if (zi2 == null) {
+            return zi1 > 0 ? 1 : -1;
+        }
         return zi1 === zi2 ? 0 : ((zi1 < zi2) ? -1 : 1);
     }
 }

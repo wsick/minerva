@@ -117,8 +117,8 @@ module minerva.text.run {
                 run.length = (breakIndex - start) || 1; //Force at least 1 character
                 run.text = text.substr(start, run.length);
                 run.width = measureTextWidth(run.text, font);
-                pass.index = breakIndex;
-                return true;
+                pass.index = start + run.length;
+                return pass.index < pass.max;
             }
             if (c === ' ')
                 lastSpace = pass.index;

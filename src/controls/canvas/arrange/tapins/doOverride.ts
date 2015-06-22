@@ -10,6 +10,7 @@ module minerva.controls.canvas.arrange.tapins {
             cr.y = child.getAttachedValue("Canvas.Top") || 0;
             child.arrange(cr);
         }
+        Size.copyTo(state.finalSize, state.arrangedSize);
         return true;
     }
 }

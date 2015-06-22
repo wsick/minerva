@@ -1,5 +1,5 @@
 module minerva.controls.textblock.tests {
-    QUnit.module("TextBlock Updater Tests");
+    QUnit.module("controls.textblock.updater");
 
     var mock = {
         textUpdater: function (): text.TextUpdater {
@@ -28,8 +28,11 @@ module minerva.controls.textblock.tests {
         var updater = new TextBlockUpdater();
         updater.assets.textWrapping = TextWrapping.NoWrap;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
+        var fheight = minerva.fontHeight.get(run.assets.font);
 
         run.assets.text = "";
         updater.invalidateTextMetrics();
@@ -38,7 +41,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "");
         assert.strictEqual(docassets.actualWidth, 0);
-        assert.strictEqual(docassets.actualHeight, 19);
+        assert.strictEqual(docassets.actualHeight, fheight);
     });
 
     QUnit.test("NoWrap", (assert) => {
@@ -46,8 +49,11 @@ module minerva.controls.textblock.tests {
         updater.assets.textWrapping = TextWrapping.NoWrap;
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
+        var fheight = minerva.fontHeight.get(run.assets.font);
 
         var alltext = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris efficitur nunc lobortis varius dignissim. Sed sed sem non orci laoreet tempus. Nullam a nisi consequat, dignissim diam volutpat, blandit augue. Praesent et nulla nec ante consectetur varius et condimentum leo. Nam ornare odio neque, ut lobortis purus volutpat eu. In hac habitasse platea dictumst. Etiam accumsan bibendum vehicula.";
         run.assets.text = alltext;
@@ -57,7 +63,7 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, alltext);
         assert.strictEqual(docassets.actualWidth, mock.measure(alltext, run.assets.font, true));
-        assert.strictEqual(docassets.actualHeight, 19);
+        assert.strictEqual(docassets.actualHeight, fheight);
 
         run.assets.text = "Lorem";
         updater.invalidateTextMetrics();
@@ -66,13 +72,15 @@ module minerva.controls.textblock.tests {
         assert.strictEqual(docassets.lines[0].runs.length, 1);
         assert.strictEqual(docassets.lines[0].runs[0].text, "Lorem");
         assert.strictEqual(docassets.actualWidth, mock.measure("Lorem", run.assets.font, true));
-        assert.strictEqual(docassets.actualHeight, 19);
+        assert.strictEqual(docassets.actualHeight, fheight);
     });
 
     QUnit.test("NoWrap - Infinite width with line breaks", (assert) => {
         var updater = new TextBlockUpdater();
 
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -96,6 +104,8 @@ module minerva.controls.textblock.tests {
         var updater = new TextBlockUpdater();
 
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -120,6 +130,8 @@ module minerva.controls.textblock.tests {
         updater.assets.textWrapping = TextWrapping.Wrap;
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -157,6 +169,8 @@ module minerva.controls.textblock.tests {
 
         updater.assets.maxWidth = 99;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -183,6 +197,8 @@ module minerva.controls.textblock.tests {
 
         updater.assets.maxWidth = Number.POSITIVE_INFINITY;
         var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
         updater.tree.onTextAttached(run);
         var docassets = updater.tree.doc.assets;
 
@@ -198,6 +214,33 @@ module minerva.controls.textblock.tests {
             mock.run("dolor sit amet,\r\n", 0, run.assets),
             mock.run("consectetur adipiscing\n", 0, run.assets),
             mock.run("elit.", 0, run.assets)
+        ];
+        runs.forEach((run, i?) => assert.deepEqual(run, expectedRuns[i]));
+    });
+
+    QUnit.test("Wrap - Small width preventing auto line breaking", (assert) => {
+        var updater = new TextBlockUpdater();
+        updater.assets.textWrapping = TextWrapping.Wrap;
+
+        updater.assets.maxWidth = 1;
+        var run = mock.textUpdater();
+        run.assets.fontFamily = "Arial";
+        run.invalidateFont();
+        updater.tree.onTextAttached(run);
+        var docassets = updater.tree.doc.assets;
+
+        run.assets.text = "Text";
+        updater.invalidateTextMetrics();
+        updater.tree.layout(new Size(1, Number.POSITIVE_INFINITY), updater.assets);
+        assert.strictEqual(docassets.lines.length, 4);
+        docassets.lines.forEach(line => assert.strictEqual(line.width, line.runs.reduce<number>((agg, run) => agg + run.width, 0), "Line Width === Run Widths"));
+        var runs = docassets.lines.reduce<minerva.text.layout.Run[]>((agg, line) => agg.concat(line.runs), []);
+        runs.forEach(run => delete run.attrs);
+        var expectedRuns = [
+            mock.run("T", 0, run.assets),
+            mock.run("e", 0, run.assets),
+            mock.run("x", 0, run.assets),
+            mock.run("t", 0, run.assets)
         ];
         runs.forEach((run, i?) => assert.deepEqual(run, expectedRuns[i]));
     });

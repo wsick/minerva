@@ -23,35 +23,4 @@ module minerva.shapes.shape.arrange {
             this.replaceTapin('doOverride', tapins.doOverride);
         }
     }
-
-    export module tapins {
-        export function doOverride (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) {
-            var sx: number;
-            var sy: number;
-            var nb = input.naturalBounds;
-            var fs = state.finalSize;
-            switch (input.stretch) {
-                case Stretch.None:
-                    sx = sy = 0;
-                    break;
-                default:
-                case Stretch.Fill:
-                    sx = fs.width / nb.width;
-                    sy = fs.height / nb.height;
-                    break;
-                case Stretch.Uniform:
-                    sx = sy = Math.min(fs.width / nb.width, fs.height / nb.height);
-                    break;
-                case Stretch.UniformToFill:
-                    sx = sy = Math.max(fs.width / nb.width, fs.height / nb.height);
-                    break;
-            }
-
-            var as = state.arrangedSize;
-            as.width = (nb.width * sx) || 0;
-            as.height = (nb.height * sy) || 0;
-
-            return true;
-        }
-    }
 }

@@ -8,7 +8,8 @@ module minerva.shapes.ellipse {
         assets: IEllipseUpdaterAssets;
 
         init () {
-            this.setRenderPipe(singleton(render.EllipseRenderPipeDef))
+            this.setMeasurePipe(singleton(measure.EllipseMeasurePipeDef))
+                .setRenderPipe(singleton(render.EllipseRenderPipeDef))
                 .setHitTestPipe(singleton(hittest.EllipseHitTestPipeDef));
 
             var assets = this.assets;

@@ -9,4 +9,4 @@ install:
   - npm install
   - bower install
 before_script: grunt symlink:test
-script: grunt test --verbose
+script: grunt test

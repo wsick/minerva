@@ -1,12 +1,3 @@
-interface CanvasRenderingContext2D {
-    isPointInStroke(x: number, y: number): boolean;
-}
-if (!CanvasRenderingContext2D.prototype.isPointInStroke) {
-    CanvasRenderingContext2D.prototype.isPointInStroke = function (x: number, y: number) {
-        return false;
-    };
-}
-
 module minerva.core.render {
     export interface IStrokeParameters {
         stroke: IBrush;
@@ -17,7 +8,7 @@ module minerva.core.render {
         strokeMiterLimit: number;
     }
 
-    var ARC_TO_BEZIER = 0.55228475;
+    var epsilon = 1e-10;
     var caps: string[] = [
         "butt", //flat
         "square", //square
@@ -34,11 +25,15 @@ module minerva.core.render {
         currentTransform = mat3.identity();
         raw: CanvasRenderingContext2D;
         hasFillRule: boolean;
+        dpiRatio: number;
 
         constructor (ctx: CanvasRenderingContext2D) {
             Object.defineProperty(this, 'raw', {value: ctx, writable: false});
             Object.defineProperty(this, 'currentTransform', {value: mat3.identity(), writable: false});
             Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false});
+            var ratio = (window.devicePixelRatio || 1) / ctx.backingStorePixelRatio;
+            Object.defineProperty(this, 'dpiRatio', {value: ratio, writable: false});
+            this.scale(ratio, ratio);
         }
 
         static get hasFillRule (): boolean {
@@ -51,8 +46,17 @@ module minerva.core.render {
 
         resize (width: number, height: number) {
             var canvas = this.raw.canvas;
-            canvas.width = width;
-            canvas.height = height;
+            if (Math.abs(this.dpiRatio - 1) < epsilon) {
+                canvas.width = width;
+                canvas.height = height;
+            } else {
+                // Size the canvas width and height (the virtual canvas size) to the scaled up pixel count.
+                canvas.width = width * this.dpiRatio;
+                canvas.height = height * this.dpiRatio;
+                // Size the physical canvas using CSS width and height to the pixel dimensions.
+                canvas.style.width = width.toString() + "px";
+                canvas.style.height = height.toString() + "px";
+            }
         }
 
         save () {
@@ -102,15 +106,13 @@ module minerva.core.render {
             this.raw.translate(x, y);
         }
 
-        transformMatrix (mat: number[]) {
-            var ct = this.currentTransform;
-            mat3.multiply(ct, mat, ct); //ct = ct * matrix
+        apply (mat: number[]) {
+            var ct = mat3.apply(this.currentTransform, mat);
             this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
         }
 
-        pretransformMatrix (mat: number[]) {
-            var ct = this.currentTransform;
-            mat3.multiply(mat, ct, ct); //ct = matrix * ct
+        preapply (mat: number[]) {
+            var ct = mat3.preapply(this.currentTransform, mat);
             this.raw.setTransform(ct[0], ct[1], ct[2], ct[3], ct[4], ct[5]);
         }
 
@@ -138,53 +140,6 @@ module minerva.core.render {
                 (<any>raw).fillRule = raw.msFillRule = fr;
                 raw.fill(fr);
             }
-        }
-
-        drawRectEx (extents: Rect, cr?: ICornerRadius) {
-            var raw = this.raw;
-            if (!cr || CornerRadius.isEmpty(cr)) {
-                raw.rect(extents.x, extents.y, extents.width, extents.height);
-                return;
-            }
-
-            var top_adj = Math.max(cr.topLeft + cr.topRight - extents.width, 0) / 2;
-            var bottom_adj = Math.max(cr.bottomLeft + cr.bottomRight - extents.width, 0) / 2;
-            var left_adj = Math.max(cr.topLeft + cr.bottomLeft - extents.height, 0) / 2;
-            var right_adj = Math.max(cr.topRight + cr.bottomRight - extents.height, 0) / 2;
-
-            var tlt = cr.topLeft - top_adj;
-            raw.moveTo(extents.x + tlt, extents.y);
-
-            var trt = cr.topRight - top_adj;
-            var trr = cr.topRight - right_adj;
-            raw.lineTo(extents.x + extents.width - trt, extents.y);
-            raw.bezierCurveTo(
-                extents.x + extents.width - trt + trt * ARC_TO_BEZIER, extents.y,
-                extents.x + extents.width, extents.y + trr - trr * ARC_TO_BEZIER,
-                extents.x + extents.width, extents.y + trr);
-
-            var brr = cr.bottomRight - right_adj;
-            var brb = cr.bottomRight - bottom_adj;
-            raw.lineTo(extents.x + extents.width, extents.y + extents.height - brr);
-            raw.bezierCurveTo(
-                extents.x + extents.width, extents.y + extents.height - brr + brr * ARC_TO_BEZIER,
-                extents.x + extents.width + brb * ARC_TO_BEZIER - brb, extents.y + extents.height,
-                extents.x + extents.width - brb, extents.y + extents.height);
-
-            var blb = cr.bottomLeft - bottom_adj;
-            var bll = cr.bottomLeft - left_adj;
-            raw.lineTo(extents.x + blb, extents.y + extents.height);
-            raw.bezierCurveTo(
-                extents.x + blb - blb * ARC_TO_BEZIER, extents.y + extents.height,
-                extents.x, extents.y + extents.height - bll + bll * ARC_TO_BEZIER,
-                extents.x, extents.y + extents.height - bll);
-
-            var tll = cr.topLeft - left_adj;
-            raw.lineTo(extents.x, extents.y + tll);
-            raw.bezierCurveTo(
-                extents.x, extents.y + tll - tll * ARC_TO_BEZIER,
-                extents.x + tlt - tlt * ARC_TO_BEZIER, extents.y,
-                extents.x + tlt, extents.y);
         }
 
         isPointInStrokeEx (strokePars: IStrokeParameters, x: number, y: number): boolean {
