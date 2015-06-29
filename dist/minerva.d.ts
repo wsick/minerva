@@ -1072,6 +1072,8 @@ declare module minerva.core.render {
     }
     class RenderContext {
         private $$transforms;
+        private $$width;
+        private $$height;
         currentTransform: number[];
         raw: CanvasRenderingContext2D;
         hasFillRule: boolean;
