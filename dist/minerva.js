@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.22';
+    minerva.version = '0.4.23';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -3555,6 +3555,8 @@ var minerva;
                 function RenderContext(ctx) {
                     this.$$transforms = [];
                     this.currentTransform = minerva.mat3.identity();
+                    this.$$width = ctx.canvas.width;
+                    this.$$height = ctx.canvas.height;
                     Object.defineProperty(this, 'raw', { value: ctx, writable: false });
                     Object.defineProperty(this, 'currentTransform', { value: minerva.mat3.identity(), writable: false });
                     Object.defineProperty(this, 'hasFillRule', { value: RenderContext.hasFillRule, writable: false });
@@ -3574,6 +3576,10 @@ var minerva;
                     configurable: true
                 });
                 RenderContext.prototype.resize = function (width, height) {
+                    if (Math.abs(this.$$width - width) < epsilon && Math.abs(this.$$height - height) < epsilon)
+                        return;
+                    this.$$width = width;
+                    this.$$height = height;
                     var canvas = this.raw.canvas;
                     if (Math.abs(this.dpiRatio - 1) < epsilon) {
                         canvas.width = width;

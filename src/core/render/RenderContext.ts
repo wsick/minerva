@@ -22,12 +22,16 @@ module minerva.core.render {
     ];
     export class RenderContext {
         private $$transforms = [];
+        private $$width: number;
+        private $$height: number;
         currentTransform = mat3.identity();
         raw: CanvasRenderingContext2D;
         hasFillRule: boolean;
         dpiRatio: number;
 
         constructor (ctx: CanvasRenderingContext2D) {
+            this.$$width = ctx.canvas.width;
+            this.$$height = ctx.canvas.height;
             Object.defineProperty(this, 'raw', {value: ctx, writable: false});
             Object.defineProperty(this, 'currentTransform', {value: mat3.identity(), writable: false});
             Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false});
@@ -45,6 +49,11 @@ module minerva.core.render {
         }
 
         resize (width: number, height: number) {
+            if (Math.abs(this.$$width - width) < epsilon && Math.abs(this.$$height - height) < epsilon)
+                return;
+            this.$$width = width;
+            this.$$height = height;
+
             var canvas = this.raw.canvas;
             if (Math.abs(this.dpiRatio - 1) < epsilon) {
                 canvas.width = width;
