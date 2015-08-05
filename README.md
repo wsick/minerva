@@ -20,3 +20,36 @@ Documentation
 
 * See [pipeline](docs/pipeline.md) notes for information on how pipelines work.
 * See [engine](docs/engine.md) notes for information on how the presentation engine works.
+
+
+Development
+=======
+
+### Prerequisites
+
+```
+$ npm install -g gulp
+$ npm install -g bower
+$ npm install -g fayde-unify
+```
+
+### Setup
+
+```
+$ git clone git@github.com:wsick/nullstone.git
+$ cd nullstone
+$ npm install
+$ gulp reset # cleans bower libs, bower installs, then symlinks to test and stress bootstrappers
+```
+
+### Unit Tests
+
+```
+$ gulp test
+```
+
+### Stress Tests
+Launches default browser with runnable stress tests.
+```
+$ gulp stress
+```
