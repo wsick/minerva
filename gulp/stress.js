@@ -17,7 +17,7 @@ module.exports = function (meta) {
                 target: 'ES5',
                 module: 'amd',
                 outDir: 'stress/.build/',
-                pathFilter: { 'stress': '' }
+                pathFilter: {'stress': ''}
             }))
             .pipe(sourcemaps.write())
             .pipe(gulp.dest('stress/.build/'))

@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-    clean = require('gulp-clean'),
+    del = require('del'),
     symlink = require('gulp-symlink'),
     runSequence = require('run-sequence').use(gulp),
     bower = require('gulp-bower'),
@@ -7,9 +7,12 @@ var gulp = require('gulp'),
     glob = require('glob');
 
 module.exports = function (meta) {
-    gulp.task('clean', function () {
-        return gulp.src(['./lib', './test/lib', './stress/lib'], {read: false})
-            .pipe(clean());
+    gulp.task('clean', function (cb) {
+        del([
+            './lib',
+            './test/lib',
+            './stress/lib'
+        ], cb);
     });
 
     gulp.task('update-libs', function () {
