@@ -22,7 +22,7 @@ Documentation
 * See [engine](docs/engine.md) notes for information on how the presentation engine works.
 
 
-Development
+Contributing
 =======
 
 ### Prerequisites
