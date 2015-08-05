@@ -1,3 +1,5 @@
+/// <reference path="../../GridUnitType.ts" />
+
 module minerva.controls.grid.measure.tapins {
     var DEFAULT_GRID_LEN: IGridLength = {
         Value: 1.0,

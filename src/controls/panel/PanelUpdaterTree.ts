@@ -23,7 +23,7 @@ module minerva.controls.panel {
                 return;
             zs = this.zSorted = [];
             for (var i = 0, walker = this.walk(); walker.step(); i++) {
-                let cur = walker.current;
+                var cur = walker.current;
                 cur.setAttachedValue("Panel.Index", i);
                 zs.push(cur);
             }

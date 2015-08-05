@@ -1,3 +1,5 @@
+/// <reference path="../virtualizingpanel/VirtualizingPanelUpdater" />
+
 module minerva.controls.virtualizingstackpanel {
     export interface IVirtualizingStackPanelUpdaterAssets extends panel.IPanelUpdaterAssets, measure.IInput, arrange.IInput {
     }
