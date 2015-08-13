@@ -7,7 +7,7 @@ var gulp = require('gulp'),
 module.exports = function (meta) {
     gulp.task('test-build', function () {
         return gulp.src([
-            'typings/*.d.ts',
+            'typings/tsd.d.ts',
             'test/**/*.ts',
             '!test/lib/**/*.ts',
             'dist/' + meta.name + '.d.ts'

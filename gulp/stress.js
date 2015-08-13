@@ -7,7 +7,7 @@ var gulp = require('gulp'),
 module.exports = function (meta) {
     gulp.task('stress-build', function () {
         return gulp.src([
-            'typings/*.d.ts',
+            'typings/tsd.d.ts',
             'stress/**/*.ts',
             '!stress/lib/**/*.ts',
             'dist/' + meta.name + '.d.ts'

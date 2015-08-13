@@ -2,7 +2,7 @@ var fs = require('fs'),
     meta = {
         name: 'minerva',
         buildfiles: [
-            'typings/**/*.d.ts',
+            'typings/tsd.d.ts',
             'lib/perfex/dist/perfex.d.ts',
             'src/_Version.ts',
             'src/*.ts',

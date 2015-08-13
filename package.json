@@ -42,5 +42,8 @@
     "merge2": "^0.3.3",
     "run-sequence": "^1.0.2",
     "version-ts": "^0.1.1"
+  },
+  "typescript": {
+    "definitions": ["dist/minerva.d.ts"]
   }
 }

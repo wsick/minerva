@@ -36,5 +36,8 @@
   },
   "dependencies": {
     "perfex": "~0.1.3"
+  },
+  "typescript": {
+    "definitions": ["dist/minerva.d.ts"]
   }
 }
