@@ -72,21 +72,19 @@ module minerva.controls.image.processdown.tests {
         },
         imageSource: function (): IImageSource {
             return <IImageSource>{
-                islocked: false,
-                image: null,
-                pixelWidth: 0,
-                pixelHeight: 0,
-                lock: function () {
-                    this.islocked = true;
+                draw(ctx: CanvasRenderingContext2D) {
                 },
-                unlock: function () {
-                    this.islocked = false;
-                }
+                createPattern(ctx: CanvasRenderingContext2D) {
+
+                },
+                isEmpty: true,
+                pixelWidth: 0,
+                pixelHeight: 0
             };
         }
     };
 
-    function typedToArray (typed) {
+    function typedToArray(typed) {
         var arr = [];
         for (var i = 0; i < typed.length; i++) {
             arr.push(typed[i]);
@@ -125,10 +123,8 @@ module minerva.controls.image.processdown.tests {
         input.source = mock.imageSource();
         input.source.pixelWidth = 50;
         input.source.pixelHeight = 100;
-        assert.strictEqual((<any>input.source).islocked, false);
         assert.ok(tapins.prepareImageMetrics(input, state, output, vpinput, null));
         assert.deepEqual(state.imgRect, new Rect(0, 0, 50, 100));
-        assert.strictEqual((<any>input.source).islocked, false);
 
         input.actualWidth = 100;
         input.actualHeight = 200;
