@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.24';
+    minerva.version = '0.4.25';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -5743,6 +5743,162 @@ var minerva;
 (function (minerva) {
     var controls;
     (function (controls) {
+        var video;
+        (function (video) {
+            var arrange;
+            (function (arrange) {
+                var VideoArrangePipeDef = (function (_super) {
+                    __extends(VideoArrangePipeDef, _super);
+                    function VideoArrangePipeDef() {
+                        _super.call(this);
+                        this.addTapinAfter('invalidateFuture', 'invalidateMetrics', arrange.tapins.invalidateMetrics)
+                            .addTapinBefore('doOverride', 'calcVideoBounds', arrange.tapins.calcVideoBounds)
+                            .addTapinBefore('doOverride', 'calcStretch', arrange.tapins.calcStretch)
+                            .replaceTapin('doOverride', arrange.tapins.doOverride);
+                    }
+                    VideoArrangePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.videoBounds = new minerva.Rect();
+                        state.stretchX = 0;
+                        state.stretchY = 0;
+                        return state;
+                    };
+                    return VideoArrangePipeDef;
+                })(minerva.core.arrange.ArrangePipeDef);
+                arrange.VideoArrangePipeDef = VideoArrangePipeDef;
+            })(arrange = video.arrange || (video.arrange = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var hittest;
+            (function (hittest) {
+                var VideoHitTestPipeDef = (function (_super) {
+                    __extends(VideoHitTestPipeDef, _super);
+                    function VideoHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('insideChildren', hittest.tapins.insideChildren)
+                            .replaceTapin('canHitInside', hittest.tapins.canHitInside)
+                            .addTapinAfter('insideObject', 'insideStretch', hittest.tapins.insideStretch);
+                    }
+                    VideoHitTestPipeDef.prototype.prepare = function (data) {
+                        data.videoRect = data.videoRect || new minerva.Rect();
+                    };
+                    return VideoHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.VideoHitTestPipeDef = VideoHitTestPipeDef;
+            })(hittest = video.hittest || (video.hittest = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var measure;
+            (function (measure) {
+                var VideoMeasurePipeDef = (function (_super) {
+                    __extends(VideoMeasurePipeDef, _super);
+                    function VideoMeasurePipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('doOverride', 'calcVideoBounds', measure.tapins.calcVideoBounds)
+                            .addTapinBefore('doOverride', 'calcStretch', measure.tapins.calcStretch)
+                            .replaceTapin('doOverride', measure.tapins.doOverride);
+                    }
+                    VideoMeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.videoBounds = new minerva.Rect();
+                        state.stretchX = 0;
+                        state.stretchY = 0;
+                        return state;
+                    };
+                    return VideoMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.VideoMeasurePipeDef = VideoMeasurePipeDef;
+            })(measure = video.measure || (video.measure = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var processdown;
+            (function (processdown) {
+                var VideoProcessDownPipeDef = (function (_super) {
+                    __extends(VideoProcessDownPipeDef, _super);
+                    function VideoProcessDownPipeDef() {
+                        _super.call(this);
+                        this.addTapinBefore('processLayoutClip', 'checkNeedVideoMetrics', processdown.tapins.checkNeedVideoMetrics)
+                            .addTapinAfter('checkNeedVideoMetrics', 'prepareVideoMetrics', processdown.tapins.prepareVideoMetrics)
+                            .addTapinAfter('prepareVideoMetrics', 'calcVideoTransform', processdown.tapins.calcVideoTransform)
+                            .addTapinAfter('calcVideoTransform', 'calcOverlap', processdown.tapins.calcOverlap);
+                    }
+                    VideoProcessDownPipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.vidRect = new minerva.Rect();
+                        state.paintRect = new minerva.Rect();
+                        state.calcVideoMetrics = false;
+                        state.vidAdjust = false;
+                        return state;
+                    };
+                    VideoProcessDownPipeDef.prototype.createOutput = function () {
+                        var output = _super.prototype.createOutput.call(this);
+                        output.vidXform = minerva.mat3.identity();
+                        output.overlap = minerva.RectOverlap.In;
+                        return output;
+                    };
+                    VideoProcessDownPipeDef.prototype.prepare = function (input, state, output, vpinput, tree) {
+                        _super.prototype.prepare.call(this, input, state, output, vpinput, tree);
+                        output.overlap = input.overlap;
+                        minerva.mat3.copyTo(input.vidXform, output.vidXform);
+                    };
+                    VideoProcessDownPipeDef.prototype.flush = function (input, state, output, vpinput, tree) {
+                        _super.prototype.flush.call(this, input, state, output, vpinput, tree);
+                        input.overlap = output.overlap;
+                        minerva.mat3.copyTo(output.vidXform, input.vidXform);
+                    };
+                    return VideoProcessDownPipeDef;
+                })(minerva.core.processdown.ProcessDownPipeDef);
+                processdown.VideoProcessDownPipeDef = VideoProcessDownPipeDef;
+            })(processdown = video.processdown || (video.processdown = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var render;
+            (function (render) {
+                var VideoRenderPipeDef = (function (_super) {
+                    __extends(VideoRenderPipeDef, _super);
+                    function VideoRenderPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('doRender', render.tapins.doRender);
+                    }
+                    return VideoRenderPipeDef;
+                })(minerva.core.render.RenderPipeDef);
+                render.VideoRenderPipeDef = VideoRenderPipeDef;
+            })(render = video.render || (video.render = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
         var virtualizingstackpanel;
         (function (virtualizingstackpanel) {
             var arrange;
@@ -8333,6 +8489,475 @@ var minerva;
                 })(tapins = measure.tapins || (measure.tapins = {}));
             })(measure = usercontrol.measure || (usercontrol.measure = {}));
         })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var arrange;
+            (function (arrange) {
+                var tapins;
+                (function (tapins) {
+                    function calcStretch(input, state, output, tree, finalRect) {
+                        var ib = state.videoBounds;
+                        var sx = 1.0;
+                        var sy = 1.0;
+                        var fs = state.finalSize;
+                        if (ib.width !== fs.width)
+                            sx = fs.width / ib.width;
+                        if (ib.height !== fs.height)
+                            sy = fs.height / ib.height;
+                        switch (input.stretch) {
+                            case minerva.Stretch.Uniform:
+                                sx = sy = Math.min(sx, sy);
+                                break;
+                            case minerva.Stretch.UniformToFill:
+                                sx = sy = Math.max(sx, sy);
+                                break;
+                            case minerva.Stretch.None:
+                                sx = sy = 1.0;
+                                break;
+                            case minerva.Stretch.Fill:
+                            default:
+                                break;
+                        }
+                        state.stretchX = sx;
+                        state.stretchY = sy;
+                        return true;
+                    }
+                    tapins.calcStretch = calcStretch;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = video.arrange || (video.arrange = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var arrange;
+            (function (arrange) {
+                var tapins;
+                (function (tapins) {
+                    function calcVideoBounds(input, state, output, tree, finalRect) {
+                        var ib = state.videoBounds;
+                        ib.x = ib.y = ib.width = ib.height = 0;
+                        if (input.source) {
+                            ib.width = input.source.pixelWidth;
+                            ib.height = input.source.pixelHeight;
+                        }
+                        var fs = state.finalSize;
+                        if (ib.width === 0)
+                            ib.width = fs.width;
+                        if (ib.height === 0)
+                            ib.height = fs.height;
+                        return true;
+                    }
+                    tapins.calcVideoBounds = calcVideoBounds;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = video.arrange || (video.arrange = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var arrange;
+            (function (arrange) {
+                var tapins;
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, finalRect) {
+                        var as = state.arrangedSize;
+                        as.width = state.videoBounds.width * state.stretchX;
+                        as.height = state.videoBounds.height * state.stretchY;
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = video.arrange || (video.arrange = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var arrange;
+            (function (arrange) {
+                var tapins;
+                (function (tapins) {
+                    function invalidateMetrics(input, state, output, tree, finalRect) {
+                        output.dirtyFlags |= minerva.DirtyFlags.ImageMetrics;
+                        return true;
+                    }
+                    tapins.invalidateMetrics = invalidateMetrics;
+                })(tapins = arrange.tapins || (arrange.tapins = {}));
+            })(arrange = video.arrange || (video.arrange = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var hittest;
+            (function (hittest) {
+                var tapins;
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = video.hittest || (video.hittest = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var hittest;
+            (function (hittest) {
+                var tapins;
+                (function (tapins) {
+                    function insideChildren(data, pos, hitList, ctx) {
+                        hitList.unshift(data.updater);
+                        data.hitChildren = false;
+                        return true;
+                    }
+                    tapins.insideChildren = insideChildren;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = video.hittest || (video.hittest = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var hittest;
+            (function (hittest) {
+                var tapins;
+                (function (tapins) {
+                    function insideStretch(data, pos, hitList, ctx) {
+                        var source = data.assets.source;
+                        if (!source || source.pixelWidth === 0 || source.pixelHeight === 0) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        var stretch = data.assets.stretch;
+                        if (stretch === minerva.Stretch.Fill || stretch === minerva.Stretch.UniformToFill)
+                            return true;
+                        var ir = data.videoRect;
+                        ir.x = ir.y = 0;
+                        ir.width = source.pixelWidth;
+                        ir.height = source.pixelHeight;
+                        minerva.Rect.transform(ir, data.assets.vidXform);
+                        minerva.Rect.transform(ir, ctx.currentTransform);
+                        if (!minerva.Rect.containsPoint(ir, pos)) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        return true;
+                    }
+                    tapins.insideStretch = insideStretch;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = video.hittest || (video.hittest = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var measure;
+            (function (measure) {
+                var tapins;
+                (function (tapins) {
+                    function calcStretch(input, state, output, tree, availableSize) {
+                        var as = state.availableSize;
+                        var dw = as.width;
+                        var dh = as.height;
+                        var ib = state.videoBounds;
+                        if (!isFinite(dw))
+                            dw = ib.width;
+                        if (!isFinite(dh))
+                            dh = ib.height;
+                        var sx = 0.0;
+                        var sy = 0.0;
+                        if (ib.width > 0)
+                            sx = dw / ib.width;
+                        if (ib.height > 0)
+                            sy = dh / ib.height;
+                        if (!isFinite(as.width))
+                            sx = sy;
+                        if (!isFinite(as.height))
+                            sy = sx;
+                        switch (input.stretch) {
+                            default:
+                            case minerva.Stretch.Uniform:
+                                sx = sy = Math.min(sx, sy);
+                                break;
+                            case minerva.Stretch.UniformToFill:
+                                sx = sy = Math.max(sx, sy);
+                                break;
+                            case minerva.Stretch.Fill:
+                                if (!isFinite(as.width))
+                                    sx = sy;
+                                if (!isFinite(as.height))
+                                    sy = sx;
+                                break;
+                            case minerva.Stretch.None:
+                                sx = sy = 1.0;
+                                break;
+                        }
+                        state.stretchX = sx;
+                        state.stretchY = sy;
+                        return true;
+                    }
+                    tapins.calcStretch = calcStretch;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = video.measure || (video.measure = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var measure;
+            (function (measure) {
+                var tapins;
+                (function (tapins) {
+                    function calcVideoBounds(input, state, output, tree, availableSize) {
+                        var ib = state.videoBounds;
+                        ib.x = ib.y = ib.width = ib.height = 0;
+                        if (!input.source)
+                            return true;
+                        ib.width = input.source.pixelWidth;
+                        ib.height = input.source.pixelHeight;
+                        return true;
+                    }
+                    tapins.calcVideoBounds = calcVideoBounds;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = video.measure || (video.measure = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var measure;
+            (function (measure) {
+                var tapins;
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+                        ds.width = state.videoBounds.width * state.stretchX;
+                        ds.height = state.videoBounds.height * state.stretchY;
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = video.measure || (video.measure = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var processdown;
+            (function (processdown) {
+                var tapins;
+                (function (tapins) {
+                    function calcOverlap(input, state, output, vpinput, tree) {
+                        if (!state.calcVideoMetrics)
+                            return true;
+                        if (input.stretch === minerva.Stretch.UniformToFill || state.vidAdjust) {
+                            var paint = state.paintRect;
+                            minerva.Rect.roundOut(paint);
+                            var imgRect = state.vidRect;
+                            minerva.Rect.transform(imgRect, output.vidXform);
+                            minerva.Rect.roundIn(imgRect);
+                            output.overlap = minerva.Rect.rectIn(paint, imgRect);
+                        }
+                        return true;
+                    }
+                    tapins.calcOverlap = calcOverlap;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = video.processdown || (video.processdown = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var processdown;
+            (function (processdown) {
+                var tapins;
+                (function (tapins) {
+                    function calcVideoTransform(input, state, output, vpinput, tree) {
+                        if (!state.calcVideoMetrics)
+                            return true;
+                        var w = state.paintRect.width;
+                        var h = state.paintRect.height;
+                        var sw = state.vidRect.width;
+                        var sh = state.vidRect.height;
+                        var sx = w / sw;
+                        var sy = h / sh;
+                        if (w === 0)
+                            sx = 1.0;
+                        if (h === 0)
+                            sy = 1.0;
+                        var xform = output.vidXform;
+                        if (input.stretch === minerva.Stretch.Fill) {
+                            minerva.mat3.createScale(sx, sy, xform);
+                            return true;
+                        }
+                        var scale = 1.0;
+                        switch (input.stretch) {
+                            case minerva.Stretch.Uniform:
+                                scale = sx < sy ? sx : sy;
+                                break;
+                            case minerva.Stretch.UniformToFill:
+                                scale = sx < sy ? sy : sx;
+                                break;
+                            case minerva.Stretch.None:
+                                break;
+                        }
+                        var dx = (w - (scale * sw)) / 2;
+                        var dy = (h - (scale * sh)) / 2;
+                        minerva.mat3.createScale(scale, scale, xform);
+                        minerva.mat3.translate(xform, dx, dy);
+                        return true;
+                    }
+                    tapins.calcVideoTransform = calcVideoTransform;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = video.processdown || (video.processdown = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var processdown;
+            (function (processdown) {
+                var tapins;
+                (function (tapins) {
+                    function checkNeedVideoMetrics(input, state, output, vpinput, tree) {
+                        state.calcVideoMetrics = false;
+                        if ((input.dirtyFlags & minerva.DirtyFlags.ImageMetrics) === 0)
+                            return true;
+                        minerva.mat3.identity(output.vidXform);
+                        output.overlap = minerva.RectOverlap.In;
+                        var vidRect = state.vidRect;
+                        vidRect.x = vidRect.y = vidRect.width = vidRect.height = 0;
+                        state.calcVideoMetrics = !!input.source;
+                        return true;
+                    }
+                    tapins.checkNeedVideoMetrics = checkNeedVideoMetrics;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = video.processdown || (video.processdown = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var processdown;
+            (function (processdown) {
+                var tapins;
+                (function (tapins) {
+                    function prepareVideoMetrics(input, state, output, vpinput, tree) {
+                        if (!state.calcVideoMetrics)
+                            return true;
+                        var vidRect = state.vidRect;
+                        vidRect.x = vidRect.y = 0;
+                        var source = input.source;
+                        source.lock();
+                        vidRect.width = source.pixelWidth;
+                        vidRect.height = source.pixelHeight;
+                        source.unlock();
+                        var paintRect = state.paintRect;
+                        paintRect.x = paintRect.y = 0;
+                        paintRect.width = input.actualWidth;
+                        paintRect.height = input.actualHeight;
+                        state.vidAdjust = !minerva.Size.isEqual(paintRect, input.renderSize);
+                        if (input.stretch === minerva.Stretch.None)
+                            minerva.Rect.union(paintRect, vidRect);
+                        return true;
+                    }
+                    tapins.prepareVideoMetrics = prepareVideoMetrics;
+                })(tapins = processdown.tapins || (processdown.tapins = {}));
+            })(processdown = video.processdown || (video.processdown = {}));
+        })(video = controls.video || (controls.video = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var render;
+            (function (render) {
+                var tapins;
+                (function (tapins) {
+                    function doRender(input, state, output, ctx, region, tree) {
+                        var source = input.source;
+                        if (!source || source.pixelWidth === 0 || source.pixelHeight === 0)
+                            return true;
+                        source.lock();
+                        ctx.save();
+                        minerva.core.helpers.renderLayoutClip(ctx, input, tree);
+                        ctx.preapply(input.vidXform);
+                        ctx.raw.drawImage(source.video, region.x, region.y, region.width, region.height);
+                        ctx.restore();
+                        source.unlock();
+                        return true;
+                    }
+                    tapins.doRender = doRender;
+                })(tapins = render.tapins || (render.tapins = {}));
+            })(render = video.render || (video.render = {}));
+        })(video = controls.video || (controls.video = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
@@ -12077,6 +12702,41 @@ var minerva;
             })(controls.control.ControlUpdater);
             usercontrol.UserControlUpdater = UserControlUpdater;
         })(usercontrol = controls.usercontrol || (controls.usercontrol = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var video;
+        (function (video) {
+            var VideoUpdater = (function (_super) {
+                __extends(VideoUpdater, _super);
+                function VideoUpdater() {
+                    _super.apply(this, arguments);
+                }
+                VideoUpdater.prototype.init = function () {
+                    this.setMeasurePipe(minerva.singleton(video.measure.VideoMeasurePipeDef))
+                        .setArrangePipe(minerva.singleton(video.arrange.VideoArrangePipeDef))
+                        .setProcessDownPipe(minerva.singleton(video.processdown.VideoProcessDownPipeDef))
+                        .setRenderPipe(minerva.singleton(video.render.VideoRenderPipeDef))
+                        .setHitTestPipe(minerva.singleton(video.hittest.VideoHitTestPipeDef));
+                    var assets = this.assets;
+                    assets.source = null;
+                    assets.stretch = minerva.Stretch.Uniform;
+                    assets.overlap = minerva.RectOverlap.In;
+                    assets.vidXform = minerva.mat3.identity();
+                    _super.prototype.init.call(this);
+                };
+                VideoUpdater.prototype.invalidateMetrics = function () {
+                    this.assets.dirtyFlags |= minerva.DirtyFlags.ImageMetrics;
+                    minerva.core.Updater.$$addDownDirty(this);
+                    return this;
+                };
+                return VideoUpdater;
+            })(minerva.core.Updater);
+            video.VideoUpdater = VideoUpdater;
+        })(video = controls.video || (controls.video = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
 var minerva;
