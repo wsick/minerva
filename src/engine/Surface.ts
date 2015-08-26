@@ -13,6 +13,7 @@ module minerva.engine {
         private $$ctx: core.render.RenderContext = null;
 
         private $$layers: core.Updater[] = [];
+        private $$prerenderhooks: core.Updater[] = [];
 
         private $$downDirty: core.Updater[] = [];
         private $$upDirty: core.Updater[] = [];
@@ -96,6 +97,10 @@ module minerva.engine {
         }
 
         render () {
+            for (var i = 0, hooks = this.$$prerenderhooks; i < hooks.length; i++) {
+                hooks[i].preRender();
+            }
+
             var region = this.$$dirtyRegion;
             if (!region || Rect.isEmpty(region))
                 return;
@@ -117,6 +122,17 @@ module minerva.engine {
                 layers[i].render(ctx, region);
             }
             ctx.restore();
+        }
+
+        hookPrerender (updater: core.Updater) {
+            this.$$prerenderhooks.push(updater);
+        }
+
+        unhookPrerender (updater: core.Updater) {
+            var index = this.$$prerenderhooks.indexOf(updater);
+            if (index > -1) {
+                this.$$prerenderhooks.splice(index, 1);
+            }
         }
 
         addUpDirty (updater: core.Updater) {

@@ -23,6 +23,8 @@ module minerva.core {
         addDownDirty (updater: Updater);
         attachLayer (layer: core.Updater, root?: boolean);
         detachLayer (layer: core.Updater);
+        hookPrerender (updater: core.Updater);
+        unhookPrerender (updater: core.Updater);
     }
 
     export interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
