@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 module minerva.controls.video {
     export interface IVideoUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
     }
@@ -27,4 +28,19 @@ module minerva.controls.video {
             return this;
         }
     }
+=======
+module minerva.controls.video {
+    export class VideoUpdater extends core.Updater {
+        onSurfaceChanged (oldSurface: core.ISurface, newSurface: core.ISurface) {
+            if (oldSurface)
+                oldSurface.unhookPrerender(this);
+            if (newSurface)
+                newSurface.hookPrerender(this);
+        }
+
+        preRender () {
+            this.invalidate();
+        }
+    }
+>>>>>>> a1f2c23e28a9769d6e25e46e310bb8b7513a0d4c
 }

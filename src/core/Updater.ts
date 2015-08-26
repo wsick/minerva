@@ -170,7 +170,9 @@ module minerva.core {
                     walker.skipBranch();
                     continue;
                 }
+                var olds = cur.tree.surface;
                 cur.tree.surface = surface;
+                cur.onSurfaceChanged(olds, surface);
                 if (surface) {
                     if ((cur.assets.dirtyFlags & DirtyFlags.DownDirtyState) > 0) {
                         cur.$$inDownDirty = true;
@@ -186,6 +188,9 @@ module minerva.core {
                 surface.addUpDirty(cur);
             }
             return this;
+        }
+
+        onSurfaceChanged (oldSurface: ISurface, newSurface: ISurface) {
         }
 
         walkDeep (dir?: WalkDirection): IDeepWalker<Updater> {
@@ -377,6 +382,10 @@ module minerva.core {
         render (ctx: render.RenderContext, region: Rect): boolean {
             var pipe = this.$$render;
             return pipe.def.run(this.assets, pipe.state, pipe.output, ctx, region, this.tree);
+        }
+
+        preRender () {
+
         }
 
         hitTest (pos: Point, list: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean {
