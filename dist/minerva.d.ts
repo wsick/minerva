@@ -105,24 +105,24 @@ declare module minerva {
 }
 declare module minerva {
     enum DirtyFlags {
-        Transform,
-        LocalTransform,
-        Clip,
-        LocalClip,
-        LayoutClip,
-        RenderVisibility,
-        HitTestVisibility,
-        ImageMetrics,
-        Measure,
-        Arrange,
-        Bounds,
-        NewBounds,
-        Invalidate,
-        InUpDirtyList,
-        InDownDirtyList,
-        DownDirtyState,
-        UpDirtyState,
-        PropagateDown,
+        Transform = 1,
+        LocalTransform = 2,
+        Clip = 8,
+        LocalClip = 16,
+        LayoutClip = 32,
+        RenderVisibility = 64,
+        HitTestVisibility = 128,
+        ImageMetrics = 256,
+        Measure = 512,
+        Arrange = 1024,
+        Bounds = 1048576,
+        NewBounds = 2097152,
+        Invalidate = 4194304,
+        InUpDirtyList = 1073741824,
+        InDownDirtyList = -2147483648,
+        DownDirtyState = 507,
+        UpDirtyState = 7340032,
+        PropagateDown = 225,
     }
     enum UIFlags {
         None = 0,
@@ -133,7 +133,7 @@ declare module minerva {
         MeasureHint = 2048,
         ArrangeHint = 4096,
         SizeHint = 8192,
-        Hints,
+        Hints = 14336,
     }
     enum ShapeFlags {
         None = 0,
@@ -1147,6 +1147,12 @@ declare module minerva.core.processup.tapins {
 declare module minerva.core.processup.tapins {
     var processNewBounds: IProcessUpTapin;
 }
+declare module minerva.core.sizing.tapins {
+    var calcUseRender: ISizingTapin;
+}
+declare module minerva.core.sizing.tapins {
+    var computeActual: ISizingTapin;
+}
 declare module minerva.core.render.tapins {
     var applyClip: IRenderTapin;
 }
@@ -1173,12 +1179,6 @@ declare module minerva.core.render.tapins {
 }
 declare module minerva.core.render.tapins {
     var validateRegion: IRenderTapin;
-}
-declare module minerva.core.sizing.tapins {
-    var calcUseRender: ISizingTapin;
-}
-declare module minerva.core.sizing.tapins {
-    var computeActual: ISizingTapin;
 }
 declare module minerva.controls.border.arrange {
     interface IInput extends core.arrange.IInput {
@@ -1825,6 +1825,84 @@ declare module minerva.controls.usercontrol.processdown {
         function processLayoutClip(input: core.processdown.IInput, state: core.processdown.IState, output: core.processdown.IOutput, vpinput: core.processdown.IInput, tree: core.IUpdaterTree): boolean;
     }
 }
+declare module minerva.controls.video.arrange {
+    interface IInput extends core.arrange.IInput {
+        source: IVideoSource;
+        stretch: Stretch;
+    }
+    interface IState extends core.arrange.IState {
+        videoBounds: Rect;
+        stretchX: number;
+        stretchY: number;
+    }
+    class VideoArrangePipeDef extends core.arrange.ArrangePipeDef {
+        constructor();
+        createState(): IState;
+    }
+}
+declare module minerva.controls.video.hittest {
+    interface IHitTestData extends core.hittest.IHitTestData {
+        assets: IVideoUpdaterAssets;
+        videoRect: Rect;
+    }
+    class VideoHitTestPipeDef extends core.hittest.HitTestPipeDef {
+        constructor();
+        prepare(data: IHitTestData): void;
+    }
+}
+declare module minerva.controls.video.measure {
+    interface IInput extends core.measure.IInput {
+        source: IVideoSource;
+        stretch: Stretch;
+    }
+    interface IState extends core.measure.IState {
+        videoBounds: Rect;
+        stretchX: number;
+        stretchY: number;
+    }
+    class VideoMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+        createState(): IState;
+    }
+}
+declare module minerva.controls.video.processdown {
+    interface IInput extends core.processdown.IInput, core.helpers.ISized {
+        source: IVideoSource;
+        stretch: Stretch;
+        vidXform: number[];
+        overlap: RectOverlap;
+        renderSize: Size;
+    }
+    interface IState extends core.processdown.IState {
+        vidRect: Rect;
+        paintRect: Rect;
+        calcVideoMetrics: boolean;
+        vidAdjust: boolean;
+    }
+    interface IOutput extends core.processdown.IOutput {
+        vidXform: number[];
+        overlap: RectOverlap;
+    }
+    class VideoProcessDownPipeDef extends core.processdown.ProcessDownPipeDef {
+        constructor();
+        createState(): IState;
+        createOutput(): IOutput;
+        prepare(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
+        flush(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): void;
+    }
+}
+declare module minerva.controls.video.render {
+    interface IInput extends core.render.IInput {
+        source: IVideoSource;
+        vidXform: number[];
+        overlap: RectOverlap;
+    }
+    interface IState extends core.render.IState {
+    }
+    class VideoRenderPipeDef extends core.render.RenderPipeDef {
+        constructor();
+    }
+}
 declare module minerva.controls.virtualizingstackpanel.arrange {
     interface IInput extends panel.arrange.IInput {
         orientation: Orientation;
@@ -1853,6 +1931,9 @@ declare module minerva.controls.virtualizingstackpanel.measure {
         createState(): IState;
     }
 }
+declare module minerva.shapes.ellipse.helpers {
+    function draw(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
+}
 declare module minerva.shapes.shape.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
         assets: IShapeUpdaterAssets;
@@ -1871,9 +1952,6 @@ declare module minerva.shapes.ellipse.hittest {
     module tapins {
         function drawShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
     }
-}
-declare module minerva.shapes.ellipse.helpers {
-    function draw(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
 }
 declare module minerva.shapes.shape.measure {
     interface IInput extends core.measure.IInput, IShapeProperties {
@@ -2292,6 +2370,51 @@ declare module minerva.controls.usercontrol.measure.tapins {
 declare module minerva.controls.usercontrol.measure.tapins {
     function preOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: control.ControlUpdaterTree, availableSize: Size): boolean;
 }
+declare module minerva.controls.video.arrange.tapins {
+    function calcStretch(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.video.arrange.tapins {
+    function calcVideoBounds(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.video.arrange.tapins {
+    function doOverride(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.video.arrange.tapins {
+    function invalidateMetrics(input: IInput, state: IState, output: core.arrange.IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.video.hittest.tapins {
+    function canHitInside(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.controls.video.hittest.tapins {
+    function insideChildren(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.controls.video.hittest.tapins {
+    function insideStretch(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+}
+declare module minerva.controls.video.measure.tapins {
+    function calcStretch(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.video.measure.tapins {
+    function calcVideoBounds(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.video.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: core.measure.IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
+}
+declare module minerva.controls.video.processdown.tapins {
+    function calcOverlap(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.video.processdown.tapins {
+    function calcVideoTransform(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.video.processdown.tapins {
+    function checkNeedVideoMetrics(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.video.processdown.tapins {
+    function prepareVideoMetrics(input: IInput, state: IState, output: IOutput, vpinput: IInput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.controls.video.render.tapins {
+    function doRender(input: IInput, state: IState, output: core.render.IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
+}
 declare module minerva.controls.virtualizingstackpanel.arrange.tapins {
     function doHorizontal(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
@@ -2349,6 +2472,12 @@ declare module minerva.shapes.shape.hittest.tapins {
 declare module minerva.shapes.shape.hittest.tapins {
     function prepareShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
+declare module minerva.shapes.shape.processup.tapins {
+    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.shape.processup.tapins {
+    function calcShapeRect(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
 declare module minerva.shapes.shape.measure.tapins {
     function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
@@ -2372,12 +2501,6 @@ declare module minerva.shapes.shape.render.tapins {
 }
 declare module minerva.shapes.shape.render.tapins {
     function stroke(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
-}
-declare module minerva.shapes.shape.processup.tapins {
-    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-}
-declare module minerva.shapes.shape.processup.tapins {
-    function calcShapeRect(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
     function calcBalanced(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
@@ -2972,6 +3095,24 @@ declare module minerva.controls.usercontrol {
     class UserControlUpdater extends controls.control.ControlUpdater {
         assets: IUserControlUpdaterAssets;
         init(): void;
+    }
+}
+declare module minerva.controls.video {
+    interface IVideoSource {
+        video: HTMLVideoElement;
+        pixelWidth: number;
+        pixelHeight: number;
+        lock(): any;
+        unlock(): any;
+    }
+}
+declare module minerva.controls.video {
+    interface IVideoUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
+    }
+    class VideoUpdater extends core.Updater {
+        assets: IVideoUpdaterAssets;
+        init(): void;
+        invalidateMetrics(): VideoUpdater;
     }
 }
 declare module minerva.controls.virtualizingpanel {
