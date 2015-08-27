@@ -1151,12 +1151,6 @@ declare module minerva.core.processup.tapins {
 declare module minerva.core.processup.tapins {
     var processNewBounds: IProcessUpTapin;
 }
-declare module minerva.core.sizing.tapins {
-    var calcUseRender: ISizingTapin;
-}
-declare module minerva.core.sizing.tapins {
-    var computeActual: ISizingTapin;
-}
 declare module minerva.core.render.tapins {
     var applyClip: IRenderTapin;
 }
@@ -1183,6 +1177,12 @@ declare module minerva.core.render.tapins {
 }
 declare module minerva.core.render.tapins {
     var validateRegion: IRenderTapin;
+}
+declare module minerva.core.sizing.tapins {
+    var calcUseRender: ISizingTapin;
+}
+declare module minerva.core.sizing.tapins {
+    var computeActual: ISizingTapin;
 }
 declare module minerva.controls.border.arrange {
     interface IInput extends core.arrange.IInput {
@@ -2476,12 +2476,6 @@ declare module minerva.shapes.shape.hittest.tapins {
 declare module minerva.shapes.shape.hittest.tapins {
     function prepareShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
 }
-declare module minerva.shapes.shape.processup.tapins {
-    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-}
-declare module minerva.shapes.shape.processup.tapins {
-    function calcShapeRect(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-}
 declare module minerva.shapes.shape.measure.tapins {
     function calcNaturalBounds(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
@@ -3111,7 +3105,6 @@ declare module minerva.controls.usercontrol {
     }
 }
 declare module minerva.controls.video {
-<<<<<<< HEAD
     interface IVideoSource {
         video: HTMLVideoElement;
         pixelWidth: number;
@@ -3127,11 +3120,8 @@ declare module minerva.controls.video {
         assets: IVideoUpdaterAssets;
         init(): void;
         invalidateMetrics(): VideoUpdater;
-=======
-    class VideoUpdater extends core.Updater {
         onSurfaceChanged(oldSurface: core.ISurface, newSurface: core.ISurface): void;
         preRender(): void;
->>>>>>> a1f2c23e28a9769d6e25e46e310bb8b7513a0d4c
     }
 }
 declare module minerva.controls.virtualizingpanel {

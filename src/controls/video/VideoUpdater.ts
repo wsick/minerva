@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 module minerva.controls.video {
     export interface IVideoUpdaterAssets extends core.IUpdaterAssets, measure.IInput, arrange.IInput, processdown.IInput, render.IInput {
     }
@@ -6,7 +5,7 @@ module minerva.controls.video {
     export class VideoUpdater extends core.Updater {
         assets: IVideoUpdaterAssets;
 
-        init () {
+        init() {
             this.setMeasurePipe(singleton(measure.VideoMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.VideoArrangePipeDef))
                 .setProcessDownPipe(singleton(processdown.VideoProcessDownPipeDef))
@@ -22,25 +21,21 @@ module minerva.controls.video {
             super.init();
         }
 
-        invalidateMetrics (): VideoUpdater {
+        invalidateMetrics(): VideoUpdater {
             this.assets.dirtyFlags |= DirtyFlags.ImageMetrics;
             core.Updater.$$addDownDirty(this);
             return this;
         }
-    }
-=======
-module minerva.controls.video {
-    export class VideoUpdater extends core.Updater {
-        onSurfaceChanged (oldSurface: core.ISurface, newSurface: core.ISurface) {
+
+        onSurfaceChanged(oldSurface: core.ISurface, newSurface: core.ISurface) {
             if (oldSurface)
                 oldSurface.unhookPrerender(this);
             if (newSurface)
                 newSurface.hookPrerender(this);
         }
 
-        preRender () {
+        preRender() {
             this.invalidate();
         }
     }
->>>>>>> a1f2c23e28a9769d6e25e46e310bb8b7513a0d4c
 }

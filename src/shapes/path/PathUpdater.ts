@@ -1,3 +1,5 @@
+/// <reference path="../shape/ShapeUpdater" />
+
 module minerva.shapes.path {
     export interface IPathUpdaterAssets extends shape.IShapeUpdaterAssets, measure.IInput, processup.IInput, render.IInput {
     }
