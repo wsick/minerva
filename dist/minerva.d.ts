@@ -1263,28 +1263,6 @@ declare module minerva.controls.border.render {
         createState(): IShimState;
     }
 }
-declare module minerva.controls.panel.measure {
-    interface IInput extends core.measure.IInput {
-    }
-    interface IState extends core.measure.IState {
-    }
-    interface IOutput extends core.measure.IOutput {
-    }
-    class PanelMeasurePipeDef extends core.measure.MeasurePipeDef {
-        constructor();
-    }
-}
-declare module minerva.controls.canvas.measure {
-    interface IInput extends panel.measure.IInput {
-    }
-    interface IState extends panel.measure.IState {
-    }
-    interface IOutput extends panel.measure.IOutput {
-    }
-    class CanvasMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
-        constructor();
-    }
-}
 declare module minerva.controls.panel.arrange {
     interface IInput extends core.arrange.IInput {
     }
@@ -1304,6 +1282,28 @@ declare module minerva.controls.canvas.arrange {
     interface IOutput extends panel.arrange.IOutput {
     }
     class CanvasArrangePipeDef extends panel.arrange.PanelArrangePipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.panel.measure {
+    interface IInput extends core.measure.IInput {
+    }
+    interface IState extends core.measure.IState {
+    }
+    interface IOutput extends core.measure.IOutput {
+    }
+    class PanelMeasurePipeDef extends core.measure.MeasurePipeDef {
+        constructor();
+    }
+}
+declare module minerva.controls.canvas.measure {
+    interface IInput extends panel.measure.IInput {
+    }
+    interface IState extends panel.measure.IState {
+    }
+    interface IOutput extends panel.measure.IOutput {
+    }
+    class CanvasMeasurePipeDef extends panel.measure.PanelMeasurePipeDef {
         constructor();
     }
 }
@@ -1557,6 +1557,11 @@ declare module minerva.controls.image.render {
         constructor();
     }
 }
+declare module minerva.controls.overlay.processup {
+    class OverlayProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
+    }
+}
 declare module minerva.controls.overlay.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
         assets: IOverlayUpdaterAssets;
@@ -1566,11 +1571,6 @@ declare module minerva.controls.overlay.hittest {
     }
     module tapins {
         function shouldSkip(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
-    }
-}
-declare module minerva.controls.overlay.processup {
-    class OverlayProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
-        constructor();
     }
 }
 declare module minerva.controls.panel.hittest {
@@ -2205,14 +2205,14 @@ declare module minerva.controls.border.render.tapins {
 declare module minerva.controls.border.render.tapins {
     function doRender(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
 }
-declare module minerva.controls.canvas.measure.tapins {
-    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
-}
 declare module minerva.controls.canvas.arrange.tapins {
     function buildLayoutClip(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
 }
 declare module minerva.controls.canvas.arrange.tapins {
     function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, finalRect: Rect): boolean;
+}
+declare module minerva.controls.canvas.measure.tapins {
+    function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree, availableSize: Size): boolean;
 }
 declare module minerva.controls.canvas.processup.tapins {
     var calcPaintBounds: (input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree) => boolean;
@@ -3109,6 +3109,7 @@ declare module minerva.controls.video {
         video: HTMLVideoElement;
         pixelWidth: number;
         pixelHeight: number;
+        getIsPlaying(): boolean;
         lock(): any;
         unlock(): any;
     }

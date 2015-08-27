@@ -8,7 +8,7 @@ module minerva.controls.video.render.tapins {
         ctx.save();
         core.helpers.renderLayoutClip(ctx, input, tree);
         ctx.preapply(input.vidXform);
-        ctx.raw.drawImage(source.video, region.x, region.y, region.width, region.height);
+        ctx.raw.drawImage(source.video, 0, 0, region.width, region.height - 1);
         ctx.restore();
         source.unlock();
 

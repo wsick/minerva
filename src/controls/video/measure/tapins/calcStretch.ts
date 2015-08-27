@@ -17,10 +17,10 @@ module minerva.controls.video.measure.tapins {
         if (ib.height > 0)
             sy = dh / ib.height;
 
-        if (!isFinite(as.width))
-            sx = sy;
-        if (!isFinite(as.height))
-            sy = sx;
+        //if (!isFinite(as.width))
+        //    sx = sy;
+        //if (!isFinite(as.height))
+        //    sy = sx;
 
         switch (input.stretch) {
             default:

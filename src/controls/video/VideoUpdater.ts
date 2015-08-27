@@ -7,10 +7,10 @@ module minerva.controls.video {
 
         init() {
             this.setMeasurePipe(singleton(measure.VideoMeasurePipeDef))
-                .setArrangePipe(singleton(arrange.VideoArrangePipeDef))
+                //.setArrangePipe(singleton(arrange.VideoArrangePipeDef))
                 .setProcessDownPipe(singleton(processdown.VideoProcessDownPipeDef))
-                .setRenderPipe(singleton(render.VideoRenderPipeDef))
-                .setHitTestPipe(singleton(hittest.VideoHitTestPipeDef));
+                .setRenderPipe(singleton(render.VideoRenderPipeDef));
+                //.setHitTestPipe(singleton(hittest.VideoHitTestPipeDef));
 
             var assets = this.assets;
             assets.source = null;
