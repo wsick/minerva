@@ -35,7 +35,9 @@ module minerva.controls.video {
         }
 
         preRender() {
-            this.invalidate();
+            var assets = this.assets;
+            if (assets.source && assets.source.getIsPlaying())
+                this.invalidate();
         }
     }
 }

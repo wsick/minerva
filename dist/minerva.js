@@ -12759,7 +12759,9 @@ var minerva;
                         newSurface.hookPrerender(this);
                 };
                 VideoUpdater.prototype.preRender = function () {
-                    this.invalidate();
+                    var assets = this.assets;
+                    if (assets.source && assets.source.getIsPlaying())
+                        this.invalidate();
                 };
                 return VideoUpdater;
             })(minerva.core.Updater);

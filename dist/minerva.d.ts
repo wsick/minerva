@@ -3109,6 +3109,7 @@ declare module minerva.controls.video {
         video: HTMLVideoElement;
         pixelWidth: number;
         pixelHeight: number;
+        getIsPlaying(): boolean;
         lock(): any;
         unlock(): any;
     }
