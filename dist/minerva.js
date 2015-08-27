@@ -4955,29 +4955,6 @@ var minerva;
     (function (controls) {
         var overlay;
         (function (overlay) {
-            var processup;
-            (function (processup) {
-                var OverlayProcessUpPipeDef = (function (_super) {
-                    __extends(OverlayProcessUpPipeDef, _super);
-                    function OverlayProcessUpPipeDef() {
-                        _super.call(this);
-                        this.removeTapin('calcActualSize')
-                            .removeTapin('calcExtents')
-                            .removeTapin('calcPaintBounds');
-                    }
-                    return OverlayProcessUpPipeDef;
-                })(minerva.core.processup.ProcessUpPipeDef);
-                processup.OverlayProcessUpPipeDef = OverlayProcessUpPipeDef;
-            })(processup = overlay.processup || (overlay.processup = {}));
-        })(overlay = controls.overlay || (controls.overlay = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var overlay;
-        (function (overlay) {
             var hittest;
             (function (hittest) {
                 var OverlayHitTestPipeDef = (function (_super) {
@@ -4997,6 +4974,29 @@ var minerva;
                     tapins.shouldSkip = shouldSkip;
                 })(tapins = hittest.tapins || (hittest.tapins = {}));
             })(hittest = overlay.hittest || (overlay.hittest = {}));
+        })(overlay = controls.overlay || (controls.overlay = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var overlay;
+        (function (overlay) {
+            var processup;
+            (function (processup) {
+                var OverlayProcessUpPipeDef = (function (_super) {
+                    __extends(OverlayProcessUpPipeDef, _super);
+                    function OverlayProcessUpPipeDef() {
+                        _super.call(this);
+                        this.removeTapin('calcActualSize')
+                            .removeTapin('calcExtents')
+                            .removeTapin('calcPaintBounds');
+                    }
+                    return OverlayProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.OverlayProcessUpPipeDef = OverlayProcessUpPipeDef;
+            })(processup = overlay.processup || (overlay.processup = {}));
         })(overlay = controls.overlay || (controls.overlay = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
@@ -8582,8 +8582,8 @@ var minerva;
                 (function (tapins) {
                     function doOverride(input, state, output, tree, finalRect) {
                         var as = state.arrangedSize;
-                        as.width = state.videoBounds.width;
-                        as.height = state.videoBounds.height;
+                        as.width = state.videoBounds.width * state.stretchX;
+                        as.height = state.videoBounds.height * state.stretchY;
                         return true;
                     }
                     tapins.doOverride = doOverride;

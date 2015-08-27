@@ -1557,11 +1557,6 @@ declare module minerva.controls.image.render {
         constructor();
     }
 }
-declare module minerva.controls.overlay.processup {
-    class OverlayProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
-        constructor();
-    }
-}
 declare module minerva.controls.overlay.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
         assets: IOverlayUpdaterAssets;
@@ -1571,6 +1566,11 @@ declare module minerva.controls.overlay.hittest {
     }
     module tapins {
         function shouldSkip(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
+    }
+}
+declare module minerva.controls.overlay.processup {
+    class OverlayProcessUpPipeDef extends core.processup.ProcessUpPipeDef {
+        constructor();
     }
 }
 declare module minerva.controls.panel.hittest {
