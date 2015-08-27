@@ -105,24 +105,24 @@ declare module minerva {
 }
 declare module minerva {
     enum DirtyFlags {
-        Transform,
-        LocalTransform,
-        Clip,
-        LocalClip,
-        LayoutClip,
-        RenderVisibility,
-        HitTestVisibility,
-        ImageMetrics,
-        Measure,
-        Arrange,
-        Bounds,
-        NewBounds,
-        Invalidate,
-        InUpDirtyList,
-        InDownDirtyList,
-        DownDirtyState,
-        UpDirtyState,
-        PropagateDown,
+        Transform = 1,
+        LocalTransform = 2,
+        Clip = 8,
+        LocalClip = 16,
+        LayoutClip = 32,
+        RenderVisibility = 64,
+        HitTestVisibility = 128,
+        ImageMetrics = 256,
+        Measure = 512,
+        Arrange = 1024,
+        Bounds = 1048576,
+        NewBounds = 2097152,
+        Invalidate = 4194304,
+        InUpDirtyList = 1073741824,
+        InDownDirtyList = -2147483648,
+        DownDirtyState = 507,
+        UpDirtyState = 7340032,
+        PropagateDown = 225,
     }
     enum UIFlags {
         None = 0,
@@ -133,7 +133,7 @@ declare module minerva {
         MeasureHint = 2048,
         ArrangeHint = 4096,
         SizeHint = 8192,
-        Hints,
+        Hints = 14336,
     }
     enum ShapeFlags {
         None = 0,
@@ -506,6 +506,8 @@ declare module minerva.core {
         addDownDirty(updater: Updater): any;
         attachLayer(layer: core.Updater, root?: boolean): any;
         detachLayer(layer: core.Updater): any;
+        hookPrerender(updater: core.Updater): any;
+        unhookPrerender(updater: core.Updater): any;
     }
     interface IUpdaterAssets extends measure.IInput, arrange.IInput, sizing.IInput, processdown.IInput, processup.IInput, render.IInput {
     }
@@ -536,6 +538,7 @@ declare module minerva.core {
         onAttached(): void;
         setVisualParent(visualParent: Updater): Updater;
         setSurface(surface: ISurface): Updater;
+        onSurfaceChanged(oldSurface: ISurface, newSurface: ISurface): void;
         walkDeep(dir?: WalkDirection): IDeepWalker<Updater>;
         setMeasurePipe(pipedef?: measure.MeasurePipeDef): Updater;
         setMeasureBinder(mb?: measure.IMeasureBinder): Updater;
@@ -554,6 +557,7 @@ declare module minerva.core {
         processDown(): boolean;
         processUp(): boolean;
         render(ctx: render.RenderContext, region: Rect): boolean;
+        preRender(): void;
         hitTest(pos: Point, list: Updater[], ctx: render.RenderContext, includeAll: boolean): boolean;
         onSizeChanged(oldSize: Size, newSize: Size): void;
         setSizeUpdater(updater: ISizeUpdater): void;
@@ -1853,6 +1857,9 @@ declare module minerva.controls.virtualizingstackpanel.measure {
         createState(): IState;
     }
 }
+declare module minerva.shapes.ellipse.helpers {
+    function draw(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
+}
 declare module minerva.shapes.shape.hittest {
     interface IHitTestData extends core.hittest.IHitTestData {
         assets: IShapeUpdaterAssets;
@@ -1871,9 +1878,6 @@ declare module minerva.shapes.ellipse.hittest {
     module tapins {
         function drawShape(data: IHitTestData, pos: Point, hitList: core.Updater[], ctx: core.render.RenderContext): boolean;
     }
-}
-declare module minerva.shapes.ellipse.helpers {
-    function draw(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
 }
 declare module minerva.shapes.shape.measure {
     interface IInput extends core.measure.IInput, IShapeProperties {
@@ -2355,6 +2359,12 @@ declare module minerva.shapes.shape.measure.tapins {
 declare module minerva.shapes.shape.measure.tapins {
     function doOverride(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
+declare module minerva.shapes.shape.processup.tapins {
+    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
+declare module minerva.shapes.shape.processup.tapins {
+    function calcShapeRect(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
+}
 declare module minerva.shapes.shape.render.tapins {
     function calcShouldDraw(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
 }
@@ -2372,12 +2382,6 @@ declare module minerva.shapes.shape.render.tapins {
 }
 declare module minerva.shapes.shape.render.tapins {
     function stroke(input: IInput, state: IState, output: IOutput, ctx: core.render.RenderContext, region: Rect): boolean;
-}
-declare module minerva.shapes.shape.processup.tapins {
-    function calcExtents(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
-}
-declare module minerva.shapes.shape.processup.tapins {
-    function calcShapeRect(input: IInput, state: IState, output: IOutput, tree: core.IUpdaterTree): boolean;
 }
 declare module minerva.controls.border.render.tapins.shim {
     function calcBalanced(input: IInput, state: IShimState, output: IOutput, ctx: core.render.RenderContext, region: Rect, tree: core.IUpdaterTree): boolean;
@@ -2408,6 +2412,7 @@ declare module minerva.engine {
         private $$canvas;
         private $$ctx;
         private $$layers;
+        private $$prerenderhooks;
         private $$downDirty;
         private $$upDirty;
         private $$dirtyRegion;
@@ -2423,6 +2428,8 @@ declare module minerva.engine {
         updateBounds(): void;
         invalidate(region?: Rect): void;
         render(): void;
+        hookPrerender(updater: core.Updater): void;
+        unhookPrerender(updater: core.Updater): void;
         addUpDirty(updater: core.Updater): void;
         addDownDirty(updater: core.Updater): void;
         updateLayout(): boolean;
@@ -2972,6 +2979,12 @@ declare module minerva.controls.usercontrol {
     class UserControlUpdater extends controls.control.ControlUpdater {
         assets: IUserControlUpdaterAssets;
         init(): void;
+    }
+}
+declare module minerva.controls.video {
+    class VideoUpdater extends core.Updater {
+        onSurfaceChanged(oldSurface: core.ISurface, newSurface: core.ISurface): void;
+        preRender(): void;
     }
 }
 declare module minerva.controls.virtualizingpanel {
