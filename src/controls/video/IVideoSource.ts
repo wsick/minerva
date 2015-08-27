@@ -3,6 +3,7 @@ module minerva.controls.video {
         video: HTMLVideoElement;
         pixelWidth: number;
         pixelHeight: number;
+        getIsPlaying(): boolean;
         lock();
         unlock();
     }

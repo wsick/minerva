@@ -5,7 +5,7 @@ module minerva.controls.video {
     export class VideoUpdater extends core.Updater {
         assets: IVideoUpdaterAssets;
 
-        init () {
+        init() {
             this.setMeasurePipe(singleton(measure.VideoMeasurePipeDef))
                 .setArrangePipe(singleton(arrange.VideoArrangePipeDef))
                 .setProcessDownPipe(singleton(processdown.VideoProcessDownPipeDef))
@@ -21,7 +21,7 @@ module minerva.controls.video {
             super.init();
         }
 
-        invalidateMetrics (): VideoUpdater {
+        invalidateMetrics(): VideoUpdater {
             this.assets.dirtyFlags |= DirtyFlags.ImageMetrics;
             core.Updater.$$addDownDirty(this);
             return this;
@@ -35,7 +35,9 @@ module minerva.controls.video {
         }
 
         preRender() {
-            this.invalidate();
+            var assets = this.assets;
+            if (assets.source && assets.source.getIsPlaying())
+                this.invalidate();
         }
     }
 }
