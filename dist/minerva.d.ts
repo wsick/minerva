@@ -76,6 +76,8 @@ declare module minerva {
     }
     enum TextTrimming {
         None = 0,
+        WordEllipsis = 1,
+        CharacterEllipsis = 2,
     }
     enum TextWrapping {
         NoWrap = 0,
@@ -2567,6 +2569,7 @@ declare module minerva.text {
         selectionLength: number;
         textWrapping: TextWrapping;
         textAlignment: TextAlignment;
+        textTrimming: TextTrimming;
         lineStackingStrategy: LineStackingStrategy;
         lineHeight: number;
     }
@@ -3216,6 +3219,7 @@ declare module minerva.text.layout {
         width: number;
         height: number;
         static getLineFromY(lines: Line[], y: number): Line;
+        static elliptify(docctx: IDocumentContext, docassets: IDocumentAssets, line: layout.Line, measureTextWidth: (text: string, font: Font) => number): boolean;
     }
 }
 declare module minerva.text.layout {
@@ -3229,6 +3233,7 @@ declare module minerva.text.layout {
         sel: Cluster;
         post: Cluster;
         static splitSelection(run: Run, start: number, end: number, measureWidth: (text: string, assets: ITextAssets) => number): void;
+        static elliptify(run: Run, available: number, textTrimming: TextTrimming, measureTextWidth: (text: string, font: Font) => number): void;
     }
 }
 declare module minerva.text.run {

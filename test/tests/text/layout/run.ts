@@ -40,6 +40,9 @@ module minerva.text.layout.tests {
                 width += engine.Surface.measureWidth(text[i], font);
             }
             return width;
+        },
+        measureFull: function (text: string, font: Font) {
+            return mock.measure(text, font, true);
         }
     };
 
@@ -87,5 +90,29 @@ module minerva.text.layout.tests {
         assert.equal(run.pre, null);
         assert.deepEqual(run.sel, mock.cluster("Fayde", assets, true));
         assert.equal(run.post, null);
+    });
+
+    QUnit.test("Elliptify (Word)", (assert) => {
+        var assets = mock.textAssets();
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 91, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 20, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 135, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span of text");
+
+        var run = mock.run("this is a span         of text", 0, assets);
+        layout.Run.elliptify(run, 105, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span    ...");
+    });
+
+    QUnit.test("Elliptify (Character)", (assert) => {
+        assert.ok(true);
     });
 }

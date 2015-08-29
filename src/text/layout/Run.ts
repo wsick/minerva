@@ -10,7 +10,7 @@ module minerva.text.layout {
         sel: Cluster;
         post: Cluster;
 
-        static splitSelection (run: Run, start: number, end: number, measureWidth: (text: string, assets: ITextAssets) => number) {
+        static splitSelection(run: Run, start: number, end: number, measureWidth: (text: string, assets: ITextAssets) => number) {
             run.pre = run.sel = run.post = null;
 
             var rs = run.start;
@@ -40,5 +40,41 @@ module minerva.text.layout {
                 sel.width = measureWidth(sel.text, run.attrs);
             }
         }
+
+        static elliptify(run: Run, available: number, textTrimming: TextTrimming, measureTextWidth: (text: string, font: Font) => number) {
+            var text = run.text;
+            var font = run.attrs.font;
+            var measure = (index: number) => measureTextWidth(text.substr(0, index), font);
+            if (textTrimming === TextTrimming.WordEllipsis) {
+                shortenWord(run, available - measureTextWidth("...", font), measure);
+            } else { //CharacterEllipsis
+                shortenChar(run, available - measureTextWidth("...", font), measure);
+            }
+        }
+    }
+
+    function shortenWord(run: Run, available: number, measure: (index: number) => number) {
+        var len = run.text.length;
+        for (var i = 0, next = 0; (i = next) < len && (next = run.text.indexOf(' ', i + 1)) !== -1;) {
+            if (measure(next) > available) {
+                run.text = run.text.substr(0, i);
+                break;
+            }
+        }
+        if (len === run.text.length)
+            return;
+        run.text += "...";
+        run.length = run.text.length;
+        run.width = measure(run.length);
+    }
+
+    function shortenChar(run: Run, available: number, measure: (index: number) => number) {
+        /*
+        var low = 0;
+        var high = run.text.length;
+        while (true) {
+
+        }
+        */
     }
 }

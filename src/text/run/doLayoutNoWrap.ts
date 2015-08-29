@@ -39,6 +39,7 @@ module minerva.text.run {
             }
         }
         line.width = run.width;
+        layout.Line.elliptify(docctx, docassets, line, measureTextWidth);
         docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
     }
 
