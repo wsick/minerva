@@ -48,6 +48,8 @@ module minerva {
 
     export enum TextTrimming {
         None = 0,
+        WordEllipsis = 1,
+        CharacterEllipsis = 2,
     }
 
     export enum TextWrapping {

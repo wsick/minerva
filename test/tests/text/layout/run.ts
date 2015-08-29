@@ -3,13 +3,15 @@ module minerva.text.layout.tests {
 
     var mock = {
         textAssets: function (): text.ITextAssets {
+            var font = new Font();
+            font.family = "Arial";
             return {
                 background: null,
                 foreground: null,
                 selectionBackground: null,
                 selectionForeground: null,
                 isUnderlined: false,
-                font: new Font(),
+                font: font,
                 text: ""
             };
         },
@@ -40,6 +42,9 @@ module minerva.text.layout.tests {
                 width += engine.Surface.measureWidth(text[i], font);
             }
             return width;
+        },
+        measureFull: function (text: string, font: Font) {
+            return mock.measure(text, font, true);
         }
     };
 
@@ -87,5 +92,81 @@ module minerva.text.layout.tests {
         assert.equal(run.pre, null);
         assert.deepEqual(run.sel, mock.cluster("Fayde", assets, true));
         assert.equal(run.post, null);
+    });
+
+    QUnit.test("Elliptify (Word)", (assert) => {
+        var assets = mock.textAssets();
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 96, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 20, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 135, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span of text");
+
+        var run = mock.run("this is a span         of text", 0, assets);
+        layout.Run.elliptify(run, 112, TextTrimming.WordEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span    ...");
+    });
+
+    QUnit.test("Elliptify (Character)", (assert) => {
+        var assets = mock.textAssets();
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 10, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 20, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "t...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 30, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "thi...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 40, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this ...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 50, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 60, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 70, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a ...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 80, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a sp...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 90, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a spa...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 100, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span ...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 110, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span o...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 120, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span of t...");
+
+        var run = mock.run("this is a span of text", 0, assets);
+        layout.Run.elliptify(run, 130, TextTrimming.CharacterEllipsis, mock.measureFull);
+        assert.strictEqual(run.text, "this is a span of text");
     });
 }

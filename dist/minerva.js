@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.24';
+    minerva.version = '0.4.25';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -104,6 +104,8 @@ var minerva;
     var TextAlignment = minerva.TextAlignment;
     (function (TextTrimming) {
         TextTrimming[TextTrimming["None"] = 0] = "None";
+        TextTrimming[TextTrimming["WordEllipsis"] = 1] = "WordEllipsis";
+        TextTrimming[TextTrimming["CharacterEllipsis"] = 2] = "CharacterEllipsis";
     })(minerva.TextTrimming || (minerva.TextTrimming = {}));
     var TextTrimming = minerva.TextTrimming;
     (function (TextWrapping) {
@@ -10799,7 +10801,8 @@ var minerva;
                 assets.selCached = true;
             };
             DocumentLayoutDef.prototype.getHorizontalAlignmentX = function (docctx, assets, lineWidth) {
-                if (docctx.textAlignment === minerva.TextAlignment.Left || docctx.textAlignment === minerva.TextAlignment.Justify)
+                if (docctx.textAlignment === minerva.TextAlignment.Left || docctx.textAlignment === minerva.TextAlignment.Justify
+                    || (docctx.textWrapping === minerva.TextWrapping.NoWrap && docctx.textTrimming !== minerva.TextTrimming.None))
                     return 0;
                 var width = getWidthConstraint(assets);
                 if (lineWidth >= width)
@@ -11727,6 +11730,7 @@ var minerva;
                     assets.selectionLength = 0;
                     assets.textWrapping = minerva.TextWrapping.NoWrap;
                     assets.textAlignment = minerva.TextAlignment.Left;
+                    assets.textTrimming = minerva.TextTrimming.None;
                     assets.lineStackingStrategy = minerva.LineStackingStrategy.MaxHeight;
                     assets.lineHeight = NaN;
                     _super.prototype.init.call(this);
@@ -13479,7 +13483,7 @@ var minerva;
 var minerva;
 (function (minerva) {
     var text;
-    (function (text) {
+    (function (text_2) {
         var layout;
         (function (layout) {
             var Line = (function () {
@@ -13498,16 +13502,36 @@ var minerva;
                     }
                     return lines[lines.length - 1];
                 };
+                Line.elliptify = function (docctx, docassets, line, measureTextWidth) {
+                    if (docctx.textTrimming === minerva.TextTrimming.None
+                        || docctx.textWrapping !== minerva.TextWrapping.NoWrap
+                        || line.width <= docassets.maxWidth)
+                        return false;
+                    var newRuns = [];
+                    for (var runs = line.runs, total = 0, i = 0; i < runs.length; i++) {
+                        var run = runs[i];
+                        total += run.width;
+                        newRuns.push(run);
+                        if (total >= docassets.maxWidth) {
+                            total -= run.width;
+                            layout.Run.elliptify(run, docassets.maxWidth - total, docctx.textTrimming, measureTextWidth);
+                            line.width = total + run.width;
+                            break;
+                        }
+                    }
+                    line.runs = newRuns;
+                    return true;
+                };
                 return Line;
             })();
             layout.Line = Line;
-        })(layout = text.layout || (text.layout = {}));
+        })(layout = text_2.layout || (text_2.layout = {}));
     })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     var text;
-    (function (text_2) {
+    (function (text_3) {
         var layout;
         (function (layout) {
             var Run = (function () {
@@ -13543,16 +13567,73 @@ var minerva;
                         sel.width = measureWidth(sel.text, run.attrs);
                     }
                 };
+                Run.elliptify = function (run, available, textTrimming, measureTextWidth) {
+                    if (run.width < available)
+                        return;
+                    var text = run.text;
+                    var font = run.attrs.font;
+                    var measure = function (index) { return measureTextWidth(text.substr(0, index), font); };
+                    if (textTrimming === minerva.TextTrimming.WordEllipsis) {
+                        shortenWord(run, available - measureTextWidth("...", font), measure);
+                    }
+                    else {
+                        shortenChar(run, available - measureTextWidth("...", font), measure);
+                    }
+                };
                 return Run;
             })();
             layout.Run = Run;
-        })(layout = text_2.layout || (text_2.layout = {}));
+            function shortenWord(run, available, measure) {
+                if (available > 0) {
+                    var len = run.text.length;
+                    for (var i = 0, next = 0; (i = next) < len && (next = run.text.indexOf(' ', i + 1)) !== -1;) {
+                        if (measure(next) > available) {
+                            run.text = run.text.substr(0, i);
+                            break;
+                        }
+                    }
+                    if (len === run.text.length)
+                        return;
+                }
+                else {
+                    run.text = "";
+                }
+                run.text += "...";
+                run.length = run.text.length;
+                run.width = measure(run.length);
+            }
+            function shortenChar(run, available, measure) {
+                if (available > 0) {
+                    var len = run.text.length;
+                    var low = 0;
+                    var high = len;
+                    var i = Math.ceil(low + (high - low) / 2);
+                    for (var rawr = 0; (high - low) > 1 && rawr < 1000; i = Math.ceil(low + (high - low) / 2), rawr++) {
+                        if (measure(i) > available) {
+                            high = i;
+                        }
+                        else {
+                            low = i;
+                        }
+                    }
+                    run.text = run.text.substr(0, low);
+                    if (len === run.text.length)
+                        return;
+                }
+                else {
+                    run.text = "";
+                }
+                run.text += "...";
+                run.length = run.text.length;
+                run.width = measure(run.length);
+            }
+        })(layout = text_3.layout || (text_3.layout = {}));
     })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     var text;
-    (function (text_3) {
+    (function (text_4) {
         var run;
         (function (run) {
             var RunLayoutDef = (function () {
@@ -13561,10 +13642,10 @@ var minerva;
                 RunLayoutDef.prototype.layout = function (docctx, docassets, assets) {
                     var text = assets.text;
                     if (!text) {
-                        var line = new text_3.layout.Line();
+                        var line = new text_4.layout.Line();
                         line.height = assets.font.getHeight();
                         docassets.lines.push(line);
-                        var run1 = new text_3.layout.Run();
+                        var run1 = new text_4.layout.Run();
                         run1.attrs = assets;
                         line.runs.push(run1);
                         docassets.actualHeight = line.height;
@@ -13580,13 +13661,13 @@ var minerva;
                 return RunLayoutDef;
             })();
             run.RunLayoutDef = RunLayoutDef;
-        })(run = text_3.run || (text_3.run = {}));
+        })(run = text_4.run || (text_4.run = {}));
     })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     var text;
-    (function (text_4) {
+    (function (text_5) {
         var run;
         (function (run_1) {
             function doLayoutNoWrap(docctx, docassets, assets) {
@@ -13596,11 +13677,11 @@ var minerva;
                     max: assets.text.length
                 };
                 var font = assets.font;
-                var line = new text_4.layout.Line();
+                var line = new text_5.layout.Line();
                 line.height = font.getHeight();
                 docassets.actualHeight += line.height;
                 docassets.lines.push(line);
-                var run = new text_4.layout.Run();
+                var run = new text_5.layout.Run();
                 run.attrs = assets;
                 line.runs.push(run);
                 while (pass.index < pass.max) {
@@ -13608,16 +13689,17 @@ var minerva;
                     if (hitbreak) {
                         docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
                         line.width = run.width;
-                        line = new text_4.layout.Line();
+                        line = new text_5.layout.Line();
                         line.height = font.getHeight();
                         docassets.actualHeight += line.height;
                         docassets.lines.push(line);
-                        run = new text_4.layout.Run();
+                        run = new text_5.layout.Run();
                         run.attrs = assets;
                         line.runs.push(run);
                     }
                 }
                 line.width = run.width;
+                text_5.layout.Line.elliptify(docctx, docassets, line, measureTextWidth);
                 docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
             }
             run_1.doLayoutNoWrap = doLayoutNoWrap;
@@ -13655,13 +13737,13 @@ var minerva;
             function measureTextWidth(text, font) {
                 return minerva.engine.Surface.measureWidth(text, font);
             }
-        })(run = text_4.run || (text_4.run = {}));
+        })(run = text_5.run || (text_5.run = {}));
     })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
     var text;
-    (function (text_5) {
+    (function (text_6) {
         var run;
         (function (run_2) {
             function doLayoutWrap(docctx, docassets, assets) {
@@ -13671,11 +13753,11 @@ var minerva;
                     max: assets.text.length
                 };
                 var font = assets.font;
-                var line = new text_5.layout.Line();
+                var line = new text_6.layout.Line();
                 line.height = font.getHeight();
                 docassets.actualHeight += line.height;
                 docassets.lines.push(line);
-                var run = new text_5.layout.Run();
+                var run = new text_6.layout.Run();
                 run.attrs = assets;
                 line.runs.push(run);
                 while (pass.index < pass.max) {
@@ -13683,11 +13765,11 @@ var minerva;
                     if (hitbreak) {
                         docassets.actualWidth = Math.max(docassets.actualWidth, run.width);
                         line.width = run.width;
-                        line = new text_5.layout.Line();
+                        line = new text_6.layout.Line();
                         line.height = font.getHeight();
                         docassets.actualHeight += line.height;
                         docassets.lines.push(line);
-                        run = new text_5.layout.Run();
+                        run = new text_6.layout.Run();
                         run.attrs = assets;
                         line.runs.push(run);
                     }
@@ -13776,7 +13858,7 @@ var minerva;
             function measureTextWidth(text, font) {
                 return minerva.engine.Surface.measureWidth(text, font);
             }
-        })(run = text_5.run || (text_5.run = {}));
+        })(run = text_6.run || (text_6.run = {}));
     })(text = minerva.text || (minerva.text = {}));
 })(minerva || (minerva = {}));
 

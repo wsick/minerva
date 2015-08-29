@@ -22,6 +22,7 @@ module minerva.controls.textblock {
             assets.selectionLength = 0;
             assets.textWrapping = TextWrapping.NoWrap;
             assets.textAlignment = TextAlignment.Left;
+            assets.textTrimming = TextTrimming.None;
             assets.lineStackingStrategy = LineStackingStrategy.MaxHeight;
             assets.lineHeight = NaN;
 

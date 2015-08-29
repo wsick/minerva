@@ -4,6 +4,7 @@ module minerva.text {
         selectionLength: number;
         textWrapping: TextWrapping;
         textAlignment: TextAlignment;
+        textTrimming: TextTrimming;
         lineStackingStrategy: LineStackingStrategy;
         lineHeight: number;
     }
@@ -182,7 +183,8 @@ module minerva.text {
         }
 
         getHorizontalAlignmentX (docctx: IDocumentContext, assets: IDocumentAssets, lineWidth: number): number {
-            if (docctx.textAlignment === TextAlignment.Left || docctx.textAlignment === TextAlignment.Justify)
+            if (docctx.textAlignment === TextAlignment.Left || docctx.textAlignment === TextAlignment.Justify
+                || (docctx.textWrapping === TextWrapping.NoWrap && docctx.textTrimming !== TextTrimming.None))
                 return 0;
             var width = getWidthConstraint(assets);
             if (lineWidth >= width)

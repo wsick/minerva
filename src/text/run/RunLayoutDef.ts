@@ -14,6 +14,10 @@ module minerva.text.run {
                 return false;
             }
 
+            /*
+             The TextTrimming property has no effect unless the TextWrapping property is set to NoWrap.
+             Source: https://msdn.microsoft.com/en-us/library/system.windows.controls.textblock.texttrimming(v=vs.95).aspx
+             */
             if (docctx.textWrapping === TextWrapping.NoWrap)
                 run.doLayoutNoWrap(docctx, docassets, assets);
             else
