@@ -167,10 +167,6 @@ module minerva.text.layout.tests {
 
         var run = mock.run("this is a span of text", 0, assets);
         layout.Run.elliptify(run, 130, TextTrimming.CharacterEllipsis, mock.measureFull);
-        assert.strictEqual(run.text, "this is a span of te...");
-
-        var run = mock.run("this is a span of text", 0, assets);
-        layout.Run.elliptify(run, 140, TextTrimming.CharacterEllipsis, mock.measureFull);
         assert.strictEqual(run.text, "this is a span of text");
     });
 }

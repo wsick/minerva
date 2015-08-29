@@ -13568,6 +13568,8 @@ var minerva;
                     }
                 };
                 Run.elliptify = function (run, available, textTrimming, measureTextWidth) {
+                    if (run.width < available)
+                        return;
                     var text = run.text;
                     var font = run.attrs.font;
                     var measure = function (index) { return measureTextWidth(text.substr(0, index), font); };
@@ -13582,29 +13584,45 @@ var minerva;
             })();
             layout.Run = Run;
             function shortenWord(run, available, measure) {
-                var len = run.text.length;
-                for (var i = 0, next = 0; (i = next) < len && (next = run.text.indexOf(' ', i + 1)) !== -1;) {
-                    if (measure(next) > available) {
-                        run.text = run.text.substr(0, i);
-                        break;
+                if (available > 0) {
+                    var len = run.text.length;
+                    for (var i = 0, next = 0; (i = next) < len && (next = run.text.indexOf(' ', i + 1)) !== -1;) {
+                        if (measure(next) > available) {
+                            run.text = run.text.substr(0, i);
+                            break;
+                        }
                     }
+                    if (len === run.text.length)
+                        return;
                 }
-                if (len === run.text.length)
-                    return;
+                else {
+                    run.text = "";
+                }
                 run.text += "...";
                 run.length = run.text.length;
                 run.width = measure(run.length);
             }
             function shortenChar(run, available, measure) {
-                var len = run.text.length;
-                for (var i = 0; i < len; i++) {
-                    if (measure(i + 1) > available) {
-                        run.text = run.text.substr(0, i);
-                        break;
+                if (available > 0) {
+                    var len = run.text.length;
+                    var low = 0;
+                    var high = len;
+                    var i = Math.ceil(low + (high - low) / 2);
+                    for (var rawr = 0; (high - low) > 1 && rawr < 1000; i = Math.ceil(low + (high - low) / 2), rawr++) {
+                        if (measure(i) > available) {
+                            high = i;
+                        }
+                        else {
+                            low = i;
+                        }
                     }
+                    run.text = run.text.substr(0, low);
+                    if (len === run.text.length)
+                        return;
                 }
-                if (len === run.text.length)
-                    return;
+                else {
+                    run.text = "";
+                }
                 run.text += "...";
                 run.length = run.text.length;
                 run.width = measure(run.length);
