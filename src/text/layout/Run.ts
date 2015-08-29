@@ -69,12 +69,17 @@ module minerva.text.layout {
     }
 
     function shortenChar(run: Run, available: number, measure: (index: number) => number) {
-        /*
-        var low = 0;
-        var high = run.text.length;
-        while (true) {
-
+        var len = run.text.length;
+        for (var i = 0; i < len; i++) {
+            if (measure(i + 1) > available) {
+                run.text = run.text.substr(0, i);
+                break;
+            }
         }
-        */
+        if (len === run.text.length)
+            return;
+        run.text += "...";
+        run.length = run.text.length;
+        run.width = measure(run.length);
     }
 }

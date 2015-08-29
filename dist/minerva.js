@@ -13596,6 +13596,18 @@ var minerva;
                 run.width = measure(run.length);
             }
             function shortenChar(run, available, measure) {
+                var len = run.text.length;
+                for (var i = 0; i < len; i++) {
+                    if (measure(i + 1) > available) {
+                        run.text = run.text.substr(0, i);
+                        break;
+                    }
+                }
+                if (len === run.text.length)
+                    return;
+                run.text += "...";
+                run.length = run.text.length;
+                run.width = measure(run.length);
             }
         })(layout = text_3.layout || (text_3.layout = {}));
     })(text = minerva.text || (minerva.text = {}));
