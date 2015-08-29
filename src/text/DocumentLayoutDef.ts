@@ -4,6 +4,7 @@ module minerva.text {
         selectionLength: number;
         textWrapping: TextWrapping;
         textAlignment: TextAlignment;
+        textTrimming: TextTrimming;
         lineStackingStrategy: LineStackingStrategy;
         lineHeight: number;
     }
