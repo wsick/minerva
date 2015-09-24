@@ -11,7 +11,7 @@ module minerva.path.segments {
 
     //SVG implementation: http://www.w3.org/TR/SVG/implnote.html#ArcSyntax
     export function ellipticalArc (rx: number, ry: number, rotationAngle: number, isLargeArcFlag: boolean, sweepDirectionFlag: SweepDirection, ex: number, ey: number): IEllipticalArc {
-        return {
+        return <IEllipticalArc>{
             sx: null,
             sy: null,
             isSingle: false,

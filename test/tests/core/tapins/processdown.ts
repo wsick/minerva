@@ -10,7 +10,7 @@ module minerva.core.processdown.tapins.tests {
 
     var mock = {
         input: function (): processdown.IInput {
-            return {
+            return <processdown.IInput>{
                 visibility: Visibility.Visible,
                 opacity: 1.0,
                 isHitTestVisible: true,
