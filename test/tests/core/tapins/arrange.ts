@@ -17,7 +17,7 @@ module minerva.core.arrange.tapins.tests {
 
     var mock = {
         input: function (): arrange.IInput {
-            return {
+            return <arrange.IInput>{
                 width: NaN,
                 height: NaN,
                 minWidth: 0,
@@ -42,7 +42,7 @@ module minerva.core.arrange.tapins.tests {
             };
         },
         state: function (): arrange.IState {
-            return {
+            return <arrange.IState>{
                 arrangedSize: new Size(),
                 finalRect: new Rect(),
                 finalSize: new Size(),
@@ -55,7 +55,7 @@ module minerva.core.arrange.tapins.tests {
             };
         },
         output: function (): arrange.IOutput {
-            return {
+            return <arrange.IOutput>{
                 error: null,
                 layoutSlot: new Rect(),
                 layoutXform: mat3.identity(),

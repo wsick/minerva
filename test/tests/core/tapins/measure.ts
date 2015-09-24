@@ -31,7 +31,7 @@ module minerva.core.measure.tapins.tests {
             };
         },
         output: function (): measure.IOutput {
-            return {
+            return <measure.IOutput>{
                 error: null,
                 previousConstraint: new Size(),
                 desiredSize: new Size(),

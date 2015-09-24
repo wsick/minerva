@@ -3,7 +3,7 @@ module minerva.path.segments {
         if (radiusX === 0.0 && radiusY === 0.0)
             return rect(x, y, width, height);
 
-        return {
+        return <IRect>{
             sx: null,
             sy: null,
             ex: x,

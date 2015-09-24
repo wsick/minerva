@@ -3,7 +3,7 @@ module minerva.controls.image.processdown.tests {
 
     var mock = {
         input: function (): IInput {
-            return {
+            return <IInput>{
                 visibility: Visibility.Visible,
                 opacity: 1.0,
                 isHitTestVisible: true,
@@ -41,7 +41,7 @@ module minerva.controls.image.processdown.tests {
             };
         },
         state: function (): IState {
-            return {
+            return <IState>{
                 xformOrigin: new Point(),
                 localXform: mat3.identity(),
                 subtreeDownDirty: 0,
@@ -54,7 +54,7 @@ module minerva.controls.image.processdown.tests {
             };
         },
         output: function (): IOutput {
-            return {
+            return <IOutput>{
                 totalIsRenderVisible: true,
                 totalOpacity: 1.0,
                 totalIsHitTestVisible: true,
@@ -71,7 +71,7 @@ module minerva.controls.image.processdown.tests {
             };
         },
         imageSource: function (): IImageSource {
-            return {
+            return <IImageSource>{
                 islocked: false,
                 image: null,
                 pixelWidth: 0,
