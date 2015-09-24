@@ -99,11 +99,11 @@ module minerva.engine {
 
             var ctx = this.$$ctx;
             ctx.size.commitResize();
-            ctx.raw.fillStyle = "#ffffff";
-            ctx.raw.fillRect(region.x, region.y, region.width, region.height);
 
             ctx.save();
             ctx.applyDpiRatio();
+            ctx.raw.fillStyle = "#ffffff";
+            ctx.raw.fillRect(region.x, region.y, region.width, region.height);
             ctx.clipRect(region);
             for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
                 layers[i].render(ctx, region);
