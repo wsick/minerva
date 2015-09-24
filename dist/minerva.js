@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.4.25';
+    minerva.version = '0.5.0';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -1753,8 +1753,7 @@ var minerva;
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var minerva;
 (function (minerva) {
@@ -2129,7 +2128,6 @@ var minerva;
     (function (core) {
         var render;
         (function (render) {
-            var epsilon = 1e-10;
             var caps = [
                 "butt",
                 "square",
@@ -2145,14 +2143,13 @@ var minerva;
                 function RenderContext(ctx) {
                     this.$$transforms = [];
                     this.currentTransform = minerva.mat3.identity();
-                    this.$$width = ctx.canvas.width;
-                    this.$$height = ctx.canvas.height;
-                    Object.defineProperty(this, 'raw', { value: ctx, writable: false });
-                    Object.defineProperty(this, 'currentTransform', { value: minerva.mat3.identity(), writable: false });
-                    Object.defineProperty(this, 'hasFillRule', { value: RenderContext.hasFillRule, writable: false });
-                    var ratio = (window.devicePixelRatio || 1) / ctx.backingStorePixelRatio;
-                    Object.defineProperty(this, 'dpiRatio', { value: ratio, writable: false });
-                    this.scale(ratio, ratio);
+                    Object.defineProperties(this, {
+                        "raw": { value: ctx, writable: false },
+                        "currentTransform": { value: minerva.mat3.identity(), writable: false },
+                        "hasFillRule": { value: RenderContext.hasFillRule, writable: false },
+                        "size": { value: new render.RenderContextSize(), writable: false },
+                    });
+                    this.size.init(ctx);
                 }
                 Object.defineProperty(RenderContext, "hasFillRule", {
                     get: function () {
@@ -2165,22 +2162,9 @@ var minerva;
                     enumerable: true,
                     configurable: true
                 });
-                RenderContext.prototype.resize = function (width, height) {
-                    if (Math.abs(this.$$width - width) < epsilon && Math.abs(this.$$height - height) < epsilon)
-                        return;
-                    this.$$width = width;
-                    this.$$height = height;
-                    var canvas = this.raw.canvas;
-                    if (Math.abs(this.dpiRatio - 1) < epsilon) {
-                        canvas.width = width;
-                        canvas.height = height;
-                    }
-                    else {
-                        canvas.width = width * this.dpiRatio;
-                        canvas.height = height * this.dpiRatio;
-                        canvas.style.width = width.toString() + "px";
-                        canvas.style.height = height.toString() + "px";
-                    }
+                RenderContext.prototype.applyDpiRatio = function () {
+                    var ratio = this.size.dpiRatio;
+                    this.scale(ratio, ratio);
                 };
                 RenderContext.prototype.save = function () {
                     this.$$transforms.push(minerva.mat3.create(this.currentTransform));
@@ -2270,6 +2254,104 @@ var minerva;
                     return parseFloat(RegExp.$1);
                 return -1;
             }
+        })(render = core.render || (core.render = {}));
+    })(core = minerva.core || (minerva.core = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var core;
+    (function (core) {
+        var render;
+        (function (render) {
+            var epsilon = 1e-10;
+            var RenderContextSize = (function () {
+                function RenderContextSize() {
+                    this.$$ctx = null;
+                    this.$$desiredWidth = 0;
+                    this.$$desiredHeight = 0;
+                    this.$$changed = null;
+                }
+                Object.defineProperty(RenderContextSize.prototype, "desiredWidth", {
+                    get: function () {
+                        return this.$$desiredWidth;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(RenderContextSize.prototype, "desiredHeight", {
+                    get: function () {
+                        return this.$$desiredHeight;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(RenderContextSize.prototype, "paintWidth", {
+                    get: function () {
+                        return this.$$desiredWidth * this.dpiRatio;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(RenderContextSize.prototype, "paintHeight", {
+                    get: function () {
+                        return this.$$desiredHeight * this.dpiRatio;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(RenderContextSize.prototype, "dpiRatio", {
+                    get: function () {
+                        return (window.devicePixelRatio || 1) / this.$$ctx.backingStorePixelRatio;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                RenderContextSize.prototype.init = function (ctx) {
+                    this.$$ctx = ctx;
+                    this.$$desiredWidth = ctx.canvas.offsetWidth;
+                    this.$$desiredHeight = ctx.canvas.offsetHeight;
+                    this.$adjustCanvas();
+                };
+                RenderContextSize.prototype.queueResize = function (width, height) {
+                    if (this.$$changed) {
+                        this.$$changed.width = width;
+                        this.$$changed.height = height;
+                    }
+                    else {
+                        this.$$changed = {
+                            width: width,
+                            height: height
+                        };
+                    }
+                    return this;
+                };
+                RenderContextSize.prototype.commitResize = function () {
+                    if (this.$$changed) {
+                        if (Math.abs(this.$$changed.width - this.$$desiredWidth) < epsilon && Math.abs(this.$$changed.height - this.$$desiredHeight) < epsilon)
+                            return;
+                        this.$$desiredWidth = this.$$changed.width;
+                        this.$$desiredHeight = this.$$changed.height;
+                        this.$$changed = null;
+                        this.$adjustCanvas();
+                    }
+                    return this;
+                };
+                RenderContextSize.prototype.$adjustCanvas = function () {
+                    var canvas = this.$$ctx.canvas;
+                    if (Math.abs(this.dpiRatio - 1) < epsilon) {
+                        canvas.width = this.desiredWidth;
+                        canvas.height = this.desiredHeight;
+                    }
+                    else {
+                        canvas.width = this.paintWidth;
+                        canvas.height = this.paintHeight;
+                        canvas.style.width = this.desiredWidth.toString() + "px";
+                        canvas.style.height = this.desiredHeight.toString() + "px";
+                    }
+                };
+                return RenderContextSize;
+            })();
+            render.RenderContextSize = RenderContextSize;
         })(render = core.render || (core.render = {}));
     })(core = minerva.core || (minerva.core = {}));
 })(minerva || (minerva = {}));
@@ -9465,27 +9547,20 @@ var minerva;
                 this.$$dirtyRegion = null;
                 this.$$width = 0;
                 this.$$height = 0;
-                this.$$sizechanged = false;
             }
             Object.defineProperty(Surface.prototype, "width", {
-                get: function () {
-                    return this.$$width;
-                },
+                get: function () { return this.$$width; },
                 enumerable: true,
                 configurable: true
             });
             Object.defineProperty(Surface.prototype, "height", {
-                get: function () {
-                    return this.$$height;
-                },
+                get: function () { return this.$$height; },
                 enumerable: true,
                 configurable: true
             });
             Surface.prototype.init = function (canvas) {
                 this.$$canvas = canvas;
                 this.$$ctx = new minerva.core.render.RenderContext(canvas.getContext('2d', { alpha: false }));
-                this.$$width = canvas.offsetWidth;
-                this.$$height = canvas.offsetHeight;
             };
             Surface.prototype.attachLayer = function (layer, root) {
                 if (root === true)
@@ -9533,7 +9608,7 @@ var minerva;
             Surface.prototype.updateBounds = function () {
             };
             Surface.prototype.invalidate = function (region) {
-                region = region || new minerva.Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
+                region = region || new minerva.Rect(0, 0, this.width, this.height);
                 if (!this.$$dirtyRegion)
                     this.$$dirtyRegion = new minerva.Rect(region.x, region.y, region.width, region.height);
                 else
@@ -9549,15 +9624,11 @@ var minerva;
                 this.$$dirtyRegion = null;
                 minerva.Rect.roundOut(region);
                 var ctx = this.$$ctx;
-                if (this.$$sizechanged) {
-                    this.$$sizechanged = false;
-                    ctx.resize(this.$$width, this.$$height);
-                }
-                else {
-                }
+                ctx.size.commitResize();
+                ctx.save();
+                ctx.applyDpiRatio();
                 ctx.raw.fillStyle = "#ffffff";
                 ctx.raw.fillRect(region.x, region.y, region.width, region.height);
-                ctx.save();
                 ctx.clipRect(region);
                 for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
                     layers[i].render(ctx, region);
@@ -9590,7 +9661,7 @@ var minerva;
                     measureList: [],
                     arrangeList: [],
                     sizingList: [],
-                    surfaceSize: new minerva.Size(this.$$width, this.$$height),
+                    surfaceSize: new minerva.Size(this.width, this.height),
                     sizingUpdates: []
                 };
                 var updated = false;
@@ -9607,7 +9678,7 @@ var minerva;
             Surface.prototype.resize = function (width, height) {
                 this.$$width = width;
                 this.$$height = height;
-                this.$$sizechanged = true;
+                this.$$ctx.size.queueResize(width, height);
                 this.invalidate(new minerva.Rect(0, 0, width, height));
                 for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
                     layers[i].invalidateMeasure();
@@ -9617,7 +9688,9 @@ var minerva;
                 if (this.$$layers.length < 1)
                     return null;
                 hitTestCtx = hitTestCtx || new minerva.core.render.RenderContext(document.createElement('canvas').getContext('2d'));
-                hitTestCtx.resize(this.$$canvas.width, this.$$canvas.height);
+                hitTestCtx.size
+                    .queueResize(this.width, this.height)
+                    .commitResize();
                 var list = [];
                 for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
                     layers[i].hitTest(pos, list, hitTestCtx, false);
