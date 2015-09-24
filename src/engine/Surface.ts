@@ -21,22 +21,12 @@ module minerva.engine {
 
         private $$width: number = 0;
         private $$height: number = 0;
-        //NOTE: If we resize the HTML5 canvas during resize, the canvas will go blank until render happens
-        private $$sizechanged: boolean = false;
-
-        get width (): number {
-            return this.$$width;
-        }
-
-        get height (): number {
-            return this.$$height;
-        }
+        get width(): number { return this.$$width; }
+        get height(): number { return this.$$height; }
 
         init (canvas: HTMLCanvasElement) {
             this.$$canvas = canvas;
             this.$$ctx = new core.render.RenderContext(<CanvasRenderingContext2D>canvas.getContext('2d', {alpha: false}));
-            this.$$width = canvas.offsetWidth;
-            this.$$height = canvas.offsetHeight;
         }
 
         attachLayer (layer: core.Updater, root?: boolean) {
@@ -89,7 +79,7 @@ module minerva.engine {
         }
 
         invalidate (region?: Rect) {
-            region = region || new Rect(0, 0, this.$$canvas.offsetWidth, this.$$canvas.offsetHeight);
+            region = region || new Rect(0, 0, this.width, this.height);
             if (!this.$$dirtyRegion)
                 this.$$dirtyRegion = new Rect(region.x, region.y, region.width, region.height);
             else
@@ -108,15 +98,12 @@ module minerva.engine {
             Rect.roundOut(region);
 
             var ctx = this.$$ctx;
-            if (this.$$sizechanged) {
-                this.$$sizechanged = false;
-                ctx.resize(this.$$width, this.$$height);
-            } else {
-            }
+            ctx.size.commitResize();
             ctx.raw.fillStyle = "#ffffff";
             ctx.raw.fillRect(region.x, region.y, region.width, region.height);
 
             ctx.save();
+            ctx.applyDpiRatio();
             ctx.clipRect(region);
             for (var layers = this.$$layers, i = 0, len = layers.length; i < len; i++) {
                 layers[i].render(ctx, region);
@@ -154,7 +141,7 @@ module minerva.engine {
                 measureList: [],
                 arrangeList: [],
                 sizingList: [],
-                surfaceSize: new Size(this.$$width, this.$$height),
+                surfaceSize: new Size(this.width, this.height),
                 sizingUpdates: []
             };
             var updated = false;
@@ -174,7 +161,7 @@ module minerva.engine {
         resize (width: number, height: number) {
             this.$$width = width;
             this.$$height = height;
-            this.$$sizechanged = true;
+            this.$$ctx.size.queueResize(width, height);
             this.invalidate(new Rect(0, 0, width, height));
             for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
                 layers[i].invalidateMeasure();
@@ -185,12 +172,17 @@ module minerva.engine {
             if (this.$$layers.length < 1)
                 return null;
             hitTestCtx = hitTestCtx || new core.render.RenderContext(<CanvasRenderingContext2D>document.createElement('canvas').getContext('2d'));
-            hitTestCtx.resize(this.$$canvas.width, this.$$canvas.height);
+            hitTestCtx.size
+                .queueResize(this.width, this.height)
+                .commitResize();
 
+            hitTestCtx.save();
+            hitTestCtx.applyDpiRatio();
             var list: core.Updater[] = [];
             for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
                 layers[i].hitTest(pos, list, hitTestCtx, false);
             }
+            hitTestCtx.restore();
             return list;
         }
 

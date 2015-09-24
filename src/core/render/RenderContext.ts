@@ -8,7 +8,6 @@ module minerva.core.render {
         strokeMiterLimit: number;
     }
 
-    var epsilon = 1e-10;
     var caps: string[] = [
         "butt", //flat
         "square", //square
@@ -22,22 +21,19 @@ module minerva.core.render {
     ];
     export class RenderContext {
         private $$transforms = [];
-        private $$width: number;
-        private $$height: number;
         currentTransform = mat3.identity();
-        raw: CanvasRenderingContext2D;
         hasFillRule: boolean;
-        dpiRatio: number;
+        raw: CanvasRenderingContext2D;
+        size: RenderContextSize;
 
         constructor (ctx: CanvasRenderingContext2D) {
-            this.$$width = ctx.canvas.width;
-            this.$$height = ctx.canvas.height;
-            Object.defineProperty(this, 'raw', {value: ctx, writable: false});
-            Object.defineProperty(this, 'currentTransform', {value: mat3.identity(), writable: false});
-            Object.defineProperty(this, 'hasFillRule', {value: RenderContext.hasFillRule, writable: false});
-            var ratio = (window.devicePixelRatio || 1) / ctx.backingStorePixelRatio;
-            Object.defineProperty(this, 'dpiRatio', {value: ratio, writable: false});
-            this.scale(ratio, ratio);
+            Object.defineProperties(this, {
+                "raw": {value: ctx, writable: false},
+                "currentTransform": {value: mat3.identity(), writable: false},
+                "hasFillRule": {value: RenderContext.hasFillRule, writable: false},
+                "size": {value: new RenderContextSize(), writable: false},
+            });
+            this.size.init(ctx);
         }
 
         static get hasFillRule (): boolean {
@@ -48,24 +44,9 @@ module minerva.core.render {
             return true;
         }
 
-        resize (width: number, height: number) {
-            if (Math.abs(this.$$width - width) < epsilon && Math.abs(this.$$height - height) < epsilon)
-                return;
-            this.$$width = width;
-            this.$$height = height;
-
-            var canvas = this.raw.canvas;
-            if (Math.abs(this.dpiRatio - 1) < epsilon) {
-                canvas.width = width;
-                canvas.height = height;
-            } else {
-                // Size the canvas width and height (the virtual canvas size) to the scaled up pixel count.
-                canvas.width = width * this.dpiRatio;
-                canvas.height = height * this.dpiRatio;
-                // Size the physical canvas using CSS width and height to the pixel dimensions.
-                canvas.style.width = width.toString() + "px";
-                canvas.style.height = height.toString() + "px";
-            }
+        applyDpiRatio() {
+            var ratio = this.size.dpiRatio;
+            this.scale(ratio, ratio);
         }
 
         save () {
