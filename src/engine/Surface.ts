@@ -176,13 +176,10 @@ module minerva.engine {
                 .queueResize(this.width, this.height)
                 .commitResize();
 
-            hitTestCtx.save();
-            hitTestCtx.applyDpiRatio();
             var list: core.Updater[] = [];
             for (var layers = this.$$layers, i = layers.length - 1; i >= 0 && list.length === 0; i--) {
                 layers[i].hitTest(pos, list, hitTestCtx, false);
             }
-            hitTestCtx.restore();
             return list;
         }
 
