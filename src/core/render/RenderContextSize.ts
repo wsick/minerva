@@ -7,6 +7,7 @@ module minerva.core.render {
         private $$desiredWidth: number = 0;
         private $$desiredHeight: number = 0;
         private $$changed: ISize = null;
+        private $$lastDpiRatio = 1;
 
         get desiredWidth(): number {
             return this.$$desiredWidth;
@@ -30,8 +31,9 @@ module minerva.core.render {
 
         init(ctx: CanvasRenderingContext2D) {
             this.$$ctx = ctx;
-            this.$$desiredWidth = ctx.canvas.offsetWidth;
-            this.$$desiredHeight = ctx.canvas.offsetHeight;
+            var desired = getNaturalCanvasSize(ctx.canvas);
+            this.$$desiredWidth = desired.width;
+            this.$$desiredHeight = desired.height;
             this.$adjustCanvas();
         }
 
@@ -61,9 +63,17 @@ module minerva.core.render {
             return this;
         }
 
+        updateDpiRatio(): boolean {
+            if (this.$$lastDpiRatio === this.dpiRatio)
+                return false;
+            this.$adjustCanvas();
+            return true;
+        }
+
         private $adjustCanvas() {
             var canvas = this.$$ctx.canvas;
-            if (Math.abs(this.dpiRatio - 1) < epsilon) {
+            var dpiRatio = this.dpiRatio;
+            if (Math.abs(dpiRatio - 1) < epsilon) {
                 canvas.width = this.desiredWidth;
                 canvas.height = this.desiredHeight;
             } else {
@@ -74,6 +84,7 @@ module minerva.core.render {
                 canvas.style.width = this.desiredWidth.toString() + "px";
                 canvas.style.height = this.desiredHeight.toString() + "px";
             }
+            this.$$lastDpiRatio = dpiRatio;
         }
     }
 }
