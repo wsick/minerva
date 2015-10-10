@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.5.0';
+    minerva.version = '0.6.0';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -803,6 +803,14 @@ var minerva;
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
+    function getNaturalCanvasSize(canvas) {
+        var zoomFactor = minerva.zoom.calc();
+        return new minerva.Size(canvas.offsetWidth * zoomFactor, canvas.offsetHeight * zoomFactor);
+    }
+    minerva.getNaturalCanvasSize = getNaturalCanvasSize;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
     function singleton(type) {
         var x = type;
         if (!x.$$instance)
@@ -810,6 +818,45 @@ var minerva;
         return x.$$instance;
     }
     minerva.singleton = singleton;
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var zoom;
+    (function (zoom_1) {
+        zoom_1.calc = (function () {
+            if (document.frames)
+                return ie();
+            return chrome();
+        })();
+        function ie() {
+            return function () {
+                var screen = document.frames.screen;
+                var zoom = screen.deviceXDPI / screen.systemXDPI;
+                return Math.round(zoom * 100) / 100;
+            };
+        }
+        function chrome() {
+            var svg;
+            function memoizeSvg() {
+                if (!!svg || !document.body)
+                    return;
+                svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                svg.setAttribute('version', '1.1');
+                document.body.appendChild(svg);
+                (function (style) {
+                    style.opacity = "0.0";
+                    style.position = "absolute";
+                    style.left = "0";
+                    style.top = "0";
+                })(svg.style);
+            }
+            return function () {
+                memoizeSvg();
+                return !svg ? 1 : svg.currentScale;
+            };
+        }
+    })(zoom = minerva.zoom || (minerva.zoom = {}));
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -2270,6 +2317,7 @@ var minerva;
                     this.$$desiredWidth = 0;
                     this.$$desiredHeight = 0;
                     this.$$changed = null;
+                    this.$$lastDpiRatio = 1;
                 }
                 Object.defineProperty(RenderContextSize.prototype, "desiredWidth", {
                     get: function () {
@@ -2308,8 +2356,9 @@ var minerva;
                 });
                 RenderContextSize.prototype.init = function (ctx) {
                     this.$$ctx = ctx;
-                    this.$$desiredWidth = ctx.canvas.offsetWidth;
-                    this.$$desiredHeight = ctx.canvas.offsetHeight;
+                    var desired = minerva.getNaturalCanvasSize(ctx.canvas);
+                    this.$$desiredWidth = desired.width;
+                    this.$$desiredHeight = desired.height;
                     this.$adjustCanvas();
                 };
                 RenderContextSize.prototype.queueResize = function (width, height) {
@@ -2336,9 +2385,16 @@ var minerva;
                     }
                     return this;
                 };
+                RenderContextSize.prototype.updateDpiRatio = function () {
+                    if (this.$$lastDpiRatio === this.dpiRatio)
+                        return false;
+                    this.$adjustCanvas();
+                    return true;
+                };
                 RenderContextSize.prototype.$adjustCanvas = function () {
                     var canvas = this.$$ctx.canvas;
-                    if (Math.abs(this.dpiRatio - 1) < epsilon) {
+                    var dpiRatio = this.dpiRatio;
+                    if (Math.abs(dpiRatio - 1) < epsilon) {
                         canvas.width = this.desiredWidth;
                         canvas.height = this.desiredHeight;
                     }
@@ -2348,6 +2404,7 @@ var minerva;
                         canvas.style.width = this.desiredWidth.toString() + "px";
                         canvas.style.height = this.desiredHeight.toString() + "px";
                     }
+                    this.$$lastDpiRatio = dpiRatio;
                 };
                 return RenderContextSize;
             })();
@@ -9549,12 +9606,16 @@ var minerva;
                 this.$$height = 0;
             }
             Object.defineProperty(Surface.prototype, "width", {
-                get: function () { return this.$$width; },
+                get: function () {
+                    return this.$$width;
+                },
                 enumerable: true,
                 configurable: true
             });
             Object.defineProperty(Surface.prototype, "height", {
-                get: function () { return this.$$height; },
+                get: function () {
+                    return this.$$height;
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -9676,10 +9737,15 @@ var minerva;
                 return updated;
             };
             Surface.prototype.resize = function (width, height) {
+                if (this.$$width === width && this.$$height === height)
+                    return;
+                var region = new minerva.Rect(0, 0, this.$$width, this.$$height);
+                minerva.Rect.union(region, new minerva.Rect(0, 0, width, height));
+                minerva.Rect.roundOut(region);
                 this.$$width = width;
                 this.$$height = height;
                 this.$$ctx.size.queueResize(width, height);
-                this.invalidate(new minerva.Rect(0, 0, width, height));
+                this.invalidate(region);
                 for (var layers = this.$$layers, i = 0; i < layers.length; i++) {
                     layers[i].invalidateMeasure();
                 }
@@ -9696,6 +9762,10 @@ var minerva;
                     layers[i].hitTest(pos, list, hitTestCtx, false);
                 }
                 return list;
+            };
+            Surface.prototype.updateDpiRatio = function () {
+                if (this.$$ctx.size.updateDpiRatio())
+                    this.invalidate();
             };
             Surface.measureWidth = function (text, font) {
                 fontCtx = fontCtx || document.createElement('canvas').getContext('2d');

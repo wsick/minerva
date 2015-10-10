@@ -396,7 +396,13 @@ declare module minerva {
     function layoutError(tree: core.IUpdaterTree, pipedef: any, message: string): void;
 }
 declare module minerva {
+    function getNaturalCanvasSize(canvas: HTMLCanvasElement): Size;
+}
+declare module minerva {
     function singleton(type: Function): any;
+}
+declare module minerva.zoom {
+    var calc: () => number;
 }
 declare module minerva.pipe {
     interface IPipeData {
@@ -942,6 +948,7 @@ declare module minerva.core.render {
         private $$desiredWidth;
         private $$desiredHeight;
         private $$changed;
+        private $$lastDpiRatio;
         desiredWidth: number;
         desiredHeight: number;
         paintWidth: number;
@@ -950,6 +957,7 @@ declare module minerva.core.render {
         init(ctx: CanvasRenderingContext2D): void;
         queueResize(width: number, height: number): RenderContextSize;
         commitResize(): RenderContextSize;
+        updateDpiRatio(): boolean;
         private $adjustCanvas();
     }
 }
@@ -2451,6 +2459,7 @@ declare module minerva.engine {
         updateLayout(): boolean;
         resize(width: number, height: number): void;
         hitTest(pos: Point): core.Updater[];
+        updateDpiRatio(): void;
         static measureWidth(text: string, font: Font): number;
     }
 }
