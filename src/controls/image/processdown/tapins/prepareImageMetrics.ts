@@ -7,10 +7,8 @@ module minerva.controls.image.processdown.tapins {
         imgRect.x = imgRect.y = 0;
 
         var source = input.source;
-        source.lock();
         imgRect.width = source.pixelWidth;
         imgRect.height = source.pixelHeight;
-        source.unlock();
 
         var paintRect = state.paintRect;
         paintRect.x = paintRect.y = 0;

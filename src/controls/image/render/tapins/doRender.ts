@@ -4,13 +4,11 @@ module minerva.controls.image.render.tapins {
         if (!source || source.pixelWidth === 0 || source.pixelHeight === 0)
             return true;
 
-        source.lock();
         ctx.save();
         core.helpers.renderLayoutClip(ctx, input, tree);
         ctx.preapply(input.imgXform);
-        ctx.raw.drawImage(source.image, 0, 0);
+        source.draw(ctx.raw);
         ctx.restore();
-        source.unlock();
 
         return true;
     }

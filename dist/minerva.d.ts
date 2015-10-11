@@ -2794,11 +2794,11 @@ declare module minerva.controls.grid {
 }
 declare module minerva.controls.image {
     interface IImageSource {
-        image: HTMLImageElement;
+        draw(ctx: CanvasRenderingContext2D): any;
+        createPattern(ctx: CanvasRenderingContext2D): any;
+        isEmpty: boolean;
         pixelWidth: number;
         pixelHeight: number;
-        lock(): any;
-        unlock(): any;
     }
 }
 declare module minerva.controls.image {
@@ -3008,7 +3008,16 @@ declare module minerva.controls.usercontrol {
     }
 }
 declare module minerva.controls.video {
-    class VideoUpdater extends core.Updater {
+    interface IVideoSource extends image.IImageSource {
+        getIsPlaying(): boolean;
+    }
+}
+declare module minerva.controls.video {
+    interface IVideoUpdaterAssets extends image.IImageUpdaterAssets {
+        source: IVideoSource;
+    }
+    class VideoUpdater extends image.ImageUpdater {
+        assets: IVideoUpdaterAssets;
         onSurfaceChanged(oldSurface: core.ISurface, newSurface: core.ISurface): void;
         preRender(): void;
     }

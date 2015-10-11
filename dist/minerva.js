@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.6.0';
+    minerva.version = '0.7.0';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -7844,10 +7844,8 @@ var minerva;
                         var imgRect = state.imgRect;
                         imgRect.x = imgRect.y = 0;
                         var source = input.source;
-                        source.lock();
                         imgRect.width = source.pixelWidth;
                         imgRect.height = source.pixelHeight;
-                        source.unlock();
                         var paintRect = state.paintRect;
                         paintRect.x = paintRect.y = 0;
                         paintRect.width = input.actualWidth;
@@ -7877,13 +7875,11 @@ var minerva;
                         var source = input.source;
                         if (!source || source.pixelWidth === 0 || source.pixelHeight === 0)
                             return true;
-                        source.lock();
                         ctx.save();
                         minerva.core.helpers.renderLayoutClip(ctx, input, tree);
                         ctx.preapply(input.imgXform);
-                        ctx.raw.drawImage(source.image, 0, 0);
+                        source.draw(ctx.raw);
                         ctx.restore();
-                        source.unlock();
                         return true;
                     }
                     tapins.doRender = doRender;
@@ -12263,10 +12259,12 @@ var minerva;
                         newSurface.hookPrerender(this);
                 };
                 VideoUpdater.prototype.preRender = function () {
-                    this.invalidate();
+                    var assets = this.assets;
+                    if (assets.source && assets.source.getIsPlaying())
+                        this.invalidate();
                 };
                 return VideoUpdater;
-            })(minerva.core.Updater);
+            })(controls.image.ImageUpdater);
             video.VideoUpdater = VideoUpdater;
         })(video = controls.video || (controls.video = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
@@ -13400,6 +13398,7 @@ var minerva;
         })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
     })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
+/// <reference path="../shape/ShapeUpdater" />
 var minerva;
 (function (minerva) {
     var shapes;
