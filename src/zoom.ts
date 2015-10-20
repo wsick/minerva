@@ -27,7 +27,7 @@ module minerva.zoom {
                 style.opacity = "0.0";
                 style.position = "absolute";
                 style.left = "-300px";
-                style.top = "-150px";
+                //style.top = "-150px";
             })(<any>svg.style);
         }
 
