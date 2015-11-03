@@ -6,6 +6,7 @@ interface IMatrix4Static {
     // dest = a * b
     multiply (a: number[], b: number[], dest?: number[]): number[];
     inverse (mat: number[], dest?: number[]): number[];
+    transpose (mat: number[], dest?: number[]): number[];
     transformVec4 (mat: number[], vec: number[], dest?: number[]): number[];
     createTranslate (x: number, y: number, z: number, dest?: number[]): number[];
     createScale (x: number, y: number, z: number, dest?: number[]): number[];
@@ -206,6 +207,21 @@ module minerva {
             dest[Indexes.OffsetY] = (a00 * b09 - a01 * b07 + a02 * b06) * id;
             dest[Indexes.OffsetZ] = (-a30 * b03 + a31 * b01 - a32 * b00) * id;
             dest[Indexes.M44] = (a20 * b03 - a21 * b01 + a22 * b00) * id;
+
+            return dest;
+        },
+        transpose (mat: number[], dest?: number[]): number[] {
+            if (!dest) dest = mat;
+
+            var a00 = mat[Indexes.M11], a01 = mat[Indexes.M12], a02 = mat[Indexes.M13], a03 = mat[Indexes.M14],
+                a10 = mat[Indexes.M21], a11 = mat[Indexes.M22], a12 = mat[Indexes.M23], a13 = mat[Indexes.M24],
+                a20 = mat[Indexes.M31], a21 = mat[Indexes.M32], a22 = mat[Indexes.M33], a23 = mat[Indexes.M34],
+                a30 = mat[Indexes.OffsetX], a31 = mat[Indexes.OffsetY], a32 = mat[Indexes.OffsetZ], a33 = mat[Indexes.M44];
+
+            dest[Indexes.M11] = a00; dest[Indexes.M21] = a01; dest[Indexes.M31] = a02; dest[Indexes.OffsetX] = a03;
+            dest[Indexes.M12] = a10; dest[Indexes.M22] = a11; dest[Indexes.M32] = a12; dest[Indexes.OffsetY] = a13;
+            dest[Indexes.M13] = a20; dest[Indexes.M23] = a21; dest[Indexes.M33] = a22; dest[Indexes.OffsetZ] = a23;
+            dest[Indexes.M14] = a30; dest[Indexes.M24] = a31; dest[Indexes.M34] = a32; dest[Indexes.M44] = a33;
 
             return dest;
         },
