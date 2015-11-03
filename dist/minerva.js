@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.7.2';
+    minerva.version = '0.7.3';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -5436,34 +5436,6 @@ var minerva;
     (function (controls) {
         var textblock;
         (function (textblock) {
-            var hittest;
-            (function (hittest) {
-                var TextBlockHitTestPipeDef = (function (_super) {
-                    __extends(TextBlockHitTestPipeDef, _super);
-                    function TextBlockHitTestPipeDef() {
-                        _super.call(this);
-                        this.replaceTapin('canHitInside', tapins.canHitInside);
-                    }
-                    return TextBlockHitTestPipeDef;
-                })(minerva.core.hittest.HitTestPipeDef);
-                hittest.TextBlockHitTestPipeDef = TextBlockHitTestPipeDef;
-                var tapins;
-                (function (tapins) {
-                    function canHitInside(data, pos, hitList, ctx) {
-                        return true;
-                    }
-                    tapins.canHitInside = canHitInside;
-                })(tapins = hittest.tapins || (hittest.tapins = {}));
-            })(hittest = textblock.hittest || (textblock.hittest = {}));
-        })(textblock = controls.textblock || (controls.textblock = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var textblock;
-        (function (textblock) {
             var measure;
             (function (measure) {
                 var TextBlockMeasurePipeDef = (function (_super) {
@@ -5488,6 +5460,34 @@ var minerva;
                     tapins.doOverride = doOverride;
                 })(tapins = measure.tapins || (measure.tapins = {}));
             })(measure = textblock.measure || (textblock.measure = {}));
+        })(textblock = controls.textblock || (controls.textblock = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var textblock;
+        (function (textblock) {
+            var hittest;
+            (function (hittest) {
+                var TextBlockHitTestPipeDef = (function (_super) {
+                    __extends(TextBlockHitTestPipeDef, _super);
+                    function TextBlockHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('canHitInside', tapins.canHitInside);
+                    }
+                    return TextBlockHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.TextBlockHitTestPipeDef = TextBlockHitTestPipeDef;
+                var tapins;
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = textblock.hittest || (textblock.hittest = {}));
         })(textblock = controls.textblock || (controls.textblock = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
@@ -5682,53 +5682,6 @@ var minerva;
     (function (controls) {
         var textboxview;
         (function (textboxview) {
-            var processup;
-            (function (processup) {
-                var TextBoxViewProcessUpPipeDef = (function (_super) {
-                    __extends(TextBoxViewProcessUpPipeDef, _super);
-                    function TextBoxViewProcessUpPipeDef() {
-                        _super.call(this);
-                        this.replaceTapin('calcActualSize', tapins.calcActualSize)
-                            .replaceTapin('calcExtents', tapins.calcExtents);
-                    }
-                    return TextBoxViewProcessUpPipeDef;
-                })(minerva.core.processup.ProcessUpPipeDef);
-                processup.TextBoxViewProcessUpPipeDef = TextBoxViewProcessUpPipeDef;
-                var tapins;
-                (function (tapins) {
-                    function calcActualSize(input, state, output, tree) {
-                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
-                            return true;
-                        var as = state.actualSize;
-                        as.width = Number.POSITIVE_INFINITY;
-                        as.height = Number.POSITIVE_INFINITY;
-                        minerva.core.helpers.coerceSize(as, input);
-                        minerva.Size.copyTo(tree.layout(as, input), as);
-                        return true;
-                    }
-                    tapins.calcActualSize = calcActualSize;
-                    function calcExtents(input, state, output, tree) {
-                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
-                            return true;
-                        var e = output.extents;
-                        e.x = e.y = 0;
-                        minerva.Size.copyTo(state.actualSize, e);
-                        minerva.Rect.copyTo(e, output.extentsWithChildren);
-                        output.extentsWithChildren.width++;
-                        return true;
-                    }
-                    tapins.calcExtents = calcExtents;
-                })(tapins = processup.tapins || (processup.tapins = {}));
-            })(processup = textboxview.processup || (textboxview.processup = {}));
-        })(textboxview = controls.textboxview || (controls.textboxview = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var textboxview;
-        (function (textboxview) {
             var render;
             (function (render) {
                 var TextBoxViewRenderPipeDef = (function (_super) {
@@ -5795,6 +5748,53 @@ var minerva;
                     tapins.renderCaret = renderCaret;
                 })(tapins = render.tapins || (render.tapins = {}));
             })(render = textboxview.render || (textboxview.render = {}));
+        })(textboxview = controls.textboxview || (controls.textboxview = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var textboxview;
+        (function (textboxview) {
+            var processup;
+            (function (processup) {
+                var TextBoxViewProcessUpPipeDef = (function (_super) {
+                    __extends(TextBoxViewProcessUpPipeDef, _super);
+                    function TextBoxViewProcessUpPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('calcActualSize', tapins.calcActualSize)
+                            .replaceTapin('calcExtents', tapins.calcExtents);
+                    }
+                    return TextBoxViewProcessUpPipeDef;
+                })(minerva.core.processup.ProcessUpPipeDef);
+                processup.TextBoxViewProcessUpPipeDef = TextBoxViewProcessUpPipeDef;
+                var tapins;
+                (function (tapins) {
+                    function calcActualSize(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+                        var as = state.actualSize;
+                        as.width = Number.POSITIVE_INFINITY;
+                        as.height = Number.POSITIVE_INFINITY;
+                        minerva.core.helpers.coerceSize(as, input);
+                        minerva.Size.copyTo(tree.layout(as, input), as);
+                        return true;
+                    }
+                    tapins.calcActualSize = calcActualSize;
+                    function calcExtents(input, state, output, tree) {
+                        if ((input.dirtyFlags & minerva.DirtyFlags.Bounds) === 0)
+                            return true;
+                        var e = output.extents;
+                        e.x = e.y = 0;
+                        minerva.Size.copyTo(state.actualSize, e);
+                        minerva.Rect.copyTo(e, output.extentsWithChildren);
+                        output.extentsWithChildren.width++;
+                        return true;
+                    }
+                    tapins.calcExtents = calcExtents;
+                })(tapins = processup.tapins || (processup.tapins = {}));
+            })(processup = textboxview.processup || (textboxview.processup = {}));
         })(textboxview = controls.textboxview || (controls.textboxview = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
@@ -5940,41 +5940,6 @@ var minerva;
 (function (minerva) {
     var shapes;
     (function (shapes) {
-        var ellipse;
-        (function (ellipse) {
-            var helpers;
-            (function (helpers) {
-                function draw(ctx, x, y, width, height) {
-                    var radiusX = width / 2;
-                    var radiusY = height / 2;
-                    var right = x + width;
-                    var bottom = y + height;
-                    var centerX = x + radiusX;
-                    var centerY = y + radiusY;
-                    ctx.beginPath();
-                    if (width === height) {
-                        ctx.arc(centerX, centerY, radiusX, 0, Math.PI * 2, false);
-                        return;
-                    }
-                    var kappa = .5522848;
-                    var ox = radiusX * kappa;
-                    var oy = radiusY * kappa;
-                    ctx.moveTo(x, centerY);
-                    ctx.bezierCurveTo(x, centerY - oy, centerX - ox, y, centerX, y);
-                    ctx.bezierCurveTo(centerX + ox, y, right, centerY - oy, right, centerY);
-                    ctx.bezierCurveTo(right, centerY + oy, centerX + ox, bottom, centerX, bottom);
-                    ctx.bezierCurveTo(centerX - ox, bottom, x, centerY + oy, x, centerY);
-                    ctx.closePath();
-                }
-                helpers.draw = draw;
-            })(helpers = ellipse.helpers || (ellipse.helpers = {}));
-        })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
-    })(shapes = minerva.shapes || (minerva.shapes = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var shapes;
-    (function (shapes) {
         var shape;
         (function (shape) {
             var hittest;
@@ -6025,6 +5990,41 @@ var minerva;
                     tapins.drawShape = drawShape;
                 })(tapins = hittest.tapins || (hittest.tapins = {}));
             })(hittest = ellipse.hittest || (ellipse.hittest = {}));
+        })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
+    })(shapes = minerva.shapes || (minerva.shapes = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var shapes;
+    (function (shapes) {
+        var ellipse;
+        (function (ellipse) {
+            var helpers;
+            (function (helpers) {
+                function draw(ctx, x, y, width, height) {
+                    var radiusX = width / 2;
+                    var radiusY = height / 2;
+                    var right = x + width;
+                    var bottom = y + height;
+                    var centerX = x + radiusX;
+                    var centerY = y + radiusY;
+                    ctx.beginPath();
+                    if (width === height) {
+                        ctx.arc(centerX, centerY, radiusX, 0, Math.PI * 2, false);
+                        return;
+                    }
+                    var kappa = .5522848;
+                    var ox = radiusX * kappa;
+                    var oy = radiusY * kappa;
+                    ctx.moveTo(x, centerY);
+                    ctx.bezierCurveTo(x, centerY - oy, centerX - ox, y, centerX, y);
+                    ctx.bezierCurveTo(centerX + ox, y, right, centerY - oy, right, centerY);
+                    ctx.bezierCurveTo(right, centerY + oy, centerX + ox, bottom, centerX, bottom);
+                    ctx.bezierCurveTo(centerX - ox, bottom, x, centerY + oy, x, centerY);
+                    ctx.closePath();
+                }
+                helpers.draw = draw;
+            })(helpers = ellipse.helpers || (ellipse.helpers = {}));
         })(ellipse = shapes.ellipse || (shapes.ellipse = {}));
     })(shapes = minerva.shapes || (minerva.shapes = {}));
 })(minerva || (minerva = {}));
@@ -10206,6 +10206,28 @@ var minerva;
             dest[Indexes.OffsetY] = (a00 * b09 - a01 * b07 + a02 * b06) * id;
             dest[Indexes.OffsetZ] = (-a30 * b03 + a31 * b01 - a32 * b00) * id;
             dest[Indexes.M44] = (a20 * b03 - a21 * b01 + a22 * b00) * id;
+            return dest;
+        },
+        transpose: function (mat, dest) {
+            if (!dest)
+                dest = mat;
+            var a00 = mat[Indexes.M11], a01 = mat[Indexes.M12], a02 = mat[Indexes.M13], a03 = mat[Indexes.M14], a10 = mat[Indexes.M21], a11 = mat[Indexes.M22], a12 = mat[Indexes.M23], a13 = mat[Indexes.M24], a20 = mat[Indexes.M31], a21 = mat[Indexes.M32], a22 = mat[Indexes.M33], a23 = mat[Indexes.M34], a30 = mat[Indexes.OffsetX], a31 = mat[Indexes.OffsetY], a32 = mat[Indexes.OffsetZ], a33 = mat[Indexes.M44];
+            dest[Indexes.M11] = a00;
+            dest[Indexes.M21] = a01;
+            dest[Indexes.M31] = a02;
+            dest[Indexes.OffsetX] = a03;
+            dest[Indexes.M12] = a10;
+            dest[Indexes.M22] = a11;
+            dest[Indexes.M32] = a12;
+            dest[Indexes.OffsetY] = a13;
+            dest[Indexes.M13] = a20;
+            dest[Indexes.M23] = a21;
+            dest[Indexes.M33] = a22;
+            dest[Indexes.OffsetZ] = a23;
+            dest[Indexes.M14] = a30;
+            dest[Indexes.M24] = a31;
+            dest[Indexes.M34] = a32;
+            dest[Indexes.M44] = a33;
             return dest;
         },
         transformVec4: function (mat, vec, dest) {
