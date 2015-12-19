@@ -46,8 +46,8 @@ module minerva.core.arrange {
     export class ArrangePipeDef extends pipe.TriPipeDef<IArrangeTapin, IInput, IState, IOutput> {
         constructor () {
             super();
-            this.addTapin('applyRounding', tapins.applyRounding)
-                .addTapin('validateFinalRect', tapins.validateFinalRect)
+            this.addTapin('validateFinalRect', tapins.validateFinalRect)
+                .addTapin('applyRounding', tapins.applyRounding)
                 .addTapin('validateVisibility', tapins.validateVisibility)
                 .addTapin('checkNeedArrange', tapins.checkNeedArrange)
                 //.addTapin('ensureMeasured', tapins.ensureMeasured) -> original only runs if haven't measured for Panel
