@@ -41,8 +41,9 @@ module minerva.controls.canvas {
 
             var ls = updater.assets.layoutSlot;
             minerva.Size.copyTo(updater.assets.desiredSize, ls);
-            ls.x = updater.getAttachedValue("Canvas.Left");
-            ls.y = updater.getAttachedValue("Canvas.Top");
+            //Coerce NaN, null, undefined to 0
+            ls.x = updater.getAttachedValue("Canvas.Left") || 0;
+            ls.y = updater.getAttachedValue("Canvas.Top") || 0;
             if (updater.assets.useLayoutRounding) {
                 ls.x = Math.round(ls.x);
                 ls.y = Math.round(ls.y);
