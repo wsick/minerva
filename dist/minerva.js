@@ -1,6 +1,6 @@
 var minerva;
 (function (minerva) {
-    minerva.version = '0.7.4';
+    minerva.version = '0.7.5';
 })(minerva || (minerva = {}));
 var minerva;
 (function (minerva) {
@@ -4453,156 +4453,6 @@ var minerva;
     (function (controls) {
         var grid;
         (function (grid) {
-            var helpers;
-            (function (helpers) {
-                function allocateDesiredSize(rowMat, colMat) {
-                    for (var i = 0; i < 2; i++) {
-                        var matrix = i === 0 ? rowMat : colMat;
-                        var count = matrix.length;
-                        for (var row = count - 1; row >= 0; row--) {
-                            for (var col = row; col >= 0; col--) {
-                                var spansStar = false;
-                                for (var j = row; j >= col; j--) {
-                                    spansStar = spansStar || (matrix[j][j].type === grid.GridUnitType.Star);
-                                }
-                                var current = matrix[row][col].desired;
-                                var totalAllocated = 0;
-                                for (var a = row; a >= col; a--) {
-                                    totalAllocated += matrix[a][a].desired;
-                                }
-                                if (totalAllocated < current) {
-                                    var additional = current - totalAllocated;
-                                    if (spansStar) {
-                                        additional = helpers.assignSize(matrix, col, row, additional, grid.GridUnitType.Star, true);
-                                    }
-                                    else {
-                                        additional = helpers.assignSize(matrix, col, row, additional, grid.GridUnitType.Pixel, true);
-                                        additional = helpers.assignSize(matrix, col, row, additional, grid.GridUnitType.Auto, true);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    for (var i = 0; i < rowMat.length; i++) {
-                        rowMat[i][i].offered = rowMat[i][i].desired;
-                    }
-                    for (var i = 0; i < matrix.length; i++) {
-                        colMat[i][i].offered = colMat[i][i].desired;
-                    }
-                }
-                helpers.allocateDesiredSize = allocateDesiredSize;
-            })(helpers = grid.helpers || (grid.helpers = {}));
-        })(grid = controls.grid || (controls.grid = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var grid;
-        (function (grid) {
-            var helpers;
-            (function (helpers) {
-                function assignSize(mat, start, end, size, unitType, desiredSize) {
-                    var count = 0;
-                    var assigned = false;
-                    var segmentSize = 0;
-                    for (var i = start; i <= end; i++) {
-                        var cur = mat[i][i];
-                        segmentSize = desiredSize ? cur.desired : cur.offered;
-                        if (segmentSize < cur.max)
-                            count += (unitType === grid.GridUnitType.Star) ? cur.stars : 1;
-                    }
-                    do {
-                        assigned = false;
-                        var contribution = size / count;
-                        for (i = start; i <= end; i++) {
-                            cur = mat[i][i];
-                            segmentSize = desiredSize ? cur.desired : cur.offered;
-                            if (!(cur.type === unitType && segmentSize < cur.max))
-                                continue;
-                            var newSize = segmentSize;
-                            newSize += contribution * (unitType === grid.GridUnitType.Star ? cur.stars : 1);
-                            newSize = Math.min(newSize, cur.max);
-                            assigned = assigned || (newSize > segmentSize);
-                            size -= newSize - segmentSize;
-                            if (desiredSize)
-                                cur.desired = newSize;
-                            else
-                                cur.offered = newSize;
-                        }
-                    } while (assigned);
-                    return size;
-                }
-                helpers.assignSize = assignSize;
-            })(helpers = grid.helpers || (grid.helpers = {}));
-        })(grid = controls.grid || (controls.grid = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var grid;
-        (function (grid) {
-            var helpers;
-            (function (helpers) {
-                function expandStarCols(mat, coldefs, availableSize) {
-                    var aw = availableSize.width;
-                    for (var i = 0; i < mat.length; i++) {
-                        var cur = mat[i][i];
-                        if (cur.type === grid.GridUnitType.Star)
-                            cur.offered = 0;
-                        else
-                            aw = Math.max(aw - cur.offered, 0);
-                    }
-                    aw = helpers.assignSize(mat, 0, mat.length - 1, aw, grid.GridUnitType.Star, false);
-                    for (var i = 0; i < coldefs.length; i++) {
-                        var cur = mat[i][i];
-                        if (cur.type === grid.GridUnitType.Star)
-                            coldefs[i].setActualWidth(cur.offered);
-                    }
-                }
-                helpers.expandStarCols = expandStarCols;
-            })(helpers = grid.helpers || (grid.helpers = {}));
-        })(grid = controls.grid || (controls.grid = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var grid;
-        (function (grid) {
-            var helpers;
-            (function (helpers) {
-                function expandStarRows(mat, rowdefs, availableSize) {
-                    var ah = availableSize.height;
-                    for (var i = 0; i < mat.length; i++) {
-                        var cur = mat[i][i];
-                        if (cur.type === grid.GridUnitType.Star)
-                            cur.offered = 0;
-                        else
-                            ah = Math.max(ah - cur.offered, 0);
-                    }
-                    ah = helpers.assignSize(mat, 0, mat.length - 1, ah, grid.GridUnitType.Star, false);
-                    for (var i = 0; i < rowdefs.length; i++) {
-                        var cur = mat[i][i];
-                        if (cur.type === grid.GridUnitType.Star)
-                            rowdefs[i].setActualHeight(cur.offered);
-                    }
-                }
-                helpers.expandStarRows = expandStarRows;
-            })(helpers = grid.helpers || (grid.helpers = {}));
-        })(grid = controls.grid || (controls.grid = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var grid;
-        (function (grid) {
             var measure;
             (function (measure) {
                 var GridChildPlacement = (function () {
@@ -4797,6 +4647,156 @@ var minerva;
 (function (minerva) {
     var controls;
     (function (controls) {
+        var grid;
+        (function (grid) {
+            var helpers;
+            (function (helpers) {
+                function allocateDesiredSize(rowMat, colMat) {
+                    for (var i = 0; i < 2; i++) {
+                        var matrix = i === 0 ? rowMat : colMat;
+                        var count = matrix.length;
+                        for (var row = count - 1; row >= 0; row--) {
+                            for (var col = row; col >= 0; col--) {
+                                var spansStar = false;
+                                for (var j = row; j >= col; j--) {
+                                    spansStar = spansStar || (matrix[j][j].type === grid.GridUnitType.Star);
+                                }
+                                var current = matrix[row][col].desired;
+                                var totalAllocated = 0;
+                                for (var a = row; a >= col; a--) {
+                                    totalAllocated += matrix[a][a].desired;
+                                }
+                                if (totalAllocated < current) {
+                                    var additional = current - totalAllocated;
+                                    if (spansStar) {
+                                        additional = helpers.assignSize(matrix, col, row, additional, grid.GridUnitType.Star, true);
+                                    }
+                                    else {
+                                        additional = helpers.assignSize(matrix, col, row, additional, grid.GridUnitType.Pixel, true);
+                                        additional = helpers.assignSize(matrix, col, row, additional, grid.GridUnitType.Auto, true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (var i = 0; i < rowMat.length; i++) {
+                        rowMat[i][i].offered = rowMat[i][i].desired;
+                    }
+                    for (var i = 0; i < matrix.length; i++) {
+                        colMat[i][i].offered = colMat[i][i].desired;
+                    }
+                }
+                helpers.allocateDesiredSize = allocateDesiredSize;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var grid;
+        (function (grid) {
+            var helpers;
+            (function (helpers) {
+                function assignSize(mat, start, end, size, unitType, desiredSize) {
+                    var count = 0;
+                    var assigned = false;
+                    var segmentSize = 0;
+                    for (var i = start; i <= end; i++) {
+                        var cur = mat[i][i];
+                        segmentSize = desiredSize ? cur.desired : cur.offered;
+                        if (segmentSize < cur.max)
+                            count += (unitType === grid.GridUnitType.Star) ? cur.stars : 1;
+                    }
+                    do {
+                        assigned = false;
+                        var contribution = size / count;
+                        for (i = start; i <= end; i++) {
+                            cur = mat[i][i];
+                            segmentSize = desiredSize ? cur.desired : cur.offered;
+                            if (!(cur.type === unitType && segmentSize < cur.max))
+                                continue;
+                            var newSize = segmentSize;
+                            newSize += contribution * (unitType === grid.GridUnitType.Star ? cur.stars : 1);
+                            newSize = Math.min(newSize, cur.max);
+                            assigned = assigned || (newSize > segmentSize);
+                            size -= newSize - segmentSize;
+                            if (desiredSize)
+                                cur.desired = newSize;
+                            else
+                                cur.offered = newSize;
+                        }
+                    } while (assigned);
+                    return size;
+                }
+                helpers.assignSize = assignSize;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var grid;
+        (function (grid) {
+            var helpers;
+            (function (helpers) {
+                function expandStarCols(mat, coldefs, availableSize) {
+                    var aw = availableSize.width;
+                    for (var i = 0; i < mat.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === grid.GridUnitType.Star)
+                            cur.offered = 0;
+                        else
+                            aw = Math.max(aw - cur.offered, 0);
+                    }
+                    aw = helpers.assignSize(mat, 0, mat.length - 1, aw, grid.GridUnitType.Star, false);
+                    for (var i = 0; i < coldefs.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === grid.GridUnitType.Star)
+                            coldefs[i].setActualWidth(cur.offered);
+                    }
+                }
+                helpers.expandStarCols = expandStarCols;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var grid;
+        (function (grid) {
+            var helpers;
+            (function (helpers) {
+                function expandStarRows(mat, rowdefs, availableSize) {
+                    var ah = availableSize.height;
+                    for (var i = 0; i < mat.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === grid.GridUnitType.Star)
+                            cur.offered = 0;
+                        else
+                            ah = Math.max(ah - cur.offered, 0);
+                    }
+                    ah = helpers.assignSize(mat, 0, mat.length - 1, ah, grid.GridUnitType.Star, false);
+                    for (var i = 0; i < rowdefs.length; i++) {
+                        var cur = mat[i][i];
+                        if (cur.type === grid.GridUnitType.Star)
+                            rowdefs[i].setActualHeight(cur.offered);
+                    }
+                }
+                helpers.expandStarRows = expandStarRows;
+            })(helpers = grid.helpers || (grid.helpers = {}));
+        })(grid = controls.grid || (controls.grid = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
         var panel;
         (function (panel) {
             var processup;
@@ -4939,6 +4939,32 @@ var minerva;
     (function (controls) {
         var image;
         (function (image) {
+            var hittest;
+            (function (hittest) {
+                var ImageHitTestPipeDef = (function (_super) {
+                    __extends(ImageHitTestPipeDef, _super);
+                    function ImageHitTestPipeDef() {
+                        _super.call(this);
+                        this.replaceTapin('insideChildren', hittest.tapins.insideChildren)
+                            .replaceTapin('canHitInside', hittest.tapins.canHitInside)
+                            .addTapinAfter('insideObject', 'insideStretch', hittest.tapins.insideStretch);
+                    }
+                    ImageHitTestPipeDef.prototype.prepare = function (data) {
+                        data.imgRect = data.imgRect || new minerva.Rect();
+                    };
+                    return ImageHitTestPipeDef;
+                })(minerva.core.hittest.HitTestPipeDef);
+                hittest.ImageHitTestPipeDef = ImageHitTestPipeDef;
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var image;
+        (function (image) {
             var arrange;
             (function (arrange) {
                 var ImageArrangePipeDef = (function (_super) {
@@ -4970,23 +4996,27 @@ var minerva;
     (function (controls) {
         var image;
         (function (image) {
-            var hittest;
-            (function (hittest) {
-                var ImageHitTestPipeDef = (function (_super) {
-                    __extends(ImageHitTestPipeDef, _super);
-                    function ImageHitTestPipeDef() {
+            var measure;
+            (function (measure) {
+                var ImageMeasurePipeDef = (function (_super) {
+                    __extends(ImageMeasurePipeDef, _super);
+                    function ImageMeasurePipeDef() {
                         _super.call(this);
-                        this.replaceTapin('insideChildren', hittest.tapins.insideChildren)
-                            .replaceTapin('canHitInside', hittest.tapins.canHitInside)
-                            .addTapinAfter('insideObject', 'insideStretch', hittest.tapins.insideStretch);
+                        this.addTapinBefore('doOverride', 'calcImageBounds', measure.tapins.calcImageBounds)
+                            .addTapinBefore('doOverride', 'calcStretch', measure.tapins.calcStretch)
+                            .replaceTapin('doOverride', measure.tapins.doOverride);
                     }
-                    ImageHitTestPipeDef.prototype.prepare = function (data) {
-                        data.imgRect = data.imgRect || new minerva.Rect();
+                    ImageMeasurePipeDef.prototype.createState = function () {
+                        var state = _super.prototype.createState.call(this);
+                        state.imageBounds = new minerva.Rect();
+                        state.stretchX = 0;
+                        state.stretchY = 0;
+                        return state;
                     };
-                    return ImageHitTestPipeDef;
-                })(minerva.core.hittest.HitTestPipeDef);
-                hittest.ImageHitTestPipeDef = ImageHitTestPipeDef;
-            })(hittest = image.hittest || (image.hittest = {}));
+                    return ImageMeasurePipeDef;
+                })(minerva.core.measure.MeasurePipeDef);
+                measure.ImageMeasurePipeDef = ImageMeasurePipeDef;
+            })(measure = image.measure || (image.measure = {}));
         })(image = controls.image || (controls.image = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
@@ -5035,36 +5065,6 @@ var minerva;
                 })(minerva.core.processdown.ProcessDownPipeDef);
                 processdown.ImageProcessDownPipeDef = ImageProcessDownPipeDef;
             })(processdown = image.processdown || (image.processdown = {}));
-        })(image = controls.image || (controls.image = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var image;
-        (function (image) {
-            var measure;
-            (function (measure) {
-                var ImageMeasurePipeDef = (function (_super) {
-                    __extends(ImageMeasurePipeDef, _super);
-                    function ImageMeasurePipeDef() {
-                        _super.call(this);
-                        this.addTapinBefore('doOverride', 'calcImageBounds', measure.tapins.calcImageBounds)
-                            .addTapinBefore('doOverride', 'calcStretch', measure.tapins.calcStretch)
-                            .replaceTapin('doOverride', measure.tapins.doOverride);
-                    }
-                    ImageMeasurePipeDef.prototype.createState = function () {
-                        var state = _super.prototype.createState.call(this);
-                        state.imageBounds = new minerva.Rect();
-                        state.stretchX = 0;
-                        state.stretchY = 0;
-                        return state;
-                    };
-                    return ImageMeasurePipeDef;
-                })(minerva.core.measure.MeasurePipeDef);
-                measure.ImageMeasurePipeDef = ImageMeasurePipeDef;
-            })(measure = image.measure || (image.measure = {}));
         })(image = controls.image || (controls.image = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
@@ -7428,6 +7428,85 @@ var minerva;
     (function (controls) {
         var image;
         (function (image) {
+            var hittest;
+            (function (hittest) {
+                var tapins;
+                (function (tapins) {
+                    function canHitInside(data, pos, hitList, ctx) {
+                        return true;
+                    }
+                    tapins.canHitInside = canHitInside;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var image;
+        (function (image) {
+            var hittest;
+            (function (hittest) {
+                var tapins;
+                (function (tapins) {
+                    function insideChildren(data, pos, hitList, ctx) {
+                        hitList.unshift(data.updater);
+                        data.hitChildren = false;
+                        return true;
+                    }
+                    tapins.insideChildren = insideChildren;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var image;
+        (function (image) {
+            var hittest;
+            (function (hittest) {
+                var tapins;
+                (function (tapins) {
+                    function insideStretch(data, pos, hitList, ctx) {
+                        var source = data.assets.source;
+                        if (!source || source.pixelWidth === 0 || source.pixelHeight === 0) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        var stretch = data.assets.stretch;
+                        if (stretch === minerva.Stretch.Fill || stretch === minerva.Stretch.UniformToFill)
+                            return true;
+                        var ir = data.imgRect;
+                        ir.x = ir.y = 0;
+                        ir.width = source.pixelWidth;
+                        ir.height = source.pixelHeight;
+                        minerva.Rect.transform(ir, data.assets.imgXform);
+                        minerva.Rect.transform(ir, ctx.currentTransform);
+                        if (!minerva.Rect.containsPoint(ir, pos)) {
+                            hitList.shift();
+                            ctx.restore();
+                            return false;
+                        }
+                        return true;
+                    }
+                    tapins.insideStretch = insideStretch;
+                })(tapins = hittest.tapins || (hittest.tapins = {}));
+            })(hittest = image.hittest || (image.hittest = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var image;
+        (function (image) {
             var arrange;
             (function (arrange) {
                 var tapins;
@@ -7543,76 +7622,101 @@ var minerva;
     (function (controls) {
         var image;
         (function (image) {
-            var hittest;
-            (function (hittest) {
+            var measure;
+            (function (measure) {
                 var tapins;
                 (function (tapins) {
-                    function canHitInside(data, pos, hitList, ctx) {
-                        return true;
-                    }
-                    tapins.canHitInside = canHitInside;
-                })(tapins = hittest.tapins || (hittest.tapins = {}));
-            })(hittest = image.hittest || (image.hittest = {}));
-        })(image = controls.image || (controls.image = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var image;
-        (function (image) {
-            var hittest;
-            (function (hittest) {
-                var tapins;
-                (function (tapins) {
-                    function insideChildren(data, pos, hitList, ctx) {
-                        hitList.unshift(data.updater);
-                        data.hitChildren = false;
-                        return true;
-                    }
-                    tapins.insideChildren = insideChildren;
-                })(tapins = hittest.tapins || (hittest.tapins = {}));
-            })(hittest = image.hittest || (image.hittest = {}));
-        })(image = controls.image || (controls.image = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var image;
-        (function (image) {
-            var hittest;
-            (function (hittest) {
-                var tapins;
-                (function (tapins) {
-                    function insideStretch(data, pos, hitList, ctx) {
-                        var source = data.assets.source;
-                        if (!source || source.pixelWidth === 0 || source.pixelHeight === 0) {
-                            hitList.shift();
-                            ctx.restore();
-                            return false;
-                        }
-                        var stretch = data.assets.stretch;
-                        if (stretch === minerva.Stretch.Fill || stretch === minerva.Stretch.UniformToFill)
+                    function calcImageBounds(input, state, output, tree, availableSize) {
+                        var ib = state.imageBounds;
+                        ib.x = ib.y = ib.width = ib.height = 0;
+                        if (!input.source)
                             return true;
-                        var ir = data.imgRect;
-                        ir.x = ir.y = 0;
-                        ir.width = source.pixelWidth;
-                        ir.height = source.pixelHeight;
-                        minerva.Rect.transform(ir, data.assets.imgXform);
-                        minerva.Rect.transform(ir, ctx.currentTransform);
-                        if (!minerva.Rect.containsPoint(ir, pos)) {
-                            hitList.shift();
-                            ctx.restore();
-                            return false;
-                        }
+                        ib.width = input.source.pixelWidth;
+                        ib.height = input.source.pixelHeight;
                         return true;
                     }
-                    tapins.insideStretch = insideStretch;
-                })(tapins = hittest.tapins || (hittest.tapins = {}));
-            })(hittest = image.hittest || (image.hittest = {}));
+                    tapins.calcImageBounds = calcImageBounds;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = image.measure || (image.measure = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var image;
+        (function (image) {
+            var measure;
+            (function (measure) {
+                var tapins;
+                (function (tapins) {
+                    function calcStretch(input, state, output, tree, availableSize) {
+                        var as = state.availableSize;
+                        var dw = as.width;
+                        var dh = as.height;
+                        var ib = state.imageBounds;
+                        if (!isFinite(dw))
+                            dw = ib.width;
+                        if (!isFinite(dh))
+                            dh = ib.height;
+                        var sx = 0.0;
+                        var sy = 0.0;
+                        if (ib.width > 0)
+                            sx = dw / ib.width;
+                        if (ib.height > 0)
+                            sy = dh / ib.height;
+                        if (!isFinite(as.width))
+                            sx = sy;
+                        if (!isFinite(as.height))
+                            sy = sx;
+                        switch (input.stretch) {
+                            default:
+                            case minerva.Stretch.Uniform:
+                                sx = sy = Math.min(sx, sy);
+                                break;
+                            case minerva.Stretch.UniformToFill:
+                                sx = sy = Math.max(sx, sy);
+                                break;
+                            case minerva.Stretch.Fill:
+                                if (!isFinite(as.width))
+                                    sx = sy;
+                                if (!isFinite(as.height))
+                                    sy = sx;
+                                break;
+                            case minerva.Stretch.None:
+                                sx = sy = 1.0;
+                                break;
+                        }
+                        state.stretchX = sx;
+                        state.stretchY = sy;
+                        return true;
+                    }
+                    tapins.calcStretch = calcStretch;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = image.measure || (image.measure = {}));
+        })(image = controls.image || (controls.image = {}));
+    })(controls = minerva.controls || (minerva.controls = {}));
+})(minerva || (minerva = {}));
+var minerva;
+(function (minerva) {
+    var controls;
+    (function (controls) {
+        var image;
+        (function (image) {
+            var measure;
+            (function (measure) {
+                var tapins;
+                (function (tapins) {
+                    function doOverride(input, state, output, tree, availableSize) {
+                        var ds = output.desiredSize;
+                        ds.width = state.imageBounds.width * state.stretchX;
+                        ds.height = state.imageBounds.height * state.stretchY;
+                        return true;
+                    }
+                    tapins.doOverride = doOverride;
+                })(tapins = measure.tapins || (measure.tapins = {}));
+            })(measure = image.measure || (image.measure = {}));
         })(image = controls.image || (controls.image = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
@@ -7753,110 +7857,6 @@ var minerva;
                     tapins.prepareImageMetrics = prepareImageMetrics;
                 })(tapins = processdown.tapins || (processdown.tapins = {}));
             })(processdown = image.processdown || (image.processdown = {}));
-        })(image = controls.image || (controls.image = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var image;
-        (function (image) {
-            var measure;
-            (function (measure) {
-                var tapins;
-                (function (tapins) {
-                    function calcImageBounds(input, state, output, tree, availableSize) {
-                        var ib = state.imageBounds;
-                        ib.x = ib.y = ib.width = ib.height = 0;
-                        if (!input.source)
-                            return true;
-                        ib.width = input.source.pixelWidth;
-                        ib.height = input.source.pixelHeight;
-                        return true;
-                    }
-                    tapins.calcImageBounds = calcImageBounds;
-                })(tapins = measure.tapins || (measure.tapins = {}));
-            })(measure = image.measure || (image.measure = {}));
-        })(image = controls.image || (controls.image = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var image;
-        (function (image) {
-            var measure;
-            (function (measure) {
-                var tapins;
-                (function (tapins) {
-                    function calcStretch(input, state, output, tree, availableSize) {
-                        var as = state.availableSize;
-                        var dw = as.width;
-                        var dh = as.height;
-                        var ib = state.imageBounds;
-                        if (!isFinite(dw))
-                            dw = ib.width;
-                        if (!isFinite(dh))
-                            dh = ib.height;
-                        var sx = 0.0;
-                        var sy = 0.0;
-                        if (ib.width > 0)
-                            sx = dw / ib.width;
-                        if (ib.height > 0)
-                            sy = dh / ib.height;
-                        if (!isFinite(as.width))
-                            sx = sy;
-                        if (!isFinite(as.height))
-                            sy = sx;
-                        switch (input.stretch) {
-                            default:
-                            case minerva.Stretch.Uniform:
-                                sx = sy = Math.min(sx, sy);
-                                break;
-                            case minerva.Stretch.UniformToFill:
-                                sx = sy = Math.max(sx, sy);
-                                break;
-                            case minerva.Stretch.Fill:
-                                if (!isFinite(as.width))
-                                    sx = sy;
-                                if (!isFinite(as.height))
-                                    sy = sx;
-                                break;
-                            case minerva.Stretch.None:
-                                sx = sy = 1.0;
-                                break;
-                        }
-                        state.stretchX = sx;
-                        state.stretchY = sy;
-                        return true;
-                    }
-                    tapins.calcStretch = calcStretch;
-                })(tapins = measure.tapins || (measure.tapins = {}));
-            })(measure = image.measure || (image.measure = {}));
-        })(image = controls.image || (controls.image = {}));
-    })(controls = minerva.controls || (minerva.controls = {}));
-})(minerva || (minerva = {}));
-var minerva;
-(function (minerva) {
-    var controls;
-    (function (controls) {
-        var image;
-        (function (image) {
-            var measure;
-            (function (measure) {
-                var tapins;
-                (function (tapins) {
-                    function doOverride(input, state, output, tree, availableSize) {
-                        var ds = output.desiredSize;
-                        ds.width = state.imageBounds.width * state.stretchX;
-                        ds.height = state.imageBounds.height * state.stretchY;
-                        return true;
-                    }
-                    tapins.doOverride = doOverride;
-                })(tapins = measure.tapins || (measure.tapins = {}));
-            })(measure = image.measure || (image.measure = {}));
         })(image = controls.image || (controls.image = {}));
     })(controls = minerva.controls || (minerva.controls = {}));
 })(minerva || (minerva = {}));
@@ -10662,6 +10662,8 @@ var minerva;
                 case minerva.PenLineCap.Square:
                     if (!(v = entry.getEndVector()))
                         return;
+                    if (!v[0] || !v[1])
+                        return;
                     var ed = minerva.Vector.normalize(v.slice(0));
                     var edo = minerva.Vector.orthogonal(ed.slice(0));
                     var x1 = ex + hs * (ed[0] + edo[0]);
@@ -10676,6 +10678,8 @@ var minerva;
                 case minerva.PenLineCap.Flat:
                 default:
                     if (!(v = entry.getEndVector()))
+                        return;
+                    if (!v[0] || !v[1])
                         return;
                     var edo = minerva.Vector.orthogonal(minerva.Vector.normalize(v.slice(0)));
                     var x1 = ex + hs * edo[0];

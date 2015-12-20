@@ -211,6 +211,7 @@ module minerva.path {
                 break;
             case PenLineCap.Square:
                 if (!(v = entry.getEndVector())) return;
+                if (!v[0] || !v[1]) return;
                 var ed = Vector.normalize(v.slice(0));
                 var edo = Vector.orthogonal(ed.slice(0));
 
@@ -227,6 +228,7 @@ module minerva.path {
             case PenLineCap.Flat:
             default:
                 if (!(v = entry.getEndVector())) return;
+                if (!v[0] || !v[1]) return;
                 var edo = Vector.orthogonal(Vector.normalize(v.slice(0)));
 
                 var x1 = ex + hs * edo[0];
