@@ -6,9 +6,6 @@ var fs = require('fs'),
             'lib/perfex/dist/perfex.d.ts',
             'src/_Version.ts',
             'src/*.ts',
-            'src/pipe/*.ts',
-            'src/core/*.ts',
-            'src/core/**/*.ts',
             'src/**/*.ts'
         ]
     };

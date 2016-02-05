@@ -1,4 +1,4 @@
-/// <reference path="../../core/measure/MeasurePipeDef" />
+/// <reference path="../../core/arrange/ArrangePipeDef" />
 
 module minerva.anon.arrange {
     export class AnonymousArrangePipeDef extends core.arrange.ArrangePipeDef {
