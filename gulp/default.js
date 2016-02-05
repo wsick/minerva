@@ -17,7 +17,7 @@ module.exports = function (meta) {
         return merge([
             tsResult.dts.pipe(gulp.dest('./dist')),
             tsResult.js
-                .pipe(sourcemaps.write('./'))
+                .pipe(sourcemaps.write({sourceRoot: './src', debug: true}))
                 .pipe(gulp.dest('./dist'))
         ]);
     });
