@@ -1,6 +1,6 @@
 var gulp = require('gulp'),
     del = require('del'),
-    symlink = require('gulp-symlink'),
+    vfs = require('vinyl-fs'),
     runSequence = require('run-sequence').use(gulp),
     bower = require('gulp-bower'),
     path = require('path'),
@@ -20,35 +20,27 @@ module.exports = function (meta) {
             .pipe(gulp.dest('lib'));
     });
 
-    gulp.task('symlink-testlibs', function () {
-        var srcs = glob.sync("lib/*");
-        var dests = srcs.map(function (src) {
-            return path.join('test', 'lib', path.basename(src));
+    function createSymlinkTask(scaffold) {
+        gulp.task(`symlink-${scaffold.name}-libs`, () => {
+            var libs = glob.sync("lib/*", !scaffold.ignore ? undefined : {ignore: scaffold.ignore});
+            var dest = path.resolve(path.join(scaffold.name, 'lib'));
+            return vfs.src(libs).pipe(vfs.symlink(dest));
         });
-        srcs.push('./dist');
-        dests.push(path.join('test', 'lib', meta.name, 'dist'));
-
-        srcs.push('./src');
-        dests.push(path.join('test', 'lib', meta.name, 'src'));
-
-        return gulp.src(srcs).pipe(symlink.relative(dests, {force: true}));
-    });
-
-    gulp.task('symlink-stresslibs', function () {
-        var srcs = glob.sync("lib/*", {ignore: "lib/qunit"});
-        var dests = srcs.map(function (src) {
-            return path.join('stress', 'lib', path.basename(src));
+        gulp.task(`symlink-${scaffold.name}-local`, () => {
+            var dirs = scaffold.symdirs || [];
+            var dest = path.resolve(path.join(scaffold.name, 'lib', meta.name));
+            return vfs.src(dirs).pipe(vfs.symlink(dest));
         });
-        srcs.push('./dist');
-        dests.push(path.join('stress', 'lib', meta.name, 'dist'));
 
-        srcs.push('./src');
-        dests.push(path.join('stress', 'lib', meta.name, 'src'));
+        gulp.task(`symlink-${scaffold.name}`, () => {
+            return runSequence(`symlink-${scaffold.name}-libs`, `symlink-${scaffold.name}-local`);
+        });
+    }
 
-        return gulp.src(srcs).pipe(symlink.relative(dests, {force: true}));
-    });
-
+    meta.scaffolds.forEach(createSymlinkTask);
     gulp.task('reset', function () {
-        return runSequence('clean', 'update-libs', 'symlink-testlibs', 'symlink-stresslibs');
+        return runSequence('clean', 'update-libs', meta.scaffolds.map(function (scaffold) {
+            return `symlink-${scaffold.name}`;
+        }));
     });
 };

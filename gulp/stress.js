@@ -5,13 +5,14 @@ var gulp = require('gulp'),
     open = require('gulp-open');
 
 module.exports = function (meta) {
+    var scaffold = meta.scaffolds.filter(function (scaffold) {
+        return scaffold.name === 'stress';
+    })[0];
+    if (!scaffold)
+        return;
+
     gulp.task('stress-build', function () {
-        return gulp.src([
-            'typings/*.d.ts',
-            'stress/**/*.ts',
-            '!stress/lib/**/*.ts',
-            'dist/' + meta.name + '.d.ts'
-        ])
+        return gulp.src(scaffold.src)
             .pipe(sourcemaps.init())
             .pipe(ts({
                 target: 'ES5',
@@ -19,7 +20,7 @@ module.exports = function (meta) {
                 outDir: 'stress/.build/',
                 pathFilter: {'stress': ''}
             }))
-            .pipe(sourcemaps.write())
+            .pipe(sourcemaps.write('./', {sourceRoot: '/', debug: true}))
             .pipe(gulp.dest('stress/.build/'))
             .pipe(connect.reload());
     });
