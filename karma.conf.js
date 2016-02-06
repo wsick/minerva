@@ -5,7 +5,7 @@ module.exports = function (config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '',
+        basePath: 'test/',
 
 
         // frameworks to use
@@ -15,8 +15,8 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'test/.build/tests/**/*.js',
-            'dist/*.js'
+            'lib/minerva/dist/minerva.js',
+            '.build/tests/**/*.js'
         ],
 
 
@@ -49,7 +49,7 @@ module.exports = function (config) {
 
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: false,
+        autoWatch: true,
 
 
         // start these browsers
