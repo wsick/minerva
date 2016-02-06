@@ -22,7 +22,7 @@ module.exports = function (meta) {
             tsResult.js
                 .pipe(uglify())
                 .pipe(rename(meta.name + '.min.js'))
-                .pipe(sourcemaps.write('./'))
+                .pipe(sourcemaps.write({sourceRoot: './src', debug: true}))
                 .pipe(gulp.dest('dist'))
         ]);
     });

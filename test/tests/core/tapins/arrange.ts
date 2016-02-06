@@ -88,36 +88,56 @@ module minerva.core.arrange.tapins.tests {
 
         fr.x = NaN;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
         fr.x = 0;
 
         fr.y = NaN;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
         fr.y = 0;
 
         fr.width = -1;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
 
         fr.width = NaN;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
 
         fr.width = Number.POSITIVE_INFINITY;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
 
         fr.width = Number.NEGATIVE_INFINITY;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
         fr.width = 50;
 
         fr.height = -1;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
 
         fr.height = NaN;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
 
         fr.height = Number.POSITIVE_INFINITY;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
 
         fr.height = Number.NEGATIVE_INFINITY;
         assert.ok(!tapins.validateFinalRect(input, state, output, tree, fr));
+        assert.equal(minerva.errors.length, 1);
+        minerva.clearErrors();
     });
 
     QUnit.test("applyRounding", (assert) => {

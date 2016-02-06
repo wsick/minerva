@@ -1,30 +1,34 @@
-var gulp = require('gulp'),
+var path = require('path'),
+    gulp = require('gulp'),
     ts = require('gulp-typescript'),
     sourcemaps = require('gulp-sourcemaps'),
-    qunit = require('gulp-qunit'),
+    Server = require('karma').Server,
     runSequence = require('run-sequence').use(gulp);
 
 module.exports = function (meta) {
+    var scaffold = meta.scaffolds.filter(function (scaffold) {
+        return scaffold.name === 'test';
+    })[0];
+    if (!scaffold)
+        return;
+
     gulp.task('test-build', function () {
-        return gulp.src([
-            'typings/*.d.ts',
-            'test/**/*.ts',
-            '!test/lib/**/*.ts',
-            'dist/' + meta.name + '.d.ts'
-        ])
+        return gulp.src(scaffold.src)
             .pipe(sourcemaps.init())
             .pipe(ts({
                 target: 'ES5',
                 declaration: true,
-                pathFilter: {'test/tests': 'tests'}
+                pathFilter: {'test': ''}
             }))
-            .pipe(sourcemaps.write())
+            .pipe(sourcemaps.write('./', {sourceRoot: '/', debug: true}))
             .pipe(gulp.dest('test/.build'));
     });
 
-    gulp.task('test-run', function () {
-        return gulp.src('test/tests.html')
-            .pipe(qunit());
+    gulp.task('test-run', function (done) {
+        new Server({
+            configFile: path.normalize(path.join(__dirname, '..', 'karma.conf.js')),
+            singleRun: true
+        }, done).start();
     });
 
     gulp.task('test-watch', ['test'], function () {
