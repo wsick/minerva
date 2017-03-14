@@ -37,6 +37,8 @@ module minerva {
         }
 
         static copyTo (cr2: ICornerRadius, dest: ICornerRadius) {
+            if(!cr2 || !dest)
+                return;
             dest.topLeft = cr2.topLeft;
             dest.topRight = cr2.topRight;
             dest.bottomRight = cr2.bottomRight;
