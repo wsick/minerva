@@ -20,6 +20,8 @@ module minerva {
         }
 
         static copyTo (thickness: Thickness, dest: Thickness) {
+            if(!thickness || !dest)
+                return;
             dest.left = thickness.left;
             dest.top = thickness.top;
             dest.right = thickness.right;
